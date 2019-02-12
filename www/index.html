@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#2196f3">
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:">
+  <link rel="stylesheet" href="css/framework7.min.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="apple-touch-icon" href="img/f7-icon-square.png">
+  <link rel="icon" href="img/fav/android-icon-144x144.png">
+</head>
+
+<body>
+  <div id="app">
+    <div class="view view-main view-init ios-edges">
+      <div class="page">
+        <div class="navbar">
+          <div class="navbar-inner">
+            <div class="title">LightPOS</div>
+          </div>
+        </div>
+
+        <div class="page-content">
+          <div class="card card-outline">
+            <div class="card-header">
+              <strong>Header</strong>
+            </div>
+
+            <div class="segmented" style="margin: 5px;">
+              <a href="#foods" class="button tab-link tab-link-active">Foods</a>
+              <a href="#beverages" class="button tab-link">Beverages</a>
+            </div>
+
+            <div class="tabs">
+              <div class="tab tab-active" id="foods">
+                <form class="searchbar searchbar-init" data-search-container="#foodlist" data-search-in=".item-title" data-backdrop="false">
+                  <div class="searchbar-inner">
+                    <div class="searchbar-input-wrap">
+                      <input type="search" placeholder="Search">
+                      <i class="searchbar-icon"></i>
+                      <span class="input-clear-button"></span>
+                    </div>
+                    <span class="searchbar-disable-button">Cancel</span>
+                  </div>
+                </form>
+
+                <div class="block" style="max-height: 40vh; overflow: scroll;">
+                  <div class="list no-hairlines no-chevron searchbar-found" id="foodlist">
+
+                  </div>
+                </div>
+              </div>
+
+              <div class="tab" id="beverages">
+                <form class="searchbar searchbar-init" data-search-container="#bvrglist" data-search-in=".item-title" data-backdrop="false">
+                  <div class="searchbar-inner">
+                    <div class="searchbar-input-wrap">
+                      <input type="search" placeholder="Search">
+                      <i class="searchbar-icon"></i>
+                      <span class="input-clear-button"></span>
+                    </div>
+                    <span class="searchbar-disable-button">Cancel</span>
+                  </div>
+                </form>
+
+                <div class="block" style="max-height: 40vh; overflow: scroll;">
+                  <div class="list no-hairlines no-chevron searchbar-found" id="bvrglist">
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-outline">
+            <div class="card-header">
+              <strong>Keranjang</strong>
+            </div>
+
+            <div class="block" style="max-height: 40vh; overflow: scroll;">
+              <div class="list no-hairlines" id="keranjang">
+                <!-- <ul>
+                  <li class="item-content ">
+                    <div class="item-inner">
+                      <div class="item-title">
+                        Barang 1
+                        <div class="item-footer">1 x 20000</div>
+                      </div>
+                      <div class="item-after"><a href="#"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>
+                    </div>
+                  </li>
+                </ul> -->
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-outline">
+            <div class="card-header">
+              <strong>Detail Pembayaran</strong>
+            </div>
+
+            <div class="list no-hairlines no-hairlines-between">
+              <ul>
+                <li class="item-content">
+                  <div class="item-inner">
+                    <div class="item-title" style="width: 100%;">
+                      <div class="row">
+                        <div class="col-70">Total</div>
+                        <div class="col-30" id="subtotal" style="text-align: right;">0</div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <!-- <li class="item-content">
+                  <div class="item-inner">
+                    <div class="item-title" style="width: 100%;">
+                      <div class="row">
+                        <div class="col-70">Grand Total</div>
+                        <div class="col-30" id="grandtot" style="text-align: right;">0</div>
+                      </div>
+                    </div>
+                  </div>
+                </li> -->
+                <li class="item-content item-input inline-label">
+                  <div class="item-inner">
+                    <div class="item-title item-label" style="color: unset;">Dibayar</div>
+                    <div class="item-input-wrap">
+                      <input type="text" id="bayar" style="text-align: right;">
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="card-footer">
+              <button class="button button-fill color-green">Bayar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/framework7.min.js"></script>
+  <script src="js/highcharts.js"></script>
+
+  <script src="js/routes.js"></script>
+  <script src="js/app.js"></script>
+  <script type="text/javascript" src="cordova.js"></script>
+
+<!-- <div data-pagination='{"el": ".swiper-pagination"}' data-space-between="50" class="swiper-container swiper-init">
+              <div class="swiper-pagination"></div>
+              <div class="swiper-wrapper">
+                <div class="swiper-slide" style="background: black">
+                  <div class="block" style="padding-bottom: 35px">
+                    <div class="row">
+                      <div class="col-33" style="height: 10vh; color: white; border: solid white;">Satu</div>
+                      <div class="col-33" style="height: 10vh; color: red; border: solid red;">Dua</div>
+                      <div class="col-33" style="height: 10vh; color: lightblue; border: solid lightblue;">Tiga</div>
+                      <div class="col-33" style="height: 10vh; color: lightgreen; border: solid lightgreen;">Empat</div>
+                      <div class="col-33" style="height: 10vh; color: yellow; border: solid yellow;">Lima</div>
+                      <div class="col-33" style="height: 10vh; color: white; border: solid white;">Enam</div>
+                      <div class="col-33" style="height: 10vh; color: white; border: solid white;">Satu</div>
+                      <div class="col-33" style="height: 10vh; color: red; border: solid red;">Dua</div>
+                      <div class="col-33" style="height: 10vh; color: lightblue; border: solid lightblue;">Tiga</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="swiper-slide" style="background: red">Slide 2</div>
+                <div class="swiper-slide" style="background: green">Slide 3</div>
+                <div class="swiper-slide" style="background: blue">Slide 4</div>
+                <div class="swiper-slide" style="background: yellow">Slide 5</div>
+                <div class="swiper-slide" style="background: pink">Slide 6</div>
+                <div class="swiper-slide" style="background: brown">Slide 7</div>
+                <div class="swiper-slide" style="background: lightblue">Slide 8</div>
+                <div class="swiper-slide" style="background: gray">Slide 9</div>
+                <div class="swiper-slide" style="background: black">Slide 10</div>
+              </div>
+            </div> -->
+          </body>
+          </html>
