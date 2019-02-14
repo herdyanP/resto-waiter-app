@@ -36,7 +36,40 @@
 
             <div class="tabs">
               <div class="tab tab-active" id="foods">
-                <form class="searchbar searchbar-init" data-search-container="#foodlist" data-search-in=".item-title" data-backdrop="false">
+
+                <!-- <form class="searchbar" data-search-container="#foodlist" data-search-in=".item-title" data-backdrop="false">
+                  <div class="searchbar-inner">
+                    <div class="searchbar-input-wrap">
+                      <input type="search" placeholder="Search" oninput="cariItem(this)">
+                      <i class="searchbar-icon"></i>
+                      <span class="input-clear-button"></span>
+                    </div>
+                    <span class="searchbar-disable-button">Cancel</span>
+                  </div>
+                </form> -->
+
+                <form class="searchbar" id="foodSearch">
+                  <div class="searchbar-inner">
+                    <div class="searchbar-input-wrap">
+                      <input type="search" placeholder="Search" oninput="cariFood(this.value)">
+                      <i class="searchbar-icon"></i>
+                      <span class="input-clear-button"></span>
+                    </div>
+                    <span class="searchbar-disable-button">Cancel</span>
+                  </div>
+                </form>
+
+                <div class="block">
+                  <div class="grid-demo">
+                    <div class="row" id="foodlist" style="overflow: scroll; max-height: 40vh; padding-top: 15px;"></div>
+                  </div>
+                </div>
+
+                <!-- <div class="block" style="max-height: 40vh; overflow: scroll;">
+                  <div class="list no-hairlines no-chevron searchbar-found" id="foodlist"></div>
+                </div> -->
+
+                <!-- <form class="searchbar searchbar-init" data-search-container="#foodlist" data-search-in=".item-title" data-backdrop="false">
                   <div class="searchbar-inner">
                     <div class="searchbar-input-wrap">
                       <input type="search" placeholder="Search">
@@ -46,16 +79,32 @@
                     <span class="searchbar-disable-button">Cancel</span>
                   </div>
                 </form>
-
                 <div class="block" style="max-height: 40vh; overflow: scroll;">
-                  <div class="list no-hairlines no-chevron searchbar-found" id="foodlist">
+                  <div class="list no-hairlines no-chevron searchbar-found" id="foodlist"></div>
+                </div> -->
 
-                  </div>
-                </div>
               </div>
 
               <div class="tab" id="beverages">
-                <form class="searchbar searchbar-init" data-search-container="#bvrglist" data-search-in=".item-title" data-backdrop="false">
+
+                <form class="searchbar" id="bvrgSearch">
+                  <div class="searchbar-inner">
+                    <div class="searchbar-input-wrap">
+                      <input type="search" placeholder="Search" oninput="cariBvrg(this.value)">
+                      <i class="searchbar-icon"></i>
+                      <span class="input-clear-button"></span>
+                    </div>
+                    <span class="searchbar-disable-button">Cancel</span>
+                  </div>
+                </form>
+
+                <div class="block">
+                  <div class="grid-demo">
+                    <div class="row" id="bvrglist" style="overflow: scroll; max-height: 40vh; padding-top: 15px;"></div>
+                  </div>
+                </div>
+
+                <!-- <form class="searchbar searchbar-init" data-search-container="#bvrglist" data-search-in=".item-title" data-backdrop="false">
                   <div class="searchbar-inner">
                     <div class="searchbar-input-wrap">
                       <input type="search" placeholder="Search">
@@ -65,12 +114,10 @@
                     <span class="searchbar-disable-button">Cancel</span>
                   </div>
                 </form>
-
                 <div class="block" style="max-height: 40vh; overflow: scroll;">
-                  <div class="list no-hairlines no-chevron searchbar-found" id="bvrglist">
+                  <div class="list no-hairlines no-chevron searchbar-found" id="bvrglist"></div>
+                </div> -->
 
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -115,7 +162,7 @@
             </div>
 
             <div class="card-footer">
-              <button class="button button-fill color-green">Bayar</button>
+              <button class="button button-fill color-green" onclick="bayar()">Bayar</button>
             </div>
           </div>
         </div>
@@ -136,15 +183,15 @@
                 <div class="swiper-slide" style="background: black">
                   <div class="block" style="padding-bottom: 35px">
                     <div class="row">
-                      <div class="col-33" style="height: 10vh; color: white; border: solid white;">Satu</div>
-                      <div class="col-33" style="height: 10vh; color: red; border: solid red;">Dua</div>
-                      <div class="col-33" style="height: 10vh; color: lightblue; border: solid lightblue;">Tiga</div>
-                      <div class="col-33" style="height: 10vh; color: lightgreen; border: solid lightgreen;">Empat</div>
-                      <div class="col-33" style="height: 10vh; color: yellow; border: solid yellow;">Lima</div>
-                      <div class="col-33" style="height: 10vh; color: white; border: solid white;">Enam</div>
-                      <div class="col-33" style="height: 10vh; color: white; border: solid white;">Satu</div>
-                      <div class="col-33" style="height: 10vh; color: red; border: solid red;">Dua</div>
-                      <div class="col-33" style="height: 10vh; color: lightblue; border: solid lightblue;">Tiga</div>
+                      <div class="col-50" style="height: 10vh; color: white; border: solid white;">Satu</div>
+                      <div class="col-50" style="height: 10vh; color: red; border: solid red;">Dua</div>
+                      <div class="col-50" style="height: 10vh; color: lightblue; border: solid lightblue;">Tiga</div>
+                      <div class="col-50" style="height: 10vh; color: lightgreen; border: solid lightgreen;">Empat</div>
+                      <div class="col-50" style="height: 10vh; color: yellow; border: solid yellow;">Lima</div>
+                      <div class="col-50" style="height: 10vh; color: white; border: solid white;">Enam</div>
+                      <div class="col-50" style="height: 10vh; color: white; border: solid white;">Satu</div>
+                      <div class="col-50" style="height: 10vh; color: red; border: solid red;">Dua</div>
+                      <div class="col-50" style="height: 10vh; color: lightblue; border: solid lightblue;">Tiga</div>
                     </div>
                   </div>
                 </div>
