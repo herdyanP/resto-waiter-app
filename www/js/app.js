@@ -29,6 +29,7 @@ var splitItem = [];
 var toBeMerged = [];
 var mergeItem = [];
 var payFlag = 0;
+var shortMonths = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 // var mainView = app.views.main;
 // var chart = Highcharts.chart('container1', {});
 
@@ -171,7 +172,10 @@ document.addEventListener('deviceready', function() {
 function tampilFood(){
   db.transaction(function(tx) {
     tx.executeSql('SELECT * FROM m_barang WHERE kategori = "1" ORDER BY nama_barang ASC', [], function(tx, rs) {
-      var len = rs.rows.length, i;
+      var len, i;
+      if(rs.rows.length > 20) {len = 20}
+        else {len = rs.rows.length}
+
       var all_rows = [];
       var datanya = '';
       for (i = 0; i < len; i++){
@@ -208,7 +212,10 @@ function cariFood(q){
 function tampilBvrg(){
   db.transaction(function(tx) {
     tx.executeSql('SELECT * FROM m_barang WHERE kategori = "2" ORDER BY nama_barang ASC', [], function(tx, rs) {
-      var len = rs.rows.length, i;
+      var len, i;
+      if(rs.rows.length > 20) {len = 20}
+        else {len = rs.rows.length}
+
       var all_rows = [];
       var datanya = '';
       for (i = 0; i < len; i++){
@@ -243,7 +250,7 @@ function cariBvrg(q){
 }
 
 function simpan(a,b,c,d){
-  app.toast.create({text: a+', '+b+', '+c+', '+d, closeTimeout: 2000, closeButton: true, destroyOnClose: true}).open();
+  // app.toast.create({text: a+', '+b+', '+c+', '+d, closeTimeout: 2000, closeButton: true, destroyOnClose: true}).open();
   db.transaction(function(transaction) {
     var c1=0;
     var qty=0;
@@ -299,7 +306,7 @@ function keranjang(a,b,c,d){
 
       data += '</ul>';
       $('#keranjang').html(data);
-      $('#subtotal').html(jumlah.toLocaleString());
+      $('#subtotal').html(jumlah.toLocaleString('id-ID'));
       // var ppn=jumlah*(10/100);
       // var gt=jumlah+ppn;
       // $('#ppn').html(ppn.toLocaleString());
@@ -349,10 +356,21 @@ function bayar(){
     tx.executeSql('SELECT * FROM pj_dtl_tmp', [], 
       function(t, rs){
         for(var i = 0; i < rs.rows.length; i++){
-          list += rs.rows.item(i).nama_barang+', '+rs.rows.item(i).qty+', '+parseInt(rs.rows.item(i).harga).toLocaleString('id-ID')+', '+(parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID')+'; ';
+          var ws = '';
+          var satuan = parseInt(rs.rows.item(i).harga).toLocaleString('id-ID');
+          var jumlah = (parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID');
+
+          for(var j = 0; j < 27 - satuan.length - jumlah.length; j++){ws += ' '}
+          list += '{left}'+rs.rows.item(i).nama_barang+'{br}  '+parseInt(rs.rows.item(i).harga)+' x '+rs.rows.item(i).qty+ws+(parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID')+'{br}';
+          // list += rs.rows.item(i).nama_barang+', '+rs.rows.item(i).qty+', '+parseInt(rs.rows.item(i).harga).toLocaleString('id-ID')+', '+(parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID')+'; ';
         }
 
-        alert(list);
+        list += '--------------------------------{br}{left}';
+
+        connectToPrinter(list);
+        // alert(list);
+
+        // console.log(list);
       }, function(t, error){
         alert('error')
       })
@@ -485,4 +503,62 @@ function again(a){
   }
   idtemp = 0;
   mainView.router.back();
+}
+
+function connectToPrinter(q){
+  window.DatecsPrinter.listBluetoothDevices(
+    function (devices) {
+      window.DatecsPrinter.connect(devices[0].address, 
+        function() {
+          printBayar(q);
+          //printMyBarcode();
+          //feed();
+        },
+        function() {
+          alert(JSON.stringify(error));
+        }
+      );
+    },
+    function (error) {
+      alert(JSON.stringify(error));
+    }
+  );
+}
+
+function printBayar(q) {
+  var tot = $('#subtotal').html();
+  var totInt = tot.replace(/\D/g, '');
+  var paid = $('#bayar').val();
+  var kembali = parseInt(paid) - parseInt(totInt);
+  var order = nomor();
+  var dt = new Date();
+
+  var header = '{br}{center}{h}LightPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
+  var subheader = '{left}No.Trans : '+nomor()+'{br}Tanggal  : '+dt.getDate()+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+dt.getHours()+':'+dt.getMinutes()+'{br}--------------------------------{br}';
+  var sub = 'Sub-total';
+  var byr = 'Bayar (Cash)';
+  var kbl = 'Kembali';
+
+  for(var i = 0; i < 23-tot.length; i++){sub += ' ';} sub += tot + '{br}';
+  for(var i = 0; i < 20-parseInt(paid).toLocaleString().length; i++){byr += ' ';} byr += parseInt(paid).toLocaleString('id-ID') + '{br}';
+  for(var i = 0; i < 25-parseInt(kembali).toLocaleString().length; i++){kbl += ' ';} kbl += parseInt(kembali).toLocaleString('id-ID');
+
+  window.DatecsPrinter.printText(header + subheader + q + sub + byr + kbl +'{br}{br}{br}', 'ISO-8859-1', 
+    function(){
+      alert('success!');
+    }, function() {
+      alert(JSON.stringify(error));
+    });
+  // window.DatecsPrinter.printText('{left}Item(Qty){br}{right}Jumlah{br}{br}{br}{br}{br}{br}{br}', 'ISO-8859-1');
+
+  /*,
+  // window.DatecsPrinter.printText('{center}LightPOS {br}Sales Receipt {br}{br}{left}No. Order{center}: '+nmr+'{br}{left}'+shortMonths[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear()+'{right}'+d.getHours()+':'+d.getMinutes()+'{br}{br}'+header+q+'{br}{br}{left}SubTotal{right}'+tot, 'ISO-8859-1', 
+  // window.DatecsPrinter.printText("{center}Receipt Print {br}MEDIA NUSA MANDIRI{br}{left} No | Barang | QTY | Harga{br}{br} Terima kasih{br}{br}{br}{br}{br}{br}", 'ISO-8859-1', 
+    function() {
+      //printMyImage();
+      alert("Success");
+    }, function() {
+      alert(JSON.stringify(error));
+    }
+  );*/
 }
