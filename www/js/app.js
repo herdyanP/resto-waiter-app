@@ -15,6 +15,9 @@ var app = new Framework7({
   root: '#app',
   init: false,
   theme: theme,
+  panel: {
+    swipe: 'left'
+  },
   routes: routes,
 });
 
@@ -22,16 +25,9 @@ var app = new Framework7({
 // NYOBA TEMPLATING
 
 var db;
-var nomormeja = 0;
-var st = 0;
-var idtemp = 0;
-var split = 0;
-var splitItem = [];
-var toBeMerged = [];
-var mergeItem = [];
-var payFlag = 0;
 var shortMonths = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 var mtd = 1;
+var txNmr = 0;
 
 // var mainView = app.views.main;
 // var chart = Highcharts.chart('container1', {});
@@ -295,14 +291,13 @@ function keranjang(a,b,c,d){
       var all_rows = [];
       for (i = 0; i < len; i++){
         data += '<li class="item-content ">\
-        <div class="item-inner">\
-        <div class="item-title">\
-        '+rs.rows.item(i).nama_barang+'\
-        <div class="item-footer">'+rs.rows.item(i).qty+' x '+rs.rows.item(i).harga+'</div>\
-        </div>\
-        <div class="item-after"><a href="#" onclick="pilihHapus('+rs.rows.item(i).id_tmp+','+rs.rows.item(i).qty+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
-        </div>\
-        </li>'
+                    <div class="item-inner">\
+                      <div class="item-title">'+rs.rows.item(i).nama_barang+'\
+                      <div class="item-footer">'+rs.rows.item(i).qty+' x '+rs.rows.item(i).harga+'</div>\
+                      </div>\
+                      <div class="item-after"><a href="#" onclick="pilihHapus('+rs.rows.item(i).id_tmp+','+rs.rows.item(i).qty+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
+                    </div>\
+                  </li>'
         // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
         jumlah += parseInt(rs.rows.item(i).qty * rs.rows.item(i).harga);
       }
@@ -339,9 +334,9 @@ function hapusSatu(a){
 }
 
 function hapusKeranjang(a){
-  var b=a;
+  var b = a;
   db.transaction(function(transaction) {
-    var executeQuery = "DELETE FROM pj_dtl_tmp where id_tmp=?";
+    var executeQuery = "DELETE FROM pj_dtl_tmp where id_tmp = ?";
     transaction.executeSql(executeQuery, [b],
       function(tx, result) {
         keranjang("a","b","c","d");
@@ -375,17 +370,15 @@ function bayar(){
           var jumlah = (parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID');
 
           for(var j = 0; j < 27 - satuan.length - jumlah.length; j++){ws += ' '}
-          list += '{left}'+rs.rows.item(i).nama_barang+'{br}  '+parseInt(rs.rows.item(i).harga)+' x '+rs.rows.item(i).qty+ws+(parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID')+'{br}';
+          list += '{left}'+rs.rows.item(i).nama_barang+'{br}  '+rs.rows.item(i).qty+' x '+parseInt(rs.rows.item(i).harga)+ws+(parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID')+'{br}';
           // list += rs.rows.item(i).nama_barang+', '+rs.rows.item(i).qty+', '+parseInt(rs.rows.item(i).harga).toLocaleString('id-ID')+', '+(parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID')+'; ';
         }
 
         list += '--------------------------------{br}{left}';
+        txNmr = nomor();
 
-        connectToPrinter(list);
-        // printBayar(list);
-        // alert(list);
-
-        // console.log(list);
+        // connectToPrinter(list);
+        ordernya();
       }, function(t, error){
         alert('error')
       })
@@ -424,42 +417,29 @@ function nomor(){
 }
 
 function ordernya(){
-  var c1=1;
-  var qty=0;
+  var qty = 0;
+  var d = new Date();
+  var tgl = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+("0" + d.getDate()).slice(-2);
+  var tgltime = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+("0" + d.getDate()).slice(-2)+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
 
-  var nomorx=nomor();
-  var d=new Date();
-  var tgl=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+("0" + d.getDate()).slice(-2);
-  var tgltime=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+("0" + d.getDate()).slice(-2)+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+  // if(st == 2){
+  //   nomormeja = -1;
+  //   c1 = 0;
+  // }else if(nomormeja==0){
+  //   alert('Harap memilih meja dahulu!');
+  //   return;
+  // }
 
-  if(st == 2){
-    nomormeja = -1;
-    c1 = 0;
-  }else if(nomormeja==0){
-    alert('Harap memilih meja dahulu!');
-    return;
-  }
-
-  db.transaction(function(tx){
-    tx.executeSql("SELECT COUNT(*) c FROM pj WHERE id_pj = ?", [idtemp],
-      function(t, result){
-        if(result.rows.item(0).c < 1){
-          db.transaction(function(transaction) {
-            var executeQuery = "INSERT INTO pj (no_penjualan,no_faktur,tgl_penjualan,jenis_jual,id_user,stamp_date,no_meja,id_gudang,meja,st) VALUES (?,?,?,?,?,?,?,?,?,?)";
-            transaction.executeSql(executeQuery, [nomorx,nomorx,tgl,st,'1',tgltime,nomormeja,'1','1',c1]
-              , function(tx, result) {
-                orderdtl(result.insertId);
-                listmeja();
-              },
-              function(error){
-                alert('Error occurred'); 
-              });
-          });
-        } else{
-          orderdtl(idtemp);
-        }
-      })
-  })
+  db.transaction(function(transaction) {
+    var executeQuery = "INSERT INTO pj (no_penjualan, no_faktur, tgl_penjualan, jenis_jual, id_user, stamp_date, no_meja, id_gudang, meja, st) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    transaction.executeSql(executeQuery, [txNmr, txNmr, tgl, '1', '1', tgltime, '0', '1', '1', '1'], 
+      function(tx, result) {
+        orderdtl(result.insertId);
+      },
+      function(error){
+        alert('Error occurred'); 
+      });
+  });
 }
 
 function orderdtl(id){
@@ -467,12 +447,14 @@ function orderdtl(id){
     tx.executeSql('SELECT *,'+id+' as idpj FROM pj_dtl_tmp', [], function(tx, rs) {
       var len = rs.rows.length, i;
       var all_rows = [];
-      var idnya="";
-      var datanya="";
+      var idnya = '';
+      var datanya = '';
+
       for (i = 0; i < len; i++){
-        idnya=rs.rows.item(i).id_tmp;
+        idnya = rs.rows.item(i).id_tmp;
         all_rows.push(rs.rows.item(i));
       }
+
       again(all_rows);
     }, function(tx, error) {
       alert('SELECT error: ' + error.message);
@@ -481,7 +463,6 @@ function orderdtl(id){
 }
 
 function again(a){
-  var mainView = app.views.main;
   var d = new Date();
   var tgltime = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
   for (var i = 0; i < a.length; i++) {
@@ -492,8 +473,8 @@ function again(a){
             if(result.rows.item(0).c < 1){
               db.transaction(function(transaction) {
                 var executeQuery = "INSERT INTO pj_dtl (id_pj, id_barang, qty_jual, harga_jual, discprs, discrp, dtl_total, harga_jual_cetak, user, dtpesan) VALUES (?,?,?,?,?,?,?,?,?,?)";
-                transaction.executeSql(executeQuery, [id_pj, id_barang, qty_jual, harga_jual, discprs, discrp, dtl_total, harga_jual_cetak, user, dtpesan]
-                  , function(tx, result) {
+                transaction.executeSql(executeQuery, [id_pj, id_barang, qty_jual, harga_jual, discprs, discrp, dtl_total, harga_jual_cetak, user, dtpesan], 
+                  function(tx, result) {
                     hapusKeranjang(id_tmp);
                   },
                   function(error){
@@ -514,11 +495,106 @@ function again(a){
             }
           }, function(error){})
       })
-    }(a[i].idpj, a[i].id_barang, a[i].qty, a[i].harga,"0","0",a[i].total,a[i].harga,"1",tgltime, a[i].id_tmp)
+    }(a[i].idpj, a[i].id_barang, a[i].qty, a[i].harga, "0", "0", a[i].total, a[i].harga, "1", tgltime, a[i].id_tmp)
   }
-  idtemp = 0;
-  mainView.router.back();
 }
+
+// function ordernya(){
+//   var c1=1;
+//   var qty=0;
+
+//   var nomorx=nomor();
+//   var d=new Date();
+//   var tgl=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+("0" + d.getDate()).slice(-2);
+//   var tgltime=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+("0" + d.getDate()).slice(-2)+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+
+//   if(st == 2){
+//     nomormeja = -1;
+//     c1 = 0;
+//   }else if(nomormeja==0){
+//     alert('Harap memilih meja dahulu!');
+//     return;
+//   }
+
+//   db.transaction(function(tx){
+//     tx.executeSql("SELECT COUNT(*) c FROM pj WHERE id_pj = ?", [idtemp],
+//       function(t, result){
+//         if(result.rows.item(0).c < 1){
+//           db.transaction(function(transaction) {
+//             var executeQuery = "INSERT INTO pj (no_penjualan,no_faktur,tgl_penjualan,jenis_jual,id_user,stamp_date,no_meja,id_gudang,meja,st) VALUES (?,?,?,?,?,?,?,?,?,?)";
+//             transaction.executeSql(executeQuery, [nomorx,nomorx,tgl,st,'1',tgltime,nomormeja,'1','1',c1]
+//               , function(tx, result) {
+//                 orderdtl(result.insertId);
+//                 listmeja();
+//               },
+//               function(error){
+//                 alert('Error occurred'); 
+//               });
+//           });
+//         } else{
+//           orderdtl(idtemp);
+//         }
+//       })
+//   })
+// }
+
+// function orderdtl(id){
+//   db.transaction(function(tx) {
+//     tx.executeSql('SELECT *,'+id+' as idpj FROM pj_dtl_tmp', [], function(tx, rs) {
+//       var len = rs.rows.length, i;
+//       var all_rows = [];
+//       var idnya="";
+//       var datanya="";
+//       for (i = 0; i < len; i++){
+//         idnya=rs.rows.item(i).id_tmp;
+//         all_rows.push(rs.rows.item(i));
+//       }
+//       again(all_rows);
+//     }, function(tx, error) {
+//       alert('SELECT error: ' + error.message);
+//     });
+//   });
+// }
+
+// function again(a){
+//   var mainView = app.views.main;
+//   var d = new Date();
+//   var tgltime = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+//   for (var i = 0; i < a.length; i++) {
+//     var insert = function(id_pj, id_barang, qty_jual, harga_jual, discprs, discrp, dtl_total, harga_jual_cetak, user, dtpesan, id_tmp){
+//       db.transaction(function(t){
+//         t.executeSql('SELECT COUNT(*) c FROM pj_dtl WHERE id_pj = ? AND id_barang = ?', [id_pj, id_barang], 
+//           function(t, result){
+//             if(result.rows.item(0).c < 1){
+//               db.transaction(function(transaction) {
+//                 var executeQuery = "INSERT INTO pj_dtl (id_pj, id_barang, qty_jual, harga_jual, discprs, discrp, dtl_total, harga_jual_cetak, user, dtpesan) VALUES (?,?,?,?,?,?,?,?,?,?)";
+//                 transaction.executeSql(executeQuery, [id_pj, id_barang, qty_jual, harga_jual, discprs, discrp, dtl_total, harga_jual_cetak, user, dtpesan]
+//                   , function(tx, result) {
+//                     hapusKeranjang(id_tmp);
+//                   },
+//                   function(error){
+//                     alert('Error occurred'); 
+//                   })
+//               });
+//             } else{
+//               db.transaction(function(transaction) {
+//                 var executeQuery = "UPDATE pj_dtl SET qty_jual = qty_jual + ?, dtl_total = dtl_total + ? WHERE id_pj = ? AND id_barang = ?";
+//                 transaction.executeSql(executeQuery, [qty_jual, dtl_total, id_pj, id_barang], 
+//                   function(tx, result) {
+//                     hapusKeranjang(id_tmp);
+//                   }, 
+//                   function(error){
+//                     alert('Error occured');
+//                   })
+//               });
+//             }
+//           }, function(error){})
+//       })
+//     }(a[i].idpj, a[i].id_barang, a[i].qty, a[i].harga,"0","0",a[i].total,a[i].harga,"1",tgltime, a[i].id_tmp)
+//   }
+//   idtemp = 0;
+//   mainView.router.back();
+// }
 
 function connectToPrinter(q){
   window.DatecsPrinter.listBluetoothDevices(
@@ -545,11 +621,10 @@ function printBayar(q) {
   var totInt = tot.replace(/\D/g, '');
   var paid = $('#bayar').val();
   var kembali = parseInt(paid) - parseInt(totInt);
-  var order = nomor();
   var dt = new Date();
 
   var header = '{br}{center}{h}LightPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
-  var subheader = '{left}No.Trans : '+nomor()+'{br}Tanggal  : '+dt.getDate()+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+dt.getHours()+':'+dt.getMinutes()+'{br}--------------------------------{br}';
+  var subheader = '{left}No.Trans : '+txNmr+'{br}Tanggal  : '+dt.getDate()+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+dt.getHours()+':'+dt.getMinutes()+'{br}--------------------------------{br}';
   var sub = 'Sub-total';
   var byr = 'Tunai';
   var crd = 'CC';
@@ -561,17 +636,19 @@ function printBayar(q) {
   for(var i = 0; i < 25-parseInt(kembali).toLocaleString().length; i++){kbl += ' ';} kbl += parseInt(kembali).toLocaleString('id-ID');
 
   if(mtd == '1'){
-    window.DatecsPrinter.printText(header + subheader + q + sub + byr + kbl +'{br}{br}{br}{br}{br}', 'ISO-8859-1', 
+    window.DatecsPrinter.printText(header + subheader + q + sub + byr + kbl +'{br}{br}{br}{br}', 'ISO-8859-1', 
     function(){
       alert('success!');
+      ordernya();
     }, function() {
       alert(JSON.stringify(error));
     });
     // console.log(header + subheader + q + sub + byr + kbl +'{br}{br}{br}{br}{br}');
   }else if (mtd == '2'){
-    window.DatecsPrinter.printText(header + subheader + q + sub + crd +'{br}{br}{br}{br}{br}', 'ISO-8859-1', 
+    window.DatecsPrinter.printText(header + subheader + q + sub + crd +'{br}{br}{br}{br}', 'ISO-8859-1', 
     function(){
       alert('success!');
+      ordernya();
     }, function() {
       alert(JSON.stringify(error));
     });
