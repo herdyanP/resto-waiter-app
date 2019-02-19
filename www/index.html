@@ -154,8 +154,8 @@
                   <div class="item-inner">
                     <div class="item-title item-label" style="color: unset;">Metode</div>
                     <div class="item-input-wrap input-dropdown-wrap">
-                      <select id="" name="">
-                        <option value="1">Tunai</option>
+                      <select id="metode" name="" onchange="metode(this.value)">
+                        <option value="1" selected>Tunai</option>
                         <option value="2">Kartu Kredit</option>
                         <option value="3">e-Wallet</option>
                       </select>
@@ -166,7 +166,7 @@
                     </div> -->
                   </div>
                 </li>
-                <li class="item-content item-input inline-label" class="bayar-tunai">
+                <li class="item-content item-input inline-label bayar-tunai" style="display: block;">
                   <div class="item-inner">
                     <div class="item-title item-label" style="color: unset;">Dibayar</div>
                     <div class="item-input-wrap">
@@ -174,42 +174,44 @@
                     </div>
                   </div>
                 </li>
-                <li class="item-content item-input inline-label" style="display: none;">
-                  <div class="item-inner">
-                    <div class="item-title item-label" style="color: unset;">Card Number</div>
-                    <div class="item-input-wrap">
-                      <input type="text" id="" style="text-align: right;">
+                <div class="bayar-card" style="display: none;">
+                  <li class="item-content item-input inline-label">
+                    <div class="item-inner">
+                      <div class="item-title item-label" style="color: unset;">Card Number</div>
+                      <div class="item-input-wrap">
+                        <input type="text" id="" style="text-align: right;">
+                      </div>
                     </div>
-                  </div>
-                </li>
-                <li class="item-content item-input" style="display: none;">
-                  <div class="item-inner item-cell">
-                    <div class="item-row">
-                      <div class="item-cell">
-                        <div class="item-title item-label" style="color: unset;">EXP</div>
-                        <div class="row">
-                          <div class="col">
-                            <div class="item-input-wrap">
-                              <input type="text" id="" style="text-align: right;">
+                  </li>
+                  <li class="item-content item-input">
+                    <div class="item-inner item-cell">
+                      <div class="item-row">
+                        <div class="item-cell">
+                          <div class="item-title item-label" style="color: unset;">EXP</div>
+                          <div class="row">
+                            <div class="col">
+                              <div class="item-input-wrap">
+                                <input type="text" id="" style="text-align: right;">
+                              </div>
                             </div>
-                          </div>
-                          &nbsp;/&nbsp;
-                          <div class="col">
-                            <div class="item-input-wrap">
-                              <input type="text" id="" style="text-align: right;">
+                            &nbsp;/&nbsp;
+                            <div class="col">
+                              <div class="item-input-wrap">
+                                <input type="text" id="" style="text-align: right;">
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="item-cell">
-                        <div class="item-title item-label" style="color: unset;">CVV</div>
-                        <div class="item-input-wrap">
-                          <input type="text" id="" style="text-align: right;">
+                        <div class="item-cell">
+                          <div class="item-title item-label" style="color: unset;">CVV</div>
+                          <div class="item-input-wrap">
+                            <input type="text" id="" style="text-align: right;">
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </li>
+                  </li>
+                </div>
               </ul>
             </div>
 

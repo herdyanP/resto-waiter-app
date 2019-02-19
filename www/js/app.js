@@ -1,5 +1,6 @@
 // Dom7
 //var $$ = Dom7;
+// sudo cordova build android --release -- --keystore=lightpos.keystore --storePassword=bismillah --alias=lightpos --password=bismillah
 var $ = Dom7;
 
 // Theme
@@ -30,6 +31,8 @@ var toBeMerged = [];
 var mergeItem = [];
 var payFlag = 0;
 var shortMonths = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+var mtd = 1;
+
 // var mainView = app.views.main;
 // var chart = Highcharts.chart('container1', {});
 
@@ -350,6 +353,17 @@ function hapusKeranjang(a){
   });
 }
 
+function metode(a){
+  mtd = a;
+  if(a == '1'){
+    $('.bayar-tunai').css('display', 'block');
+    $('.bayar-card').css('display', 'none');
+  } else if(a == '2'){
+    $('.bayar-tunai').css('display', 'none');
+    $('.bayar-card').css('display', 'block');
+  }
+}
+
 function bayar(){
   var list = '';
   db.transaction(function(tx){
@@ -368,6 +382,7 @@ function bayar(){
         list += '--------------------------------{br}{left}';
 
         connectToPrinter(list);
+        // printBayar(list);
         // alert(list);
 
         // console.log(list);
@@ -536,29 +551,30 @@ function printBayar(q) {
   var header = '{br}{center}{h}LightPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
   var subheader = '{left}No.Trans : '+nomor()+'{br}Tanggal  : '+dt.getDate()+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+dt.getHours()+':'+dt.getMinutes()+'{br}--------------------------------{br}';
   var sub = 'Sub-total';
-  var byr = 'Bayar (Cash)';
+  var byr = 'Tunai';
+  var crd = 'CC';
   var kbl = 'Kembali';
 
   for(var i = 0; i < 23-tot.length; i++){sub += ' ';} sub += tot + '{br}';
-  for(var i = 0; i < 20-parseInt(paid).toLocaleString().length; i++){byr += ' ';} byr += parseInt(paid).toLocaleString('id-ID') + '{br}';
+  for(var i = 0; i < 30-tot.length; i++){crd += ' ';} crd += tot + '{br}';
+  for(var i = 0; i < 27-parseInt(paid).toLocaleString().length; i++){byr += ' ';} byr += parseInt(paid).toLocaleString('id-ID') + '{br}';
   for(var i = 0; i < 25-parseInt(kembali).toLocaleString().length; i++){kbl += ' ';} kbl += parseInt(kembali).toLocaleString('id-ID');
 
-  window.DatecsPrinter.printText(header + subheader + q + sub + byr + kbl +'{br}{br}{br}', 'ISO-8859-1', 
+  if(mtd == '1'){
+    window.DatecsPrinter.printText(header + subheader + q + sub + byr + kbl +'{br}{br}{br}{br}{br}', 'ISO-8859-1', 
     function(){
       alert('success!');
     }, function() {
       alert(JSON.stringify(error));
     });
-  // window.DatecsPrinter.printText('{left}Item(Qty){br}{right}Jumlah{br}{br}{br}{br}{br}{br}{br}', 'ISO-8859-1');
-
-  /*,
-  // window.DatecsPrinter.printText('{center}LightPOS {br}Sales Receipt {br}{br}{left}No. Order{center}: '+nmr+'{br}{left}'+shortMonths[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear()+'{right}'+d.getHours()+':'+d.getMinutes()+'{br}{br}'+header+q+'{br}{br}{left}SubTotal{right}'+tot, 'ISO-8859-1', 
-  // window.DatecsPrinter.printText("{center}Receipt Print {br}MEDIA NUSA MANDIRI{br}{left} No | Barang | QTY | Harga{br}{br} Terima kasih{br}{br}{br}{br}{br}{br}", 'ISO-8859-1', 
-    function() {
-      //printMyImage();
-      alert("Success");
+    // console.log(header + subheader + q + sub + byr + kbl +'{br}{br}{br}{br}{br}');
+  }else if (mtd == '2'){
+    window.DatecsPrinter.printText(header + subheader + q + sub + crd +'{br}{br}{br}{br}{br}', 'ISO-8859-1', 
+    function(){
+      alert('success!');
     }, function() {
       alert(JSON.stringify(error));
-    }
-  );*/
+    });
+    // console.log(header + subheader + q + sub + crd +'{br}{br}{br}{br}{br}');
+  }
 }
