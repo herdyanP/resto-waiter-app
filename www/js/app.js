@@ -1,7 +1,7 @@
 // Dom7
 //var $$ = Dom7;
 // sudo cordova build android --release -- --keystore=lightpos.keystore --storePassword=bismillah --alias=lightpos --password=bismillah
-var $ = Dom7;
+var $$ = Dom7;
 
 // Theme
 var theme = 'auto';
@@ -28,6 +28,9 @@ var db;
 var shortMonths = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 var mtd = 1;
 var txNmr = 0;
+var retail;
+var cabang;
+var lastId;
 
 // var mainView = app.views.main;
 // var chart = Highcharts.chart('container1', {});
@@ -168,6 +171,15 @@ document.addEventListener('deviceready', function() {
 //   });
 // }
 
+function kodeBarang(id){
+  var q = 'B';
+  for(var i = 0; i < 5 - id.toString().length; i++){
+    q += '0';
+  }
+
+  return q+id;
+}
+
 function tampilFood(){
   db.transaction(function(tx) {
     tx.executeSql('SELECT * FROM m_barang WHERE kategori = "1" ORDER BY nama_barang ASC', [], function(tx, rs) {
@@ -179,7 +191,8 @@ function tampilFood(){
       var datanya = '';
       for (i = 0; i < len; i++){
 
-        datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-50" style="height: 100px;text-align:left;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
+        datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-50" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+        // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-50" style="height: 100px;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
       }
 
       $('#foodlist').html(datanya);
@@ -198,7 +211,8 @@ function cariFood(q){
         var datanya = '';
         for (i = 0; i < len; i++){
 
-          datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-50" style="height: 100px;text-align:left;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
+          datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-50" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+          // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-50" style="height: 100px;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
         }
 
         $('#foodlist').html(datanya);
@@ -219,7 +233,8 @@ function tampilBvrg(){
       var datanya = '';
       for (i = 0; i < len; i++){
 
-        datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-50" style="height: 100px;text-align:left;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
+        datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-50" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+        // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-50" style="height: 100px;text-align:left;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
       }
 
       $('#bvrglist').html(datanya);
@@ -238,7 +253,8 @@ function cariBvrg(q){
         var datanya = '';
         for (i = 0; i < len; i++){
 
-          datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-50" style="height: 100px;text-align:left;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
+          datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-50" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+          // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-50" style="height: 100px;text-align:left;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
         }
 
         $('#bvrglist').html(datanya);
@@ -428,15 +444,7 @@ function ordernya(kembali, subTot, uang){
     kembali = 0;
     uang = 0;
   }
-
-  // if(st == 2){
-  //   nomormeja = -1;
-  //   c1 = 0;
-  // }else if(nomormeja==0){
-  //   alert('Harap memilih meja dahulu!');
-  //   return;
-  // }
-
+  
   db.transaction(function(transaction) {
     var executeQuery = "INSERT INTO pj (no_penjualan, no_faktur, tgl_penjualan, jenis_jual, id_user, stamp_date, no_meja, id_gudang, meja, st, total_jual, grantot_jual, bayar_tunai, bayar_card, kembali_tunai) \
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -680,4 +688,47 @@ function test(){
         console.log(error);
       })
   })
+}
+
+function tambahItem(el){
+  var temp = {};
+  var kategori;
+
+  switch(el.id){
+    case 'tambahFood':
+      kategori = '1';
+      break;
+
+    case 'tambahBvrg':
+      kategori = '2';
+      break;
+
+    case 'tambahCombo':
+      kategori = '3';
+      break
+  }
+
+  $.each($(el).serializeArray(), function(){
+    temp[this.name] = this.value;
+  })
+
+  db.transaction(function(tx){
+    tx.executeSql('SELECT id_barang FROM m_barang ORDER BY id_barang DESC LIMIT 1', [], 
+      function(q, rs){
+        var lastId = parseInt(rs.rows.item(0).id_barang) + 1;
+        var kode = kodeBarang(lastId);
+
+        db.transaction(function(t){
+          t.executeSql('INSERT INTO m_barang VALUES (?, ?, ?, ?, ?)', [lastId, kode, temp.nama_barang, temp.harga_jual, kategori], 
+            function(qt, res){
+              alert('success');
+            },
+            function(error){
+              alert(error);
+            })
+        })
+      })
+  })
+
+  // console.log(temp);
 }

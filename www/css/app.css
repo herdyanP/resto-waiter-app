@@ -175,13 +175,13 @@ div.demo-lazy {
 }
 /* Grid demo */
 .grid-demo div[class*="col"] {
-  background: #fff;
+  background: #2196f3;
   text-align: center;
-  color: #000;
+  color: #FFF;
   border: 1px solid #ddd;
-  padding: 5px;
+  padding: 10px;
   margin-bottom: 15px;
-  font-size: 12px;
+  font-size: 21px;
 }
 .theme-dark .grid-demo div[class*="col"] {
   background-color: #000;
