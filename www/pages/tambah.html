@@ -46,7 +46,7 @@
                   </li>
                   <li class="item-content">
                     <div class="item-inner">
-                      <div class="item-title">
+                      <div class="item-title" style="width: 100%;">
                         <a href="#" class="button button-fill" onclick="tambahItem(document.getElementById('tambahFood'))">Tambah</a>
                       </div>
                     </div>
@@ -55,7 +55,37 @@
               </form>
             </div>
           </div>
-          <div id="addBvrgs" class="tab"></div>
+          <div id="addBvrgs" class="tab">
+            <div class="block">
+              <form id="tambahBvrg" class="list no-hairlines no-hairlines-between">
+                <ul>
+                  <li class="item-content item-input">
+                    <div class="item-inner">
+                      <div class="item-title item-label">Nama Item</div>
+                      <div class="item-input-wrap">
+                        <input type="text" name="nama_barang">
+                      </div>
+                    </div>
+                  </li>
+                  <li class="item-content item-input">
+                    <div class="item-inner">
+                      <div class="item-title item-label">Harga</div>
+                      <div class="item-input-wrap">
+                        <input type="text" name="harga_jual">
+                      </div>
+                    </div>
+                  </li>
+                  <li class="item-content">
+                    <div class="item-inner">
+                      <div class="item-title" style="width: 100%;">
+                        <a href="#" class="button button-fill" onclick="tambahItem(document.getElementById('tambahBvrg'))">Tambah</a>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </form>
+            </div>
+          </div>
           <div id="addCombos" class="tab"></div>
         </div>
       </div>
