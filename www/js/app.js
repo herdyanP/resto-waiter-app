@@ -642,6 +642,7 @@ function printBayar(q) {
 
   var header = '{br}{center}{h}LightPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
   var subheader = '{left}No.Trans : '+txNmr+'{br}Tanggal  : '+dt.getDate()+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+dt.getHours()+':'+dt.getMinutes()+'{br}--------------------------------{br}';
+  var thanks = '{br}{center}Terima Kasih Atas {br}Kunjungan Anda {br}{br}{br}'
   var sub = 'Sub-total';
   var byr = 'Tunai';
   var crd = 'CC';
@@ -654,7 +655,7 @@ function printBayar(q) {
 
   // ordernya(kembali, totInt, paid);
   if(mtd == '1'){
-    window.DatecsPrinter.printText(header + subheader + q + sub + byr + kbl +'{br}{br}{br}{br}', 'ISO-8859-1', 
+    window.DatecsPrinter.printText(header + subheader + q + sub + byr + kbl +'{br}{br}' + thanks, 'ISO-8859-1', 
     function(){
       alert('success!');
       ordernya(kembali, totInt, paid);
@@ -662,7 +663,7 @@ function printBayar(q) {
       alert(JSON.stringify(error));
     });
   }else if (mtd == '2'){
-    window.DatecsPrinter.printText(header + subheader + q + sub + crd +'{br}{br}{br}{br}', 'ISO-8859-1', 
+    window.DatecsPrinter.printText(header + subheader + q + sub + crd +'{br}{br}' + thanks, 'ISO-8859-1', 
     function(){
       alert('success!');
       ordernya(kembali, totInt, paid);
@@ -709,7 +710,7 @@ function tambahItem(el){
   }
 
   $.each($(el).serializeArray(), function(){
-    temp[this.name] = this.value;
+    temp[this.name] = this.value.toUpperCase();
   })
 
   db.transaction(function(tx){
