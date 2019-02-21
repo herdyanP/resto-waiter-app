@@ -181,7 +181,7 @@ div.demo-lazy {
   border: 1px solid #ddd;
   padding: 10px;
   margin-bottom: 15px;
-  font-size: 21px;
+  font-size: 14px;
 }
 .theme-dark .grid-demo div[class*="col"] {
   background-color: #000;

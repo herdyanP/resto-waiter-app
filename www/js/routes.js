@@ -13,9 +13,14 @@ var routes = [
     path: '/tambah/',
     componentUrl: './pages/tambah.html',
     on: {
+      pageInit: function(){
+        emptyDB();
+        allItems();
+      },
       pageAfterOut: function(){
         tampilFood();
         tampilBvrg();
+        emptyDB();
         // tampilCombo();
       }
     }

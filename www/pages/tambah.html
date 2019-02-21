@@ -86,7 +86,46 @@
               </form>
             </div>
           </div>
-          <div id="addCombos" class="tab"></div>
+          <div id="addCombos" class="tab">
+            <div class="card card-outline">
+              <form class="searchbar" id="search_for_combo">
+                <div class="searchbar-inner">
+                  <div class="searchbar-input-wrap">
+                    <input type="search" placeholder="Search" oninput="">
+                    <i class="searchbar-icon"></i>
+                    <span class="input-clear-button"></span>
+                  </div>
+                  <span class="searchbar-disable-button">Cancel</span>
+                </div>
+              </form>
+
+              <div class="block">
+                <div class="list no-hairlines no-hairlines-between">
+                  <ul>
+                    <li class="item-content item-input">
+                      <div class="item-inner">
+                        <div class="item-title item-label">Nama Combo</div>
+                        <div class="item-input-wrap">
+                          <input type="text" name="" id="nama_combo">
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="block">
+                <div class="grid-demo">
+                  <div class="row" id="item_list" style="overflow: scroll; max-height: 33vh; padding-top: 15px;"></div>
+                </div>
+              </div>
+
+              <div class="block" style="max-height: 40vh; overflow: scroll;">
+                <div class="list no-hairlines" id="combo_item">
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

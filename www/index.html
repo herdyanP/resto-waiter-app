@@ -38,13 +38,6 @@
                 </div>
               </a>
             </li>
-            <!-- <li>
-              <a href="#" class="item-content item-link" onclick="test()">
-                <div class="item-inner">
-                  <div class="item-title">Test</div>
-                </div>
-              </a>
-            </li> -->
           </ul>
         </div>
       </div>
@@ -64,30 +57,19 @@
         </div>
 
         <div class="page-content">
-          <div class="card card-outline">
+          <div class="card card-outline" style="margin-top: 20px">
             <div class="card-header">
-              <strong>Header</strong>
+              <strong>Daftar Hidangan</strong>
             </div>
 
-            <div class="segmented" style="margin: 5px;">
+            <div class="segmented" style="margin: 5px; max-width: ">
               <a href="#foods" class="button tab-link tab-link-active">Foods</a>
               <a href="#beverages" class="button tab-link">Beverages</a>
+              <a href="#combos" class="button tab-link">Combo Menus</a>
             </div>
 
             <div class="tabs">
               <div class="tab tab-active" id="foods">
-
-                <!-- <form class="searchbar" data-search-container="#foodlist" data-search-in=".item-title" data-backdrop="false">
-                  <div class="searchbar-inner">
-                    <div class="searchbar-input-wrap">
-                      <input type="search" placeholder="Search" oninput="cariItem(this)">
-                      <i class="searchbar-icon"></i>
-                      <span class="input-clear-button"></span>
-                    </div>
-                    <span class="searchbar-disable-button">Cancel</span>
-                  </div>
-                </form> -->
-
                 <form class="searchbar" id="foodSearch">
                   <div class="searchbar-inner">
                     <div class="searchbar-input-wrap">
@@ -101,28 +83,9 @@
 
                 <div class="block">
                   <div class="grid-demo">
-                    <div class="row" id="foodlist" style="overflow: scroll; max-height: 40vh; padding-top: 15px;"></div>
+                    <div class="row" id="foodlist" style="overflow: scroll; max-height: 33vh; padding-top: 15px;"></div>
                   </div>
                 </div>
-
-                <!-- <div class="block" style="max-height: 40vh; overflow: scroll;">
-                  <div class="list no-hairlines no-chevron searchbar-found" id="foodlist"></div>
-                </div> -->
-
-                <!-- <form class="searchbar searchbar-init" data-search-container="#foodlist" data-search-in=".item-title" data-backdrop="false">
-                  <div class="searchbar-inner">
-                    <div class="searchbar-input-wrap">
-                      <input type="search" placeholder="Search">
-                      <i class="searchbar-icon"></i>
-                      <span class="input-clear-button"></span>
-                    </div>
-                    <span class="searchbar-disable-button">Cancel</span>
-                  </div>
-                </form>
-                <div class="block" style="max-height: 40vh; overflow: scroll;">
-                  <div class="list no-hairlines no-chevron searchbar-found" id="foodlist"></div>
-                </div> -->
-
               </div>
 
               <div class="tab" id="beverages">
@@ -140,7 +103,7 @@
 
                 <div class="block">
                   <div class="grid-demo">
-                    <div class="row" id="bvrglist" style="overflow: scroll; max-height: 40vh; padding-top: 15px;"></div>
+                    <div class="row" id="bvrglist" style="overflow: scroll; max-height: 33vh; padding-top: 15px;"></div>
                   </div>
                 </div>
 
@@ -200,17 +163,13 @@
                         <option value="3">e-Wallet</option>
                       </select>
                     </div>
-                    <!-- <div class="item-title item-label" style="color: unset;">Dibayar</div>
-                    <div class="item-input-wrap">
-                      <input type="text" id="bayar" style="text-align: right;">
-                    </div> -->
                   </div>
                 </li>
                 <li class="item-content item-input inline-label bayar-tunai" style="display: block;">
                   <div class="item-inner">
                     <div class="item-title item-label" style="color: unset;">Dibayar</div>
                     <div class="item-input-wrap">
-                      <input type="text" id="bayar" placeholder="0" style="text-align: right;">
+                      <input type="text" id="bayar" placeholder="0" oninput="comma(this)" style="text-align: right;">
                     </div>
                   </div>
                 </li>
@@ -272,34 +231,5 @@
   <script src="js/app.js"></script>
   <script type="text/javascript" src="cordova.js"></script>
 
-<!-- <div data-pagination='{"el": ".swiper-pagination"}' data-space-between="50" class="swiper-container swiper-init">
-              <div class="swiper-pagination"></div>
-              <div class="swiper-wrapper">
-                <div class="swiper-slide" style="background: black">
-                  <div class="block" style="padding-bottom: 35px">
-                    <div class="row">
-                      <div class="col-50" style="height: 10vh; color: white; border: solid white;">Satu</div>
-                      <div class="col-50" style="height: 10vh; color: red; border: solid red;">Dua</div>
-                      <div class="col-50" style="height: 10vh; color: lightblue; border: solid lightblue;">Tiga</div>
-                      <div class="col-50" style="height: 10vh; color: lightgreen; border: solid lightgreen;">Empat</div>
-                      <div class="col-50" style="height: 10vh; color: yellow; border: solid yellow;">Lima</div>
-                      <div class="col-50" style="height: 10vh; color: white; border: solid white;">Enam</div>
-                      <div class="col-50" style="height: 10vh; color: white; border: solid white;">Satu</div>
-                      <div class="col-50" style="height: 10vh; color: red; border: solid red;">Dua</div>
-                      <div class="col-50" style="height: 10vh; color: lightblue; border: solid lightblue;">Tiga</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="swiper-slide" style="background: red">Slide 2</div>
-                <div class="swiper-slide" style="background: green">Slide 3</div>
-                <div class="swiper-slide" style="background: blue">Slide 4</div>
-                <div class="swiper-slide" style="background: yellow">Slide 5</div>
-                <div class="swiper-slide" style="background: pink">Slide 6</div>
-                <div class="swiper-slide" style="background: brown">Slide 7</div>
-                <div class="swiper-slide" style="background: lightblue">Slide 8</div>
-                <div class="swiper-slide" style="background: gray">Slide 9</div>
-                <div class="swiper-slide" style="background: black">Slide 10</div>
-              </div>
-            </div> -->
-          </body>
-          </html>
+</body>
+</html>
