@@ -25,6 +25,14 @@ var routes = [
       }
     }
   },
+  {
+    path: '/profil/',
+    componentUrl: './pages/profil.html'
+  },
+  {
+    path: '/login/',
+    componentUrl: './pages/login.html'
+  },
   // About page
   {
     path: '/about/',

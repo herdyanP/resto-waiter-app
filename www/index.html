@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="theme-color" content="#2196f3">
+  <!-- <meta name="theme-color" content="#2196f3"> -->
   <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:">
   <link rel="stylesheet" href="css/framework7.min.css">
   <link rel="stylesheet" href="css/app.css">
@@ -17,24 +17,82 @@
   <div id="app">
 
     <div class="panel panel-left panel-cover">
-      <div class="block" style="color: #085847">
+      <div class="block">
         <br><strong>LightPOS</strong>
         <br>Aplikasi POS Resto
       </div>
       <div class="block">
-        <div class="list no-hairlines no-hairlines-between no-chevron">
+        <div class="list no-hairlines">
           <ul>
-            <li>
-              <a href="#" class="item-content item-link panel-close">
+            <li class="accordion-item for-admin">
+              <a href="#" class="item-link item-content">
+                <div class="item-media">
+                  <i class="f7-icons">box</i>
+                </div>
                 <div class="item-inner">
-                  <div class="item-title">Pengaturan</div>
+                  <div class="item-title">Master Barang</div>
+                </div>
+              </a>
+
+              <div class="accordion-item-content list inset no-chevron">
+                <ul>
+                  <li>
+                    <a href="/tambah/" class="item-content item-link panel-close">
+                      <div class="item-inner">
+                        <div class="item-title">Tambah Baru</div>
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="accordion-item for-admin">
+              <a href="#" class="item-link item-content">
+                <div class="item-media">
+                  <i class="f7-icons">document_text</i>
+                </div>
+                <div class="item-inner">
+                  <div class="item-title">Laporan</div>
+                </div>
+              </a>
+
+              <div class="accordion-item-content list inset no-chevron">
+                <ul>
+                  <li>
+                    <a href="#" class="item-content item-link panel-close">
+                      <div class="item-inner">
+                        <div class="item-title">Penjualan</div>
+                      </div>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="item-content item-link panel-close">
+                      <div class="item-inner">
+                        <div class="item-title">Pembelian</div>
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li>
+              <a href="/profil/" class="item-link item-content no-chevron panel-close">
+                <div class="item-media">
+                  <i class="f7-icons">person_round</i>
+                </div>
+                <div class="item-inner">
+                  <div class="item-title">Profil</div>
                 </div>
               </a>
             </li>
+            <div class="divider"></div>
             <li>
-              <a href="/tambah/" class="item-content item-link panel-close">
+              <a href="/login/" class="item-link item-content no-chevron panel-close">
+                <div class="item-media">
+                  <i class="f7-icons">person_round</i>
+                </div>
                 <div class="item-inner">
-                  <div class="item-title">Tambah Baru</div>
+                  <div class="item-title">Login</div>
                 </div>
               </a>
             </li>
@@ -44,7 +102,7 @@
     </div>
 
     <div class="view view-main view-init ios-edges">
-      <div class="page">
+      <div class="page page-with-subnavbar">
         <div class="navbar">
           <div class="navbar-inner">
             <div class="left">
@@ -53,20 +111,32 @@
               </a>
             </div>
             <div class="title">LightPOS</div>
+            <div class="right">
+              <p style="font-size: 14px; margin-right: 20px">User: Admin</p>
+            </div>
+            <div class="subnavbar">
+              <div class="subnavbar-inner">
+                <div class="segmented">
+                  <a href="#foods" class="button tab-link tab-link-active">Foods</a>
+                  <a href="#beverages" class="button tab-link">Beverages</a>
+                  <a href="#combos" class="button tab-link">Combos</a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="page-content">
-          <div class="card card-outline" style="margin-top: 20px">
-            <div class="card-header">
-              <strong>Daftar Hidangan</strong>
-            </div>
+        <!-- <div class="toolbar tabbar tabbar-scrollable toolbar-top">
+          <div class="toolbar-inner">
+            <a href="#foods" class="tab-link tab-link-active">foods</a>
+            <a href="#beverages" class="tab-link">Beverages</a>
+            <a href="#combos" class="tab-link">Combos</a>
+          </div>
+        </div> -->
 
-            <div class="segmented" style="margin: 5px; max-width: ">
-              <a href="#foods" class="button tab-link tab-link-active">Foods</a>
-              <a href="#beverages" class="button tab-link">Beverages</a>
-              <a href="#combos" class="button tab-link">Combo Menus</a>
-            </div>
+
+        <div class="page-content hide-navbar-on-scroll">
+          <div class="card card-outline" style="margin-top: 20px">
 
             <div class="tabs">
               <div class="tab tab-active" id="foods">
@@ -89,7 +159,6 @@
               </div>
 
               <div class="tab" id="beverages">
-
                 <form class="searchbar" id="bvrgSearch">
                   <div class="searchbar-inner">
                     <div class="searchbar-input-wrap">
@@ -106,21 +175,6 @@
                     <div class="row" id="bvrglist" style="overflow: scroll; max-height: 33vh; padding-top: 15px;"></div>
                   </div>
                 </div>
-
-                <!-- <form class="searchbar searchbar-init" data-search-container="#bvrglist" data-search-in=".item-title" data-backdrop="false">
-                  <div class="searchbar-inner">
-                    <div class="searchbar-input-wrap">
-                      <input type="search" placeholder="Search">
-                      <i class="searchbar-icon"></i>
-                      <span class="input-clear-button"></span>
-                    </div>
-                    <span class="searchbar-disable-button">Cancel</span>
-                  </div>
-                </form>
-                <div class="block" style="max-height: 40vh; overflow: scroll;">
-                  <div class="list no-hairlines no-chevron searchbar-found" id="bvrglist"></div>
-                </div> -->
-
               </div>
             </div>
           </div>
@@ -132,6 +186,13 @@
 
             <div class="block" style="max-height: 40vh; overflow: scroll;">
               <div class="list no-hairlines" id="keranjang">
+                <!-- <ul>
+                  <li class="item-content ">
+                    <div class="item-inner">
+                      <div class="item-title">Kosong</div>
+                    </div>
+                  </li>
+                </ul> -->
               </div>
             </div>
           </div>

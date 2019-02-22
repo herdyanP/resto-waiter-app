@@ -1,0 +1,186 @@
+<template>
+  <div class="page">
+
+    <div class="navbar">
+      <div class="navbar-inner sliding">
+        <div class="left">
+          <a href="#" class="link back">
+            <i class="icon icon-back"></i>
+            <span class="ios-only">Back</span>
+          </a>
+        </div>
+        <div class="title">
+          Profil
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <div class="list no-hairlines">
+        <ul>
+          <form id="profil_cred">
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">NIK</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="NO_ANGGOTA" name="nik" readonly>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Status Anggota</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="STATUS_ANGGOTA" readonly>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Nama Anggota</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="NAMA_ANGGOTA" name="nama">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Email</div>
+                <div class="item-input-wrap">
+                  <input type="email" id="EMAIL" name="email" validate required data-error-message="Contoh email yang benar: example@domain.com">
+                  <!-- <div class="item-input-info">Format email contoh: example@domain.com</div> -->
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Alamat</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="ALAMAT_ANGGOTA" name="alamat">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Alamat Kantor Anggota</div>
+                <div class="item-input-wrap input-dropdown-wrap">
+                  <select id="prof_kantor" name="">
+
+                  </select>
+                  <!-- <input type="text" id="STATUS_RUMAH" name="status_rumah"> -->
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Status Rumah</div>
+                <div class="item-input-wrap input-dropdown-wrap">
+                  <select id="STATUS_RUMAH" name="status_rumah">
+                    <option value="1">Milik Sendiri</option>
+                    <option value="2">Kontrak</option>
+                    <option value="3">Lainnya</option>
+                  </select>
+                  <!-- <input type="text" id="STATUS_RUMAH" name="status_rumah"> -->
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Telepon</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="TELP" name="telp" pattern="[0-9]{8,12}" validate required data-error-message="Hanya boleh diisi 8-12 digit angka">
+                  <!-- <div class="item-input-info">Masukkan 8-12 digit nomor telepon</div> -->
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Nomor Identitas</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="NO_IDENTITAS" name="no_iden" pattern="[0-9]*" validate required data-error-message="Hanya boleh diisi angka">
+                  <!-- <div class="item-input-info">Hanya boleh diisi angka</div> -->
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Nama Kerabat Kandung</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="NAMA_KANDUNG" name="nama_kandung">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Telepon Kerabat Kandung</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="TELP_KANDUNG" name="telp_kandung" pattern="[0-9]{8,12}" validate required data-error-message="Hanya boleh diisi 8-12 digit angka">
+                  <!-- <div class="item-input-info">Masukkan 8-12 digit nomor telepon</div> -->
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Alamat Kerabat Kandung</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="ALAMAT_KANDUNG" name="alamat_kandung">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Rekening</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="REKENING" name="rekening">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Grade</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="GRADE" name="grade">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Jabatan</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="JABATAN" name="jabatan">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Loker</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="LOKER" name="loker">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Alamat Kantor</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="ALAMAT_KANTOR" name="alamat_kantor">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Telepon Kantor</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="TELP_KANTOR" name="telp_kantor" pattern="[0-9]{8,12}" validate required data-error-message="Hanya boleh diisi 8-12 digit angka">
+                  <!-- <div class="item-input-info">Masukkan 8-12 digit nomor telepon</div> -->
+                </div>
+              </div>
+            </li>
+          </form>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</template>

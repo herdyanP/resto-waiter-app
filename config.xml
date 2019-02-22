@@ -34,5 +34,6 @@
     <plugin name="cordova-android-support-gradle-release" spec="^2.0.1">
         <variable name="ANDROID_SUPPORT_VERSION" value="27.+" />
     </plugin>
+    <plugin name="cordova-plugin-nativestorage" spec="^2.3.2" />
     <engine name="android" spec="^7.1.4" />
 </widget>
