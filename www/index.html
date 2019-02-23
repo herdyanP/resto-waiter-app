@@ -21,84 +21,85 @@
         <br><strong>LightPOS</strong>
         <br>Aplikasi POS Resto
       </div>
-      <div class="block">
-        <div class="list no-hairlines">
-          <ul>
-            <li class="accordion-item for-admin">
-              <a href="#" class="item-link item-content">
-                <div class="item-media">
-                  <i class="f7-icons">box</i>
-                </div>
-                <div class="item-inner">
-                  <div class="item-title">Master Barang</div>
-                </div>
-              </a>
 
-              <div class="accordion-item-content list inset no-chevron">
-                <ul>
-                  <li>
-                    <a href="/tambah/" class="item-content item-link panel-close">
-                      <div class="item-inner">
-                        <div class="item-title">Tambah Baru</div>
-                      </div>
-                    </a>
-                  </li>
-                </ul>
+      <div class="list no-hairlines no-hairlines-between">
+        <ul>
+          <li class="divider"><strong>Store Management</strong></li>
+          <li class="accordion-item for-admin">
+            <a href="#" class="item-link item-content">
+              <div class="item-media">
+                <i class="f7-icons">box</i>
               </div>
-            </li>
-            <li class="accordion-item for-admin">
-              <a href="#" class="item-link item-content">
-                <div class="item-media">
-                  <i class="f7-icons">document_text</i>
-                </div>
-                <div class="item-inner">
-                  <div class="item-title">Laporan</div>
-                </div>
-              </a>
+              <div class="item-inner">
+                <div class="item-title">Master Barang</div>
+              </div>
+            </a>
 
-              <div class="accordion-item-content list inset no-chevron">
-                <ul>
-                  <li>
-                    <a href="#" class="item-content item-link panel-close">
-                      <div class="item-inner">
-                        <div class="item-title">Penjualan</div>
-                      </div>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" class="item-content item-link panel-close">
-                      <div class="item-inner">
-                        <div class="item-title">Pembelian</div>
-                      </div>
-                    </a>
-                  </li>
-                </ul>
+            <div class="accordion-item-content list inset no-chevron">
+              <ul>
+                <li>
+                  <a href="/tambah/" class="item-content item-link panel-close">
+                    <div class="item-inner">
+                      <div class="item-title">Tambah Baru</div>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="accordion-item for-admin">
+            <a href="#" class="item-link item-content">
+              <div class="item-media">
+                <i class="f7-icons">document_text</i>
               </div>
-            </li>
-            <li>
-              <a href="/profil/" class="item-link item-content no-chevron panel-close">
-                <div class="item-media">
-                  <i class="f7-icons">person_round</i>
-                </div>
-                <div class="item-inner">
-                  <div class="item-title">Profil</div>
-                </div>
-              </a>
-            </li>
-            <div class="divider"></div>
-            <li>
-              <a href="/login/" class="item-link item-content no-chevron panel-close">
-                <div class="item-media">
-                  <i class="f7-icons">person_round</i>
-                </div>
-                <div class="item-inner">
-                  <div class="item-title">Login</div>
-                </div>
-              </a>
-            </li>
-          </ul>
-        </div>
+              <div class="item-inner">
+                <div class="item-title">Laporan</div>
+              </div>
+            </a>
+
+            <div class="accordion-item-content list inset no-chevron">
+              <ul>
+                <li>
+                  <a href="#" class="item-content item-link panel-close">
+                    <div class="item-inner">
+                      <div class="item-title">Penjualan</div>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="item-content item-link panel-close">
+                    <div class="item-inner">
+                      <div class="item-title">Pembelian</div>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="divider">Account Management</li>
+          <li>
+            <a href="/profil/" class="item-link item-content no-chevron panel-close">
+              <div class="item-media">
+                <i class="f7-icons">person_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Profile</div>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="/login/" class="item-link item-content no-chevron panel-close">
+              <div class="item-media">
+                <i class="f7-icons">person_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Login</div>
+              </div>
+            </a>
+          </li>
+        </ul>
       </div>
+
     </div>
 
     <div class="view view-main view-init ios-edges">
@@ -153,7 +154,7 @@
 
                 <div class="block">
                   <div class="grid-demo">
-                    <div class="row" id="foodlist" style="overflow: scroll; max-height: 33vh; padding-top: 15px;"></div>
+                    <div class="row" id="foodlist" style="overflow: scroll; height: 33vh; padding-top: 15px;"></div>
                   </div>
                 </div>
               </div>
@@ -172,7 +173,26 @@
 
                 <div class="block">
                   <div class="grid-demo">
-                    <div class="row" id="bvrglist" style="overflow: scroll; max-height: 33vh; padding-top: 15px;"></div>
+                    <div class="row" id="bvrglist" style="overflow: scroll; height: 33vh; padding-top: 15px;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tab" id="combos">
+                <form class="searchbar" id="comboSearch">
+                  <div class="searchbar-inner">
+                    <div class="searchbar-input-wrap">
+                      <input type="search" placeholder="Search" oninput="">
+                      <i class="searchbar-icon"></i>
+                      <span class="input-clear-button"></span>
+                    </div>
+                    <span class="searchbar-disable-button">Cancel</span>
+                  </div>
+                </form>
+
+                <div class="block">
+                  <div class="grid-demo">
+                    <div class="row" id="combolist" style="overflow: scroll; height: 33vh; padding-top: 15px;"></div>
                   </div>
                 </div>
               </div>
@@ -186,13 +206,6 @@
 
             <div class="block" style="max-height: 40vh; overflow: scroll;">
               <div class="list no-hairlines" id="keranjang">
-                <!-- <ul>
-                  <li class="item-content ">
-                    <div class="item-inner">
-                      <div class="item-title">Kosong</div>
-                    </div>
-                  </li>
-                </ul> -->
               </div>
             </div>
           </div>

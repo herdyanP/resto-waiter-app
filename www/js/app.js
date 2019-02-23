@@ -62,6 +62,8 @@ document.addEventListener('deviceready', function() {
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj (id_pj INTEGER PRIMARY KEY AUTOINCREMENT, no_penjualan VARCHAR(30), no_faktur VARCHAR(30), tgl_penjualan DATE, jenis_jual int, jenis_bayar int, id_customer int, id_user  int, stamp_date datetime, disc_prs double, disc_rp double, sc_prs double, sc_rp double, ppn double, total_jual double, grantot_jual double, bayar_tunai double, bayar_card double, nomor_kartu varchar, ref_kartu varchar, kembali_tunai double, void_jual varchar, no_meja int, ip varchar,   id_gudang int, pl_retail text, meja int, st int)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl (id_dtl_jual int, id_pj int, id_barang int, qty_jual double, harga_jual double, discprs double, discrp double, dtl_total double, harga_jual_cetak double, user int, dtpesan datetime, ready int default 0)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl_tmp (id_tmp INTEGER PRIMARY KEY AUTOINCREMENT,id_barang INT NOT NULL UNIQUE, qty INT  NOT NULL,total DOUBLE, harga DOUBLE,nama_barang VARCHAR(20) NOT NULL)');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER, qty INTEGER )');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20))');
 
     tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['1', 'B00001','AYAM GORENG KALASAN','15000', '1']);
     tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['2', 'B00002','AYAM OPOR','20000', '1']);
@@ -80,6 +82,11 @@ document.addEventListener('deviceready', function() {
     tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['15', 'B00015','ABON SAPI','20000', '1']);
     tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['16', 'B00016','ADAS MANIS','20000', '1']);
     tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['17', 'B00017','ADAS PEDAS','20000', '1']);
+
+    tx.executeSql('INSERT INTO m_combo VALUES (?,?)', ['1', 'Combo A']);
+
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['1', '1', '2']);
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['1', '11', '2']);
   }, 
   function(error) {}, 
   function() {});
@@ -120,6 +127,7 @@ document.addEventListener('deviceready', function() {
 
   tampilFood();
   tampilBvrg();
+  tampilCombo();
 });
 
 function onNewLogin(q){
@@ -284,6 +292,44 @@ function cariBvrg(q){
   })
 }
 
+function tampilCombo(){
+  db.transaction(function(tx) {
+    tx.executeSql('SELECT * FROM m_combo ORDER BY nama_combo ASC', [], function(tx, rs) {
+      var len, i;
+      if(rs.rows.length > 20) {
+        len = 20
+      } else {
+        len = rs.rows.length
+      }
+
+      var all_rows = [];
+      var datanya = '';
+      for (i = 0; i < len; i++){
+
+        datanya += '<div onclick="getCombo('+rs.rows.item(i).id_combo+')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_combo+'</p></div>';
+        // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;text-align:left;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
+      }
+
+      datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
+
+      $('#combolist').html(datanya);
+    }, function(tx, error) {
+      alert('SELECT error: ' + error.message);
+    });
+  });
+}
+
+function getCombo(a){
+  db.transaction(function(tx){
+    tx.executeSql('SELECT * FROM m_combo a JOIN combo_dtl b ON a.id_combo = b.id_combo JOIN m_barang c ON b.id_barang = c.id_barang WHERE a.id_combo = ?', [a],
+      function(t, rs){
+        for(var i = 0; i < rs.rows.length; i++){
+          simpan(rs.rows.item(i).id_barang, '1', rs.rows.item(i).harga_jual, rs.rows.item(i).nama_barang);
+        }
+      })
+  })
+}
+
 function simpan(a,b,c,d){
   db.transaction(function(transaction) {
     var c1=0;
@@ -316,6 +362,8 @@ function simpan(a,b,c,d){
     });
   });
 }
+
+
 
 function keranjang(a,b,c,d){
   var data = '<ul>'
