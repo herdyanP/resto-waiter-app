@@ -33,6 +33,15 @@ var routes = [
     path: '/login/',
     componentUrl: './pages/login.html'
   },
+  {
+    path: '/penjualan/',
+    componentUrl: './pages/penjualan.html',
+    on: {
+      pageInit: function(){
+        listPenjualan();
+      }
+    }
+  },
   // About page
   {
     path: '/about/',
