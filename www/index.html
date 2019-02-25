@@ -17,14 +17,14 @@
   <div id="app">
 
     <div class="panel panel-left panel-cover">
-      <div class="block">
+      <div class="block" style="background: #2196f3; color: white; margin: 0; padding: 20px; font-size: 20px">
         <br><strong>LightPOS</strong>
         <br>Aplikasi POS Resto
       </div>
 
-      <div class="list no-hairlines no-hairlines-between">
+      <div class="list no-hairlines no-hairlines-between" style="margin: 0;">
         <ul>
-          <li class="divider"><strong>Store Management</strong></li>
+          <li class="divider" style="margin-top: 0;"><strong>Store Management</strong></li>
           <li class="accordion-item for-admin">
             <a href="#" class="item-link item-content">
               <div class="item-media">
@@ -60,7 +60,7 @@
             <div class="accordion-item-content list inset no-chevron">
               <ul>
                 <li>
-                  <a href="#" class="item-content item-link panel-close">
+                  <a href="/penjualan/" class="item-content item-link panel-close">
                     <div class="item-inner">
                       <div class="item-title">Penjualan</div>
                     </div>
@@ -87,13 +87,23 @@
               </div>
             </a>
           </li>
-          <li>
+          <li id="loginRow">
             <a href="/login/" class="item-link item-content no-chevron panel-close">
               <div class="item-media">
                 <i class="f7-icons">person_round</i>
               </div>
               <div class="item-inner">
                 <div class="item-title">Login</div>
+              </div>
+            </a>
+          </li>
+          <li id="logoutRow">
+            <a href="#" class="item-link item-content no-chevron panel-close" onclick="onLogout();">
+              <div class="item-media">
+                <i class="f7-icons">person_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Logout</div>
               </div>
             </a>
           </li>
@@ -113,7 +123,7 @@
             </div>
             <div class="title">LightPOS</div>
             <div class="right">
-              <p style="font-size: 14px; margin-right: 20px">User: Admin</p>
+              <p id="currentUser" style="font-size: 14px; margin-right: 20px"></p>
             </div>
             <div class="subnavbar">
               <div class="subnavbar-inner">
@@ -289,7 +299,7 @@
             </div>
 
             <div class="card-footer">
-              <button class="button button-fill color-green" onclick="bayar()">Bayar</button>
+              <button class="button button-fill color-green" id="bayarButton" onclick="bayar()">Bayar</button>
             </div>
           </div>
         </div>

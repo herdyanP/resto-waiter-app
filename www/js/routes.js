@@ -1,51 +1,54 @@
 var routes = [
-  // Index page
-  {
-    path: '/',
-    url: './index.html',
-    name: 'home',
-  },
-  {
-    path: '/pengaturan/',
-    componentUrl: './pages/pengaturan.html'
-  },
-  {
-    path: '/tambah/',
-    componentUrl: './pages/tambah.html',
-    on: {
-      pageInit: function(){
-        emptyDB();
-        allItems();
-      },
-      pageAfterOut: function(){
-        tampilFood();
-        tampilBvrg();
-        emptyDB();
-        // tampilCombo();
-      }
+{
+  path: '/',
+  url: './index.html',
+  name: 'home',
+  on: {
+    pageAfterIn: function(){
+      tampilFood();
+      tampilBvrg();
+      tampilCombo();
+
+      emptyDB();
+
+      onLogin();
     }
-  },
-  {
-    path: '/profil/',
-    componentUrl: './pages/profil.html'
-  },
-  {
-    path: '/login/',
-    componentUrl: './pages/login.html'
-  },
-  {
-    path: '/penjualan/',
-    componentUrl: './pages/penjualan.html',
-    on: {
-      pageInit: function(){
-        listPenjualan();
-      }
+  }
+},
+{
+  path: '/pengaturan/',
+  componentUrl: './pages/pengaturan.html'
+},
+{
+  path: '/tambah/',
+  componentUrl: './pages/tambah.html',
+  on: {
+    pageInit: function(){
+      emptyDB();
+      // allItems();
+    },
+    pageAfterOut: function(){
+      tampilFood();
+      tampilBvrg();
+      emptyDB();
     }
-  },
-  // About page
-  {
-    path: '/about/',
-    url: './pages/about.html',
-    name: 'about',
-  },
+  }
+},
+{
+  path: '/profil/',
+  componentUrl: './pages/profil.html'
+},
+{
+  path: '/login/',
+  componentUrl: './pages/login.html'
+},
+{
+  path: '/penjualan/',
+  componentUrl: './pages/penjualan.html',
+  on: {
+    pageInit: function(){
+      listPenjualan();
+    }
+  }
+}
 ];

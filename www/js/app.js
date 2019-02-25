@@ -28,18 +28,18 @@ var txNmr = 0;
 var retail;
 var cabang;
 var lastId;
-var user = 'user testing';
+var user;
 
 // var mainView = app.views.main;
 // var chart = Highcharts.chart('container1', {});
 
-Highcharts.setOptions({
-  lang: {
-    months: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
-    shortMonths: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
-    weekdays: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]
-  }
-})
+// Highcharts.setOptions({
+//   lang: {
+//     months: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
+//     shortMonths: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
+//     weekdays: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]
+//   }
+// })
 
 document.addEventListener('deviceready', function() {
   document.addEventListener("backbutton", onBackPressed, false);
@@ -52,9 +52,7 @@ document.addEventListener('deviceready', function() {
 
   db.transaction(function(transaction) {
     var executeQuery = "DELETE FROM pj_dtl_tmp";
-    transaction.executeSql(executeQuery, [],
-      function(tx, result) {},
-      function(error){});
+    transaction.executeSql(executeQuery);
   });
 
   db.transaction(function(tx) {
@@ -64,6 +62,7 @@ document.addEventListener('deviceready', function() {
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl_tmp (id_tmp INTEGER PRIMARY KEY AUTOINCREMENT,id_barang INT NOT NULL UNIQUE, qty INT  NOT NULL,total DOUBLE, harga DOUBLE,nama_barang VARCHAR(20) NOT NULL)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER, qty INTEGER )');
     tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20))');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS m_user( id_user INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, username VARCHAR(20), pass VARCHAR(20), nama_user VARCHAR(50))')
 
     tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['1', 'B00001','AYAM GORENG KALASAN','15000', '1']);
     tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['2', 'B00002','AYAM OPOR','20000', '1']);
@@ -85,66 +84,91 @@ document.addEventListener('deviceready', function() {
 
     tx.executeSql('INSERT INTO m_combo VALUES (?,?)', ['1', 'Combo A']);
 
+    tx.executeSql('INSERT INTO m_user (username, pass, nama_user) VALUES (?,?,?)', ['admin', 'admin', 'Administrator']);
+    tx.executeSql('INSERT INTO m_user (username, pass, nama_user) VALUES (?,?,?)', ['ryan', '12345', 'Herdyan Pradana']);
+
     tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['1', '1', '2']);
     tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['1', '11', '2']);
-  }, 
-  function(error) {}, 
-  function() {});
+  });
 
-  var d = new Date();
-  var tgls=d.getFullYear()+"-"+("0" + (d.getMonth()+1)).slice(-2)+"-"+("0" + d.getDate()).slice(-2);
-  var stime = window.localStorage.getItem("tgl");
+var d = new Date();
+var tgls=d.getFullYear()+"-"+("0" + (d.getMonth()+1)).slice(-2)+"-"+("0" + d.getDate()).slice(-2);
+var stime = window.localStorage.getItem("tgl");
 
-  $$('.panel-left').on('panel:closed', function(){
-    $.each($('.accordion-item'), function(){
-      app.accordion.close(this);
-    })
-  })
+// $$('.panel-left').on('panel:closed', function(){
+//   $.each($('.accordion-item-opened'), function(){
+//     app.accordion.close(this);
+//   })
+// })
 
-  if(stime=="" || stime==null){
-    window.localStorage.setItem("tgl",tgls);
-    window.localStorage.setItem("inctrx",1);
-  }
-  if(stime!=tgls){
-    window.localStorage.setItem("tgl",tgls);
-    window.localStorage.setItem("inctrx",1);
-  }
+if(stime=="" || stime==null){
+  window.localStorage.setItem("tgl",tgls);
+  window.localStorage.setItem("inctrx",1);
+}
+if(stime!=tgls){
+  window.localStorage.setItem("tgl",tgls);
+  window.localStorage.setItem("inctrx",1);
+}
 
-  app.init();
+app.init();
 
-  app.searchbar.create({
-    el: '#foodSearch',
-    backdrop: false,
-    on: {
-      disable: function(){
-        tampilFood();
-      }
+app.searchbar.create({
+  el: '#foodSearch',
+  backdrop: false,
+  on: {
+    disable: function(){
+      tampilFood();
     }
-  })
+  }
+})
 
-  app.searchbar.create({
-    el: '#bvrgSearch',
-    backdrop: false,
-    on: {
-      disable: function(){
-        tampilBvrg();
-      }
+app.searchbar.create({
+  el: '#bvrgSearch',
+  backdrop: false,
+  on: {
+    disable: function(){
+      tampilBvrg();
     }
-  })
+  }
+})
 
-  tampilFood();
-  tampilBvrg();
-  tampilCombo();
+tampilFood();
+tampilBvrg();
+tampilCombo();
+
+onLogin();
+
 });
 
 function onNewLogin(q){
   var temp = {};
 
   $.each($(q).serializeArray(), function(){
-    temp[this.name] = this.value.toUpperCase();
+    temp[this.name] = this.value;
   })
 
-  NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
+  console.log(temp);
+
+  db.transaction(function(tx){
+    tx.executeSql('SELECT * FROM m_user WHERE username = ?', [temp.username], 
+      function(t, result){
+        if(result.rows.item(0).pass == temp.pass){
+          temp.nama = result.rows.item(0).nama_user;
+          NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
+
+          app.views.main.router.navigate('/');
+        } else {
+          app.toast.create({
+            text: "Cek lagi username / password anda",
+            closeTimeout: 3000,
+            closeButton: true
+          }).open();
+        }
+      },
+      function(error){
+        alert(error.message)
+      })
+  })
 }
 
 function onStoreSuccess(){
@@ -160,11 +184,22 @@ function onLogin(){
 }
 
 function onRetSuccess(obj){
-  console.log('Retrieve '+obj.username+' Success')
+  console.log('succ');
+  $('#bayarButton').removeAttr('disabled').removeClass('disabled');
+
+  $('#loginRow').css('display', 'none');
+  $('#logoutRow').css('display', 'block');
+
+  user = obj.nama;
+  $('#currentUser').html('Operator: '+user);
 }
 
 function onRetFail(){
-  console.log('Retrieve Fail')
+  console.log('fail');
+  $('#bayarButton').attr('disabled', 'true').addClass('disabled');
+  $('#logoutRow').css('display', 'none');
+
+  $('#currentUser').html('Operator: Guest');
 }
 
 function onLogout(){
@@ -172,11 +207,19 @@ function onLogout(){
 }
 
 function onRemSuccess(){
-  console.log('Remove Success')
+  console.log('rem succ');
+  $('#bayarButton').attr('disabled', 'true').addClass('disabled');
+  $('#currentUser').html('Operator: Guest');
+
+  $('#logoutRow').css('display', 'none');
+  $('#loginRow').css('display', 'block');
+
+  emptyDB();
+  // console.log('Remove Success');
 }
 
 function onRemFail(){
-  console.log('Remove Fail')
+  console.log('rem fail');
 }
 
 function onBackPressed(){
@@ -202,6 +245,7 @@ function kodeBarang(id){
 }
 
 function tampilFood(){
+  console.log('food');
   db.transaction(function(tx) {
     tx.executeSql('SELECT * FROM m_barang WHERE kategori = "1" ORDER BY nama_barang ASC', [], function(tx, rs) {
       var len, i;
@@ -251,6 +295,7 @@ function cariFood(q){
 }
 
 function tampilBvrg(){
+  console.log('drinks');
   db.transaction(function(tx) {
     tx.executeSql('SELECT * FROM m_barang WHERE kategori = "2" ORDER BY nama_barang ASC', [], function(tx, rs) {
       var len, i;
@@ -300,6 +345,7 @@ function cariBvrg(q){
 }
 
 function tampilCombo(){
+  console.log('combos');
   db.transaction(function(tx) {
     tx.executeSql('SELECT * FROM m_combo ORDER BY nama_combo ASC', [], function(tx, rs) {
       var len, i;
@@ -475,7 +521,10 @@ function bayar(){
     title: 'Konfirmasi',
     text: 'Cetak receipt via:',
     buttons: [{
-      text: 'Cetak',
+      text: 'Cancel',
+      close: true
+    }, {
+      text: 'Print',
       onClick: function(){
         db.transaction(function(tx){
           tx.executeSql('SELECT * FROM pj_dtl_tmp', [], 
@@ -506,6 +555,7 @@ function bayar(){
       onClick: function(){
         app.dialog.prompt('Masukkan nomor WhatsApp (+62):', 'Konfirmasi', function(result){
           if(result != ''){
+            txNmr = nomor();
             db.transaction(function(tx){
               tx.executeSql('SELECT * FROM pj_dtl_tmp', [], 
                 function(t, rs){
@@ -524,8 +574,8 @@ function bayar(){
                   var crd = 'CC';
                   var kbl = 'Kembali';
 
-                  var header = '```         Sales Receipt\n\n--------------------------------\nNo. Trans : '+nomor()+'\nTanggal   : '+dy+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+hr+':'+mn+'\nUser      : '+user+'\n--------------------------------\n';
-                  var thanks = '       Terima Kasih Atas\n        Kunjungan Anda\n'
+                  var header = '```\n          Sales Receipt\n\n--------------------------------\nNo. Trans : '+txNmr+'\nTanggal   : '+dy+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+hr+':'+mn+'\nOperator  : '+user+'\n--------------------------------\n';
+                  var thanks = '\n--------------------------------\n\n        Terima Kasih Atas\n         Kunjungan Anda\n'
 
                   for(var i = 0; i < 23-tot.length; i++){
                     sub += ' ';
@@ -557,7 +607,7 @@ function bayar(){
 
                   list += '--------------------------------\n';
 
-                  window.location = 'https://wa.me/62'+result+'?text='+encodeURI(header + list + sub + byr + kbl + '```');
+                  window.location = 'https://wa.me/62'+result+'?text='+encodeURI(header + list + sub + byr + kbl + thanks + '```');
                   ordernya(kembali, totInt, paid);
                 }, function(t, error){
                   alert('error')
@@ -650,6 +700,8 @@ function orderdtl(id){
 function again(a){
   var d = new Date();
   var tgltime = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+
+  $('#bayar').val('');
   for (var i = 0; i < a.length; i++) {
     var insert = function(id_pj, id_barang, qty_jual, harga_jual, discprs, discrp, dtl_total, harga_jual_cetak, user, dtpesan, id_tmp){
       db.transaction(function(t){
@@ -792,9 +844,13 @@ function printBayar(q) {
   var kembali = parseInt(paid) - parseInt(totInt);
   var dt = new Date();
 
+  var dy = ('00'+dt.getDate()).slice(-2);
+  var hr = ('00'+dt.getHours()).slice(-2);
+  var mn = ('00'+dt.getMinutes()).slice(-2);
+
   var header = '{br}{center}{h}LightPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
-  var subheader = '{left}No.Trans : '+txNmr+'{br}Tanggal  : '+dt.getDate()+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+dt.getHours()+':'+dt.getMinutes()+'{br}--------------------------------{br}';
-  var thanks = '{br}{center}Terima Kasih Atas {br}Kunjungan Anda {br}{br}{br}';
+  var subheader = '{left}No. Trans : '+txNmr+'{br}Tanggal   : '+dy+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+hr+':'+mn+'{br}Operator  : '+user+'{br}--------------------------------{br}';
+  var thanks = '{br}{center}Terima Kasih Atas {br}Kunjungan Anda {br}{br}{br}{br}{br}';
   var sub = 'Sub-total';
   var byr = 'Tunai';
   var crd = 'CC';
@@ -1014,8 +1070,11 @@ function emptyDB(){
   db.transaction(function(t){
     t.executeSql("DELETE FROM pj_dtl_tmp", [],
       function(){
+        console.log('delet this');
         keranjang('a', 'b', 'c', 'd');
-        comboItems('a', 'b', 'c', 'd');
+        // comboItems('a', 'b', 'c', 'd');
+      }, function(error){
+        console.log(error.message);
       })
   })
 }
