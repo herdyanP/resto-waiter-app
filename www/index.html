@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <!-- <meta name="theme-color" content="#2196f3"> -->
   <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:">
-  <link rel="stylesheet" href="css/framework7.min.css">
+  <link rel="stylesheet" href="css/framework7.css">
   <link rel="stylesheet" href="css/app.css">
   <link rel="apple-touch-icon" href="img/f7-icon-square.png">
   <link rel="icon" href="img/fav/android-icon-144x144.png">
@@ -22,10 +22,10 @@
         <br>Aplikasi POS Resto
       </div>
 
-      <div class="list no-hairlines no-hairlines-between" style="margin: 0;">
+      <div class="list no-hairlines no-hairlines-between no-chevron" style="margin: 0;">
         <ul>
           <li class="divider" style="margin-top: 0;"><strong>Store Management</strong></li>
-          <li class="accordion-item for-admin">
+          <!-- <li class="accordion-item for-admin">
             <a href="#" class="item-link item-content">
               <div class="item-media">
                 <i class="f7-icons">box</i>
@@ -46,39 +46,64 @@
                 </li>
               </ul>
             </div>
+          </li> -->
+          <li>
+            <div class="item-content">
+              <div class="item-media">
+                <i class="f7-icons">box</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Master Barang</div>
+              </div>
+            </div>
+            <ul>
+              <li>
+                <a href="/tambah/" class="item-content item-link panel-close">
+                  <div class="item-media">
+                    <i class="f7-icons">add</i>
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title">Tambah Baru</div>
+                  </div>
+                </a>
+              </li>
+            </ul>
           </li>
-          <li class="accordion-item for-admin">
-            <a href="#" class="item-link item-content">
+          <li>
+            <div class="item-content">
               <div class="item-media">
                 <i class="f7-icons">document_text</i>
               </div>
               <div class="item-inner">
                 <div class="item-title">Laporan</div>
               </div>
-            </a>
-
-            <div class="accordion-item-content list inset no-chevron">
-              <ul>
-                <li>
-                  <a href="/penjualan/" class="item-content item-link panel-close">
-                    <div class="item-inner">
-                      <div class="item-title">Penjualan</div>
-                    </div>
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="item-content item-link panel-close">
-                    <div class="item-inner">
-                      <div class="item-title">Pembelian</div>
-                    </div>
-                  </a>
-                </li>
-              </ul>
             </div>
+            <ul>
+              <li>
+                <a href="/penjualan/" class="item-content item-link panel-close">
+                  <div class="item-media">
+                    <i class="f7-icons">bars_chart</i>
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title">Penjualan</div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="item-content item-link panel-close">
+                  <div class="item-media">
+                    <i class="f7-icons">bars_chart</i>
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title">Pembelian</div>
+                  </div>
+                </a>
+              </li>
+            </ul>
           </li>
           <li class="divider">Account Management</li>
           <li>
-            <a href="/profil/" class="item-link item-content no-chevron panel-close">
+            <a href="/profil/" class="item-link item-content panel-close">
               <div class="item-media">
                 <i class="f7-icons">person_round</i>
               </div>
@@ -88,7 +113,7 @@
             </a>
           </li>
           <li id="loginRow">
-            <a href="/login/" class="item-link item-content no-chevron panel-close">
+            <a href="/login/" class="item-link item-content panel-close">
               <div class="item-media">
                 <i class="f7-icons">person_round</i>
               </div>
@@ -98,7 +123,7 @@
             </a>
           </li>
           <li id="logoutRow">
-            <a href="#" class="item-link item-content no-chevron panel-close" onclick="onLogout();">
+            <a href="#" class="item-link item-content panel-close" onclick="onLogout();">
               <div class="item-media">
                 <i class="f7-icons">person_round</i>
               </div>
@@ -164,7 +189,7 @@
 
                 <div class="block">
                   <div class="grid-demo">
-                    <div class="row" id="foodlist" style="overflow: scroll; height: 33vh; padding-top: 15px;"></div>
+                    <div class="row" id="foodlist" style="overflow: scroll; height: 35vh; padding-top: 15px;"></div>
                   </div>
                 </div>
               </div>
@@ -183,7 +208,7 @@
 
                 <div class="block">
                   <div class="grid-demo">
-                    <div class="row" id="bvrglist" style="overflow: scroll; height: 33vh; padding-top: 15px;"></div>
+                    <div class="row" id="bvrglist" style="overflow: scroll; height: 35vh; padding-top: 15px;"></div>
                   </div>
                 </div>
               </div>
@@ -202,7 +227,7 @@
 
                 <div class="block">
                   <div class="grid-demo">
-                    <div class="row" id="combolist" style="overflow: scroll; height: 33vh; padding-top: 15px;"></div>
+                    <div class="row" id="combolist" style="overflow: scroll; height: 35vh; padding-top: 15px;"></div>
                   </div>
                 </div>
               </div>
