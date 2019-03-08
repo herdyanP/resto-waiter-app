@@ -15,8 +15,36 @@
     </div>
 
     <div class="page-content">
-      <form class="list no-hairlines" id="penjualanList">
-      </form>
+      <div class="card card-outline">
+        <div class="card-header">
+          <strong>Laporan</strong>
+        </div>
+
+        <div class="list no-hairlines no-hairlines-between inline-labels">
+          <ul>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Tanggal Awal</div>
+                <div class="item-input-wrap">
+                  <input type="date" id="tglAwal">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Tanggal Akhir</div>
+                <div class="item-input-wrap">
+                  <input type="date" id="tglAkhir">
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card-footer">
+          <button class="button button-fill color-green" id="bayarButton">Cari</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>

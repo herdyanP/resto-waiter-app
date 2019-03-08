@@ -140,35 +140,6 @@ onLogin();
 
 });
 
-function checkUpdates(){
-  db.transaction(function(t){
-    t.executeSql('DROP TABLE m_barang');
-    t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, kode_barang VARCHAR(20)  NOT NULL,nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
-  })
-
-  $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
-    type: 'GET'
-  }).done(function(obj){
-
-    for (var i = 0; i < obj.length; i++) {
-      var insert = function(id_barang, kode_barang, nama_barang, harga_jual, kategori){
-        db.transaction(function(t){
-          // t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, kode_barang VARCHAR(20)  NOT NULL,nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
-          t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', [id_barang, kode_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
-            function(error){
-              console.log(error.message);
-            })
-        })
-      }(obj[i].id_barang, obj[i].kode_barang, obj[i].nama_barang, obj[i].harga_jual, '1');
-    }
-  }).always(function(){
-    tampilFood();
-    tampilBvrg();
-    tampilCombo();
-  })
-}
-
 function onNewLogin(q){
   var temp = {};
 
@@ -707,7 +678,7 @@ function ordernya(kembali, subTot, uang){
   db.transaction(function(transaction) {
     var executeQuery = "INSERT INTO pj (no_penjualan, no_faktur, tgl_penjualan, jenis_jual, id_user, stamp_date, no_meja, id_gudang, meja, st, total_jual, grantot_jual, bayar_tunai, bayar_card, kembali_tunai) \
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    transaction.executeSql(executeQuery, [txNmr, txNmr, tgl, '1', '1', tgltime, '0', '1', '1', '1', subTot, subTot * 1.1, uang, subTot, kembali], 
+    transaction.executeSql(executeQuery, [txNmr, txNmr, tgl, '1', '1', tgltime, '0', '1', '1', '1', subTot, subTot, uang, subTot, kembali], 
       function(tx, result) {
         orderdtl(result.insertId);
       },
@@ -1134,6 +1105,37 @@ function listPenjualan(){
   })
 }
 
+function checkUpdates(){
+  db.transaction(function(t){
+    t.executeSql('DROP TABLE m_barang');
+    t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, kode_barang VARCHAR(20)  NOT NULL,nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
+  })
+
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+    type: 'GET'
+  }).done(function(obj){
+
+    for (var i = 0; i < obj.length; i++) {
+      var insert = function(id_barang, kode_barang, nama_barang, harga_jual, kategori){
+        db.transaction(function(t){
+          // t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, kode_barang VARCHAR(20)  NOT NULL,nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
+          t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', [id_barang, kode_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
+            function(error){
+              console.log(error.message);
+            })
+        })
+      }(obj[i].id_barang, obj[i].kode_barang, obj[i].nama_barang, obj[i].harga_jual, '1');
+    }
+  }).fail(function(a,b,error){
+    alert(error);
+  }).always(function(){
+    tampilFood();
+    tampilBvrg();
+    tampilCombo();
+  })
+}
+
 function uploadPenjualan(){
   db.transaction(function(tx){
     tx.executeSql('SELECT * FROM pj a JOIN pj_dtl b ON a.id_pj = b.id_pj WHERE a.id_pj = (SELECT id_pj from pj ORDER BY id_pj DESC LIMIT 1)', [],
@@ -1190,5 +1192,17 @@ function cariSesuatu(a, b, c){
     console.log(result);
   }).fail(function(a,b,error){
     console.log(error);
+  })
+}
+
+function sendPing(){
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API//',
+    method: 'POST',
+    data: 
+  }).done(function(result){
+    console.log(result);
+  }).fail(function(a,b,error){
+    console.log(eror);
   })
 }
