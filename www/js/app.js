@@ -1196,13 +1196,46 @@ function cariSesuatu(a, b, c){
 }
 
 function sendPing(){
+  var d = new Date();
+
+  var mo = ('0' + (d.getMonth()+1)).slice(-2);
+  var dy = ('0' + d.getDate()).slice(-2);
+  var hr = ('0' + d.getHours()).slice(-2);
+  var mn = ('0' + d.getMinutes()).slice(-2);
+  var sc = ('0' + d.getSeconds()).slice(-2);
+
+  var tgls = d.getFullYear() + '-' + mo + '-' + dy + ' ' + hr + ':' + mn + ':' + sc;
+  console.log(tgls);
+
+  var stamp = {
+    'tgl_log' : tgls
+  }
+
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API//',
+    url: 'http://demo.medianusamandiri.com/lightpos/API/log/',
     method: 'POST',
-    data: 
+    data: JSON.stringify(stamp)
   }).done(function(result){
     console.log(result);
+    setTimeout(function(){
+      sendPing();
+    }, 3 * 1000);
   }).fail(function(a,b,error){
     console.log(eror);
+  })
+}
+
+function updateSesuatu(a, b){
+  var up = {
+    'id_barang' : a,
+    'st_ubah' : b
+  }
+
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/ubah/',
+    method: 'POST',
+    data: JSON.stringify(up)
+  }).done(function(result){
+    console.log(result);
   })
 }
