@@ -29,6 +29,8 @@ var retail;
 var cabang;
 var lastId;
 var user;
+var platform;
+var jn;
 
 // var mainView = app.views.main;
 // var chart = Highcharts.chart('container1', {});
@@ -64,31 +66,24 @@ document.addEventListener('deviceready', function() {
     tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20))');
     tx.executeSql('CREATE TABLE IF NOT EXISTS m_user( id_user INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, username VARCHAR(20), pass VARCHAR(20), nama_user VARCHAR(50))')
 
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['1', 'B00001','AYAM GORENG KALASAN','15000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['2', 'B00002','AYAM OPOR','20000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['3', 'B00003','AYAM RENDANG','20000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['4', 'B00004','AYAM SAUCE LADA HITAM','20000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['5', 'B00005','IKAN BAKAR SAMBAL MATA','20000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['6', 'B00006','IKAN WOKU BELANGA','20000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['7', 'B00007','SAPI SEMUR','20000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['8', 'B00008','SATE LILIT','20000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['9', 'B00009','SOTO AYAM','20000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['10', 'B00010','7UP','20000', '2']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['11', 'B00011','JUS JERUK','10000', '2']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['12', 'B00012','JUS ANGGUR MERAH','10000', '2']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['13', 'B00013','ABON AYAM','20000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['14', 'B00014','ABON IKAN','20000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['15', 'B00015','ABON SAPI','20000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['16', 'B00016','ADAS MANIS','20000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['17', 'B00017','ADAS PEDAS','20000', '1']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['1', 'B00001','TEST MENU 1','15000', '1']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['2', 'B00002','TEST MENU 2','12000', '1']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['3', 'B00003','TEST MENU 3','13000', '1']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['4', 'B00004','TEST MENU 4','10000', '2']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['5', 'B00005','TEST MENU 5','8000', '2']);
 
-    tx.executeSql('INSERT INTO m_combo VALUES (?,?)', ['1', 'Combo A']);
+    tx.executeSql('INSERT INTO m_combo VALUES (?,?)', ['1', 'TEST COMBO 1']);
+    tx.executeSql('INSERT INTO m_combo VALUES (?,?)', ['2', 'TEST COMBO 2']);
 
     tx.executeSql('INSERT INTO m_user (username, pass, nama_user) VALUES (?,?,?)', ['admin', 'admin', 'Administrator']);
     tx.executeSql('INSERT INTO m_user (username, pass, nama_user) VALUES (?,?,?)', ['ryan', '12345', 'Herdyan Pradana']);
 
     tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['1', '1', '2']);
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['1', '11', '2']);
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['1', '4', '2']);
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['2', '3', '4']);
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['2', '4', '2']);
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['2', '5', '2']);
+
   });
 
 var d = new Date();
@@ -518,14 +513,34 @@ function metode(a){
   if(a == '1'){
     $('.bayar-tunai').css('display', 'block');
     $('.bayar-card').css('display', 'none');
+    $('.bayar-ewallet').css('display', 'none');
   } else if(a == '2'){
     $('.bayar-tunai').css('display', 'none');
     $('.bayar-card').css('display', 'block');
+    $('.bayar-ewallet').css('display', 'none');
+  } else if(a == '3'){
+    $('.bayar-tunai').css('display', 'none');
+    $('.bayar-card').css('display', 'none');
+    $('.bayar-ewallet').css('display', 'block');
   }
 }
 
 function bayar(){
   var list = '';
+  platform = $('#platform').val();
+
+  if(mtd == '1'){
+    jn = 'Tunai';
+  } else if (mtd == '2'){
+    jn = 'Kartu Kredit';
+  } else if (mtd == '3'){
+    if(platform == '1'){
+      jn = 'GO-PAY';
+    } else if(platform == '2'){
+      jn = 'OVO';
+    }
+  }
+
   app.dialog.create({
     title: 'Konfirmasi',
     text: 'Cetak receipt via:',
@@ -569,9 +584,9 @@ function bayar(){
               tx.executeSql('SELECT * FROM pj_dtl_tmp', [], 
                 function(t, rs){
                   var dt = new Date();
-                  var paid = $('#bayar').val().replace(/\D/g, '');
                   var tot = $('#subtotal').html();
                   var totInt = tot.replace(/\D/g, '');
+                  var paid = $('#bayar').val().replace(/\D/g, ''); if(mtd != '1') paid = totInt;
                   var kembali = parseInt(paid) - parseInt(totInt);
 
                   var dy = ('00'+dt.getDate()).slice(-2);
@@ -579,12 +594,14 @@ function bayar(){
                   var mn = ('00'+dt.getMinutes()).slice(-2);
 
                   var sub = 'Sub-total';
-                  var byr = 'Tunai';
+                  var byr = 'Via: ' + jn;
                   var crd = 'CC';
                   var kbl = 'Kembali';
 
                   var header = '```\n          Sales Receipt\n\n--------------------------------\nNo. Trans : '+txNmr+'\nTanggal   : '+dy+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+hr+':'+mn+'\nOperator  : '+user+'\n--------------------------------\n';
-                  var thanks = ' \n--------------------------------\n\n        Terima Kasih Atas\n         Kunjungan Anda\n'
+                  var thanks = ' \n--------------------------------\n\n        Terima Kasih Atas\n         Kunjungan Anda\n';
+
+
 
                   for(var i = 0; i < 22-tot.length; i++){
                     sub += ' ';
@@ -594,7 +611,7 @@ function bayar(){
                     crd += ' ';
                   } crd += tot + ' \n';
 
-                  for(var i = 0; i < 26-parseInt(paid).toLocaleString().length; i++){
+                  for(var i = 0; i < 26 - jn.length - parseInt(paid).toLocaleString().length; i++){
                     byr += ' ';
                   } byr += parseInt(paid).toLocaleString('id-ID') + ' \n';
 
