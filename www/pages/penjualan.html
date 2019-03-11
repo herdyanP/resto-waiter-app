@@ -9,9 +9,18 @@
           </a>
         </div>
         <div class="title">
-          Laporan Penjualan
+          Laporan Penjualan 
         </div>
       </div>
+      <!-- <div class="subnavbar">
+        <div class="subnavbar-inner">
+          <div class="segmented">
+            <a href="#jual1" class="button tab-link tab-link-active">Item</a>
+            <a href="#beverages" class="button tab-link">Beverages</a>
+            <a href="#combos" class="button tab-link">Combos</a>
+          </div>
+        </div>
+      </div> -->
     </div>
 
     <div class="page-content">
@@ -26,7 +35,7 @@
               <div class="item-inner">
                 <div class="item-title item-label">Tanggal Awal</div>
                 <div class="item-input-wrap">
-                  <input type="date" id="tglAwal">
+                  <input type="date" id="tgl_awal">
                 </div>
               </div>
             </li>
@@ -34,7 +43,7 @@
               <div class="item-inner">
                 <div class="item-title item-label">Tanggal Akhir</div>
                 <div class="item-input-wrap">
-                  <input type="date" id="tglAkhir">
+                  <input type="date" id="tgl_akhir">
                 </div>
               </div>
             </li>
@@ -42,9 +51,15 @@
         </div>
 
         <div class="card-footer">
-          <button class="button button-fill color-green" id="bayarButton">Cari</button>
+          <button class="button button-fill color-green" onclick="cariLaporan()">Cari</button>
         </div>
       </div>
+
+      <div class="data-table" id="table_penjualan">
+        
+      </div>
+
+
     </div>
   </div>
 </template>

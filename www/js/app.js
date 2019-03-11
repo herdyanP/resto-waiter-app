@@ -140,6 +140,14 @@ onLogin();
 
 });
 
+function onConstruction(){
+  app.toast.create({
+    text: "Feature under construction...",
+    closeTimeout: 3000,
+    closeButton: true
+  }).open();
+}
+
 function onNewLogin(q){
   var temp = {};
 
@@ -185,6 +193,7 @@ function onLogin(){
 
 function onRetSuccess(obj){
   console.log('succ');
+  sendPing();
   $('#bayarButton').removeAttr('disabled').removeClass('disabled');
 
   $('#loginRow').css('display', 'none');
@@ -656,7 +665,7 @@ function nomor(){
 
   // var nomornya=d.getFullYear()+""+(d.getMonth()+1)+""+d.getDate()+""+ans1+""+ans;
 
-  var nomornya = 'TX/' + '01/' + d.getFullYear() + (('0'+(d.getMonth()+1)).slice(-2)) + '/' + dayTrans;
+  var nomornya = 'TX/' + '01/' + d.getFullYear() + (('0'+(d.getMonth()+1)).slice(-2)) + '/' + (('0'+d.getDate()).slice(-2)) + '/' + dayTrans;
   window.localStorage.setItem("inctrx",inc);
   return nomornya;
 }
@@ -732,6 +741,10 @@ function again(a){
       })
     }(a[i].idpj, a[i].id_barang, a[i].qty, a[i].harga, "0", "0", a[i].total, a[i].harga, "1", tgltime, a[i].id_tmp)
   }
+
+  setTimeout(function(){
+    uploadPenjualan();
+  }, 10 * 1000);
 }
 
 // function ordernya(){
@@ -1132,6 +1145,49 @@ function checkUpdates(){
   }).always(function(){
     tampilFood();
     tampilBvrg();
+  })
+}
+
+function checkUpdates2(){
+  db.transaction(function(t){
+    t.executeSql('DROP TABLE m_combo');
+    t.executeSql('DROP TABLE combo_dtl');
+
+    t.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20))');
+    t.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER, qty INTEGER )');
+
+    // t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, kode_barang VARCHAR(20)  NOT NULL,nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
+  })
+
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/combo/',
+    type: 'GET'
+  }).done(function(obj){
+
+    for (var i = 0; i < obj.length; i++) {
+      var insert = function(id_combo, nama_combo){
+        db.transaction(function(t){
+          t.executeSql('INSERT INTO m_combo VALUES (?,?)', [id_combo, nama_combo], function(t, success){}, 
+            function(error){
+              console.log(error.message);
+            })
+        })
+      }(obj[i].id_combo, obj[i].nama_combo);
+    }
+
+    for (var i = 0; i < obj.length; i++) {
+      var insert = function(id_combo, id_barang, qty){
+        db.transaction(function(t){
+          t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', [id_combo, id_barang, qty], function(t, success){}, 
+            function(error){
+              console.log(error.message);
+            })
+        })
+      }(obj[i].id_combo, obj[i].id_barang, '1');
+    }
+  }).fail(function(a,b,error){
+    alert(error);
+  }).always(function(){
     tampilCombo();
   })
 }
@@ -1178,6 +1234,8 @@ function uploadPenjualan(){
 }
 
 function cariSesuatu(a, b, c){
+
+
   var data = {
     'jenis_cari' : a,
     'tgl' : b,
@@ -1190,6 +1248,62 @@ function cariSesuatu(a, b, c){
     data: JSON.stringify(data)
   }).done(function(result){
     console.log(result);
+  }).fail(function(a,b,error){
+    console.log(error);
+  })
+}
+
+function cariLaporan(){
+  var a = 2;
+  var b = document.getElementById('tgl_awal');
+  var c = document.getElementById('tgl_akhir');
+  var jenis;
+  var datanya =   '<table>\
+                    <thead>\
+                      <tr>\
+                        <th class="label-cell">No. Penjualan</th>\
+                        <th>Tanggal Penjualan</th>\
+                        <th class="numeric-cell">Total Penjualan</th>\
+                        <th>Jenis Pembayaran</th>\
+                      </tr>\
+                    </thead>\
+                    <tbody>';
+  
+  var data = {
+    'jenis_cari' : a,
+    'tgl' : b.value,
+    'tglsd' : c.value
+  }
+
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/cari/',
+    method: 'POST',
+    data: JSON.stringify(data)
+  }).done(function(result){
+    for(var i = 0; i < result.length; i++){
+      switch (result[i].jenis_bayar){
+        case '1':
+          jenis = 'Tunai';
+          break;
+        case '2':
+          jenis = 'Kartu Kredit';
+          break;
+        case '3':
+          jenis = 'E-Money';
+          break;
+        }
+
+      if(i == 0){
+        datanya += '<tr><td class="label-cell">'+result[i].no_penjualan+'</td><td>'+result[i].tgl_penjualan+'</td><td class="numeric-cell">'+parseInt(result[i].total_jual).toLocaleString('id-ID')+'</td><td>'+jenis+'</td></tr>';
+      }else if(result[i].no_penjualan != result[i-1].no_penjualan){
+        datanya += '<tr><td class="label-cell">'+result[i].no_penjualan+'</td><td>'+result[i].tgl_penjualan+'</td><td class="numeric-cell">'+parseInt(result[i].total_jual).toLocaleString('id-ID')+'</td><td>'+jenis+'</td></tr>';
+      }
+    }
+
+    datanya += '</tbody></table>';
+    $('#table_penjualan').html(datanya);
+
+
   }).fail(function(a,b,error){
     console.log(error);
   })
@@ -1219,7 +1333,7 @@ function sendPing(){
     console.log(result);
     setTimeout(function(){
       sendPing();
-    }, 3 * 1000);
+    }, 10 * 1000);
   }).fail(function(a,b,error){
     console.log(eror);
   })
@@ -1238,4 +1352,8 @@ function updateSesuatu(a, b){
   }).done(function(result){
     console.log(result);
   })
+}
+
+function cekUUID(){
+  alert('Nomor ID device: '+device.uuid);
 }
