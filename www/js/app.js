@@ -881,7 +881,7 @@ function connectToPrinter(q){
 function printBayar(q) {
   var tot = $('#subtotal').html();
   var totInt = tot.replace(/\D/g, '');
-  var paid = $('#bayar').val().replace(/\D/g, '');
+  var paid = $('#bayar').val().replace(/\D/g, ''); if(mtd != '1') paid = totInt;
   var kembali = parseInt(paid) - parseInt(totInt);
   var dt = new Date();
 
@@ -893,7 +893,7 @@ function printBayar(q) {
   var subheader = '{left}No. Trans : '+txNmr+'{br}Tanggal   : '+dy+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+hr+':'+mn+'{br}Operator  : '+user+'{br}--------------------------------{br}';
   var thanks = '{br}{center}Terima Kasih Atas {br}Kunjungan Anda {br}{br}{br}{br}{br}';
   var sub = 'Sub-total';
-  var byr = 'Tunai';
+  var byr = 'Via :' + jn;
   var crd = 'CC';
   var kbl = 'Kembali';
 
@@ -905,7 +905,7 @@ function printBayar(q) {
     crd += ' ';
   } crd += tot + '{br}';
 
-  for(var i = 0; i < 27-parseInt(paid).toLocaleString().length; i++){
+  for(var i = 0; i < 26 - jn.length - parseInt(paid).toLocaleString().length; i++){
     byr += ' ';
   } byr += parseInt(paid).toLocaleString('id-ID') + '{br}';
 
@@ -913,7 +913,7 @@ function printBayar(q) {
     kbl += ' ';
   } kbl += parseInt(kembali).toLocaleString('id-ID');
 
-  if(mtd == '1'){
+  // if(mtd == '1'){
     window.DatecsPrinter.printText(header + subheader + q + sub + byr + kbl +'{br}' + thanks, 'ISO-8859-1', 
       function(){
         alert('success!');
@@ -921,15 +921,15 @@ function printBayar(q) {
       }, function() {
         alert(JSON.stringify(error));
       });
-  }else if (mtd == '2'){
-    window.DatecsPrinter.printText(header + subheader + q + sub + crd +'{br}' + thanks, 'ISO-8859-1', 
-      function(){
-        alert('success!');
-        ordernya(kembali, totInt, paid);
-      }, function() {
-        alert(JSON.stringify(error));
-      });
-  }
+  // }else if (mtd == '2'){
+  //   window.DatecsPrinter.printText(header + subheader + q + sub + crd +'{br}' + thanks, 'ISO-8859-1', 
+  //     function(){
+  //       alert('success!');
+  //       ordernya(kembali, totInt, paid);
+  //     }, function() {
+  //       alert(JSON.stringify(error));
+  //     });
+  // }
 }
 
 function test(){
