@@ -31,6 +31,7 @@ var lastId;
 var user;
 var platform;
 var jn;
+var modalAwal;
 
 // var mainView = app.views.main;
 // var chart = Highcharts.chart('container1', {});
@@ -45,6 +46,8 @@ var jn;
 
 document.addEventListener('deviceready', function() {
   document.addEventListener("backbutton", onBackPressed, false);
+  document.addEventListener("online", onOnline, false);
+
   screen.orientation.lock('portrait');
 
   db = window.sqlitePlugin.openDatabase({
@@ -59,7 +62,7 @@ document.addEventListener('deviceready', function() {
 
   db.transaction(function(tx) {
     tx.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, kode_barang VARCHAR(20)  NOT NULL,nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS pj (id_pj INTEGER PRIMARY KEY AUTOINCREMENT, no_penjualan VARCHAR(30), no_faktur VARCHAR(30), tgl_penjualan DATE, jenis_jual int, jenis_bayar int, id_customer int, id_user  int, stamp_date datetime, disc_prs double, disc_rp double, sc_prs double, sc_rp double, ppn double, total_jual double, grantot_jual double, bayar_tunai double, bayar_card double, nomor_kartu varchar, ref_kartu varchar, kembali_tunai double, void_jual varchar, no_meja int, ip varchar,   id_gudang int, pl_retail text, meja int, st int)');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS pj (id_pj INTEGER PRIMARY KEY AUTOINCREMENT, no_penjualan VARCHAR(30), no_faktur VARCHAR(30), tgl_penjualan DATE, jenis_jual int, jenis_bayar int, id_customer int, id_user  int, stamp_date datetime, disc_prs double, disc_rp double, sc_prs double, sc_rp double, ppn double, total_jual double, grantot_jual double, bayar_tunai double, bayar_card double, nomor_kartu varchar, ref_kartu varchar, kembali_tunai double, void_jual varchar, no_meja int, ip varchar, id_gudang int, pl_retail text, meja int, st int)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl (id_dtl_jual int, id_pj int, id_barang int, qty_jual double, harga_jual double, discprs double, discrp double, dtl_total double, harga_jual_cetak double, user int, dtpesan datetime, ready int default 0)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl_tmp (id_tmp INTEGER PRIMARY KEY AUTOINCREMENT,id_barang INT NOT NULL UNIQUE, qty INT  NOT NULL,total DOUBLE, harga DOUBLE,nama_barang VARCHAR(20) NOT NULL)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER, qty INTEGER )');
@@ -135,6 +138,60 @@ onLogin();
 
 });
 
+function onOnline(){
+  alert('you\'re online');
+  db.transaction(function(tx){
+    tx.executeSql('SELECT * FROM pj a JOIN pj_dtl b ON a.id_pj = b.id_pj WHERE a.st = 1', [],
+      function(t, rs){
+        var a = [];
+        for(var i = 0; i < rs.rows.length; i++){
+          var idpj = rs.rows.item(i).id_pj;
+          var temp = {
+            "no_jual": rs.rows.item(i).no_penjualan,
+            "tanggal": rs.rows.item(i).tgl_penjualan,
+            "jenis_jual": rs.rows.item(i).jenis_jual,
+            "jenis_bayar": rs.rows.item(i).jenis_bayar,
+            "user": "1",
+            "total": rs.rows.item(i).total_jual,
+            "grantot": rs.rows.item(i).grantot_jual,
+            "bayar_tunai": rs.rows.item(i).bayar_tunai,
+            "bayar_card": rs.rows.item(i).bayar_card,
+            "nomor_kartu": rs.rows.item(i).nomor_kartu,
+            "kembali_tunai": rs.rows.item(i).kembali_tunai,
+            "meja": "1",
+            "id_barang": rs.rows.item(i).id_barang,
+            "qty": rs.rows.item(i).qty_jual,
+            "harga_jual": rs.rows.item(i).harga_jual
+          }
+
+          a.push(temp);
+          // console.log(temp);
+        }
+
+        console.log(a);
+
+        updatePj2();
+        afterOnline(a);
+
+    })
+  })
+}
+
+function afterOnline(a){
+  for(var i = 0; i < a.length; i++){
+    // console.log(JSON.stringify(a[i]));
+    $.ajax({
+      url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+      method: 'POST',
+      data: JSON.stringify(a[i])
+    }).done(function(data, text, XHR){
+      console.log('sukses upload: ', data);
+    }).fail(function(XHR, text, error){
+      console.log('gagal upload: ', error);
+    })
+  }
+}
+
 function onConstruction(){
   app.toast.create({
     text: "Feature under construction...",
@@ -175,6 +232,11 @@ function onNewLogin(q){
 }
 
 function onStoreSuccess(){
+  app.dialog.prompt('Masukkan modal awal', 'Konfirmasi', function(value){
+    modalAwal = value;
+  }, function(){
+    return;
+  })
   console.log('Store Success')
 }
 
@@ -702,9 +764,9 @@ function ordernya(kembali, subTot, uang){
   // var subTot = parseInt($('#subtotal').html().replace(/\D/g, ''));
   
   db.transaction(function(transaction) {
-    var executeQuery = "INSERT INTO pj (no_penjualan, no_faktur, tgl_penjualan, jenis_jual, id_user, stamp_date, no_meja, id_gudang, meja, st, total_jual, grantot_jual, bayar_tunai, bayar_card, kembali_tunai) \
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    transaction.executeSql(executeQuery, [txNmr, txNmr, tgl, '1', '1', tgltime, '0', '1', '1', '1', subTot, subTot, uang, subTot, kembali], 
+    var executeQuery = "INSERT INTO pj (no_penjualan, no_faktur, tgl_penjualan, jenis_jual, id_user, stamp_date, no_meja, id_gudang, meja, st, total_jual, grantot_jual, bayar_tunai, bayar_card, kembali_tunai, jenis_bayar) \
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    transaction.executeSql(executeQuery, [txNmr, txNmr, tgl, '1', '1', tgltime, '0', '1', '1', '1', subTot, subTot, uang, subTot, kembali, mtd], 
       function(tx, result) {
         orderdtl(result.insertId);
       },
@@ -1147,6 +1209,7 @@ function checkUpdates(){
   }).done(function(obj){
 
     for (var i = 0; i < obj.length; i++) {
+      var harga = obj[i].harga.split('-');
       var insert = function(id_barang, kode_barang, nama_barang, harga_jual, kategori){
         db.transaction(function(t){
           // t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, kode_barang VARCHAR(20)  NOT NULL,nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
@@ -1155,7 +1218,7 @@ function checkUpdates(){
               console.log(error.message);
             })
         })
-      }(obj[i].id_barang, obj[i].kode_barang, obj[i].nama_barang, obj[i].harga_jual, '1');
+      }(obj[i].id_barang, obj[i].kode_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], '1');
     }
   }).fail(function(a,b,error){
     alert(error);
@@ -1214,6 +1277,7 @@ function uploadPenjualan(){
     tx.executeSql('SELECT * FROM pj a JOIN pj_dtl b ON a.id_pj = b.id_pj WHERE a.id_pj = (SELECT id_pj from pj ORDER BY id_pj DESC LIMIT 1)', [],
       function(t, rs){
         for(var i = 0; i < rs.rows.length; i++){
+          var idpj = rs.rows.item(i).id_pj;
           var temp = {
             "no_jual": rs.rows.item(i).no_penjualan,
             "tanggal": rs.rows.item(i).tgl_penjualan,
@@ -1239,6 +1303,7 @@ function uploadPenjualan(){
             method: 'POST',
             data: JSON.stringify(temp)
           }).done(function(data, text, XHR){
+            updatePj(idpj);
             console.log('sukses upload: ', data);
           }).fail(function(XHR, text, error){
             console.log('gagal upload: ', error);
@@ -1250,9 +1315,19 @@ function uploadPenjualan(){
   })
 }
 
+function updatePj(idpj){
+  db.transaction(function(tx){
+    tx.executeSql('UPDATE pj SET st = 0 WHERE id_pj = ?', [idpj]);
+  })
+}
+
+function updatePj2(){
+  db.transaction(function(tx){
+    tx.executeSql('UPDATE pj SET st = 0 WHERE st = 1');
+  })
+}
+
 function cariSesuatu(a, b, c){
-
-
   var data = {
     'jenis_cari' : a,
     'tgl' : b,
@@ -1352,7 +1427,7 @@ function sendPing(){
       sendPing();
     }, 10 * 1000);
   }).fail(function(a,b,error){
-    console.log(eror);
+    console.log(error);
   })
 }
 
