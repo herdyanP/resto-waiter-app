@@ -48,6 +48,28 @@ document.addEventListener('deviceready', function() {
   document.addEventListener("backbutton", onBackPressed, false);
   document.addEventListener("online", onOnline, false);
 
+/*  
+  admob.setOptions({
+    publisherId:           "ca-app-pub-XXXXXXXXXXXXXXXX/BBBBBBBBBB",  // Required
+    interstitialAdId:      "ca-app-pub-XXXXXXXXXXXXXXXX/IIIIIIIIII",  // Optional
+    autoShowBanner:        true,                                      // Optional
+    autoShowRInterstitial: false,                                     // Optional
+    autoShowRewarded:      false,                                     // Optional
+    tappxIdiOS:            "/XXXXXXXXX/Pub-XXXX-iOS-IIII",            // Optional
+    tappxIdAndroid:        "/XXXXXXXXX/Pub-XXXX-Android-AAAA",        // Optional
+    tappxShare:            0.5                                        // Optional
+  });
+      
+  // Start showing banners (atomatic when autoShowBanner is set to true)
+  admob.createBannerView();
+  
+  // Request interstitial ad (will present automatically when autoShowInterstitial is set to true)
+  admob.requestInterstitialAd();
+
+  // Request rewarded ad (will present automatically when autoShowRewarded is set to true)
+  admob.requestRewardedAd();
+*/
+
   screen.orientation.lock('portrait');
 
   db = window.sqlitePlugin.openDatabase({
@@ -139,7 +161,7 @@ onLogin();
 });
 
 function onOnline(){
-  alert('you\'re online');
+  // alert('you\'re online');
   db.transaction(function(tx){
     tx.executeSql('SELECT * FROM pj a JOIN pj_dtl b ON a.id_pj = b.id_pj WHERE a.st = 1', [],
       function(t, rs){
@@ -168,7 +190,7 @@ function onOnline(){
           // console.log(temp);
         }
 
-        console.log(a);
+        // console.log(a);
 
         updatePj2();
         afterOnline(a);
@@ -313,7 +335,7 @@ function kodeBarang(id){
 function tampilFood(){
   console.log('food');
   db.transaction(function(tx) {
-    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "1" ORDER BY nama_barang ASC', [], function(tx, rs) {
+    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "1" ORDER BY nama_barang ASC LIMIT 30', [], function(tx, rs) {
       var len, i;
       if(rs.rows.length > 20) {
         len = 20
@@ -340,7 +362,7 @@ function tampilFood(){
 
 function cariFood(q){
   db.transaction(function(tx){
-    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "1" AND nama_barang LIKE "%'+q+'%" ORDER BY nama_barang ASC', [], 
+    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "1" AND nama_barang LIKE "%'+q+'%" ORDER BY nama_barang ASC LIMIT 30', [], 
       function(tx, rs){
         var len = rs.rows.length, i;
         var all_rows = [];
@@ -363,7 +385,7 @@ function cariFood(q){
 function tampilBvrg(){
   console.log('drinks');
   db.transaction(function(tx) {
-    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "2" ORDER BY nama_barang ASC', [], function(tx, rs) {
+    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "2" ORDER BY nama_barang ASC LIMIT 30', [], function(tx, rs) {
       var len, i;
       if(rs.rows.length > 20) {
         len = 20
@@ -390,7 +412,7 @@ function tampilBvrg(){
 
 function cariBvrg(q){
   db.transaction(function(tx){
-    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "2" AND nama_barang LIKE "%'+q+'%" ORDER BY nama_barang ASC', [], 
+    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "2" AND nama_barang LIKE "%'+q+'%" ORDER BY nama_barang ASC LIMIT 30', [], 
       function(tx, rs){
         var len = rs.rows.length, i;
         var all_rows = [];
@@ -413,7 +435,7 @@ function cariBvrg(q){
 function tampilCombo(){
   console.log('combos');
   db.transaction(function(tx) {
-    tx.executeSql('SELECT * FROM m_combo ORDER BY nama_combo ASC', [], function(tx, rs) {
+    tx.executeSql('SELECT * FROM m_combo ORDER BY nama_combo ASC LIMIT 30', [], function(tx, rs) {
       var len, i;
       if(rs.rows.length > 20) {
         len = 20
