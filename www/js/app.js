@@ -20,6 +20,7 @@ var mtd = 1;
 var txNmr = 0;
 var retail, cabang, lastId, user, platform, jn, modalAwal, uid;
 var adid = {};
+var cpyProf;
 
 // var mainView = app.views.main;
 // var chart = Highcharts.chart('container1', {});
@@ -156,6 +157,7 @@ tampilCombo();
 
 onLogin();
 
+window.localStorage.setItem('test', 1);
 });
 
 function onOnline(){
@@ -258,7 +260,7 @@ function onNewLogin(q){
           break;
         }
       }
-    } else if(c == result.length) {
+    } else if(c == result.length && c != 0) {
       app.toast.create({
         text: "Device Belum Terdaftar, Mohon Tambahkan Device Melalui Menu Back-End",
         closeTimeout: 3000,
@@ -313,15 +315,27 @@ function onLogin(){
 }
 
 function onRetSuccess(obj){
-  console.log('succ');
-  sendPing();
-  $('#bayarButton').removeAttr('disabled').removeClass('disabled');
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/login/',
+    method: 'POST',
+    data: JSON.stringify({'user':obj.user, 'pwd':obj.pwd})
+  }).done(function(result){
+    if(result != '0'){
+      cpyProf = obj;
+      console.log('succ');
+      sendPing();
+      $('#bayarButton').removeAttr('disabled').removeClass('disabled');
 
-  $('#loginRow').css('display', 'none');
-  $('#logoutRow').css('display', 'block');
+      $('#loginRow').css('display', 'none');
+      $('#logoutRow').css('display', 'block');
 
-  user = obj.nama;
-  $('#currentUser').html('Operator: '+user);
+      user = obj.nama;
+      $('#currentUser').html('Operator: '+user);
+    } else {
+      // alert('gagal');
+      onLogout();
+    }
+  })
 }
 
 function onRetFail(){
@@ -1492,4 +1506,3 @@ function uploadStatus(kode){
     console.log(result);
   })
 }
-
