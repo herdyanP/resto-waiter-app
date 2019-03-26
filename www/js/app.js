@@ -25,13 +25,7 @@ var db;
 var shortMonths = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 var mtd = 1;
 var txNmr = 0;
-var retail;
-var cabang;
-var lastId;
-var user;
-var platform;
-var jn;
-var modalAwal;
+var retail, cabang, lastId, user, platform, jn, modalAwal, uid;
 
 // var mainView = app.views.main;
 // var chart = Highcharts.chart('container1', {});
@@ -48,17 +42,17 @@ document.addEventListener('deviceready', function() {
   document.addEventListener("backbutton", onBackPressed, false);
   document.addEventListener("online", onOnline, false);
 
-/*  
+ 
   admob.setOptions({
-    publisherId:           "ca-app-pub-XXXXXXXXXXXXXXXX/BBBBBBBBBB",  // Required
-    interstitialAdId:      "ca-app-pub-XXXXXXXXXXXXXXXX/IIIIIIIIII",  // Optional
+    publisherId:           "ca-app-pub-3940256099942544/6300978111",  // Required
+    interstitialAdId:      "ca-app-pub-3940256099942544/1033173712",  // Optional
     autoShowBanner:        true,                                      // Optional
     autoShowRInterstitial: false,                                     // Optional
-    autoShowRewarded:      false,                                     // Optional
+/*    autoShowRewarded:      false,                                     // Optional
     tappxIdiOS:            "/XXXXXXXXX/Pub-XXXX-iOS-IIII",            // Optional
     tappxIdAndroid:        "/XXXXXXXXX/Pub-XXXX-Android-AAAA",        // Optional
     tappxShare:            0.5                                        // Optional
-  });
+*/  });
       
   // Start showing banners (atomatic when autoShowBanner is set to true)
   admob.createBannerView();
@@ -67,8 +61,7 @@ document.addEventListener('deviceready', function() {
   admob.requestInterstitialAd();
 
   // Request rewarded ad (will present automatically when autoShowRewarded is set to true)
-  admob.requestRewardedAd();
-*/
+  // admob.requestRewardedAd();
 
   screen.orientation.lock('portrait');
 
@@ -83,7 +76,7 @@ document.addEventListener('deviceready', function() {
   });
 
   db.transaction(function(tx) {
-    tx.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, kode_barang VARCHAR(20)  NOT NULL,nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj (id_pj INTEGER PRIMARY KEY AUTOINCREMENT, no_penjualan VARCHAR(30), no_faktur VARCHAR(30), tgl_penjualan DATE, jenis_jual int, jenis_bayar int, id_customer int, id_user  int, stamp_date datetime, disc_prs double, disc_rp double, sc_prs double, sc_rp double, ppn double, total_jual double, grantot_jual double, bayar_tunai double, bayar_card double, nomor_kartu varchar, ref_kartu varchar, kembali_tunai double, void_jual varchar, no_meja int, ip varchar, id_gudang int, pl_retail text, meja int, st int)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl (id_dtl_jual int, id_pj int, id_barang int, qty_jual double, harga_jual double, discprs double, discrp double, dtl_total double, harga_jual_cetak double, user int, dtpesan datetime, ready int default 0)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl_tmp (id_tmp INTEGER PRIMARY KEY AUTOINCREMENT,id_barang INT NOT NULL UNIQUE, qty INT  NOT NULL,total DOUBLE, harga DOUBLE,nama_barang VARCHAR(20) NOT NULL)');
@@ -91,11 +84,11 @@ document.addEventListener('deviceready', function() {
     tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20))');
     tx.executeSql('CREATE TABLE IF NOT EXISTS m_user( id_user INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, username VARCHAR(20), pass VARCHAR(20), nama_user VARCHAR(50))')
 
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['1', 'B00001','TEST MENU 1','15000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['2', 'B00002','TEST MENU 2','12000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['3', 'B00003','TEST MENU 3','13000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['4', 'B00004','TEST MENU 4','10000', '2']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', ['5', 'B00005','TEST MENU 5','8000', '2']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['1','TEST MENU 1','15000', '1']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['2','TEST MENU 2','12000', '1']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['3','TEST MENU 3','13000', '1']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['4','TEST MENU 4','10000', '2']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['5','TEST MENU 5','8000', '2']);
 
     tx.executeSql('INSERT INTO m_combo VALUES (?,?)', ['1', 'TEST COMBO 1']);
     tx.executeSql('INSERT INTO m_combo VALUES (?,?)', ['2', 'TEST COMBO 2']);
@@ -162,6 +155,7 @@ onLogin();
 
 function onOnline(){
   // alert('you\'re online');
+  cekStatus();
   db.transaction(function(tx){
     tx.executeSql('SELECT * FROM pj a JOIN pj_dtl b ON a.id_pj = b.id_pj WHERE a.st = 1', [],
       function(t, rs){
@@ -229,28 +223,48 @@ function onNewLogin(q){
     temp[this.name] = this.value;
   })
 
-  console.log(temp);
+  // console.log(temp);
 
-  db.transaction(function(tx){
-    tx.executeSql('SELECT * FROM m_user WHERE username = ?', [temp.username], 
-      function(t, result){
-        if(result.rows.item(0).pass == temp.pass){
-          temp.nama = result.rows.item(0).nama_user;
-          NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/login/',
+    method: 'POST',
+    data: JSON.stringify(temp)
+  }).done(function(result){
+    console.log(result);
+    // if(result) {
+    //   // temp.nama = result.;
+    //   // NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
 
-          app.views.main.router.navigate('/');
-        } else {
-          app.toast.create({
-            text: "Cek lagi username / password anda",
-            closeTimeout: 3000,
-            closeButton: true
-          }).open();
-        }
-      },
-      function(error){
-        alert(error.message)
-      })
+    //   // app.views.main.router.navigate('/');
+    // } else {
+    //   app.toast.create({
+    //     text: "Cek lagi username / password anda",
+    //     closeTimeout: 3000,
+    //     closeButton: true
+    //   }).open();
+    // }
   })
+
+  // db.transaction(function(tx){
+  //   tx.executeSql('SELECT * FROM m_user WHERE username = ?', [temp.username], 
+  //     function(t, result){
+  //       if(result.rows.item(0).pass == temp.pass){
+  //         temp.nama = result.rows.item(0).nama_user;
+  //         NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
+
+  //         app.views.main.router.navigate('/');
+  //       } else {
+  //         app.toast.create({
+  //           text: "Cek lagi username / password anda",
+  //           closeTimeout: 3000,
+  //           closeButton: true
+  //         }).open();
+  //       }
+  //     },
+  //     function(error){
+  //       alert(error.message)
+  //     })
+  // })
 }
 
 function onStoreSuccess(){
@@ -1034,158 +1048,6 @@ function test(){
   })
 }
 
-function tambahItem(el){
-  var temp = {};
-  var kategori;
-
-  switch(el.id){
-    case 'tambahFood':
-    kategori = '1';
-    break;
-
-    case 'tambahBvrg':
-    kategori = '2';
-    break;
-  }
-
-  $.each($(el).serializeArray(), function(){
-    temp[this.name] = this.value.toUpperCase();
-  })
-
-  db.transaction(function(tx){
-    tx.executeSql('SELECT id_barang FROM m_barang ORDER BY id_barang DESC LIMIT 1', [], 
-      function(q, rs){
-        var lastId = parseInt(rs.rows.item(0).id_barang) + 1;
-        var kode = kodeBarang(lastId);
-
-        db.transaction(function(t){
-          t.executeSql('INSERT INTO m_barang VALUES (?, ?, ?, ?, ?)', [lastId, kode, temp.nama_barang, temp.harga_jual, kategori], 
-            function(qt, res){
-              alert('success');
-            },
-            function(error){
-              alert(error);
-            })
-        })
-      })
-  })
-}
-
-// function allItems(){
-//   db.transaction(function(tx) {
-//     tx.executeSql('SELECT * FROM m_barang ORDER BY kategori, nama_barang ASC', [], function(tx, rs) {
-//       var len, i;
-//       if(rs.rows.length > 20) {
-//         len = 20
-//       } else {
-//         len = rs.rows.length;
-//       }
-
-//       var all_rows = [];
-//       var datanya = '';
-//       for (i = 0; i < len; i++){
-
-//         datanya += '<div onclick="simpanAsCombo('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
-//         // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
-//       }
-
-//       datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
-
-//       $('#item_list').html(datanya);
-//     }, function(tx, error) {
-//       alert('SELECT error: ' + error.message);
-//     });
-//   });
-// }
-
-// function searchAllItems(q){
-//   db.transaction(function(tx){
-//     tx.executeSql('SELECT * FROM m_barang WHERE nama_barang LIKE "%'+q+'%" ORDER BY kategori, nama_barang ASC', [], 
-//       function(tx, rs){
-//         var len = rs.rows.length, i;
-//         var all_rows = [];
-//         var datanya = '';
-//         for (i = 0; i < len; i++){
-
-//           datanya += '<div onclick="simpanAsCombo('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
-//           // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;text-align:left;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
-//         }
-
-//         datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
-
-//         $('#item_list').html(datanya);
-//       }, function(tx, error){
-//         alert('SELECT error: ' + error.message);
-//       })
-//   })
-// }
-
-// function simpanAsCombo(a,b,c,d){
-//   db.transaction(function(transaction) {
-//     var c1=0;
-//     var qty=0;
-//     transaction.executeSql('SELECT count(*) as c, qty, harga FROM pj_dtl_tmp where id_barang=?', [a], function(tx, rs) {
-//       if(rs.rows.item(0).c<1){
-//         var executeQuery = "INSERT INTO pj_dtl_tmp (id_barang, qty,total,nama_barang,harga) VALUES (?,?,?,?,?)";
-//         transaction.executeSql(executeQuery, [a,b,c,d,c]
-//           , function(tx, result) {
-//             comboItems(a,b,c,d);
-//           },
-//           function(error){
-//             alert('Error occurred'); 
-//           });
-//       } else {
-
-//         var q=parseInt(rs.rows.item(0).qty)+1;
-//         var t=parseInt(rs.rows.item(0).harga)*q;
-//         var executeQuery = "UPDATE pj_dtl_tmp SET qty="+ q +", total="+t+" where id_barang=?";             
-//         transaction.executeSql(executeQuery, [a], 
-//           function(tx, result) {
-//             comboItems(a,b,c,d);
-//           },
-//           function(error){
-//             alert('Error occurred'); 
-//           });
-//       }
-//     }, function(tx, error) {
-//       alert('SELECT error: ' + error.message);
-//     });
-//   });
-// }
-
-// function comboItems(a,b,c,d){
-//   var data = '<ul>'
-//   var jumlah = 0;
-//   db.transaction(function(tx) {
-//     tx.executeSql('SELECT * FROM pj_dtl_tmp', [], function(tx, rs) {
-//       var len = rs.rows.length;
-//       var all_rows = [];
-//       for (i = 0; i < len; i++){
-//         data += '<li class="item-content ">\
-//         <div class="item-inner">\
-//         <div class="item-title">'+rs.rows.item(i).nama_barang+'\
-//         <div class="item-footer">'+rs.rows.item(i).qty+' x '+rs.rows.item(i).harga+'</div>\
-//         </div>\
-//         <div class="item-after"><a href="#" onclick="pilihHapus('+rs.rows.item(i).id_tmp+','+rs.rows.item(i).qty+', \'2\')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
-//         </div>\
-//         </li>'
-//         // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
-//         jumlah += parseInt(rs.rows.item(i).qty * rs.rows.item(i).harga) * 1.1;
-//       }
-
-//       data += '</ul>';
-//       $('#combo_item').html(data);
-//       // $('#subtotal').html(jumlah.toLocaleString('id-ID'));
-//       // var ppn=jumlah*(10/100);
-//       // var gt=jumlah+ppn;
-//       // $('#ppn').html(ppn.toLocaleString());
-//       // $('#grandtot').html(gt.toLocaleString());
-//     }, function(tx, error) {
-//       alert('SELECT error: ' + error.message);
-//     });
-//   });
-// }
-
 function comma(el){
   if(el.value == '') el.value = 0;
   el.value = parseInt((el.value).replace(/\D/g, '')).toLocaleString('id-ID');
@@ -1222,25 +1084,24 @@ function listPenjualan(){
 function checkUpdates(){
   db.transaction(function(t){
     t.executeSql('DROP TABLE m_barang');
-    t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, kode_barang VARCHAR(20)  NOT NULL,nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
+    t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
   })
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+    url: 'http://demo.medianusamandiri.com/lightpos/API/menu/',
     type: 'GET'
   }).done(function(obj){
 
     for (var i = 0; i < obj.length; i++) {
-      var harga = obj[i].harga.split('-');
-      var insert = function(id_barang, kode_barang, nama_barang, harga_jual, kategori){
+      // var harga = obj[i].harga.split('-');
+      var insert = function(id_barang, nama_barang, harga_jual, kategori){
         db.transaction(function(t){
-          // t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, kode_barang VARCHAR(20)  NOT NULL,nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
-          t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?,?)', [id_barang, kode_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
+          t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
             function(error){
               console.log(error.message);
             })
         })
-      }(obj[i].id_barang, obj[i].kode_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], '1');
+      }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], '1');
     }
   }).fail(function(a,b,error){
     alert(error);
@@ -1257,8 +1118,6 @@ function checkUpdates2(){
 
     t.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20))');
     t.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER, qty INTEGER )');
-
-    // t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, kode_barang VARCHAR(20)  NOT NULL,nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
   })
 
   $.ajax({
@@ -1471,3 +1330,144 @@ function updateSesuatu(a, b){
 function cekUUID(){
   alert('Nomor ID device: '+device.uuid);
 }
+
+function getUUID(){
+  return device.uuid;
+}
+
+function cekStatus(){
+  var uuid = getUUID();
+
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/status/',
+    method: 'GET',
+  }).done(function(result){
+    var t = [];
+    $.each(result, function(i,j){
+      if(j.nomor_device == uuid){
+        switch(j.jenis_ubah){
+          case 'A':
+            tambahBarang(j.id_barang);
+            // pilihUpdate(1, j.id_barang);
+            break;
+          case 'B':
+            updateMenu(j.id_menu);
+            // pilihUpdate(2, j.id_menu);
+            break;
+          case 'C':
+            updateCombo(j.id_combo);
+            // pilihUpdate(3, j.id_combo);
+            break;
+          case 'D':
+            updateHarga(j.id_harga);
+            // pilihUpdate(4, j.id_harga);
+            break;
+        }
+      }
+
+      console.log(j);
+      t.push(j);
+    })
+
+    console.log(t);
+  })
+}
+
+function tambahBarang(j){
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+    method: 'GET'
+  }).done(function(result){
+    for(var i = 0; i < result.length; i++){
+      if(result[i].id_barang == j) continue;
+
+      var a = function(id_barang, nama_barang, harga){
+        db.transaction(function(tx){
+          tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga, '1'], 
+            function(){
+              uploadStatus('A');
+            });
+        }) 
+      }(result[i].id_barang, result[i].nama_barang, result[i].harga.split('-')[0])
+    }
+  })
+}
+
+function updateMenu(j){
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+    method: 'GET'
+  }).done(function(result){
+    for(var i = 0; i < result.length; i++){
+      if(result[i].id_barang == j) continue;
+
+      var a = function(id_barang, nama_barang, harga){
+        db.transaction(function(tx){
+          tx.executeSql('UPDATE m_barang SET nama_barang = ?, harga_jual = ? WHERE id_barang = ?', [nama_barang, harga, id_barang, '1'], 
+            function(){
+              uploadStatus('B');
+            });
+        }) 
+      }(result[i].id_barang, result[i].nama_barang, result[i].harga.split('-')[0])
+    }
+  })
+}
+
+function updateCombo(j){
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+    method: 'GET'
+  }).done(function(result){
+    for(var i = 0; i < result.length; i++){
+      if(result[i].id_barang == j) continue;
+
+      var a = function(id_barang, nama_barang, harga){
+        db.transaction(function(tx){
+          tx.executeSql('', [id_barang, nama_barang, harga, '1'], 
+            function(){
+              uploadStatus('C');
+            });
+        }) 
+      }(result[i].id_barang, result[i].nama_barang, result[i].harga.split('-')[0])
+    }
+  })
+}
+
+function updateHarga(j){
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+    method: 'GET'
+  }).done(function(result){
+    for(var i = 0; i < result.length; i++){
+      if(result[i].id_barang == j) continue;
+
+      var a = function(id_barang, nama_barang, harga){
+        db.transaction(function(tx){
+          tx.executeSql('UPDATE m_barang SET harga_jual = ? WHERE id_barang = ?', [harga, id_barang], 
+            function(){
+              uploadStatus('D');
+            });
+        }) 
+      }(result[i].id_barang, result[i].nama_barang, result[i].harga.split('-')[0])
+    }
+  })
+}
+
+function uploadStatus(kode){
+  var uuid = getUUID();
+  var temp = {
+    'jnotif' : 2,
+    // 'no_device' : 'afadfsadf8',
+    'no_device' : uuid,
+    'kode' : kode
+  }
+
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/status/',
+    method: 'POST',
+    data: JSON.stringify(temp)
+  }).done(function(result){
+    console.log(result);
+  })
+}
+
