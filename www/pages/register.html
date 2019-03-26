@@ -1,7 +1,7 @@
 <template>
-  <div class="page" data-name="login">
+  <div class="page" data-name="register">
     <div class="page-content login-screen-content">
-      <div class="login-screen-title" style="font-size: 28px">LightPOS
+      <div class="login-screen-title" style="font-size: 28px">Register Baru
         <!-- <div class="mt-20"><img src="logo.png" width="150" height="150"></div> -->
         <!-- <div style="font-size: 22px">Login Anggota</div> -->
       </div>
@@ -11,10 +11,10 @@
           <ul>
             <li class="item-content item-input">
               <div class="item-inner">
-                <div class="item-title item-label">Username</div>
+                <div class="item-title item-label">Email</div>
                 <div class="item-input-wrap">
                   <!-- <input type="text" id="username" name="username" placeholder="Your username"> -->
-                  <input type="text" id="username" name="user" value="admin">
+                  <input type="text" id="email" name="email">
                 </div>
               </div>
             </li>
@@ -23,14 +23,14 @@
                 <div class="item-title item-label">Password</div>
                 <div class="item-input-wrap">
                   <!-- <input type="password" id="pass" name="pass" placeholder="Your password"> -->
-                  <input type="password" id="pass" name="pwd" value="admin">
+                  <input type="password" id="pass" name="pwd">
                 </div>
               </div>
             </li>
             <li class="item-content">
               <div class="item-inner">
                 <div class="item-title" style="width: 100%;">
-                  <a id="login_button" class="button button-outline button-round" href="#" onclick="onNewLogin(document.getElementById('login_cred'))">Sign In</a>
+                  <a id="login_button" class="button button-outline button-round" href="#" onclick="">Register</a>
                 </div>
               </div>
             </li>
@@ -51,7 +51,7 @@
         <!-- <a href="#" onclick="onLogin()">LI</a> -->
 
         <div class="block-footer">
-          <p><a href="/register/">Register Baru</a></p>
+          <p><a href="/login/">Sudah punya akun? Log In disini</a></p>
           <p>&copy; 2019 PT Media Nusa Mandiri</p>
         </div>
       </form>

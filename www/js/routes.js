@@ -50,5 +50,9 @@ var routes = [
       listPenjualan();
     }
   }
+},
+{
+  path: '/register/',
+  componentUrl: './pages/register.html'
 }
 ];

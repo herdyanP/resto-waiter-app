@@ -1,20 +1,13 @@
 // Dom7
-//var $$ = Dom7;
 // sudo cordova build android --release -- --keystore=lightpos.keystore --storePassword=bismillah --alias=lightpos --password=bismillah
 var $$ = Dom7;
-
-// Theme
-var theme = 'auto';
-if (document.location.search.indexOf('theme=') >= 0) {
-  theme = document.location.search.split('theme=')[1].split('&')[0];
-}
 
 // Init App
 var app = new Framework7({
   id: 'com.medianusamandiri.LightPOS',
   root: '#app',
   init: false,
-  theme: theme,
+  // theme: theme,
   routes: routes,
 });
 
@@ -26,6 +19,7 @@ var shortMonths = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep"
 var mtd = 1;
 var txNmr = 0;
 var retail, cabang, lastId, user, platform, jn, modalAwal, uid;
+var adid = {};
 
 // var mainView = app.views.main;
 // var chart = Highcharts.chart('container1', {});
@@ -42,23 +36,34 @@ document.addEventListener('deviceready', function() {
   document.addEventListener("backbutton", onBackPressed, false);
   document.addEventListener("online", onOnline, false);
 
- 
-  admob.setOptions({
-    publisherId:           "ca-app-pub-3940256099942544/6300978111",  // Required
-    interstitialAdId:      "ca-app-pub-3940256099942544/1033173712",  // Optional
-    autoShowBanner:        true,                                      // Optional
-    autoShowRInterstitial: false,                                     // Optional
-/*    autoShowRewarded:      false,                                     // Optional
-    tappxIdiOS:            "/XXXXXXXXX/Pub-XXXX-iOS-IIII",            // Optional
-    tappxIdAndroid:        "/XXXXXXXXX/Pub-XXXX-Android-AAAA",        // Optional
-    tappxShare:            0.5                                        // Optional
-*/  });
+  adid = {
+    banner: 'ca-app-pub-3940256099942544/6300978111',
+    interstitial: 'ca-app-pub-3940256099942544/1033173712'
+  }
+
+  AdMob.createBanner({
+    adId: adid.banner,
+    position: AdMob.AD_POSITION.BOTTOM_CENTER,
+    autoShow: true
+  });
+
+//   admob.setOptions({
+//     // publisherId:           "ca-app-pub-8300135360648716/8651556341",  // Production
+//     publisherId:           "ca-app-pub-3940256099942544/6300978111",  // Test
+//     // interstitialAdId:      "ca-app-pub-3940256099942544/1033173712",  
+//     autoShowBanner:        false,                                      
+//     // autoShowRInterstitial: false,                                     
+// /*    autoShowRewarded:      false,                                     
+//     tappxIdiOS:            "/XXXXXXXXX/Pub-XXXX-iOS-IIII",            
+//     tappxIdAndroid:        "/XXXXXXXXX/Pub-XXXX-Android-AAAA",        
+//     tappxShare:            0.5                                        
+// */  });
       
   // Start showing banners (atomatic when autoShowBanner is set to true)
-  admob.createBannerView();
+  // admob.createBannerView();
   
   // Request interstitial ad (will present automatically when autoShowInterstitial is set to true)
-  admob.requestInterstitialAd();
+  // admob.requestInterstitialAd();
 
   // Request rewarded ad (will present automatically when autoShowRewarded is set to true)
   // admob.requestRewardedAd();
@@ -93,8 +98,8 @@ document.addEventListener('deviceready', function() {
     tx.executeSql('INSERT INTO m_combo VALUES (?,?)', ['1', 'TEST COMBO 1']);
     tx.executeSql('INSERT INTO m_combo VALUES (?,?)', ['2', 'TEST COMBO 2']);
 
-    tx.executeSql('INSERT INTO m_user (username, pass, nama_user) VALUES (?,?,?)', ['admin', 'admin', 'Administrator']);
-    tx.executeSql('INSERT INTO m_user (username, pass, nama_user) VALUES (?,?,?)', ['ryan', '12345', 'Herdyan Pradana']);
+    // tx.executeSql('INSERT INTO m_user (user, pwd, nama_user) VALUES (?,?,?)', ['admin', 'admin', 'Administrator']);
+    // tx.executeSql('INSERT INTO m_user (user, pwd, nama_user) VALUES (?,?,?)', ['ryan', '12345', 'Herdyan Pradana']);
 
     tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['1', '1', '2']);
     tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['1', '4', '2']);
@@ -223,7 +228,7 @@ function onNewLogin(q){
     temp[this.name] = this.value;
   })
 
-  // console.log(temp);
+  console.log(temp);
 
   $.ajax({
     url: 'http://demo.medianusamandiri.com/lightpos/API/login/',
@@ -231,18 +236,41 @@ function onNewLogin(q){
     data: JSON.stringify(temp)
   }).done(function(result){
     console.log(result);
-    // if(result) {
-    //   // temp.nama = result.;
-    //   // NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
+    var c = 0;
+    if(result != '0') {
+      for(var i = 0; i < result.length; i++){
+        if(result[i].nomor_device == device.uuid){
+          temp.nama = result[i].nama_pegawai;
+          temp.cabang = result[i].nama_cabang;
+          temp.outlet = result[i].nama_outlet;
+          temp.id_cabang = result[i].id_cabang;
+          temp.id_client = result[i].id_client;
+          temp.id_outlet = result[i].id_outlet;
+          temp.id_pegawai = result[i].id_pegawai;
 
-    //   // app.views.main.router.navigate('/');
-    // } else {
-    //   app.toast.create({
-    //     text: "Cek lagi username / password anda",
-    //     closeTimeout: 3000,
-    //     closeButton: true
-    //   }).open();
-    // }
+          console.log(temp);
+
+          NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
+          app.views.main.router.navigate('/');
+
+          c++;
+
+          break;
+        }
+      }
+    } else if(c == result.length) {
+      app.toast.create({
+        text: "Device Belum Terdaftar, Mohon Tambahkan Device Melalui Menu Back-End",
+        closeTimeout: 3000,
+        closeButton: true
+      }).open();
+    } else {
+      app.toast.create({
+        text: "Cek lagi username / password anda",
+        closeTimeout: 3000,
+        closeButton: true
+      }).open();
+    }
   })
 
   // db.transaction(function(tx){
@@ -326,7 +354,10 @@ function onRemFail(){
 
 function onBackPressed(){
   var mainView = app.views.main;
-  if($('.link.back').length > 0 || mainView.router.currentPageEl.f7Page.name == 'login'){
+  
+  if(mainView.router.currentPageEl.f7Page.name == 'login' || mainView.router.currentPageEl.f7Page.name == 'register'){
+    mainView.router.navigate('/');
+  } else if($('.link.back').length > 0){
     mainView.router.back();
   } else{
     app.dialog.confirm('Keluar aplikasi?', 'Konfirmasi', function(){
@@ -335,15 +366,6 @@ function onBackPressed(){
       return;
     })
   }
-}
-
-function kodeBarang(id){
-  var q = 'B';
-  for(var i = 0; i < 5 - id.toString().length; i++){
-    q += '0';
-  }
-
-  return q+id;
 }
 
 function tampilFood(){
