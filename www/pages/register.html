@@ -6,15 +6,22 @@
         <!-- <div style="font-size: 22px">Login Anggota</div> -->
       </div>
 
-      <form id="login_cred">
+      <form id="register_cred">
         <div class="list no-hairlines no-hairlines-between">
           <ul>
             <li class="item-content item-input">
               <div class="item-inner">
                 <div class="item-title item-label">Email</div>
                 <div class="item-input-wrap">
-                  <!-- <input type="text" id="username" name="username" placeholder="Your username"> -->
                   <input type="text" id="email" name="email">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Username</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="user" name="user">
                 </div>
               </div>
             </li>
@@ -22,15 +29,46 @@
               <div class="item-inner">
                 <div class="item-title item-label">Password</div>
                 <div class="item-input-wrap">
-                  <!-- <input type="password" id="pass" name="pass" placeholder="Your password"> -->
-                  <input type="password" id="pass" name="pwd">
+                  <input type="password" id="pass" name="pass">
                 </div>
               </div>
             </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Nomor Telepon</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="telp" name="notel">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Nama Lengkap</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="nama_lengkap" name="nama_lengkap">
+                </div>
+              </div>
+            </li>
+            <!-- <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Nama Pemilik</div>
+                <div class="item-input-wrap">
+                  <input type="password" id="nama_lengkap" name="nama_lengkap">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Nama Outlet</div>
+                <div class="item-input-wrap">
+                  <input type="password" id="nama_outlet" name="nama_outlet">
+                </div>
+              </div>
+            </li> -->
             <li class="item-content">
               <div class="item-inner">
                 <div class="item-title" style="width: 100%;">
-                  <a id="login_button" class="button button-outline button-round" href="#" onclick="">Register</a>
+                  <a id="login_button" class="button button-outline button-round" href="#" onclick="register(document.getElementById('register_cred'))">Register</a>
                 </div>
               </div>
             </li>
@@ -51,7 +89,7 @@
         <!-- <a href="#" onclick="onLogin()">LI</a> -->
 
         <div class="block-footer">
-          <p><a href="/login/">Sudah punya akun? Log In disini</a></p>
+          <p><a href="/login/">Sudah punya akun? Log-In disini</a></p>
           <p>&copy; 2019 PT Media Nusa Mandiri</p>
         </div>
       </form>

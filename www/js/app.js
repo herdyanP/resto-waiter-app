@@ -1,5 +1,7 @@
 // Dom7
 // sudo cordova build android --release -- --keystore=lightpos.keystore --storePassword=bismillah --alias=lightpos --password=bismillah
+
+// note to self: nyimpen cred login pake token, didapet dari hasil hash di server, yang direturn sama info company
 var $$ = Dom7;
 
 // Init App
@@ -18,7 +20,7 @@ var db;
 var shortMonths = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 var mtd = 1;
 var txNmr = 0;
-var retail, cabang, lastId, user, platform, jn, modalAwal, uid;
+var retail, cabang, lastId, user, platform, jn, modalAwal, uid, updates;
 var adid = {};
 var cpyProf;
 
@@ -39,6 +41,7 @@ document.addEventListener('deviceready', function() {
 
   adid = {
     banner: 'ca-app-pub-3940256099942544/6300978111',
+    // banner: 'ca-app-pub-8300135360648716/8651556341',
     interstitial: 'ca-app-pub-3940256099942544/1033173712'
   }
 
@@ -324,13 +327,19 @@ function onRetSuccess(obj){
       cpyProf = obj;
       console.log('succ');
       sendPing();
+      cekStatus();
+
+      if(updates != 0){
+        checkUpdates();
+        checkUpdates2();
+      }
+
       $('#bayarButton').removeAttr('disabled').removeClass('disabled');
 
       $('#loginRow').css('display', 'none');
       $('#logoutRow').css('display', 'block');
 
-      user = obj.nama;
-      $('#currentUser').html('Operator: '+user);
+      $('#currentUser').html('Operator: '+obj.nama);
     } else {
       // alert('gagal');
       onLogout();
@@ -723,6 +732,9 @@ function bayar(){
                   var paid = $('#bayar').val().replace(/\D/g, ''); if(mtd != '1') paid = totInt;
                   var kembali = parseInt(paid) - parseInt(totInt);
 
+                  var kop = '';
+                  var cab = '';
+
                   var dy = ('00'+dt.getDate()).slice(-2);
                   var hr = ('00'+dt.getHours()).slice(-2);
                   var mn = ('00'+dt.getMinutes()).slice(-2);
@@ -732,9 +744,16 @@ function bayar(){
                   var crd = 'CC';
                   var kbl = 'Kembali';
 
-                  var header = '```\n          Sales Receipt\n\n--------------------------------\nNo. Trans : '+txNmr+'\nTanggal   : '+dy+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+hr+':'+mn+'\nOperator  : '+user+'\n--------------------------------\n';
-                  var thanks = ' \n--------------------------------\n\n        Terima Kasih Atas\n         Kunjungan Anda\n';
+                  for(var i = 0; i < (31 - cpyProf.outlet.length)/2; i++){
+                    kop += ' ';
+                  } kop += cpyProf.outlet + '\n';
 
+                  for(var i = 0; i < (24 - cpyProf.cabang.length)/2; i++){
+                    cab += ' ';
+                  } cab += 'Cabang ' + cpyProf.cabang + '\n';
+
+                  var header = '```\n          Sales Receipt\n\n'+kop+cab+'--------------------------------\nNo. Trans : '+txNmr+'\nTanggal   : '+dy+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+hr+':'+mn+'\nOperator  : '+cpyProf.nama+'\n--------------------------------\n';
+                  var thanks = ' \n--------------------------------\n\n        Terima Kasih Atas\n         Kunjungan Anda\n';
 
 
                   for(var i = 0; i < 22-tot.length; i++){
@@ -1118,15 +1137,15 @@ function listPenjualan(){
 }
 
 function checkUpdates(){
-  db.transaction(function(t){
-    t.executeSql('DROP TABLE m_barang');
-    t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
-  })
-
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/menu/',
+    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
     type: 'GET'
   }).done(function(obj){
+
+    db.transaction(function(t){
+      t.executeSql('DROP TABLE m_barang');
+      t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
+    })
 
     for (var i = 0; i < obj.length; i++) {
       // var harga = obj[i].harga.split('-');
@@ -1137,7 +1156,7 @@ function checkUpdates(){
               console.log(error.message);
             })
         })
-      }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], '1');
+      }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], obj[i].tipe);
     }
   }).fail(function(a,b,error){
     alert(error);
@@ -1148,18 +1167,18 @@ function checkUpdates(){
 }
 
 function checkUpdates2(){
-  db.transaction(function(t){
-    t.executeSql('DROP TABLE m_combo');
-    t.executeSql('DROP TABLE combo_dtl');
-
-    t.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20))');
-    t.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER, qty INTEGER )');
-  })
-
   $.ajax({
     url: 'http://demo.medianusamandiri.com/lightpos/API/combo/',
     type: 'GET'
   }).done(function(obj){
+
+    db.transaction(function(t){
+      t.executeSql('DROP TABLE m_combo');
+      t.executeSql('DROP TABLE combo_dtl');
+
+      t.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20))');
+      t.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER, qty INTEGER )');
+    })
 
     for (var i = 0; i < obj.length; i++) {
       var insert = function(id_combo, nama_combo){
@@ -1342,7 +1361,7 @@ function sendPing(){
     console.log(result);
     setTimeout(function(){
       sendPing();
-    }, 10 * 1000);
+    }, 300 * 1000);
   }).fail(function(a,b,error){
     console.log(error);
   })
@@ -1367,134 +1386,136 @@ function cekUUID(){
   alert('Nomor ID device: '+device.uuid);
 }
 
-function getUUID(){
-  return device.uuid;
-}
-
 function cekStatus(){
-  var uuid = getUUID();
-
+  console.log('cekstatus in:');
   $.ajax({
     url: 'http://demo.medianusamandiri.com/lightpos/API/status/',
     method: 'GET',
   }).done(function(result){
-    var t = [];
+    console.log('cekstatus ajax');
+    var c = 0;
+    
     $.each(result, function(i,j){
-      if(j.nomor_device == uuid){
-        switch(j.jenis_ubah){
+      if(j.nomor_device == device.uuid){
+        switch(j.kode){
           case 'A':
-            tambahBarang(j.id_barang);
+            console.log('tambahBarang');
+            tambahBarang(j.id_barang, j.jenis_ubah);
+            c++;
             // pilihUpdate(1, j.id_barang);
             break;
           case 'B':
-            updateMenu(j.id_menu);
+            console.log('updateMenu');
+            updateMenu(j.id_menu, j.jenis_ubah);
+            c++;
             // pilihUpdate(2, j.id_menu);
             break;
           case 'C':
-            updateCombo(j.id_combo);
+            console.log('updateCombo');
+            updateCombo(j.id_combo, j.jenis_ubah);
+            c++;
             // pilihUpdate(3, j.id_combo);
             break;
           case 'D':
-            updateHarga(j.id_harga);
+            console.log('updateHarga');
+            updateHarga(j.id_harga, j.jenis_ubah);
+            c++;
             // pilihUpdate(4, j.id_harga);
             break;
         }
-      }
+      }// cek status tiap login, lek gak ada ambil aja /data/ 
 
-      console.log(j);
-      t.push(j);
+      // console.log(j);
+      // t.push(j);
     })
-
-    console.log(t);
+    updates = c;
   })
 }
 
-function tambahBarang(j){
+function tambahBarang(j, ubah){
+
+  uploadStatus('A', ubah);
+
   $.ajax({
     url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
     method: 'GET'
   }).done(function(result){
     for(var i = 0; i < result.length; i++){
-      if(result[i].id_barang == j) continue;
+      if(result[i].id_barang != j) continue;
+
+      var a = function(id_barang, nama_barang, harga, tipe){
+        db.transaction(function(tx){
+          tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga, tipe]);
+        }) 
+      }(result[i].id_barang, result[i].nama_barang, result[i].harga.split('-')[0], result[i].tipe)
+    }
+  })
+}
+
+function updateMenu(j, ubah){
+
+  uploadStatus('B', ubah);
+
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+    method: 'GET'
+  }).done(function(result){
+    for(var i = 0; i < result.length; i++){
+      if(result[i].id_barang != j) continue;
 
       var a = function(id_barang, nama_barang, harga){
         db.transaction(function(tx){
-          tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga, '1'], 
-            function(){
-              uploadStatus('A');
-            });
+          tx.executeSql('UPDATE m_barang SET nama_barang = ?, harga_jual = ? WHERE id_barang = ?', [nama_barang, harga, id_barang, '1']);
         }) 
       }(result[i].id_barang, result[i].nama_barang, result[i].harga.split('-')[0])
     }
   })
 }
 
-function updateMenu(j){
+function updateCombo(j, ubah){
+
+  uploadStatus('C', ubah);
+
   $.ajax({
     url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
     method: 'GET'
   }).done(function(result){
     for(var i = 0; i < result.length; i++){
-      if(result[i].id_barang == j) continue;
+      if(result[i].id_barang != j) continue;
 
       var a = function(id_barang, nama_barang, harga){
         db.transaction(function(tx){
-          tx.executeSql('UPDATE m_barang SET nama_barang = ?, harga_jual = ? WHERE id_barang = ?', [nama_barang, harga, id_barang, '1'], 
-            function(){
-              uploadStatus('B');
-            });
+          tx.executeSql('', [id_barang, nama_barang, harga, '1']);
         }) 
       }(result[i].id_barang, result[i].nama_barang, result[i].harga.split('-')[0])
     }
   })
 }
 
-function updateCombo(j){
+function updateHarga(j, ubah){
+
+  uploadStatus('D', ubah);
+
   $.ajax({
     url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
     method: 'GET'
   }).done(function(result){
     for(var i = 0; i < result.length; i++){
-      if(result[i].id_barang == j) continue;
+      if(result[i].id_price != j) continue;
 
-      var a = function(id_barang, nama_barang, harga){
+      var a = function(id_barang, harga){
         db.transaction(function(tx){
-          tx.executeSql('', [id_barang, nama_barang, harga, '1'], 
-            function(){
-              uploadStatus('C');
-            });
+          tx.executeSql('UPDATE m_barang SET harga_jual = ? WHERE id_barang = ?', [harga, id_barang]);
         }) 
-      }(result[i].id_barang, result[i].nama_barang, result[i].harga.split('-')[0])
+      }(result[i].id_barang, result[i].harga.split('-')[0])
     }
   })
 }
 
-function updateHarga(j){
-  $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
-    method: 'GET'
-  }).done(function(result){
-    for(var i = 0; i < result.length; i++){
-      if(result[i].id_barang == j) continue;
-
-      var a = function(id_barang, nama_barang, harga){
-        db.transaction(function(tx){
-          tx.executeSql('UPDATE m_barang SET harga_jual = ? WHERE id_barang = ?', [harga, id_barang], 
-            function(){
-              uploadStatus('D');
-            });
-        }) 
-      }(result[i].id_barang, result[i].nama_barang, result[i].harga.split('-')[0])
-    }
-  })
-}
-
-function uploadStatus(kode){
-  var uuid = getUUID();
+function uploadStatus(kode, jenis_ubah){
   var temp = {
-    'jnotif' : 2,
-    // 'no_device' : 'afadfsadf8',
-    'no_device' : uuid,
+    'jnotif' : jenis_ubah,
+    'no_device' : device.uuid,
     'kode' : kode
   }
 
@@ -1505,4 +1526,29 @@ function uploadStatus(kode){
   }).done(function(result){
     console.log(result);
   })
+}
+
+function register(q){
+  var temp = {};
+
+  $.each($(q).serializeArray(), function(){
+    temp[this.name] = this.value;
+  })
+
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/daftar/',
+    method: 'POST',
+    data: JSON.stringify(temp)
+  }).always(function(result){
+    if(result.status == '201'){
+      app.dialog.alert('Sukses mendaftar!', 'Register', function(){
+        $('#register_cred').trigger('reset');
+        app.views.main.router.navigate('/login/');
+        $('#userlogin').val(temp.user);
+        $('#passlogin').val(temp.pass);
+      })
+    }
+  })
+
+  console.log(temp);      
 }
