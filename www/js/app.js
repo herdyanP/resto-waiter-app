@@ -175,9 +175,9 @@ function onOnline(){
           var temp = {
             "no_jual": rs.rows.item(i).no_penjualan,
             "tanggal": rs.rows.item(i).tgl_penjualan,
-            "jenis_jual": rs.rows.item(i).jenis_jual,
+            "tipe_jual": rs.rows.item(i).jenis_jual,
             "jenis_bayar": rs.rows.item(i).jenis_bayar,
-            "user": "1",
+            "user": cpyProf.id_client,
             "total": rs.rows.item(i).total_jual,
             "grantot": rs.rows.item(i).grantot_jual,
             "bayar_tunai": rs.rows.item(i).bayar_tunai,
@@ -187,7 +187,7 @@ function onOnline(){
             "meja": "1",
             "id_barang": rs.rows.item(i).id_barang,
             "qty": rs.rows.item(i).qty_jual,
-            "harga_jual": rs.rows.item(i).harga_jual
+            "harga_jual": rs.rows.item(i).harga_jual,
           }
 
           a.push(temp);
@@ -227,7 +227,9 @@ function onConstruction(){
 }
 
 function onNewLogin(q){
-  var temp = {};
+  var temp = {
+    'device' : device.uuid
+  };
 
   $.each($(q).serializeArray(), function(){
     temp[this.name] = this.value;
@@ -248,6 +250,7 @@ function onNewLogin(q){
           temp.nama = result[i].nama_pegawai;
           temp.cabang = result[i].nama_cabang;
           temp.outlet = result[i].nama_outlet;
+          temp.client = result[i].nama_client;
           temp.id_cabang = result[i].id_cabang;
           temp.id_client = result[i].id_client;
           temp.id_outlet = result[i].id_outlet;
@@ -258,24 +261,27 @@ function onNewLogin(q){
           NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
           app.views.main.router.navigate('/');
 
-          c++;
-
           break;
         }
+
+        c++;
+        console.log(c);
       }
-    } else if(c == result.length && c != 0) {
-      app.toast.create({
-        text: "Device Belum Terdaftar, Mohon Tambahkan Device Melalui Menu Back-End",
-        closeTimeout: 3000,
-        closeButton: true
-      }).open();
+
+      if(c > 0) {
+        app.toast.create({
+          text: "Device Belum Terdaftar, Mohon Tambahkan Device Melalui Menu Back-End",
+          closeTimeout: 3000,
+          closeButton: true
+        }).open();
+      } 
     } else {
-      app.toast.create({
-        text: "Cek lagi username / password anda",
-        closeTimeout: 3000,
-        closeButton: true
-      }).open();
-    }
+        app.toast.create({
+          text: "Cek lagi username / password anda",
+          closeTimeout: 3000,
+          closeButton: true
+        }).open();
+      }
   })
 
   // db.transaction(function(tx){
@@ -301,11 +307,41 @@ function onNewLogin(q){
 }
 
 function onStoreSuccess(){
-  app.dialog.prompt('Masukkan modal awal', 'Konfirmasi', function(value){
-    modalAwal = value;
-  }, function(){
-    return;
-  })
+  app.dialog.create({
+    title: 'Modal Awal',
+    closeByBackdropClick: false,
+    content: '<div class="list no-hairlines no-hairlines-between">\
+          <ul>\
+            <li class="item-content item-input">\
+              <div class="item-inner">\
+                <div class="item-input-wrap">\
+                  <input type="text" name="modal" id="modal" oninput="comma(this)" style="text-align: right;" />\
+                </div>\
+              </div>\
+            </li>\
+          </ul>\
+        </div>',
+    buttons: [
+      {
+        text: 'Simpan',
+        onClick: function(dialog, e){
+          var v = $('#modal').val();
+          if(v != '' && v != '0'){
+            modalAwal = v.replace(/\D/g, '');
+            dialog.close();
+            // window.open('http://kopdanamon.cloudmnm.com/cetak.php?nik='+user+'&bulan=12&tahun='+th+'&page=reportshu&type=android', '_self');
+          }
+        }
+      } 
+      
+    ]
+  }).open();
+
+  // app.dialog.prompt('Masukkan modal awal', 'Konfirmasi', function(value){
+  //   modalAwal = value;
+  // }, function(){
+  //   return;
+  // })
   console.log('Store Success')
 }
 
@@ -321,7 +357,7 @@ function onRetSuccess(obj){
   $.ajax({
     url: 'http://demo.medianusamandiri.com/lightpos/API/login/',
     method: 'POST',
-    data: JSON.stringify({'user':obj.user, 'pwd':obj.pwd})
+    data: JSON.stringify({'user':obj.user, 'pass':obj.pass, 'device':device.uuid})
   }).done(function(result){
     if(result != '0'){
       cpyProf = obj;
@@ -329,7 +365,7 @@ function onRetSuccess(obj){
       sendPing();
       cekStatus();
 
-      if(updates != 0){
+      if(updates != '0'){
         checkUpdates();
         checkUpdates2();
       }
@@ -339,7 +375,7 @@ function onRetSuccess(obj){
       $('#loginRow').css('display', 'none');
       $('#logoutRow').css('display', 'block');
 
-      $('#currentUser').html('Operator: '+obj.nama);
+      $('#currentUser').html('Operator: '+ (obj.nama ? obj.nama : obj.client));
     } else {
       // alert('gagal');
       onLogout();
@@ -1136,27 +1172,58 @@ function listPenjualan(){
   })
 }
 
+// function checkUpdates(){
+//   $.ajax({
+//     url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+//     type: 'GET'
+//   }).done(function(obj){
+
+//     db.transaction(function(t){
+//       t.executeSql('DROP TABLE m_barang');
+//       t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
+//     })
+
+//     for (var i = 0; i < obj.length; i++) {
+//       // var harga = obj[i].harga.split('-');
+//       var insert = function(id_barang, nama_barang, harga_jual, kategori){
+//         db.transaction(function(t){
+//           t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
+//             function(error){
+//               console.log(error.message);
+//             })
+//         })
+//       }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], obj[i].tipe);
+//     }
+//   }).fail(function(a,b,error){
+//     alert(error);
+//   }).always(function(){
+//     tampilFood();
+//     tampilBvrg();
+//   })
+// }
+
 function checkUpdates(){
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+    url: 'http://demo.medianusamandiri.com/lightpos/API/menu/',
     type: 'GET'
   }).done(function(obj){
-
     db.transaction(function(t){
       t.executeSql('DROP TABLE m_barang');
       t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
     })
 
     for (var i = 0; i < obj.length; i++) {
+      if(cpyProf.id_cabang == obj[i].id_cabang && cpyProf.id_client == obj[i].id_client){
       // var harga = obj[i].harga.split('-');
-      var insert = function(id_barang, nama_barang, harga_jual, kategori){
-        db.transaction(function(t){
-          t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
-            function(error){
-              console.log(error.message);
-            })
-        })
-      }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], obj[i].tipe);
+        var insert = function(id_barang, nama_barang, harga_jual, kategori){
+          db.transaction(function(t){
+            t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
+              function(error){
+                console.log(error.message);
+              })
+          })
+        }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], 1);
+      }
     }
   }).fail(function(a,b,error){
     alert(error);
@@ -1217,9 +1284,9 @@ function uploadPenjualan(){
           var temp = {
             "no_jual": rs.rows.item(i).no_penjualan,
             "tanggal": rs.rows.item(i).tgl_penjualan,
-            "jenis_jual": rs.rows.item(i).jenis_jual,
+            "tipe_jual": rs.rows.item(i).jenis_jual,
             "jenis_bayar": rs.rows.item(i).jenis_bayar,
-            "user": "1",
+            "user": cpyProf.id_client,
             "total": rs.rows.item(i).total_jual,
             "grantot": rs.rows.item(i).grantot_jual,
             "bayar_tunai": rs.rows.item(i).bayar_tunai,
@@ -1229,7 +1296,7 @@ function uploadPenjualan(){
             "meja": "1",
             "id_barang": rs.rows.item(i).id_barang,
             "qty": rs.rows.item(i).qty_jual,
-            "harga_jual": rs.rows.item(i).harga_jual
+            "harga_jual": rs.rows.item(i).harga_jual,
           }
 
           console.log(temp);
@@ -1529,7 +1596,9 @@ function uploadStatus(kode, jenis_ubah){
 }
 
 function register(q){
-  var temp = {};
+  var temp = {
+    'device' : device.uuid
+  };
 
   $.each($(q).serializeArray(), function(){
     temp[this.name] = this.value;
@@ -1540,7 +1609,7 @@ function register(q){
     method: 'POST',
     data: JSON.stringify(temp)
   }).always(function(result){
-    if(result.status == '201'){
+    if(result.slice(1) == '0'){
       app.dialog.alert('Sukses mendaftar!', 'Register', function(){
         $('#register_cred').trigger('reset');
         app.views.main.router.navigate('/login/');
@@ -1552,3 +1621,9 @@ function register(q){
 
   console.log(temp);      
 }
+
+/*
+status => 2,  Silahkan Konfirmasi Register di Email Anda
+status => 3, Data Anda Sudah Terdaftar, silahkan upgrade Premium
+status => 4,  Data Anda Sudah Terdaftar, dengan status premium
+*/
