@@ -88,9 +88,9 @@ document.addEventListener('deviceready', function() {
     tx.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj (id_pj INTEGER PRIMARY KEY AUTOINCREMENT, no_penjualan VARCHAR(30), no_faktur VARCHAR(30), tgl_penjualan DATE, jenis_jual int, jenis_bayar int, id_customer int, id_user  int, stamp_date datetime, disc_prs double, disc_rp double, sc_prs double, sc_rp double, ppn double, total_jual double, grantot_jual double, bayar_tunai double, bayar_card double, nomor_kartu varchar, ref_kartu varchar, kembali_tunai double, void_jual varchar, no_meja int, ip varchar, id_gudang int, pl_retail text, meja int, st int)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl (id_dtl_jual int, id_pj int, id_barang int, qty_jual double, harga_jual double, discprs double, discrp double, dtl_total double, harga_jual_cetak double, user int, dtpesan datetime, ready int default 0)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl_tmp (id_tmp INTEGER PRIMARY KEY AUTOINCREMENT,id_barang INT NOT NULL UNIQUE, qty INT  NOT NULL,total DOUBLE, harga DOUBLE,nama_barang VARCHAR(20) NOT NULL)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER, qty INTEGER )');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20))');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl_tmp (id_tmp INTEGER PRIMARY KEY AUTOINCREMENT, id_barang INT, id_combo INT, qty INT, total DOUBLE, harga DOUBLE, nama_barang VARCHAR(20), nama_combo VARCHAR(20))');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER)');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20), harga_jual INT)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS m_user( id_user INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, username VARCHAR(20), pass VARCHAR(20), nama_user VARCHAR(50))')
 
     tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['1','TEST MENU 1','15000', '1']);
@@ -342,7 +342,10 @@ function onStoreSuccess(){
   // }, function(){
   //   return;
   // })
-  console.log('Store Success')
+  console.log('Store Success');
+
+  initMenu();
+  initCombo();
 }
 
 function onStoreFail(){
@@ -365,10 +368,10 @@ function onRetSuccess(obj){
       sendPing();
       cekStatus();
 
-      if(updates != '0'){
-        checkUpdates();
-        checkUpdates2();
-      }
+      // if(updates != '0'){
+      //   checkUpdates();
+      //   checkUpdates2();
+      // }
 
       $('#bayarButton').removeAttr('disabled').removeClass('disabled');
 
@@ -1248,6 +1251,7 @@ function checkUpdates2(){
     })
 
     for (var i = 0; i < obj.length; i++) {
+      if(obj[i].id_client == cpyProf.id_client)
       var insert = function(id_combo, nama_combo){
         db.transaction(function(t){
           t.executeSql('INSERT INTO m_combo VALUES (?,?)', [id_combo, nama_combo], function(t, success){}, 
@@ -1267,6 +1271,83 @@ function checkUpdates2(){
             })
         })
       }(obj[i].id_combo, obj[i].id_barang, '1');
+    }
+  }).fail(function(a,b,error){
+    alert(error);
+  }).always(function(){
+    tampilCombo();
+  })
+}
+
+function initMenu(){
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/menu/',
+    type: 'GET'
+  }).done(function(obj){
+    db.transaction(function(t){
+      t.executeSql('DROP TABLE m_barang');
+      t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
+    })
+
+    for (var i = 0; i < obj.length; i++) {
+      if(cpyProf.id_cabang == obj[i].id_cabang && cpyProf.id_client == obj[i].id_client){
+      // var harga = obj[i].harga.split('-');
+        var insert = function(id_barang, nama_barang, harga_jual, kategori){
+          db.transaction(function(t){
+            t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
+              function(error){
+                console.log(error.message);
+              })
+          })
+        }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], 1);
+      }
+    }
+  }).fail(function(a,b,error){
+    alert(error);
+  }).always(function(){
+    tampilFood();
+    tampilBvrg();
+  })
+}
+
+function initCombo(){
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/combo/',
+    type: 'GET'
+  }).done(function(obj){
+
+    db.transaction(function(t){
+      t.executeSql('DROP TABLE m_combo');
+      t.executeSql('DROP TABLE combo_dtl');
+
+      t.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20), harga_jual INT)');
+      t.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER)');
+    })
+
+    for (var i = 0; i < obj.length; i++) {
+      if(obj[i].id_client == cpyProf.id_client){
+        var insert = function(id_combo, nama_combo){
+          db.transaction(function(t){
+            t.executeSql('INSERT INTO m_combo VALUES (?,?,?)', [id_combo, nama_combo], function(t, success){}, 
+              function(error){
+                console.log(error.message);
+              })
+          })
+        }(obj[i].id_combo, obj[i].nama_combo, obj[i].hj.split('-')[0]);
+      }
+    }
+
+    for (var i = 0; i < obj.length; i++) {
+      if(obj[i].id_client == cpyProf.id_client){
+        var insert = function(id_combo, id_barang){
+          db.transaction(function(t){
+            t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', [id_combo, id_barang], function(t, success){}, 
+              function(error){
+                console.log(error.message);
+              })
+          })
+        }(obj[i].id_combo, obj[i].id_barang);
+      }
     }
   }).fail(function(a,b,error){
     alert(error);
