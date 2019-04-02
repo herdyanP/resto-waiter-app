@@ -36,9 +36,6 @@ var cpyProf;
 // })
 
 document.addEventListener('deviceready', function() {
-  document.addEventListener("backbutton", onBackPressed, false);
-  document.addEventListener("online", onOnline, false);
-
   adid = {
     banner: 'ca-app-pub-3940256099942544/6300978111',
     // banner: 'ca-app-pub-8300135360648716/8651556341',
@@ -50,27 +47,6 @@ document.addEventListener('deviceready', function() {
     position: AdMob.AD_POSITION.BOTTOM_CENTER,
     autoShow: true
   });
-
-//   admob.setOptions({
-//     // publisherId:           "ca-app-pub-8300135360648716/8651556341",  // Production
-//     publisherId:           "ca-app-pub-3940256099942544/6300978111",  // Test
-//     // interstitialAdId:      "ca-app-pub-3940256099942544/1033173712",  
-//     autoShowBanner:        false,                                      
-//     // autoShowRInterstitial: false,                                     
-// /*    autoShowRewarded:      false,                                     
-//     tappxIdiOS:            "/XXXXXXXXX/Pub-XXXX-iOS-IIII",            
-//     tappxIdAndroid:        "/XXXXXXXXX/Pub-XXXX-Android-AAAA",        
-//     tappxShare:            0.5                                        
-// */  });
-      
-  // Start showing banners (atomatic when autoShowBanner is set to true)
-  // admob.createBannerView();
-  
-  // Request interstitial ad (will present automatically when autoShowInterstitial is set to true)
-  // admob.requestInterstitialAd();
-
-  // Request rewarded ad (will present automatically when autoShowRewarded is set to true)
-  // admob.requestRewardedAd();
 
   screen.orientation.lock('portrait');
 
@@ -84,83 +60,60 @@ document.addEventListener('deviceready', function() {
     transaction.executeSql(executeQuery);
   });
 
+  // TODO: pj_dtl, tambahan untuk tipe jual, 1 = barang, 2 = combo (done)
+
   db.transaction(function(tx) {
     tx.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS pj (id_pj INTEGER PRIMARY KEY AUTOINCREMENT, no_penjualan VARCHAR(30), no_faktur VARCHAR(30), tgl_penjualan DATE, jenis_jual int, jenis_bayar int, id_customer int, id_user  int, stamp_date datetime, disc_prs double, disc_rp double, sc_prs double, sc_rp double, ppn double, total_jual double, grantot_jual double, bayar_tunai double, bayar_card double, nomor_kartu varchar, ref_kartu varchar, kembali_tunai double, void_jual varchar, no_meja int, ip varchar, id_gudang int, pl_retail text, meja int, st int)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl (id_dtl_jual int, id_pj int, id_barang int, qty_jual double, harga_jual double, discprs double, discrp double, dtl_total double, harga_jual_cetak double, user int, dtpesan datetime, ready int default 0)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl_tmp (id_tmp INTEGER PRIMARY KEY AUTOINCREMENT, id_barang INT, id_combo INT, qty INT, total DOUBLE, harga DOUBLE, nama_barang VARCHAR(20), nama_combo VARCHAR(20))');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY, nama_combo VARCHAR(20), harga_jual INT)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20), harga_jual INT)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS m_user( id_user INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, username VARCHAR(20), pass VARCHAR(20), nama_user VARCHAR(50))')
-
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['1','TEST MENU 1','15000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['2','TEST MENU 2','12000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['3','TEST MENU 3','13000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['4','TEST MENU 4','10000', '2']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['5','TEST MENU 5','8000', '2']);
-
-    tx.executeSql('INSERT INTO m_combo VALUES (?,?)', ['1', 'TEST COMBO 1']);
-    tx.executeSql('INSERT INTO m_combo VALUES (?,?)', ['2', 'TEST COMBO 2']);
-
-    // tx.executeSql('INSERT INTO m_user (user, pwd, nama_user) VALUES (?,?,?)', ['admin', 'admin', 'Administrator']);
-    // tx.executeSql('INSERT INTO m_user (user, pwd, nama_user) VALUES (?,?,?)', ['ryan', '12345', 'Herdyan Pradana']);
-
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['1', '1', '2']);
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['1', '4', '2']);
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['2', '3', '4']);
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['2', '4', '2']);
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', ['2', '5', '2']);
-
+    tx.executeSql('CREATE TABLE IF NOT EXISTS pj (id_pj INTEGER PRIMARY KEY AUTOINCREMENT, no_penjualan VARCHAR(30), no_faktur VARCHAR(30), tgl_penjualan DATE, jenis_jual int, jenis_bayar int, id_customer int, id_user  int, stamp_date datetime, disc_prs double, disc_rp double, sc_prs double, sc_rp double, ppn double, total_jual double, grantot_jual double, bayar_tunai double, bayar_card double, nomor_kartu varchar, ref_kartu varchar, kembali_tunai double, void_jual varchar, no_meja int, ip varchar, id_gudang int, pl_retail text, meja int, st int)');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl (id_dtl_jual int, id_pj int, id_barang int, qty_jual double, harga_jual double, discprs double, discrp double, dtl_total double, harga_jual_cetak double, user int, dtpesan datetime, tipe_jual INT)');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl_tmp (id_tmp INTEGER PRIMARY KEY AUTOINCREMENT, id_barang INT, qty INT, total DOUBLE, harga DOUBLE, nama_barang VARCHAR(20), id_combo INT, nama_combo VARCHAR(20), tipe INT)');
   });
 
-var d = new Date();
-var tgls=d.getFullYear()+"-"+("0" + (d.getMonth()+1)).slice(-2)+"-"+("0" + d.getDate()).slice(-2);
-var stime = window.localStorage.getItem("tgl");
+  var d = new Date();
+  var tgls=d.getFullYear()+"-"+("0" + (d.getMonth()+1)).slice(-2)+"-"+("0" + d.getDate()).slice(-2);
+  var stime = window.localStorage.getItem("tgl");
 
-// $$('.panel-left').on('panel:closed', function(){
-//   $.each($('.accordion-item-opened'), function(){
-//     app.accordion.close(this);
-//   })
-// })
-
-if(stime=="" || stime==null){
-  window.localStorage.setItem("tgl",tgls);
-  window.localStorage.setItem("inctrx",1);
-}
-if(stime!=tgls){
-  window.localStorage.setItem("tgl",tgls);
-  window.localStorage.setItem("inctrx",1);
-}
-
-app.init();
-
-app.searchbar.create({
-  el: '#foodSearch',
-  backdrop: false,
-  on: {
-    disable: function(){
-      tampilFood();
-    }
+  if(stime=="" || stime==null){
+    window.localStorage.setItem("tgl",tgls);
+    window.localStorage.setItem("inctrx",1);
   }
-})
-
-app.searchbar.create({
-  el: '#bvrgSearch',
-  backdrop: false,
-  on: {
-    disable: function(){
-      tampilBvrg();
-    }
+  if(stime!=tgls){
+    window.localStorage.setItem("tgl",tgls);
+    window.localStorage.setItem("inctrx",1);
   }
-})
 
-tampilFood();
-tampilBvrg();
-tampilCombo();
+  app.init();
 
-onLogin();
+  app.searchbar.create({
+    el: '#foodSearch',
+    backdrop: false,
+    on: {
+      disable: function(){
+        tampilFood();
+      }
+    }
+  })
 
-window.localStorage.setItem('test', 1);
+  app.searchbar.create({
+    el: '#bvrgSearch',
+    backdrop: false,
+    on: {
+      disable: function(){
+        tampilBvrg();
+      }
+    }
+  })
+
+  onLogin();
+  tampilFood();
+  tampilCombo();
+
+  window.localStorage.setItem('test', 1);
+
+  document.addEventListener("backbutton", onBackPressed, false);
+  document.addEventListener("online", onOnline, false);
 });
 
 function onOnline(){
@@ -199,7 +152,7 @@ function onOnline(){
         updatePj2();
         afterOnline(a);
 
-    })
+      })
   })
 }
 
@@ -227,6 +180,8 @@ function onConstruction(){
 }
 
 function onNewLogin(q){
+  $('#login_button').addClass('disabled');
+
   var temp = {
     'device' : device.uuid
   };
@@ -240,7 +195,8 @@ function onNewLogin(q){
   $.ajax({
     url: 'http://demo.medianusamandiri.com/lightpos/API/login/',
     method: 'POST',
-    data: JSON.stringify(temp)
+    data: JSON.stringify(temp),
+    timeout: 10000
   }).done(function(result){
     console.log(result);
     var c = 0;
@@ -276,12 +232,20 @@ function onNewLogin(q){
         }).open();
       } 
     } else {
-        app.toast.create({
-          text: "Cek lagi username / password anda",
-          closeTimeout: 3000,
-          closeButton: true
-        }).open();
-      }
+      app.toast.create({
+        text: "Cek lagi username / password anda",
+        closeTimeout: 3000,
+        closeButton: true
+      }).open();
+    }
+  }).fail(function(){
+    app.toast.create({
+      text: "Koneksi ke Server Gagal",
+      closeTimeout: 3000,
+      closeButton: true
+    }).open();
+  }).always(function(){
+    $('#login_button').removeClass('disabled');
   })
 
   // db.transaction(function(tx){
@@ -311,31 +275,31 @@ function onStoreSuccess(){
     title: 'Modal Awal',
     closeByBackdropClick: false,
     content: '<div class="list no-hairlines no-hairlines-between">\
-          <ul>\
-            <li class="item-content item-input">\
-              <div class="item-inner">\
-                <div class="item-input-wrap">\
-                  <input type="text" name="modal" id="modal" oninput="comma(this)" style="text-align: right;" />\
-                </div>\
-              </div>\
-            </li>\
-          </ul>\
-        </div>',
+    <ul>\
+    <li class="item-content item-input">\
+    <div class="item-inner">\
+    <div class="item-input-wrap">\
+    <input type="text" name="modal" id="modal" oninput="comma(this)" style="text-align: right;" />\
+    </div>\
+    </div>\
+    </li>\
+    </ul>\
+    </div>',
     buttons: [
-      {
-        text: 'Simpan',
-        onClick: function(dialog, e){
-          var v = $('#modal').val();
-          if(v != '' && v != '0'){
-            modalAwal = v.replace(/\D/g, '');
-            dialog.close();
+    {
+      text: 'Simpan',
+      onClick: function(dialog, e){
+        var v = $('#modal').val();
+        if(v != '' && v != '0'){
+          modalAwal = v.replace(/\D/g, '');
+          dialog.close();
             // window.open('http://kopdanamon.cloudmnm.com/cetak.php?nik='+user+'&bulan=12&tahun='+th+'&page=reportshu&type=android', '_self');
           }
         }
       } 
       
-    ]
-  }).open();
+      ]
+    }).open();
 
   // app.dialog.prompt('Masukkan modal awal', 'Konfirmasi', function(value){
   //   modalAwal = value;
@@ -388,10 +352,28 @@ function onRetSuccess(obj){
 
 function onRetFail(){
   console.log('fail');
+
   $('#bayarButton').attr('disabled', 'true').addClass('disabled');
   $('#logoutRow').css('display', 'none');
 
   $('#currentUser').html('Operator: Guest');
+
+  db.transaction(function(tx){
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['1','TEST MENU 1','15000', '1']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['2','TEST MENU 2','12000', '1']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['3','TEST MENU 3','13000', '1']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['4','TEST MENU 4','10000', '2']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['5','TEST MENU 5','8000', '2']);
+
+    tx.executeSql('INSERT INTO m_combo VALUES (?,?,?)', ['1', 'TEST COMBO 1', '12000']);
+    tx.executeSql('INSERT INTO m_combo VALUES (?,?,?)', ['2', 'TEST COMBO 2', '10000']);
+
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['1', '1']);
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['1', '4']);
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '3']);
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '4']);
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '5']);
+  })
 }
 
 function onLogout(){
@@ -407,6 +389,37 @@ function onRemSuccess(){
   $('#loginRow').css('display', 'block');
 
   emptyDB();
+
+  db.transaction(function(tx){
+    tx.executeSql('DROP TABLE m_barang');
+    tx.executeSql('DROP TABLE m_combo');
+    tx.executeSql('DROP TABLE combo_dtl');
+    
+    tx.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY, nama_combo VARCHAR(20), harga_jual INT)');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER)');
+    
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['1','TEST MENU 1','15000', '1']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['2','TEST MENU 2','12000', '1']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['3','TEST MENU 3','13000', '1']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['4','TEST MENU 4','10000', '2']);
+    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['5','TEST MENU 5','8000', '2']);
+
+    tx.executeSql('INSERT INTO m_combo VALUES (?,?,?)', ['1', 'TEST COMBO 1', '12000']);
+    tx.executeSql('INSERT INTO m_combo VALUES (?,?,?)', ['2', 'TEST COMBO 2', '10000']);
+
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['1', '1']);
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['1', '4']);
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '3']);
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '4']);
+    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '5']);
+  }, function(error){
+    console.log(error);
+  }, function(){
+    tampilFood();
+    tampilBvrg();
+    tampilCombo();
+  })
   // console.log('Remove Success');
 }
 
@@ -545,7 +558,7 @@ function tampilCombo(){
       var datanya = '';
       for (i = 0; i < len; i++){
 
-        datanya += '<div onclick="getCombo('+rs.rows.item(i).id_combo+')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_combo+'</p></div>';
+        datanya += '<div onclick="simpanCombo('+rs.rows.item(i).id_combo+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_combo+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_combo+'</p></div>';
         // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;text-align:left;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
       }
 
@@ -569,14 +582,16 @@ function getCombo(a){
   })
 }
 
+// id_barang INT, id_combo INT, qty INT, total DOUBLE, harga DOUBLE, nama_barang VARCHAR(20), nama_combo VARCHAR(20)
+
 function simpan(a,b,c,d){
   db.transaction(function(transaction) {
     var c1=0;
     var qty=0;
     transaction.executeSql('SELECT count(*) as c, qty, harga FROM pj_dtl_tmp where id_barang=?', [a], function(tx, rs) {
       if(rs.rows.item(0).c<1){
-        var executeQuery = "INSERT INTO pj_dtl_tmp (id_barang, qty,total,nama_barang,harga) VALUES (?,?,?,?,?)";
-        transaction.executeSql(executeQuery, [a,b,c,d,c]
+        var executeQuery = "INSERT INTO pj_dtl_tmp (id_barang, qty, total, nama_barang, harga, tipe) VALUES (?,?,?,?,?,?)";
+        transaction.executeSql(executeQuery, [a,b,c,d,c,1]
           , function(tx, result) {
             keranjang(a,b,c,d);
           },
@@ -602,6 +617,39 @@ function simpan(a,b,c,d){
   });
 }
 
+function simpanCombo(a,b,c,d){
+  db.transaction(function(transaction) {
+    var c1=0;
+    var qty=0;
+    transaction.executeSql('SELECT count(*) as c, qty, harga FROM pj_dtl_tmp where id_combo=?', [a], function(tx, rs) {
+      if(rs.rows.item(0).c<1){
+        var executeQuery = "INSERT INTO pj_dtl_tmp (id_combo, qty, total, nama_combo, harga, tipe) VALUES (?,?,?,?,?,?)";
+        transaction.executeSql(executeQuery, [a,b,c,d,c,2]
+          , function(tx, result) {
+            keranjang(a,b,c,d);
+          },
+          function(error){
+            alert('Error occurred'); 
+          });
+      } else { //update apabila ada data dikeranjang
+
+        var q=parseInt(rs.rows.item(0).qty)+1;
+        var t=parseInt(rs.rows.item(0).harga)*q;
+        var executeQuery = "UPDATE pj_dtl_tmp SET qty="+ q +", total="+t+" where id_combo=?";             
+        transaction.executeSql(executeQuery, [a], 
+          function(tx, result) {
+            keranjang(a,b,c,d);
+          },
+          function(error){
+            alert('Error occurred'); 
+          });
+      }
+    }, function(tx, error) {
+      alert('SELECT error: ' + error.message);
+    });
+  });
+}
+
 function keranjang(a,b,c,d){
   var data = '<ul>'
   var jumlah = 0;
@@ -610,16 +658,29 @@ function keranjang(a,b,c,d){
       var len = rs.rows.length;
       var all_rows = [];
       for (i = 0; i < len; i++){
-        data += '<li class="item-content ">\
-        <div class="item-inner">\
-        <div class="item-title">'+rs.rows.item(i).nama_barang+'\
-        <div class="item-footer">'+rs.rows.item(i).qty+' x '+rs.rows.item(i).harga+'</div>\
-        </div>\
-        <div class="item-after"><a href="#" onclick="pilihHapus('+rs.rows.item(i).id_tmp+','+rs.rows.item(i).qty+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
-        </div>\
-        </li>'
-        // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
-        jumlah += parseInt(rs.rows.item(i).qty * rs.rows.item(i).harga) * 1.1;
+        if(rs.rows.item(i).nama_barang){
+          data += '<li class="item-content ">\
+          <div class="item-inner">\
+          <div class="item-title">'+rs.rows.item(i).nama_barang+'\
+          <div class="item-footer">'+rs.rows.item(i).qty+' x '+rs.rows.item(i).harga+'</div>\
+          </div>\
+          <div class="item-after"><a href="#" onclick="pilihHapus('+rs.rows.item(i).id_tmp+','+rs.rows.item(i).qty+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
+          </div>\
+          </li>'
+          // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
+          jumlah += parseInt(rs.rows.item(i).qty * rs.rows.item(i).harga) * 1.1;
+        } else {
+          data += '<li class="item-content ">\
+          <div class="item-inner">\
+          <div class="item-title">'+rs.rows.item(i).nama_combo+'\
+          <div class="item-footer">'+rs.rows.item(i).qty+' x '+rs.rows.item(i).harga+'</div>\
+          </div>\
+          <div class="item-after"><a href="#" onclick="pilihHapus('+rs.rows.item(i).id_tmp+','+rs.rows.item(i).qty+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
+          </div>\
+          </li>'
+          // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
+          jumlah += parseInt(rs.rows.item(i).qty * rs.rows.item(i).harga) * 1.1;
+        }
       }
 
       // if(len == 0){
@@ -932,13 +993,13 @@ function again(a){
 
   $('#bayar').val('');
   for (var i = 0; i < a.length; i++) {
-    var insert = function(id_pj, id_barang, qty_jual, harga_jual, discprs, discrp, dtl_total, harga_jual_cetak, user, dtpesan, id_tmp){
+    var insert = function(id_pj, id_barang, qty_jual, harga_jual, discprs, discrp, dtl_total, harga_jual_cetak, user, dtpesan, id_tmp, tipe){
       db.transaction(function(t){
         t.executeSql('SELECT COUNT(*) c FROM pj_dtl WHERE id_pj = ? AND id_barang = ?', [id_pj, id_barang], 
           function(t, result){
             db.transaction(function(transaction) {
-              var executeQuery = "INSERT INTO pj_dtl (id_pj, id_barang, qty_jual, harga_jual, discprs, discrp, dtl_total, harga_jual_cetak, user, dtpesan) VALUES (?,?,?,?,?,?,?,?,?,?)";
-              transaction.executeSql(executeQuery, [id_pj, id_barang, qty_jual, harga_jual, discprs, discrp, dtl_total, harga_jual_cetak, user, dtpesan], 
+              var executeQuery = "INSERT INTO pj_dtl (id_pj, id_barang, qty_jual, harga_jual, discprs, discrp, dtl_total, harga_jual_cetak, user, dtpesan, tipe_jual) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+              transaction.executeSql(executeQuery, [id_pj, id_barang, qty_jual, harga_jual, discprs, discrp, dtl_total, harga_jual_cetak, user, dtpesan, tipe], 
                 function(tx, result) {
                   hapusKeranjang(id_tmp);
                 },
@@ -948,7 +1009,7 @@ function again(a){
             });
           }, function(error){})
       })
-    }(a[i].idpj, a[i].id_barang, a[i].qty, a[i].harga, "0", "0", a[i].total, a[i].harga, "1", tgltime, a[i].id_tmp)
+    }(a[i].idpj, a[i].id_barang, a[i].qty, a[i].harga, "0", "0", a[i].total, a[i].harga, "1", tgltime, a[i].id_tmp, a[i].tipe)
   }
 
   setTimeout(function(){
@@ -1124,24 +1185,6 @@ function printBayar(q) {
   // }
 }
 
-function test(){
-  db.transaction(function(tx){
-    tx.executeSql('SELECT b.no_penjualan, c.nama_barang, a.qty_jual FROM pj_dtl a JOIN pj b ON a.id_pj = b.id_pj JOIN m_barang c ON a.id_barang = c.id_barang', [], 
-      function(t, result){
-        var tes = 'Penjualan : \n';
-        for(var i = 0; i < result.rows.length; i++){
-          tes += result.rows.item(i).no_penjualan+' : '+result.rows.item(i).nama_barang+' '+result.rows.item(i).qty_jual+' item(s);\n';
-        }
-
-        console.log(tes);
-        alert(tes);
-      }, 
-      function(error){
-        console.log(error);
-      })
-  })
-}
-
 function comma(el){
   if(el.value == '') el.value = 0;
   el.value = parseInt((el.value).replace(/\D/g, '')).toLocaleString('id-ID');
@@ -1205,79 +1248,79 @@ function listPenjualan(){
 //   })
 // }
 
-function checkUpdates(){
-  $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/menu/',
-    type: 'GET'
-  }).done(function(obj){
-    db.transaction(function(t){
-      t.executeSql('DROP TABLE m_barang');
-      t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
-    })
+// function checkUpdates(){
+//   $.ajax({
+//     url: 'http://demo.medianusamandiri.com/lightpos/API/menu/',
+//     type: 'GET'
+//   }).done(function(obj){
+//     db.transaction(function(t){
+//       t.executeSql('DROP TABLE m_barang');
+//       t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
+//     })
 
-    for (var i = 0; i < obj.length; i++) {
-      if(cpyProf.id_cabang == obj[i].id_cabang && cpyProf.id_client == obj[i].id_client){
-      // var harga = obj[i].harga.split('-');
-        var insert = function(id_barang, nama_barang, harga_jual, kategori){
-          db.transaction(function(t){
-            t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
-              function(error){
-                console.log(error.message);
-              })
-          })
-        }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], 1);
-      }
-    }
-  }).fail(function(a,b,error){
-    alert(error);
-  }).always(function(){
-    tampilFood();
-    tampilBvrg();
-  })
-}
+//     for (var i = 0; i < obj.length; i++) {
+//       if(cpyProf.id_cabang == obj[i].id_cabang && cpyProf.id_client == obj[i].id_client){
+//       // var harga = obj[i].harga.split('-');
+//         var insert = function(id_barang, nama_barang, harga_jual, kategori){
+//           db.transaction(function(t){
+//             t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
+//               function(error){
+//                 console.log(error.message);
+//               })
+//           })
+//         }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], 1);
+//       }
+//     }
+//   }).fail(function(a,b,error){
+//     alert(error);
+//   }).always(function(){
+//     tampilFood();
+//     tampilBvrg();
+//   })
+// }
 
-function checkUpdates2(){
-  $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/combo/',
-    type: 'GET'
-  }).done(function(obj){
+// function checkUpdates2(){
+//   $.ajax({
+//     url: 'http://demo.medianusamandiri.com/lightpos/API/combo/',
+//     type: 'GET'
+//   }).done(function(obj){
 
-    db.transaction(function(t){
-      t.executeSql('DROP TABLE m_combo');
-      t.executeSql('DROP TABLE combo_dtl');
+//     db.transaction(function(t){
+//       t.executeSql('DROP TABLE m_combo');
+//       t.executeSql('DROP TABLE combo_dtl');
 
-      t.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20))');
-      t.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER, qty INTEGER )');
-    })
+//       t.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20))');
+//       t.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER, qty INTEGER )');
+//     })
 
-    for (var i = 0; i < obj.length; i++) {
-      if(obj[i].id_client == cpyProf.id_client)
-      var insert = function(id_combo, nama_combo){
-        db.transaction(function(t){
-          t.executeSql('INSERT INTO m_combo VALUES (?,?)', [id_combo, nama_combo], function(t, success){}, 
-            function(error){
-              console.log(error.message);
-            })
-        })
-      }(obj[i].id_combo, obj[i].nama_combo);
-    }
+//     for (var i = 0; i < obj.length; i++) {
+//       if(obj[i].id_client == cpyProf.id_client)
+//       var insert = function(id_combo, nama_combo){
+//         db.transaction(function(t){
+//           t.executeSql('INSERT INTO m_combo VALUES (?,?)', [id_combo, nama_combo], function(t, success){}, 
+//             function(error){
+//               console.log(error.message);
+//             })
+//         })
+//       }(obj[i].id_combo, obj[i].nama_combo);
+//     }
 
-    for (var i = 0; i < obj.length; i++) {
-      var insert = function(id_combo, id_barang, qty){
-        db.transaction(function(t){
-          t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', [id_combo, id_barang, qty], function(t, success){}, 
-            function(error){
-              console.log(error.message);
-            })
-        })
-      }(obj[i].id_combo, obj[i].id_barang, '1');
-    }
-  }).fail(function(a,b,error){
-    alert(error);
-  }).always(function(){
-    tampilCombo();
-  })
-}
+//     for (var i = 0; i < obj.length; i++) {
+//       var insert = function(id_combo, id_barang, qty){
+//         db.transaction(function(t){
+//           t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang, qty) VALUES (?,?,?)', [id_combo, id_barang, qty], function(t, success){}, 
+//             function(error){
+//               console.log(error.message);
+//             })
+//         })
+//       }(obj[i].id_combo, obj[i].id_barang, '1');
+//     }
+//   }).fail(function(a,b,error){
+//     alert(error);
+//   }).always(function(){
+//     tampilCombo();
+//   })
+// }
 
 function initMenu(){
   $.ajax({
@@ -1291,7 +1334,6 @@ function initMenu(){
 
     for (var i = 0; i < obj.length; i++) {
       if(cpyProf.id_cabang == obj[i].id_cabang && cpyProf.id_client == obj[i].id_client){
-      // var harga = obj[i].harga.split('-');
         var insert = function(id_barang, nama_barang, harga_jual, kategori){
           db.transaction(function(t){
             t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
@@ -1365,7 +1407,7 @@ function uploadPenjualan(){
           var temp = {
             "no_jual": rs.rows.item(i).no_penjualan,
             "tanggal": rs.rows.item(i).tgl_penjualan,
-            "tipe_jual": rs.rows.item(i).jenis_jual,
+            "tipe_jual": rs.rows.item(i).tipe_jual,
             "jenis_bayar": rs.rows.item(i).jenis_bayar,
             "user": cpyProf.id_client,
             "total": rs.rows.item(i).total_jual,
@@ -1435,15 +1477,15 @@ function cariLaporan(){
   var c = document.getElementById('tgl_akhir');
   var jenis;
   var datanya =   '<table>\
-                    <thead>\
-                      <tr>\
-                        <th class="label-cell">No. Penjualan</th>\
-                        <th>Tanggal Penjualan</th>\
-                        <th class="numeric-cell">Total Penjualan</th>\
-                        <th>Jenis Pembayaran</th>\
-                      </tr>\
-                    </thead>\
-                    <tbody>';
+  <thead>\
+  <tr>\
+  <th class="label-cell">No. Penjualan</th>\
+  <th>Tanggal Penjualan</th>\
+  <th class="numeric-cell">Total Penjualan</th>\
+  <th>Jenis Pembayaran</th>\
+  </tr>\
+  </thead>\
+  <tbody>';
   
   var data = {
     'jenis_cari' : a,
@@ -1459,15 +1501,15 @@ function cariLaporan(){
     for(var i = 0; i < result.length; i++){
       switch (result[i].jenis_bayar){
         case '1':
-          jenis = 'Tunai';
-          break;
+        jenis = 'Tunai';
+        break;
         case '2':
-          jenis = 'Kartu Kredit';
-          break;
+        jenis = 'Kartu Kredit';
+        break;
         case '3':
-          jenis = 'E-Money';
-          break;
-        }
+        jenis = 'E-Money';
+        break;
+      }
 
       if(i == 0){
         datanya += '<tr><td class="label-cell">'+result[i].no_penjualan+'</td><td>'+result[i].tgl_penjualan+'</td><td class="numeric-cell">'+parseInt(result[i].total_jual).toLocaleString('id-ID')+'</td><td>'+jenis+'</td></tr>';
@@ -1486,6 +1528,8 @@ function cariLaporan(){
 }
 
 function sendPing(){
+  cekStatus();
+
   var d = new Date();
 
   var mo = ('0' + (d.getMonth()+1)).slice(-2);
@@ -1515,21 +1559,6 @@ function sendPing(){
   })
 }
 
-function updateSesuatu(a, b){
-  var up = {
-    'id_barang' : a,
-    'st_ubah' : b
-  }
-
-  $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/ubah/',
-    method: 'POST',
-    data: JSON.stringify(up)
-  }).done(function(result){
-    console.log(result);
-  })
-}
-
 function cekUUID(){
   alert('Nomor ID device: '+device.uuid);
 }
@@ -1547,34 +1576,30 @@ function cekStatus(){
       if(j.nomor_device == device.uuid){
         switch(j.kode){
           case 'A':
-            console.log('tambahBarang');
-            tambahBarang(j.id_barang, j.jenis_ubah);
-            c++;
-            // pilihUpdate(1, j.id_barang);
-            break;
-          case 'B':
-            console.log('updateMenu');
-            updateMenu(j.id_menu, j.jenis_ubah);
-            c++;
-            // pilihUpdate(2, j.id_menu);
-            break;
-          case 'C':
-            console.log('updateCombo');
-            updateCombo(j.id_combo, j.jenis_ubah);
-            c++;
-            // pilihUpdate(3, j.id_combo);
-            break;
-          case 'D':
-            console.log('updateHarga');
-            updateHarga(j.id_harga, j.jenis_ubah);
-            c++;
-            // pilihUpdate(4, j.id_harga);
-            break;
-        }
-      }// cek status tiap login, lek gak ada ambil aja /data/ 
+          console.log('tambahBarang');
+          tambahBarang(j.id_barang, j.jenis_ubah);
+          c++;
+          break;
 
-      // console.log(j);
-      // t.push(j);
+          case 'B':
+          console.log('updateMenu');
+          updateMenu(j.id_menu, j.jenis_ubah);
+          c++;
+          break;
+
+          case 'C':
+          console.log('updateCombo');
+          updateCombo(j.id_combo, j.jenis_ubah);
+          c++;
+          break;
+
+          case 'D':
+          console.log('updateHarga');
+          updateHarga(j.id_harga, j.jenis_ubah);
+          c++;
+          break;
+        }
+      }
     })
     updates = c;
   })
@@ -1677,6 +1702,7 @@ function uploadStatus(kode, jenis_ubah){
 }
 
 function register(q){
+  $('#register_button').addClass('disabled');
   var temp = {
     'device' : device.uuid
   };
@@ -1688,8 +1714,19 @@ function register(q){
   $.ajax({
     url: 'http://demo.medianusamandiri.com/lightpos/API/daftar/',
     method: 'POST',
-    data: JSON.stringify(temp)
+    data: JSON.stringify(temp),
+    timeout: 10000
+  }).done(function(result){
+    console.log(result);
+  }).fail(function(){
+    app.toast.create({
+      text: "Koneksi ke Server Gagal",
+      closeTimeout: 3000,
+      closeButton: true
+    }).open();
   }).always(function(result){
+    $('#register_button').removeClass('disabled');
+
     if(result.slice(1) == '0'){
       app.dialog.alert('Sukses mendaftar!', 'Register', function(){
         $('#register_cred').trigger('reset');

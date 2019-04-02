@@ -4627,7 +4627,8 @@ html.device-pixel-ratio-3 .ios li:last-child li .item-inner:after {
   margin-left: 0;
 }
 .md .list ul ul {
-  padding-left: 56px;
+  /*padding-left: 56px;*/
+  padding-left: 20px;
 }
 .md .list .item-media {
   padding-top: 8px;
