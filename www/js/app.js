@@ -249,7 +249,8 @@ function onNewLogin(q){
   })
 }
 
-function onStoreSuccess(){
+function onStoreSuccess(obj){
+  cpyProf = obj;
   app.dialog.create({
     title: 'Modal Awal',
     closeByBackdropClick: false,
@@ -316,7 +317,7 @@ function onRetSuccess(obj){
       //   checkUpdates2();
       // }
 
-      $('#bayarButton').removeAttr('disabled').removeClass('disabled');
+      // $('#bayarButton').removeAttr('disabled').removeClass('disabled');
 
       $('#loginRow').css('display', 'none');
       $('#logoutRow').css('display', 'block');
@@ -332,10 +333,12 @@ function onRetSuccess(obj){
 function onRetFail(){
   console.log('fail');
 
-  $('#bayarButton').attr('disabled', 'true').addClass('disabled');
-  $('#logoutRow').css('display', 'none');
+  app.views.main.router.navigate('/login/');
 
-  $('#currentUser').html('Operator: Guest');
+  // $('#bayarButton').attr('disabled', 'true').addClass('disabled');
+  // $('#logoutRow').css('display', 'none');
+
+  // $('#currentUser').html('Operator: Guest');
 
   db.transaction(function(tx){
     tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['1','TEST MENU 1','15000', '1']);
@@ -367,7 +370,7 @@ function onLogout(){
 
 function onRemSuccess(){
   console.log('rem succ');
-  $('#bayarButton').attr('disabled', 'true').addClass('disabled');
+  // $('#bayarButton').attr('disabled', 'true').addClass('disabled');
   $('#currentUser').html('Operator: Guest');
 
   $('#logoutRow').css('display', 'none');
@@ -1183,7 +1186,7 @@ function emptyDB(){
         keranjang('a', 'b', 'c', 'd');
         // comboItems('a', 'b', 'c', 'd');
       }, function(error){
-        console.log(error.message);
+        console.log(error);
       })
   })
 }
@@ -1323,7 +1326,7 @@ function initMenu(){
           db.transaction(function(t){
             t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
               function(error){
-                console.log(error.message);
+                console.log(error);
               })
           })
         }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], 1);
@@ -1347,35 +1350,40 @@ function initCombo(){
       t.executeSql('DROP TABLE m_combo');
       t.executeSql('DROP TABLE combo_dtl');
 
-      t.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20), harga_jual INT)');
+      t.executeSql('CREATE TABLE IF NOT EXISTS m_combo (id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20), harga_jual INT)');
       t.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER)');
+    }, function(error){
+      console.log(error);
+    }, function(){
+
+      for (var i = 0; i < obj.length; i++) {
+        if(obj[i].id_client == cpyProf.id_client){
+          var insert = function(id_combo, nama_combo, harga){
+            db.transaction(function(t){
+              t.executeSql('INSERT INTO m_combo VALUES (?,?,?)', [id_combo, nama_combo, harga], function(t, success){}, 
+                function(error){
+                  console.log(error.message);
+                })
+            })
+          }(obj[i].id_combo, obj[i].nama_combo, obj[i].hj.split('-')[0]);
+        }
+      }
+
+      for (var i = 0; i < obj.length; i++) {
+        if(obj[i].id_client == cpyProf.id_client){
+          var insert = function(id_combo, id_barang){
+            db.transaction(function(t){
+              t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', [id_combo, id_barang], function(t, success){}, 
+                function(error){
+                  console.log(error.message);
+                })
+            })
+          }(obj[i].id_combo, obj[i].id_barang);
+        }
+      }
+
     })
-
-    for (var i = 0; i < obj.length; i++) {
-      if(obj[i].id_client == cpyProf.id_client){
-        var insert = function(id_combo, nama_combo){
-          db.transaction(function(t){
-            t.executeSql('INSERT INTO m_combo VALUES (?,?,?)', [id_combo, nama_combo], function(t, success){}, 
-              function(error){
-                console.log(error.message);
-              })
-          })
-        }(obj[i].id_combo, obj[i].nama_combo, obj[i].hj.split('-')[0]);
-      }
-    }
-
-    for (var i = 0; i < obj.length; i++) {
-      if(obj[i].id_client == cpyProf.id_client){
-        var insert = function(id_combo, id_barang){
-          db.transaction(function(t){
-            t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', [id_combo, id_barang], function(t, success){}, 
-              function(error){
-                console.log(error.message);
-              })
-          })
-        }(obj[i].id_combo, obj[i].id_barang);
-      }
-    }
+    
   }).fail(function(a,b,error){
     alert(error);
   }).always(function(){
@@ -1704,24 +1712,19 @@ function register(q){
     method: 'POST',
     data: JSON.stringify(temp),
     timeout: 10000
-  }).done(function(result){
-    console.log(result);
-  }).fail(function(){
-    app.toast.create({
-      text: "Koneksi ke Server Gagal",
-      closeTimeout: 3000,
-      closeButton: true
-    }).open();
   }).always(function(result){
     $('#register_button').removeClass('disabled');
+    console.log(result);
 
-    if(result.slice(1) == '0'){
+    if(result.responseText.slice(0, 1) == '0'){
       app.dialog.alert('Sukses mendaftar!', 'Register', function(){
         $('#register_cred').trigger('reset');
         app.views.main.router.navigate('/login/');
         $('#userlogin').val(temp.user);
         $('#passlogin').val(temp.pass);
       })
+    } else {
+      alert('Sudah Terdaftar');
     }
   })
 
