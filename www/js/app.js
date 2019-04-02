@@ -128,7 +128,7 @@ function onOnline(){
           var temp = {
             "no_jual": rs.rows.item(i).no_penjualan,
             "tanggal": rs.rows.item(i).tgl_penjualan,
-            "tipe_jual": rs.rows.item(i).jenis_jual,
+            "tipe_jual": rs.rows.item(i).tipe_jual,
             "jenis_bayar": rs.rows.item(i).jenis_bayar,
             "user": cpyProf.id_client,
             "total": rs.rows.item(i).total_jual,
@@ -1689,7 +1689,10 @@ function uploadStatus(kode, jenis_ubah){
   var temp = {
     'jnotif' : jenis_ubah,
     'no_device' : device.uuid,
-    'kode' : kode
+    'kode' : kode,
+    'id_client' : cpyProf.id_client
+
+    // TODO: kirim status update beserta id_client
   }
 
   $.ajax({
