@@ -1312,7 +1312,7 @@ function listPenjualan(){
 
 function initMenu(){
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/menu/',
+    url: 'http://demo.medianusamandiri.com/lightpos/API/menu/'+cpyProf.id_outlet+'/',
     type: 'GET'
   }).done(function(obj){
     db.transaction(function(t){
