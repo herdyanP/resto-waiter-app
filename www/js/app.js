@@ -1,7 +1,7 @@
 // Dom7
 // sudo cordova build android --release -- --keystore=lightpos.keystore --storePassword=bismillah --alias=lightpos --password=bismillah
 
-// note to self: nyimpen cred login pake token, didapet dari hasil hash di server, yang direturn sama info company
+// note to self: maybe can use: nyimpen cred login pake token, didapet dari hasil hash di server, yang direturn sama info company
 var $$ = Dom7;
 
 // Init App
@@ -37,8 +37,8 @@ var cpyProf;
 
 document.addEventListener('deviceready', function() {
   adid = {
-    banner: 'ca-app-pub-3940256099942544/6300978111',
-    // banner: 'ca-app-pub-8300135360648716/8651556341',
+    // banner: 'ca-app-pub-3940256099942544/6300978111',
+    banner: 'ca-app-pub-8300135360648716/8651556341',
     interstitial: 'ca-app-pub-3940256099942544/1033173712'
   }
 
@@ -247,27 +247,6 @@ function onNewLogin(q){
   }).always(function(){
     $('#login_button').removeClass('disabled');
   })
-
-  // db.transaction(function(tx){
-  //   tx.executeSql('SELECT * FROM m_user WHERE username = ?', [temp.username], 
-  //     function(t, result){
-  //       if(result.rows.item(0).pass == temp.pass){
-  //         temp.nama = result.rows.item(0).nama_user;
-  //         NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
-
-  //         app.views.main.router.navigate('/');
-  //       } else {
-  //         app.toast.create({
-  //           text: "Cek lagi username / password anda",
-  //           closeTimeout: 3000,
-  //           closeButton: true
-  //         }).open();
-  //       }
-  //     },
-  //     function(error){
-  //       alert(error.message)
-  //     })
-  // })
 }
 
 function onStoreSuccess(){
@@ -373,6 +352,12 @@ function onRetFail(){
     tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '3']);
     tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '4']);
     tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '5']);
+  }, function(error){
+    console.log(error);
+  }, function(){
+    tampilFood();
+    tampilBvrg();
+    tampilCombo();
   })
 }
 
