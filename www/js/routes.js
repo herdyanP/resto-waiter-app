@@ -5,13 +5,13 @@ var routes = [
   name: 'home',
   on: {
     pageAfterIn: function(){
-      tampilFood();
-      tampilBvrg();
-      tampilCombo();
+      // tampilFood();
+      // tampilBvrg();
+      // tampilCombo();
 
-      emptyDB();
+      // emptyDB();
 
-      onLogin();
+      // onLogin();
     }
   }
 },

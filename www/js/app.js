@@ -118,8 +118,8 @@ document.addEventListener('deviceready', function() {
   })
 
   onLogin();
-  tampilFood();
-  tampilCombo();
+  // tampilFood();
+  // tampilCombo();
 
   window.localStorage.setItem('test', 1);
 
@@ -128,6 +128,7 @@ document.addEventListener('deviceready', function() {
 });
 
 function onOnline(){
+  console.log('is online');
   // alert('you\'re online');
   cekStatus();
   db.transaction(function(tx){
@@ -192,6 +193,7 @@ function onConstruction(){
 }
 
 function onNewLogin(q){
+  console.log('new login');
   $('#login_button').addClass('disabled');
 
   var temp = {
@@ -309,6 +311,7 @@ function onStoreFail(){
 }
 
 function onLogin(){
+  console.log('cek login');
   NativeStorage.getItem('akun', onRetSuccess, onRetFail);
 }
 
@@ -323,6 +326,9 @@ function onRetSuccess(obj){
       console.log('succ');
       sendPing();
       cekStatus();
+      tampilFood();
+      tampilBvrg();
+      tampilCombo();
 
       // if(updates != '0'){
       //   checkUpdates();
@@ -360,7 +366,7 @@ function onLogout(){
 function onRemSuccess(){
   console.log('rem succ');
   // $('#bayarButton').attr('disabled', 'true').addClass('disabled');
-  $('#currentUser').html('Operator: Guest');
+  // $('#currentUser').html('Operator: Guest');
 
   $('#logoutRow').css('display', 'none');
   $('#loginRow').css('display', 'block');
@@ -1325,7 +1331,7 @@ function initMenu(){
     }
   }).fail(function(a,b,error){
     alert(error);
-  }).always(function(){
+  }).then(function(){
     tampilFood();
     tampilBvrg();
   })
@@ -1337,15 +1343,15 @@ function initCombo(){
     type: 'GET'
   }).done(function(obj){
 
-    db.transaction(function(t){
-      t.executeSql('DROP TABLE m_combo');
-      t.executeSql('DROP TABLE combo_dtl');
+    // db.transaction(function(t){
+    //   t.executeSql('DROP TABLE m_combo');
+    //   t.executeSql('DROP TABLE combo_dtl');
 
-      t.executeSql('CREATE TABLE IF NOT EXISTS m_combo (id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20), harga_jual INT)');
-      t.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER)');
-    }, function(error){
-      console.log(error);
-    }, function(){
+    //   t.executeSql('CREATE TABLE IF NOT EXISTS m_combo (id_combo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nama_combo VARCHAR(20), harga_jual INT)');
+    //   t.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER)');
+    // }, function(error){
+    //   console.log(error);
+    // }, function(){
 
       for (var i = 0; i < obj.length; i++) {
         if(obj[i].id_client == cpyProf.id_client){
@@ -1373,11 +1379,11 @@ function initCombo(){
         }
       }
 
-    })
+    // })
     
   }).fail(function(a,b,error){
     alert(error);
-  }).always(function(){
+  }).then(function(){
     tampilCombo();
   })
 }
@@ -1603,7 +1609,7 @@ function tambahBarang(j, ubah){
 
       var a = function(id_barang, nama_barang, harga, tipe){
         db.transaction(function(tx){
-          tx.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', [id_barang, nama_barang, harga, tipe, 0]);
+          tx.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', [id_barang, nama_barang, harga, tipe, 1]);
         }) 
       }(result[i].id_barang, result[i].nama_barang, result[i].harga.split('-')[0], result[i].tipe)
     }
@@ -1754,3 +1760,4 @@ status => 4,  Data Anda Sudah Terdaftar, dengan status premium
 */
 
 // TODO: untuk versi free, tampilkan menu master barang.
+// TODO: upload status untuk update menu masih error
