@@ -37,8 +37,8 @@ var cpyProf;
 
 document.addEventListener('deviceready', function() {
   adid = {
-    // banner: 'ca-app-pub-3940256099942544/6300978111',
-    banner: 'ca-app-pub-8300135360648716/8651556341',
+    banner: 'ca-app-pub-3940256099942544/6300978111',
+    // banner: 'ca-app-pub-8300135360648716/8651556341',
     interstitial: 'ca-app-pub-3940256099942544/1033173712'
   }
 
@@ -47,6 +47,13 @@ document.addEventListener('deviceready', function() {
     position: AdMob.AD_POSITION.BOTTOM_CENTER,
     autoShow: true
   });
+
+  AdMob.prepareInterstitial({
+    adId: adid.interstitial,
+    autoShow: true
+  });
+
+  AdMob.showInterstitial();
 
   screen.orientation.lock('portrait');
 
@@ -63,12 +70,16 @@ document.addEventListener('deviceready', function() {
   // TODO: pj_dtl, tambahan untuk tipe jual, 1 = barang, 2 = combo (done)
 
   db.transaction(function(tx) {
-    tx.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY, nama_combo VARCHAR(20), harga_jual INT)');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS m_barang ( id_urut INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, id_barang INT NOT NULL UNIQUE, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT, st INT )');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY, nama_combo VARCHAR(20), harga_jual INT )');
     tx.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj (id_pj INTEGER PRIMARY KEY AUTOINCREMENT, no_penjualan VARCHAR(30), no_faktur VARCHAR(30), tgl_penjualan DATE, jenis_jual int, jenis_bayar int, id_customer int, id_user  int, stamp_date datetime, disc_prs double, disc_rp double, sc_prs double, sc_rp double, ppn double, total_jual double, grantot_jual double, bayar_tunai double, bayar_card double, nomor_kartu varchar, ref_kartu varchar, kembali_tunai double, void_jual varchar, no_meja int, ip varchar, id_gudang int, pl_retail text, meja int, st int)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl (id_dtl_jual int, id_pj int, id_barang int, qty_jual double, harga_jual double, discprs double, discrp double, dtl_total double, harga_jual_cetak double, user int, dtpesan datetime, tipe_jual INT)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl_tmp (id_tmp INTEGER PRIMARY KEY AUTOINCREMENT, id_barang INT, qty INT, total DOUBLE, harga DOUBLE, nama_barang VARCHAR(20), id_combo INT, nama_combo VARCHAR(20), tipe INT)');
+  }, function(e){
+    console.log(e);
+  }, function(){
+
   });
 
   var d = new Date();
@@ -141,6 +152,7 @@ function onOnline(){
             "id_barang": rs.rows.item(i).id_barang,
             "qty": rs.rows.item(i).qty_jual,
             "harga_jual": rs.rows.item(i).harga_jual,
+            "id_outlet": cpyProf.id_outlet,
           }
 
           a.push(temp);
@@ -339,29 +351,6 @@ function onRetFail(){
   // $('#logoutRow').css('display', 'none');
 
   // $('#currentUser').html('Operator: Guest');
-
-  db.transaction(function(tx){
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['1','TEST MENU 1','15000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['2','TEST MENU 2','12000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['3','TEST MENU 3','13000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['4','TEST MENU 4','10000', '2']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['5','TEST MENU 5','8000', '2']);
-
-    tx.executeSql('INSERT INTO m_combo VALUES (?,?,?)', ['1', 'TEST COMBO 1', '12000']);
-    tx.executeSql('INSERT INTO m_combo VALUES (?,?,?)', ['2', 'TEST COMBO 2', '10000']);
-
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['1', '1']);
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['1', '4']);
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '3']);
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '4']);
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '5']);
-  }, function(error){
-    console.log(error);
-  }, function(){
-    tampilFood();
-    tampilBvrg();
-    tampilCombo();
-  })
 }
 
 function onLogout(){
@@ -377,37 +366,38 @@ function onRemSuccess(){
   $('#loginRow').css('display', 'block');
 
   emptyDB();
+  app.views.main.router.navigate('/login/');
 
-  db.transaction(function(tx){
-    tx.executeSql('DROP TABLE m_barang');
-    tx.executeSql('DROP TABLE m_combo');
-    tx.executeSql('DROP TABLE combo_dtl');
-    
-    tx.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY, nama_combo VARCHAR(20), harga_jual INT)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER)');
-    
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['1','TEST MENU 1','15000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['2','TEST MENU 2','12000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['3','TEST MENU 3','13000', '1']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['4','TEST MENU 4','10000', '2']);
-    tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['5','TEST MENU 5','8000', '2']);
+  // db.transaction(function(tx){
+  //   tx.executeSql('DROP TABLE m_barang');
+  //   tx.executeSql('DROP TABLE m_combo');
+  //   tx.executeSql('DROP TABLE combo_dtl');
 
-    tx.executeSql('INSERT INTO m_combo VALUES (?,?,?)', ['1', 'TEST COMBO 1', '12000']);
-    tx.executeSql('INSERT INTO m_combo VALUES (?,?,?)', ['2', 'TEST COMBO 2', '10000']);
+  //   tx.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
+  //   tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY, nama_combo VARCHAR(20), harga_jual INT)');
+  //   tx.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER)');
 
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['1', '1']);
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['1', '4']);
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '3']);
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '4']);
-    tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '5']);
-  }, function(error){
-    console.log(error);
-  }, function(){
-    tampilFood();
-    tampilBvrg();
-    tampilCombo();
-  })
+  //   tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['1','TEST MENU 1','15000', '1']);
+  //   tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['2','TEST MENU 2','12000', '1']);
+  //   tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['3','TEST MENU 3','13000', '1']);
+  //   tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['4','TEST MENU 4','10000', '2']);
+  //   tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['5','TEST MENU 5','8000', '2']);
+
+  //   tx.executeSql('INSERT INTO m_combo VALUES (?,?,?)', ['1', 'TEST COMBO 1', '12000']);
+  //   tx.executeSql('INSERT INTO m_combo VALUES (?,?,?)', ['2', 'TEST COMBO 2', '10000']);
+
+  //   tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['1', '1']);
+  //   tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['1', '4']);
+  //   tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '3']);
+  //   tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '4']);
+  //   tx.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '5']);
+  // }, function(error){
+  //   console.log(error);
+  // }, function(){
+  //   tampilFood();
+  //   tampilBvrg();
+  //   tampilCombo();
+  // })
   // console.log('Remove Success');
 }
 
@@ -1315,17 +1305,18 @@ function initMenu(){
     url: 'http://demo.medianusamandiri.com/lightpos/API/menu/'+cpyProf.id_outlet+'/',
     type: 'GET'
   }).done(function(obj){
-    db.transaction(function(t){
-      t.executeSql('DROP TABLE m_barang');
-      t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
-    })
+    console.log(obj);
+    // db.transaction(function(t){
+    //   t.executeSql('DROP TABLE m_barang');
+    //   t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id INT PRIMARY KEY AUTOINCREMENT, id_barang INT NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT, st INT)');
+    // })
 
     for (var i = 0; i < obj.length; i++) {
       if(cpyProf.id_cabang == obj[i].id_cabang && cpyProf.id_client == obj[i].id_client){
         var insert = function(id_barang, nama_barang, harga_jual, kategori){
           db.transaction(function(t){
-            t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
-              function(error){
+            t.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori, 1], function(t, success){}, 
+              function(t, error){
                 console.log(error);
               })
           })
@@ -1413,6 +1404,7 @@ function uploadPenjualan(){
             "id_barang": rs.rows.item(i).id_barang,
             "qty": rs.rows.item(i).qty_jual,
             "harga_jual": rs.rows.item(i).harga_jual,
+            "id_outlet": cpyProf.id_outlet,
           }
 
           console.log(temp);
@@ -1559,7 +1551,7 @@ function cekUUID(){
 function cekStatus(){
   console.log('cekstatus in:');
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/status/',
+    url: 'http://demo.medianusamandiri.com/lightpos/API/status/'+cpyProf.id_client+'/',
     method: 'GET',
   }).done(function(result){
     console.log('cekstatus ajax');
@@ -1588,7 +1580,7 @@ function cekStatus(){
 
           case 'D':
           console.log('updateHarga');
-          updateHarga(j.id_harga, j.jenis_ubah);
+          updateHarga(j.id_harga, j.jenis_ubah, j.id_harga_status);
           c++;
           break;
         }
@@ -1611,7 +1603,7 @@ function tambahBarang(j, ubah){
 
       var a = function(id_barang, nama_barang, harga, tipe){
         db.transaction(function(tx){
-          tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga, tipe]);
+          tx.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', [id_barang, nama_barang, harga, tipe, 0]);
         }) 
       }(result[i].id_barang, result[i].nama_barang, result[i].harga.split('-')[0], result[i].tipe)
     }
@@ -1626,15 +1618,21 @@ function updateMenu(j, ubah){
     url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
     method: 'GET'
   }).done(function(result){
-    for(var i = 0; i < result.length; i++){
-      if(result[i].id_barang != j) continue;
+    db.transaction(function(tx){
+      tx.executeSql('UPDATE m_barang SET st = 0');
+    }, function(error){}, function(){
+      for(var i = 0; i < result.length; i++){
+        if(result[i].id_barang != j) continue;
 
-      var a = function(id_barang, nama_barang, harga){
-        db.transaction(function(tx){
-          tx.executeSql('UPDATE m_barang SET nama_barang = ?, harga_jual = ? WHERE id_barang = ?', [nama_barang, harga, id_barang, '1']);
-        }) 
-      }(result[i].id_barang, result[i].nama_barang, result[i].harga.split('-')[0])
-    }
+        var a = function(id_barang, nama_barang, harga){
+          db.transaction(function(tx){
+            tx.executeSql('UPDATE m_barang SET st = 1 WHERE id_barang = ?', [id_barang]);
+            // tx.executeSql('UPDATE m_barang SET nama_barang = ?, harga_jual = ? WHERE id_barang = ?', [nama_barang, harga, id_barang, '1']);
+          }) 
+        }(result[i].id_barang, result[i].nama_barang, result[i].harga.split('-')[0])
+      }
+    })
+    
   })
 }
 
@@ -1658,24 +1656,42 @@ function updateCombo(j, ubah){
   })
 }
 
-function updateHarga(j, ubah){
+function updateHarga(j, ubah, jenis){
 
   uploadStatus('D', ubah);
 
-  $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
-    method: 'GET'
-  }).done(function(result){
-    for(var i = 0; i < result.length; i++){
-      if(result[i].id_price != j) continue;
+  if(jenis == '1'){
+    $.ajax({
+      url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+      method: 'GET'
+    }).done(function(result){
+      for(var i = 0; i < result.length; i++){
+        if(result[i].id_price != j) continue;
 
-      var a = function(id_barang, harga){
-        db.transaction(function(tx){
-          tx.executeSql('UPDATE m_barang SET harga_jual = ? WHERE id_barang = ?', [harga, id_barang]);
-        }) 
-      }(result[i].id_barang, result[i].harga.split('-')[0])
-    }
-  })
+        var a = function(id_barang, harga){
+          db.transaction(function(tx){
+            tx.executeSql('UPDATE m_barang SET harga_jual = ? WHERE id_barang = ?', [harga, id_barang]);
+          }) 
+        }(result[i].id_barang, result[i].harga.split('-')[0])
+      }
+    })
+  }else {
+    $.ajax({
+      url: 'http://demo.medianusamandiri.com/lightpos/API/combo/',
+      method: 'GET'
+    }).done(function(result){
+      for(var i = 0; i < result.length; i++){
+        // TODO: plotting dari API status ke either APInya combo atau data buat combo
+        if(result[i].id_price != j) continue;
+
+        var a = function(id_barang, harga){
+          db.transaction(function(tx){
+            tx.executeSql('UPDATE m_combo SET harga_jual = ? WHERE id_combo = ?', [harga, id_barang]);
+          }) 
+        }(result[i].id_barang, result[i].harga.split('-')[0])
+      }
+    })
+  }
 }
 
 function uploadStatus(kode, jenis_ubah){
@@ -1724,7 +1740,7 @@ function register(q){
         $('#passlogin').val(temp.pass);
       })
     } else {
-      alert('Sudah Terdaftar');
+      alert('Email / Username Sudah Terdaftar');
     }
   })
 
@@ -1736,3 +1752,5 @@ status => 2,  Silahkan Konfirmasi Register di Email Anda
 status => 3, Data Anda Sudah Terdaftar, silahkan upgrade Premium
 status => 4,  Data Anda Sudah Terdaftar, dengan status premium
 */
+
+// TODO: untuk versi free, tampilkan menu master barang.
