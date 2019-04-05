@@ -6242,7 +6242,8 @@ button {
 .md .button.button-fill-md,
 .md .button.button-active,
 .md .button.tab-link-active {
-  background-color: #0b76cc;
+  background-color: #2196f3;
+  
   color: #fff;
 }
 .md .button.button-fill.active-state,

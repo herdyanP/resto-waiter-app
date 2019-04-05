@@ -520,6 +520,6 @@ user-select: auto !important;
   font-weight: bold;
 }
 
-/*.main-group > a .tab-link-active {
+.main-group .tab-link-active {
   background-color: #0b76cc !important; 
-}*/
+}
