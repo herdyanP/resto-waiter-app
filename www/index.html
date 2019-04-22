@@ -47,13 +47,23 @@
 
             <div class="accordion-item-content list inset no-chevron">
               <ul>
-                <li>
+                <!-- <li>
                   <a href="#" class="item-content item-link panel-close" onclick="onConstruction();">
                     <div class="item-media">
                       <i class="f7-icons">box</i>
                     </div>
                     <div class="item-inner">
                       <div class="item-title">Daftar Menu</div>
+                    </div>
+                  </a>
+                </li> -->
+                <li>
+                  <a href="/satuan/" class="item-content item-link panel-close">
+                    <div class="item-media">
+                      <i class="f7-icons">box</i>
+                    </div>
+                    <div class="item-inner">
+                      <div class="item-title">Satuan</div>
                     </div>
                   </a>
                 </li>
@@ -63,7 +73,7 @@
                       <i class="f7-icons">box</i>
                     </div>
                     <div class="item-inner">
-                      <div class="item-title">Tambah Menu</div>
+                      <div class="item-title">Menu</div>
                     </div>
                   </a>
                 </li>
@@ -342,6 +352,14 @@
 
             <div class="list no-hairlines no-hairlines-between">
               <ul>
+                <li class="item-content item-input inline-label bayar-tunai" style="display: block;">
+                  <div class="item-inner">
+                    <div class="item-title item-label" style="color: unset;">Diskon (%)</div>
+                    <div class="item-input-wrap">
+                      <input type="text" id="dsk_persen" value="0" onchange="diskon(this.value)" style="text-align: right;">
+                    </div>
+                  </div>
+                </li>
                 <li class="item-content">
                   <div class="item-inner">
                     <div class="item-title" style="width: 100%;">

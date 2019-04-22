@@ -23,6 +23,32 @@ var txNmr = 0;
 var retail, cabang, lastId, user, platform, jn, modalAwal, uid, updates;
 var adid = {};
 var cpyProf;
+var modalBox = app.dialog.create({
+    title: 'Modal Awal',
+    closeByBackdropClick: false,
+    content: '<div class="list no-hairlines no-hairlines-between">\
+    <ul>\
+    <li class="item-content item-input">\
+    <div class="item-inner">\
+    <div class="item-input-wrap">\
+    <input type="text" name="modal" id="modal" oninput="comma(this)" style="text-align: right;" />\
+    </div>\
+    </div>\
+    </li>\
+    </ul>\
+    </div>',
+    buttons: [
+    {
+      text: 'Simpan',
+      onClick: function(dialog, e){
+        var v = $('#modal').val();
+        if(v != '' && v != '0'){
+          modalAwal = v.replace(/\D/g, '');
+          dialog.close();
+        }
+      }
+    }]
+  });
 
 // var mainView = app.views.main;
 // var chart = Highcharts.chart('container1', {});
@@ -77,7 +103,7 @@ document.addEventListener('deviceready', function() {
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl (id_dtl_jual int, id_pj int, id_barang int, qty_jual double, harga_jual double, discprs double, discrp double, dtl_total double, harga_jual_cetak double, user int, dtpesan datetime, tipe_jual INT)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl_tmp (id_tmp INTEGER PRIMARY KEY AUTOINCREMENT, id_barang INT, qty INT, total DOUBLE, harga DOUBLE, nama_barang VARCHAR(20), id_combo INT, nama_combo VARCHAR(20), tipe INT)');
   }, function(e){
-    console.log(e);
+    // console.log(e);
   }, function(){
 
   });
@@ -204,7 +230,7 @@ function onNewLogin(q){
     temp[this.name] = this.value;
   })
 
-  console.log(temp);
+  // console.log(temp);
 
   $.ajax({
     url: 'http://demo.medianusamandiri.com/lightpos/API/login/',
@@ -212,7 +238,7 @@ function onNewLogin(q){
     data: JSON.stringify(temp),
     timeout: 10000
   }).done(function(result){
-    console.log(result);
+    // console.log(result);
     var c = 0;
     if(result != '0') {
       for(var i = 0; i < result.length; i++){
@@ -226,7 +252,7 @@ function onNewLogin(q){
           temp.id_outlet = result[i].id_outlet;
           temp.id_pegawai = result[i].id_pegawai;
 
-          console.log(temp);
+          // console.log(temp);
 
           NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
           app.views.main.router.navigate('/');
@@ -235,7 +261,7 @@ function onNewLogin(q){
         }
 
         c++;
-        console.log(c);
+        // console.log(c);
       }
 
       if(c > 0) {
@@ -264,46 +290,23 @@ function onNewLogin(q){
 }
 
 function onStoreSuccess(obj){
-  cpyProf = obj;
-  app.dialog.create({
-    title: 'Modal Awal',
-    closeByBackdropClick: false,
-    content: '<div class="list no-hairlines no-hairlines-between">\
-    <ul>\
-    <li class="item-content item-input">\
-    <div class="item-inner">\
-    <div class="item-input-wrap">\
-    <input type="text" name="modal" id="modal" oninput="comma(this)" style="text-align: right;" />\
-    </div>\
-    </div>\
-    </li>\
-    </ul>\
-    </div>',
-    buttons: [
-    {
-      text: 'Simpan',
-      onClick: function(dialog, e){
-        var v = $('#modal').val();
-        if(v != '' && v != '0'){
-          modalAwal = v.replace(/\D/g, '');
-          dialog.close();
-            // window.open('http://kopdanamon.cloudmnm.com/cetak.php?nik='+user+'&bulan=12&tahun='+th+'&page=reportshu&type=android', '_self');
-          }
-        }
-      } 
-      
-      ]
-    }).open();
-
-  // app.dialog.prompt('Masukkan modal awal', 'Konfirmasi', function(value){
-  //   modalAwal = value;
-  // }, function(){
-  //   return;
-  // })
   console.log('Store Success');
 
-  initMenu();
-  initCombo();
+  cpyProf = obj;
+  
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/satuan/'+cpyProf.id_client+'/',
+    method: 'GET'
+  }).done(function(result){
+    if(result.length == 0){
+      app.dialog.alert('Silahkan Tambahkan Satuan Baru Terlebih Dahulu', 'Alert', function(){
+        app.views.main.router.navigate('/satuan/');
+      })
+    } else {
+      initMenu();
+      initCombo();
+    }
+  })
 }
 
 function onStoreFail(){
@@ -645,14 +648,14 @@ function keranjang(a,b,c,d){
         if(rs.rows.item(i).nama_barang){
           data += '<li class="item-content ">\
           <div class="item-inner">\
-          <div class="item-title">'+rs.rows.item(i).nama_barang+'\
+          <div class="item-title" onclick="ubahAmount('+rs.rows.item(i).id_tmp+');">'+rs.rows.item(i).nama_barang+'\
           <div class="item-footer">'+rs.rows.item(i).qty+' x '+rs.rows.item(i).harga+'</div>\
           </div>\
           <div class="item-after"><a href="#" onclick="pilihHapus('+rs.rows.item(i).id_tmp+','+rs.rows.item(i).qty+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
           </div>\
           </li>'
           // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
-          jumlah += parseInt(rs.rows.item(i).qty * rs.rows.item(i).harga) * 1.1;
+          jumlah += parseInt(rs.rows.item(i).qty * rs.rows.item(i).harga) * 1.1 /* PPN */;
         } else {
           data += '<li class="item-content ">\
           <div class="item-inner">\
@@ -663,7 +666,7 @@ function keranjang(a,b,c,d){
           </div>\
           </li>'
           // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
-          jumlah += parseInt(rs.rows.item(i).qty * rs.rows.item(i).harga) * 1.1;
+          jumlah += parseInt(rs.rows.item(i).qty * rs.rows.item(i).harga) * 1.1 /* PPN */;
         }
       }
 
@@ -673,6 +676,7 @@ function keranjang(a,b,c,d){
 
       data += '</ul>';
       $('#keranjang').html(data);
+      $('#dsk_persen').val() ? $('#subtotal').html(jumlah.toLocaleString('id-ID')) : $('#subtotal').html((jumlah * parseFloat($('#dsk_persen').val())).toLocaleString('id-ID'));
       $('#subtotal').html(jumlah.toLocaleString('id-ID'));
       // var ppn=jumlah*(10/100);
       // var gt=jumlah+ppn;
@@ -862,7 +866,7 @@ function bayar(){
                     var satuan = parseInt(rs.rows.item(i).harga).toLocaleString('id-ID');
                     var jumlah = (parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID');
 
-                    console.log('q: '+q.length+', satuan: '+satuan.length+', jumlah: '+jumlah.length);
+                    // console.log('q: '+q.length+', satuan: '+satuan.length+', jumlah: '+jumlah.length);
 
                     var tlen = 26 - (satuan.length + jumlah.length + q.length);
 
@@ -1178,11 +1182,11 @@ function emptyDB(){
   db.transaction(function(t){
     t.executeSql("DELETE FROM pj_dtl_tmp", [],
       function(){
-        console.log('delet this');
+        // console.log('delet this');
         keranjang('a', 'b', 'c', 'd');
         // comboItems('a', 'b', 'c', 'd');
       }, function(error){
-        console.log(error);
+        // console.log(error);
       })
   })
 }
@@ -1311,7 +1315,7 @@ function initMenu(){
     url: 'http://demo.medianusamandiri.com/lightpos/API/menu/'+cpyProf.id_outlet+'/',
     type: 'GET'
   }).done(function(obj){
-    console.log(obj);
+    // console.log(obj);
     // db.transaction(function(t){
     //   t.executeSql('DROP TABLE m_barang');
     //   t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id INT PRIMARY KEY AUTOINCREMENT, id_barang INT NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT, st INT)');
@@ -1323,7 +1327,7 @@ function initMenu(){
           db.transaction(function(t){
             t.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori, 1], function(t, success){}, 
               function(t, error){
-                console.log(error);
+                // console.log(error);
               })
           })
         }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], 1);
@@ -1359,7 +1363,7 @@ function initCombo(){
             db.transaction(function(t){
               t.executeSql('INSERT INTO m_combo VALUES (?,?,?)', [id_combo, nama_combo, harga], function(t, success){}, 
                 function(error){
-                  console.log(error.message);
+                  // console.log(error.message);
                 })
             })
           }(obj[i].id_combo, obj[i].nama_combo, obj[i].hj.split('-')[0]);
@@ -1372,7 +1376,7 @@ function initCombo(){
             db.transaction(function(t){
               t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', [id_combo, id_barang], function(t, success){}, 
                 function(error){
-                  console.log(error.message);
+                  // console.log(error.message);
                 })
             })
           }(obj[i].id_combo, obj[i].id_barang);
@@ -1413,7 +1417,7 @@ function uploadPenjualan(){
             "id_outlet": cpyProf.id_outlet,
           }
 
-          console.log(temp);
+          // console.log(temp);
 
           $.ajax({
             url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
@@ -1427,7 +1431,7 @@ function uploadPenjualan(){
           })
         }
       }, function(error){
-        console.log(error.message);
+        // console.log(error.message);
       })
   })
 }
@@ -1456,9 +1460,9 @@ function cariSesuatu(a, b, c){
     method: 'POST',
     data: JSON.stringify(data)
   }).done(function(result){
-    console.log(result);
+    // console.log(result);
   }).fail(function(a,b,error){
-    console.log(error);
+    // console.log(error);
   })
 }
 
@@ -1514,7 +1518,7 @@ function cariLaporan(){
 
 
   }).fail(function(a,b,error){
-    console.log(error);
+    // console.log(error);
   })
 }
 
@@ -1530,7 +1534,7 @@ function sendPing(){
   var sc = ('0' + d.getSeconds()).slice(-2);
 
   var tgls = d.getFullYear() + '-' + mo + '-' + dy + ' ' + hr + ':' + mn + ':' + sc;
-  console.log(tgls);
+  // console.log(tgls);
 
   var stamp = {
     'tgl_log' : tgls
@@ -1541,12 +1545,12 @@ function sendPing(){
     method: 'POST',
     data: JSON.stringify(stamp)
   }).done(function(result){
-    console.log(result);
+    // console.log(result);
     setTimeout(function(){
       sendPing();
     }, 300 * 1000);
   }).fail(function(a,b,error){
-    console.log(error);
+    // console.log(error);
   })
 }
 
@@ -1556,6 +1560,8 @@ function cekUUID(){
 
 function cekStatus(){
   console.log('cekstatus in:');
+  initMenu();
+  initCombo();
   $.ajax({
     url: 'http://demo.medianusamandiri.com/lightpos/API/status/'+cpyProf.id_client+'/',
     method: 'GET',
@@ -1715,7 +1721,10 @@ function uploadStatus(kode, jenis_ubah){
     method: 'POST',
     data: JSON.stringify(temp)
   }).done(function(result){
-    console.log(result);
+    tampilFood();
+    tampilBvrg();
+    tampilCombo();
+    // console.log(result);
   })
 }
 
@@ -1736,7 +1745,7 @@ function register(q){
     timeout: 10000
   }).always(function(result){
     $('#register_button').removeClass('disabled');
-    console.log(result);
+    // console.log(result);
 
     if(result.responseText.slice(0, 1) == '0'){
       app.dialog.alert('Sukses mendaftar!', 'Register', function(){
@@ -1750,7 +1759,131 @@ function register(q){
     }
   })
 
-  console.log(temp);      
+  // console.log(temp);      
+}
+
+function diskon(a){
+  $('#subtotal').html() =  parseFloat(a);
+}
+
+function ubahAmount(id){
+  // console.log(id);
+  app.dialog.create({
+    title: 'Konfirmasi',
+    closeByBackdropClick: true,
+    content: '<div class="list no-hairlines no-hairlines-between">\
+    <ul>\
+    <li class="item-content item-input">\
+    <div class="item-inner">\
+    <div class="item-input-wrap">\
+    <input type="number" name="edit_amt" id="edit_amt" oninput="comma(this)" style="text-align: right;" />\
+    </div>\
+    </div>\
+    </li>\
+    </ul>\
+    </div>',
+    buttons: [
+    {
+      text: 'Batal',
+      onClick: function(dialog, e){
+        dialog.close();
+      }
+    },
+    {
+      text: 'Simpan',
+      onClick: function(dialog, e){
+        var v = $('#edit_amt').val();
+        db.transaction(function(t){
+          t.executeSql('UPDATE pj_dtl_tmp SET qty = ? WHERE id_tmp = ?', [v, id], 
+            function(){
+              keranjang('a','b','c','d');
+              dialog.close();
+            })
+        })
+      }
+    }]
+  }).open();
+}
+
+function addBarang(q){
+  var temp = {};
+  $.each($(q).serializeArray(), function(){
+    temp[this.name] = this.value;
+  })
+
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/barang/'+cpyProf.id_client+'/',
+    method: 'POST',
+    data: JSON.stringify(temp)
+  }).done(function(){
+    app.toast.create({
+      text: "Sukses Tambah Barang",
+      closeTimeout: 3000,
+      closeButton: true
+    }).open();
+
+    $(q).trigger('reset');
+    cekStatus();
+  })
+}
+
+function addSatuan(q){
+  var temp = {};
+  $.each($(q).serializeArray(), function(){
+    temp[this.name] = this.value;
+  })
+
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/satuan/'+cpyProf.id_client+'/',
+    method: 'POST',
+    data: JSON.stringify(temp)
+  }).done(function(){
+    app.toast.create({
+      text: "Sukses Tambah Satuan",
+      closeTimeout: 3000,
+      closeButton: true
+    }).open();
+
+    $(q).trigger('reset');
+    listSatuan();
+
+    $.ajax({
+      url: 'http://demo.medianusamandiri.com/lightpos/API/menu/'+cpyProf.id_outlet+'/',
+      method: 'GET'
+    }).done(function(result){
+      if(result.length == 0){
+        app.dialog.alert('Kemudian Silahkan Tambahkan Menu Baru', 'Alert', function(){
+          app.views.main.router.navigate('/tambah/');
+        })
+      }
+    })
+  })
+}
+
+function listSatuan(){
+  var data = '<ul>';
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/satuan/'+cpyProf.id_client+'/',
+    method: 'GET',
+  }).done(function(result){
+    for(var i = 0; i < result.length; i++){
+      data += '<li class="item-content ">\
+      <div class="item-inner">\
+      <div class="item-title">'+result[i].nama_satuan+'</div>\
+      </div>\
+      </li>'
+    }
+
+    data += '</ul>';
+    $('#satuan_list').html(data);
+  })
+}
+
+function clearReport(){
+  db.transaction(function(t){
+    t.executeSql('DELETE FROM pj');
+    t.executeSql('DELETE FROM pj_dtl');
+  })
 }
 
 /*

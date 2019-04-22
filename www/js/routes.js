@@ -27,6 +27,19 @@ var routes = [
       emptyDB();
       // allItems();
     },
+    pageAfterIn: function(){
+      $.ajax({
+        url: 'http://demo.medianusamandiri.com/lightpos/API/satuan/'+cpyProf.id_client+'/',
+        method: 'GET'
+      }).done(function(result){
+        var data = '<option value="" selected="" disabled="">-- Pilih Satuan --</option>';
+        for(var i = 0; i < result.length; i++){
+          data += '<option value="'+result[i].id_satuan+'">'+result[i].nama_satuan+'</option>';
+        }
+
+        $('#satuan_list').html(data);
+      })
+    },
     pageAfterOut: function(){
       tampilFood();
       tampilBvrg();
@@ -54,5 +67,25 @@ var routes = [
 {
   path: '/register/',
   componentUrl: './pages/register.html'
-}
+},
+{
+  path: '/satuan/',
+  componentUrl: './pages/satuan.html',
+  on: {
+    pageInit: function(){
+      listSatuan();
+    }
+  }
+  /*on: {
+    pageInit: function(){
+      emptyDB();
+      // allItems();
+    },
+    pageAfterOut: function(){
+      tampilFood();
+      tampilBvrg();
+      emptyDB();
+    }
+  }*/
+},
 ];

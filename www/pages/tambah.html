@@ -17,13 +17,13 @@
 
     <div class="page-content">
       <div class="block">
-        <form id="" class="list no-hairlines no-hairlines-between">
+        <form id="barang_form" class="list no-hairlines no-hairlines-between">
           <ul>
             <li class="item-content item-input inline-label">
               <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Tipe</div>
                 <div class="item-input-wrap input-dropdown-wrap">
-                  <select id="" name="">
+                  <select id="tipe_barang" name="tipe_barang">
                     <option value="" selected="" disabled="">-- Pilih Tipe --</option>
                     <option value="1">Food</option>
                     <option value="2">Beverage</option>
@@ -37,7 +37,7 @@
               <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Kode Item</div>
                 <div class="item-input-wrap">
-                  <input type="text" name="" id="">
+                  <input type="text" name="kode_barang" id="kode_barang">
                 </div>
               </div>
             </li>
@@ -45,7 +45,7 @@
               <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Nama Item</div>
                 <div class="item-input-wrap">
-                  <input type="text" name="" id="">
+                  <input type="text" name="nama_barang" id="nama_barang">
                 </div>
               </div>
             </li>
@@ -53,14 +53,20 @@
               <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Satuan</div>
                 <div class="item-input-wrap input-dropdown-wrap">
-                  <select id="" name="">
+                  <select id="satuan_list" name="id_satuan">
                     <option value="" selected="" disabled="">-- Pilih Satuan --</option>
                   </select>
                 </div>
               </div>
             </li>
+            <li class="item-content">
+              <div class="item-inner">
+                <div class="item-title"  style="width: 100%;">
+                  <a class="button button-outline" onclick="addBarang(document.getElementById('barang_form'));">Tambah</a>
+                </div>
+              </div>
+            </li>
           </ul>
-          <input type="hidden" id="" name="" value="0">
         </form>
         <!-- <div class="segmented" style="margin: 5px;">
           <a href="#addFoods" class="button tab-link tab-link-active">Foods</a>
