@@ -24,26 +24,28 @@ var routes = [
   componentUrl: './pages/tambah.html',
   on: {
     pageInit: function(){
-      emptyDB();
+      // emptyDB();
       // allItems();
     },
     pageAfterIn: function(){
+      listBarang();
+      console.log('afterin');
       $.ajax({
         url: 'http://demo.medianusamandiri.com/lightpos/API/satuan/'+cpyProf.id_client+'/',
         method: 'GET'
-      }).done(function(result){
+      }).always(function(result){
         var data = '<option value="" selected="" disabled="">-- Pilih Satuan --</option>';
         for(var i = 0; i < result.length; i++){
           data += '<option value="'+result[i].id_satuan+'">'+result[i].nama_satuan+'</option>';
         }
 
-        $('#satuan_list').html(data);
+        $('#satuan_select').html(data);
       })
     },
     pageAfterOut: function(){
       tampilFood();
       tampilBvrg();
-      emptyDB();
+      // emptyDB();
     }
   }
 },
@@ -72,7 +74,7 @@ var routes = [
   path: '/satuan/',
   componentUrl: './pages/satuan.html',
   on: {
-    pageInit: function(){
+    pageAfterIn: function(){
       listSatuan();
     }
   }
@@ -88,4 +90,23 @@ var routes = [
     }
   }*/
 },
-];
+{
+  path: '/combo/',
+  componentUrl: './pages/combo.html',
+  // on: {
+  //   pageInit: function(){
+  //     listSatuan();
+  //   }
+  // }
+  /*on: {
+    pageInit: function(){
+      emptyDB();
+      // allItems();
+    },
+    pageAfterOut: function(){
+      tampilFood();
+      tampilBvrg();
+      emptyDB();
+    }
+  }*/
+}];

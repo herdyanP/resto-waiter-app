@@ -95,18 +95,7 @@ document.addEventListener('deviceready', function() {
 
   // TODO: pj_dtl, tambahan untuk tipe jual, 1 = barang, 2 = combo (done)
 
-  db.transaction(function(tx) {
-    tx.executeSql('CREATE TABLE IF NOT EXISTS m_barang ( id_urut INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, id_barang INT NOT NULL UNIQUE, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT, st INT )');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY, nama_combo VARCHAR(20), harga_jual INT )');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS pj (id_pj INTEGER PRIMARY KEY AUTOINCREMENT, no_penjualan VARCHAR(30), no_faktur VARCHAR(30), tgl_penjualan DATE, jenis_jual int, jenis_bayar int, id_customer int, id_user  int, stamp_date datetime, disc_prs double, disc_rp double, sc_prs double, sc_rp double, ppn double, total_jual double, grantot_jual double, bayar_tunai double, bayar_card double, nomor_kartu varchar, ref_kartu varchar, kembali_tunai double, void_jual varchar, no_meja int, ip varchar, id_gudang int, pl_retail text, meja int, st int)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl (id_dtl_jual int, id_pj int, id_barang int, qty_jual double, harga_jual double, discprs double, discrp double, dtl_total double, harga_jual_cetak double, user int, dtpesan datetime, tipe_jual INT)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl_tmp (id_tmp INTEGER PRIMARY KEY AUTOINCREMENT, id_barang INT, qty INT, total DOUBLE, harga DOUBLE, nama_barang VARCHAR(20), id_combo INT, nama_combo VARCHAR(20), tipe INT)');
-  }, function(e){
-    // console.log(e);
-  }, function(){
-
-  });
+  initDB();
 
   var d = new Date();
   var tgls=d.getFullYear()+"-"+("0" + (d.getMonth()+1)).slice(-2)+"-"+("0" + d.getDate()).slice(-2);
@@ -152,6 +141,32 @@ document.addEventListener('deviceready', function() {
   document.addEventListener("backbutton", onBackPressed, false);
   document.addEventListener("online", onOnline, false);
 });
+
+function initDB(){
+  db.transaction(function(tx) {
+    tx.executeSql('CREATE TABLE IF NOT EXISTS m_barang ( id_urut INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, id_barang INT NOT NULL UNIQUE, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT, st INT )');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS m_combo ( id_combo INTEGER NOT NULL PRIMARY KEY, nama_combo VARCHAR(20), harga_jual INT )');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS combo_dtl (id_dtl INTEGER PRIMARY KEY AUTOINCREMENT, id_combo INTEGER, id_barang INTEGER)');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS pj (id_pj INTEGER PRIMARY KEY AUTOINCREMENT, no_penjualan VARCHAR(30), no_faktur VARCHAR(30), tgl_penjualan DATE, jenis_jual int, jenis_bayar int, id_customer int, id_user  int, stamp_date datetime, disc_prs double, disc_rp double, sc_prs double, sc_rp double, ppn double, total_jual double, grantot_jual double, bayar_tunai double, bayar_card double, nomor_kartu varchar, ref_kartu varchar, kembali_tunai double, void_jual varchar, no_meja int, ip varchar, id_gudang int, pl_retail text, meja int, st int)');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl (id_dtl_jual int, id_pj int, id_barang int, qty_jual double, harga_jual double, discprs double, discrp double, dtl_total double, harga_jual_cetak double, user int, dtpesan datetime, tipe_jual INT)');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl_tmp (id_tmp INTEGER PRIMARY KEY AUTOINCREMENT, id_barang INT, qty INT, total DOUBLE, harga DOUBLE, nama_barang VARCHAR(20), id_combo INT, nama_combo VARCHAR(20), tipe INT)');
+  }, function(e){
+    // console.log(e);
+  }, function(msg){
+    // console.log(msg);
+  });
+}
+
+function clearDB(){
+  db.transaction(function(t){
+    t.executeSql('DROP TABLE m_barang');
+    t.executeSql('DROP TABLE m_combo');
+    t.executeSql('DROP TABLE combo_dtl');
+    t.executeSql('DROP TABLE pj');
+    t.executeSql('DROP TABLE pj_dtl');
+    t.executeSql('DROP TABLE pj_dtl_tmp');
+  })
+}
 
 function onOnline(){
   console.log('is online');
@@ -241,6 +256,7 @@ function onNewLogin(q){
     // console.log(result);
     var c = 0;
     if(result != '0') {
+      console.log(result);
       for(var i = 0; i < result.length; i++){
         if(result[i].nomor_device == device.uuid){
           temp.nama = result[i].nama_pegawai;
@@ -293,6 +309,19 @@ function onStoreSuccess(obj){
   console.log('Store Success');
 
   cpyProf = obj;
+
+  initDB();
+
+  sendPing();
+  cekStatus();
+  tampilFood();
+  tampilBvrg();
+  tampilCombo();
+
+  $('#loginRow').css('display', 'none');
+  $('#logoutRow').css('display', 'block');
+
+  $('#currentUser').html('Operator: '+ (cpyProf.nama ? cpyProf.nama : cpyProf.client));
   
   $.ajax({
     url: 'http://demo.medianusamandiri.com/lightpos/API/satuan/'+cpyProf.id_client+'/',
@@ -374,7 +403,8 @@ function onRemSuccess(){
   $('#logoutRow').css('display', 'none');
   $('#loginRow').css('display', 'block');
 
-  emptyDB();
+  // emptyDB();
+  clearDB();
   app.views.main.router.navigate('/login/');
 
   // db.transaction(function(tx){
@@ -445,7 +475,8 @@ function tampilFood(){
       var datanya = '';
       for (i = 0; i < len; i++){
 
-        datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+        datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+        // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
         // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
       }
 
@@ -1178,18 +1209,18 @@ function comma(el){
   el.value = parseInt((el.value).replace(/\D/g, '')).toLocaleString('id-ID');
 }
 
-function emptyDB(){
-  db.transaction(function(t){
-    t.executeSql("DELETE FROM pj_dtl_tmp", [],
-      function(){
-        // console.log('delet this');
-        keranjang('a', 'b', 'c', 'd');
-        // comboItems('a', 'b', 'c', 'd');
-      }, function(error){
-        // console.log(error);
-      })
-  })
-}
+// function emptyDB(){
+//   db.transaction(function(t){
+//     t.executeSql("DELETE FROM pj_dtl_tmp", [],
+//       function(){
+//         // console.log('delet this');
+//         keranjang('a', 'b', 'c', 'd');
+//         // comboItems('a', 'b', 'c', 'd');
+//       }, function(error){
+//         // console.log(error);
+//       })
+//   })
+// }
 
 function listPenjualan(){
   db.transaction(function(tx){
@@ -1322,7 +1353,7 @@ function initMenu(){
     // })
 
     for (var i = 0; i < obj.length; i++) {
-      if(cpyProf.id_cabang == obj[i].id_cabang && cpyProf.id_client == obj[i].id_client){
+      if(cpyProf.id_cabang == obj[i].id_cabang && cpyProf.id_client == obj[i].id_client && obj[i].id_barang != null){
         var insert = function(id_barang, nama_barang, harga_jual, kategori){
           db.transaction(function(t){
             t.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori, 1], function(t, success){}, 
@@ -1334,7 +1365,7 @@ function initMenu(){
       }
     }
   }).fail(function(a,b,error){
-    alert(error);
+    alert('connection error');
   }).then(function(){
     tampilFood();
     tampilBvrg();
@@ -1386,7 +1417,7 @@ function initCombo(){
     // })
     
   }).fail(function(a,b,error){
-    alert(error);
+    alert('connection error');
   }).then(function(){
     tampilCombo();
   })
@@ -1748,7 +1779,7 @@ function register(q){
     // console.log(result);
 
     if(result.responseText.slice(0, 1) == '0'){
-      app.dialog.alert('Sukses mendaftar!', 'Register', function(){
+      app.dialog.alert('Email konfirmasi berisi link untuk aktivasi akun akan segera dikirim ke email anda. Harap lakukan aktivasi terlebih dahulu sebelum melakukan login.', 'Register', function(){
         $('#register_cred').trigger('reset');
         app.views.main.router.navigate('/login/');
         $('#userlogin').val(temp.user);
@@ -1806,7 +1837,7 @@ function ubahAmount(id){
 }
 
 function addBarang(q){
-  var temp = {};
+  var temp = {'act': '1'};
   $.each($(q).serializeArray(), function(){
     temp[this.name] = this.value;
   })
@@ -1823,8 +1854,35 @@ function addBarang(q){
     }).open();
 
     $(q).trigger('reset');
+    listBarang();
     cekStatus();
   })
+}
+
+function listBarang(){
+  var data = '<ul>';
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/menu/'+cpyProf.id_outlet+'/',
+    method: 'GET',
+  }).done(function(result){
+    for(var i = 0; i < result.length; i++){
+      if(result[i].id_barang == null) continue;
+
+      data += '<li class="item-content ">\
+      <div class="item-inner">\
+      <div class="item-title">'+result[i].nama_barang+'</div>\
+      <div class="item-after"><a href="#" onclick="hapusBarang('+result[i].id_barang+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
+      </div>\
+      </li>'
+    }
+
+    data += '</ul>';
+    $('#barang_list').html(data);
+  })
+}
+
+function hapusBarang(id){
+  var temp = {'act': '3'};
 }
 
 function addSatuan(q){
@@ -1851,7 +1909,7 @@ function addSatuan(q){
       url: 'http://demo.medianusamandiri.com/lightpos/API/menu/'+cpyProf.id_outlet+'/',
       method: 'GET'
     }).done(function(result){
-      if(result.length == 0){
+      if(result[0].id_barang == null){
         app.dialog.alert('Kemudian Silahkan Tambahkan Menu Baru', 'Alert', function(){
           app.views.main.router.navigate('/tambah/');
         })
@@ -1879,12 +1937,7 @@ function listSatuan(){
   })
 }
 
-function clearReport(){
-  db.transaction(function(t){
-    t.executeSql('DELETE FROM pj');
-    t.executeSql('DELETE FROM pj_dtl');
-  })
-}
+
 
 /*
 status => 2,  Silahkan Konfirmasi Register di Email Anda

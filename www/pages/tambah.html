@@ -51,28 +51,47 @@
             </li>
             <li class="item-content item-input inline-label">
               <div class="item-inner">
+                <div class="item-title item-label" style="color: unset;">Harga per Satuan</div>
+                <div class="item-input-wrap">
+                  <input type="text" name="harga" id="harga_addItem">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input inline-label">
+              <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Satuan</div>
                 <div class="item-input-wrap input-dropdown-wrap">
-                  <select id="satuan_list" name="id_satuan">
+                  <select id="satuan_select" name="id_satuan">
                     <option value="" selected="" disabled="">-- Pilih Satuan --</option>
                   </select>
                 </div>
               </div>
             </li>
+            <!-- <input type="hidden" name="act" id="act" value=""> -->
             <li class="item-content">
               <div class="item-inner">
                 <div class="item-title"  style="width: 100%;">
-                  <a class="button button-outline" onclick="addBarang(document.getElementById('barang_form'));">Tambah</a>
+                  <a class="button button-outline" id="button_addItem" style="display: block;" onclick="addBarang(document.getElementById('barang_form'));">Tambah</a>
+                  <p class="row" style="display: none;">
+                    <a class="col button button-outline" onclick="">Batal</a>
+                    <a class="col button button-outline" onclick="">Update</a>
+                  </p>
                 </div>
               </div>
             </li>
           </ul>
-        </form>
-        <!-- <div class="segmented" style="margin: 5px;">
-          <a href="#addFoods" class="button tab-link tab-link-active">Foods</a>
-          <a href="#addBvrgs" class="button tab-link">Beverages</a>
-          <a href="#addCombos" class="button tab-link">Combos</a>
-        </div> -->
+        </form>        
+      </div>
+
+      <div class="card card-outline">
+        <div class="card-header">
+          <strong>Barang Tersedia</strong>
+        </div>
+
+        <div class="block" style="max-height: 60vh; overflow: scroll;">
+          <div class="list no-hairlines" id="barang_list">
+          </div>
+        </div>
       </div>
     </div>
   </div>
