@@ -463,7 +463,7 @@ function onBackPressed(){
 function tampilFood(){
   console.log('food');
   db.transaction(function(tx) {
-    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "1" ORDER BY nama_barang ASC LIMIT 30', [], function(tx, rs) {
+    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "1" AND st = "1" ORDER BY nama_barang ASC LIMIT 30', [], function(tx, rs) {
       var len, i;
       if(rs.rows.length > 20) {
         len = 20
@@ -491,7 +491,7 @@ function tampilFood(){
 
 function cariFood(q){
   db.transaction(function(tx){
-    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "1" AND nama_barang LIKE "%'+q+'%" ORDER BY nama_barang ASC LIMIT 30', [], 
+    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "1" AND nama_barang LIKE "%'+q+'%" AND st = "1" ORDER BY nama_barang ASC LIMIT 30', [], 
       function(tx, rs){
         var len = rs.rows.length, i;
         var all_rows = [];
@@ -514,7 +514,7 @@ function cariFood(q){
 function tampilBvrg(){
   console.log('drinks');
   db.transaction(function(tx) {
-    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "2" ORDER BY nama_barang ASC LIMIT 30', [], function(tx, rs) {
+    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "2" AND st = "1" ORDER BY nama_barang ASC LIMIT 30', [], function(tx, rs) {
       var len, i;
       if(rs.rows.length > 20) {
         len = 20
@@ -541,7 +541,7 @@ function tampilBvrg(){
 
 function cariBvrg(q){
   db.transaction(function(tx){
-    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "2" AND nama_barang LIKE "%'+q+'%" ORDER BY nama_barang ASC LIMIT 30', [], 
+    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "2" AND nama_barang LIKE "%'+q+'%" AND st = "1" ORDER BY nama_barang ASC LIMIT 30', [], 
       function(tx, rs){
         var len = rs.rows.length, i;
         var all_rows = [];
@@ -1353,15 +1353,29 @@ function initMenu(){
     // })
 
     for (var i = 0; i < obj.length; i++) {
-      if(cpyProf.id_cabang == obj[i].id_cabang && cpyProf.id_client == obj[i].id_client && obj[i].id_barang != null){
+      if(/*cpyProf.id_cabang == obj[i].id_cabang && cpyProf.id_client == obj[i].id_client && */obj[i].id_barang != null && obj[i].nama_barang != null){
+        // console.log(obj[i])
         var insert = function(id_barang, nama_barang, harga_jual, kategori){
           db.transaction(function(t){
-            t.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori, 1], function(t, success){}, 
-              function(t, error){
-                // console.log(error);
-              })
+            t.executeSql('SELECT COUNT(*) AS jml FROM m_barang WHERE id_barang = ?', [id_barang], function(rt, result){
+                if(result.rows.item(0).jml > 0){
+                  t.executeSql('UPDATE m_barang SET nama_barang = ?, harga_jual = ?, kategori = ? WHERE id_barang = ?', [nama_barang, harga_jual, kategori, id_barang],
+                    function(){
+                      console.log('sukses update initMenu');
+                    }, function(){
+                      console.log('error update initMenu');
+                    })
+                } else {
+                  t.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori, 1],
+                    function(){
+                      console.log('sukses insert initMenu');
+                    }, function(){
+                      console.log('error insert initMenu');
+                    })
+                }              
+            })
           })
-        }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], 1);
+        }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], obj[i].tipe);
       }
     }
   }).fail(function(a,b,error){
@@ -1668,10 +1682,8 @@ function updateMenu(j, ubah){
         if(result[i].id_barang != j) continue;
 
         var a = function(id_barang, nama_barang, harga){
-          db.transaction(function(tx){
             tx.executeSql('UPDATE m_barang SET st = 1 WHERE id_barang = ?', [id_barang]);
             // tx.executeSql('UPDATE m_barang SET nama_barang = ?, harga_jual = ? WHERE id_barang = ?', [nama_barang, harga, id_barang, '1']);
-          }) 
         }(result[i].id_barang, result[i].nama_barang, result[i].harga.split('-')[0])
       }
     })
@@ -1794,7 +1806,12 @@ function register(q){
 }
 
 function diskon(a){
-  $('#subtotal').html() =  parseFloat(a);
+  return;
+  // var sub = parseInt($('#subtotal').html().replace(/\D/g,''));
+  // var dis = parseFloat(a / 100);
+  // var fin = parseFloat(sub - sub * dis).toLocaleString('id-ID');
+  
+  // $('#subtotal').html(fin);
 }
 
 function ubahAmount(id){
@@ -1865,24 +1882,89 @@ function listBarang(){
     url: 'http://demo.medianusamandiri.com/lightpos/API/menu/'+cpyProf.id_outlet+'/',
     method: 'GET',
   }).done(function(result){
-    for(var i = 0; i < result.length; i++){
-      if(result[i].id_barang == null) continue;
+      // var tempArr = [];
+      // var temp = {};
+      for(var i = 0; i < result.length; i++){
+        if(result[i].id_barang == null || result[i].nama_barang == null) continue;
 
-      data += '<li class="item-content ">\
-      <div class="item-inner">\
-      <div class="item-title">'+result[i].nama_barang+'</div>\
-      <div class="item-after"><a href="#" onclick="hapusBarang('+result[i].id_barang+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
-      </div>\
-      </li>'
-    }
+        data += '<li class="item-content ">\
+        <div class="item-inner">\
+        <div class="item-title" onclick="showEditBarang('+result[i].id_barang+','+result[i].tipe+',\''+result[i].kode_barang+'\',\''+result[i].nama_barang+'\',\''+result[i].harga+'\','+result[i].id_satuan+');">'+result[i].nama_barang+'</div>\
+        <div class="item-after"><a href="#" onclick="hapusBarang('+result[i].id_barang+',\''+result[i].nama_barang+'\')"><i class="icon material-icons md-only">close</i></a></div>\
+        </div>\
+        </li>'
+      }
 
-    data += '</ul>';
-    $('#barang_list').html(data);
+      data += '</ul>';
+      $('#barang_list').html(data);
   })
 }
 
-function hapusBarang(id){
+function editBarang(q){
+  var id = $('#id_barang').val();
+  var temp = {
+    'act' : '2'
+  };
+
+  $.each($(q).serializeArray(), function(){
+    temp[this.name] = this.value;
+  })
+
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/barang/'+id+'/',
+    method: 'POST',
+    data: JSON.stringify(temp)
+  }).done(function(){
+    app.toast.create({
+      text: "Sukses Edit Barang",
+      closeTimeout: 3000,
+      closeButton: true
+    }).open();
+
+    listBarang();
+  })
+}
+
+function showEditBarang(id, tipe, kode, nama, harga, satuan){
+  $('#button_addItem').css('display', 'none');
+  $('#buttons_editRemove').css('display', 'flex');
+
+  $('#id_barang').val(id);
+  $('#tipe_barang').val(tipe);
+  $('#kode_barang').val(kode);
+  $('#nama_barang').val(nama);
+  $('#harga_addItem').val(harga.split('-')[0]);
+  $('#satuan_select').val(satuan);
+}
+
+function hideEditBarang(q){
+  $('#button_addItem').css('display', 'block');
+  $('#buttons_editRemove').css('display', 'none');
+
+  $(q).trigger('reset');
+}
+
+function hapusBarang(id, nama){
   var temp = {'act': '3'};
+
+  app.dialog.confirm('Yakin Hapus '+nama+'?', 'Konfirmasi', function(){
+      $.ajax({
+        url: 'http:/demo.medianusamandiri.com/lightpos/API/barang/'+id+'/',
+        method: 'POST',
+        data: JSON.stringify(temp)
+      }).done(function(){
+        app.toast.create({
+          text: "Sukses Hapus dari Menu",
+          closeTimeout: 3000,
+          closeButton: true
+        }).open();
+
+        listBarang();
+      })
+    }, function(){
+      return;
+    })
+  $.ajax()
 }
 
 function addSatuan(q){
@@ -1947,3 +2029,8 @@ status => 4,  Data Anda Sudah Terdaftar, dengan status premium
 
 // TODO: untuk versi free, tampilkan menu master barang.
 // TODO: upload status untuk update menu masih error
+// TODO: hapus barang kasih id_outlet + id_barang biar terhapus dari menu juga
+// TODO: hasil API /menu/id_outlet ada duplikat setelah menghapus menu
+// TODO: update menu tidak muncul di API /status/ -> fixable by calling initMenu() everytime, sih
+// TODO: rebuild kalkulasi harga dengan PPN dan diskon
+// TODO: redesign cetak
