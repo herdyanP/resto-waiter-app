@@ -23,6 +23,7 @@ var txNmr = 0;
 var retail, cabang, lastId, user, platform, jn, modalAwal, uid, updates;
 var adid = {};
 var cpyProf;
+var diskonAmt = 0; totalSub = 0; totalGrand = 0;
 var modalBox = app.dialog.create({
     title: 'Modal Awal',
     closeByBackdropClick: false,
@@ -706,9 +707,11 @@ function keranjang(a,b,c,d){
       // }
 
       data += '</ul>';
+      totalSub = jumlah;
+
+
       $('#keranjang').html(data);
-      $('#dsk_persen').val() ? $('#subtotal').html(jumlah.toLocaleString('id-ID')) : $('#subtotal').html((jumlah * parseFloat($('#dsk_persen').val())).toLocaleString('id-ID'));
-      $('#subtotal').html(jumlah.toLocaleString('id-ID'));
+      $('#subtotal').html((jumlah - (jumlah * diskonAmt)).toLocaleString('id-ID'));
       // var ppn=jumlah*(10/100);
       // var gt=jumlah+ppn;
       // $('#ppn').html(ppn.toLocaleString());
@@ -1806,12 +1809,22 @@ function register(q){
 }
 
 function diskon(a){
-  return;
+  if(a.length <= 3){
+    diskonAmt = (parseFloat(a) / 100);
+    $('#subtotal').html((totalSub - (diskonAmt * totalSub)).toLocaleString('id-ID'));
+  } else {
+    diskonAmt = (parseInt(a));
+    $('#subtotal').html((totalSub - diskonAmt).toLocaleString('id-ID'));
+  }
+
+  
+
+  // return;
   // var sub = parseInt($('#subtotal').html().replace(/\D/g,''));
   // var dis = parseFloat(a / 100);
   // var fin = parseFloat(sub - sub * dis).toLocaleString('id-ID');
   
-  // $('#subtotal').html(fin);
+  
 }
 
 function ubahAmount(id){
