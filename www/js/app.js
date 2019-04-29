@@ -94,8 +94,6 @@ document.addEventListener('deviceready', function() {
     transaction.executeSql(executeQuery);
   });
 
-  // TODO: pj_dtl, tambahan untuk tipe jual, 1 = barang, 2 = combo (done)
-
   initDB();
 
   var d = new Date();
@@ -792,139 +790,144 @@ function metode(a){
 
 function bayar(){
   var list = '';
+  var paid = parseInt($('#bayar').val().replace(/\D/g, ''));
   platform = $('#platform').val();
 
-  if(mtd == '1'){
-    jn = 'Tunai';
-  } else if (mtd == '2'){
-    jn = 'Kartu Kredit';
-  } else if (mtd == '3'){
-    if(platform == '1'){
-      jn = 'GO-PAY';
-    } else if(platform == '2'){
-      jn = 'OVO';
+  if(paid){
+
+    if(mtd == '1'){
+      jn = 'Tunai';
+    } else if (mtd == '2'){
+      jn = 'Kartu Kredit';
+    } else if (mtd == '3'){
+      if(platform == '1'){
+        jn = 'GO-PAY';
+      } else if(platform == '2'){
+        jn = 'OVO';
+      }
     }
-  }
-
-  app.dialog.create({
-    title: 'Konfirmasi',
-    text: 'Cetak receipt via:',
-    buttons: [{
-      text: 'Cancel',
-      close: true
-    }, {
-      text: 'Print',
-      onClick: function(){
-        db.transaction(function(tx){
-          tx.executeSql('SELECT * FROM pj_dtl_tmp', [], 
-            function(t, rs){
-              for(var i = 0; i < rs.rows.length; i++){
-                var ws = '';
-                var satuan = parseInt(rs.rows.item(i).harga).toLocaleString('id-ID');
-                var jumlah = (parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID');
-
-                for(var j = 0; j < 27 - satuan.length - jumlah.length; j++){
-                  ws += ' ';
-                }
-
-                list += '{left}'+rs.rows.item(i).nama_barang+'{br}  '+rs.rows.item(i).qty+' x '+parseInt(rs.rows.item(i).harga)+ws+(parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID')+'{br}';
-              }
-
-              list += '--------------------------------{br}{left}';
-              txNmr = nomor();
-
-              connectToPrinter(list);
-            }, function(t, error){
-              alert('error')
-            })
-        })
-      }
-    }, {
-      text: 'WhatsApp',
-      onClick: function(){
-        app.dialog.prompt('Masukkan nomor WhatsApp (+62):', 'Konfirmasi', function(result){
-          if(result != ''){
-            txNmr = nomor();
-            db.transaction(function(tx){
-              tx.executeSql('SELECT * FROM pj_dtl_tmp', [], 
-                function(t, rs){
-                  var dt = new Date();
-                  var tot = $('#subtotal').html();
-                  var totInt = tot.replace(/\D/g, '');
-                  var paid = $('#bayar').val().replace(/\D/g, ''); if(mtd != '1') paid = totInt;
-                  var kembali = parseInt(paid) - parseInt(totInt);
-
-                  var kop = '';
-                  var cab = '';
-
-                  var dy = ('00'+dt.getDate()).slice(-2);
-                  var hr = ('00'+dt.getHours()).slice(-2);
-                  var mn = ('00'+dt.getMinutes()).slice(-2);
-
-                  var sub = 'Sub-total';
-                  var byr = 'Via: ' + jn;
-                  var crd = 'CC';
-                  var kbl = 'Kembali';
-
-                  for(var i = 0; i < (31 - cpyProf.outlet.length)/2; i++){
-                    kop += ' ';
-                  } kop += cpyProf.outlet + '\n';
-
-                  for(var i = 0; i < (24 - cpyProf.cabang.length)/2; i++){
-                    cab += ' ';
-                  } cab += 'Cabang ' + cpyProf.cabang + '\n';
-
-                  var header = '```\n          Sales Receipt\n\n'+kop+cab+'--------------------------------\nNo. Trans : '+txNmr+'\nTanggal   : '+dy+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+hr+':'+mn+'\nOperator  : '+cpyProf.nama+'\n--------------------------------\n';
-                  var thanks = ' \n--------------------------------\n\n        Terima Kasih Atas\n         Kunjungan Anda\n';
-
-
-                  for(var i = 0; i < 22-tot.length; i++){
-                    sub += ' ';
-                  } sub += tot + ' \n';
-
-                  for(var i = 0; i < 29-tot.length; i++){
-                    crd += ' ';
-                  } crd += tot + ' \n';
-
-                  for(var i = 0; i < 26 - jn.length - parseInt(paid).toLocaleString().length; i++){
-                    byr += ' ';
-                  } byr += parseInt(paid).toLocaleString('id-ID') + ' \n';
-
-                  for(var i = 0; i < 24-parseInt(kembali).toLocaleString().length; i++){
-                    kbl += ' ';
-                  } kbl += parseInt(kembali).toLocaleString('id-ID');
-                  
-                  for(var i = 0; i < rs.rows.length; i++){
-                    var ws = '';
-                    var q = parseInt(rs.rows.item(i).qty).toLocaleString('id-ID');
-                    var satuan = parseInt(rs.rows.item(i).harga).toLocaleString('id-ID');
-                    var jumlah = (parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID');
-
-                    // console.log('q: '+q.length+', satuan: '+satuan.length+', jumlah: '+jumlah.length);
-
-                    var tlen = 26 - (satuan.length + jumlah.length + q.length);
-
-                    for(var j = 0; j < tlen; j++){
-                      ws += ' ';
-                    }
-
-                    list += rs.rows.item(i).nama_barang+'\n  '+ q +' x '+ satuan + ws + jumlah +' \n';
+  
+    app.dialog.create({
+      title: 'Konfirmasi',
+      text: 'Cetak receipt via:',
+      buttons: [{
+        text: 'Cancel',
+        close: true
+      }, {
+        text: 'Print',
+        onClick: function(){
+          db.transaction(function(tx){
+            tx.executeSql('SELECT * FROM pj_dtl_tmp', [], 
+              function(t, rs){
+                for(var i = 0; i < rs.rows.length; i++){
+                  var ws = '';
+                  var satuan = parseInt(rs.rows.item(i).harga).toLocaleString('id-ID');
+                  var jumlah = (parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID');
+  
+                  for(var j = 0; j < 27 - satuan.length - jumlah.length; j++){
+                    ws += ' ';
                   }
-
-                  list += '--------------------------------\n';
-
-                  ordernya(kembali, totInt, paid);
-                  window.location = 'https://wa.me/62'+result+'?text='+encodeURI(header + list + sub + byr + kbl + thanks + '```');
-                  
-                }, function(t, error){
-                  alert('error')
-                })
-            })
-          }
-        }, function(){})
-      }
-    }]
-  }).open();
+  
+                  list += '{left}'+rs.rows.item(i).nama_barang+'{br}  '+rs.rows.item(i).qty+' x '+parseInt(rs.rows.item(i).harga)+ws+(parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID')+'{br}';
+                }
+  
+                list += '--------------------------------{br}{left}';
+                txNmr = nomor();
+  
+                connectToPrinter(list);
+              }, function(t, error){
+                alert('error')
+              })
+          })
+        }
+      }, {
+        text: 'WhatsApp',
+        onClick: function(){
+          app.dialog.prompt('Masukkan nomor WhatsApp (+62):', 'Konfirmasi', function(result){
+            if(result != ''){
+              txNmr = nomor();
+              db.transaction(function(tx){
+                tx.executeSql('SELECT * FROM pj_dtl_tmp', [], 
+                  function(t, rs){
+                    var dt = new Date();
+                    var tot = $('#subtotal').html();
+                    var totInt = tot.replace(/\D/g, '');
+                    var kembali = parseInt(paid) - parseInt(totInt);
+  
+                    var kop = '';
+                    var cab = '';
+  
+                    var dy = ('00'+dt.getDate()).slice(-2);
+                    var hr = ('00'+dt.getHours()).slice(-2);
+                    var mn = ('00'+dt.getMinutes()).slice(-2);
+  
+                    var sub = 'Sub-total';
+                    var byr = 'Via: ' + jn;
+                    var crd = 'CC';
+                    var kbl = 'Kembali';
+  
+                    for(var i = 0; i < (31 - cpyProf.outlet.length)/2; i++){
+                      kop += ' ';
+                    } kop += cpyProf.outlet + '\n';
+  
+                    for(var i = 0; i < (24 - cpyProf.cabang.length)/2; i++){
+                      cab += ' ';
+                    } cab += 'Cabang ' + cpyProf.cabang + '\n';
+  
+                    var header = '```\n          Sales Receipt\n\n'+kop+cab+'--------------------------------\nNo. Trans : '+txNmr+'\nTanggal   : '+dy+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+hr+':'+mn+'\nOperator  : '+cpyProf.nama+'\n--------------------------------\n';
+                    var thanks = ' \n--------------------------------\n\n        Terima Kasih Atas\n         Kunjungan Anda\n';
+  
+  
+                    for(var i = 0; i < 22-tot.length; i++){
+                      sub += ' ';
+                    } sub += tot + ' \n';
+  
+                    for(var i = 0; i < 29-tot.length; i++){
+                      crd += ' ';
+                    } crd += tot + ' \n';
+  
+                    for(var i = 0; i < 26 - jn.length - parseInt(paid).toLocaleString().length; i++){
+                      byr += ' ';
+                    } byr += parseInt(paid).toLocaleString('id-ID') + ' \n';
+  
+                    for(var i = 0; i < 24-parseInt(kembali).toLocaleString().length; i++){
+                      kbl += ' ';
+                    } kbl += parseInt(kembali).toLocaleString('id-ID');
+                    
+                    for(var i = 0; i < rs.rows.length; i++){
+                      var ws = '';
+                      var q = parseInt(rs.rows.item(i).qty).toLocaleString('id-ID');
+                      var satuan = parseInt(rs.rows.item(i).harga).toLocaleString('id-ID');
+                      var jumlah = (parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID');
+  
+                      // console.log('q: '+q.length+', satuan: '+satuan.length+', jumlah: '+jumlah.length);
+  
+                      var tlen = 26 - (satuan.length + jumlah.length + q.length);
+  
+                      for(var j = 0; j < tlen; j++){
+                        ws += ' ';
+                      }
+  
+                      list += rs.rows.item(i).nama_barang+'\n  '+ q +' x '+ satuan + ws + jumlah +' \n';
+                    }
+  
+                    list += '--------------------------------\n';
+  
+                    ordernya(kembali, totInt, paid);
+                    window.location = 'https://wa.me/62'+result+'?text='+encodeURI(header + list + sub + byr + kbl + thanks + '```');
+                    
+                  }, function(t, error){
+                    alert('error')
+                  })
+              })
+            }
+          }, function(){})
+        }
+      }]
+    }).open();
+  } else {
+    app.dialog.alert('Jumlah dibayar harus lebih dari 0', 'Alert');
+  }
 }
 
 function nomor(){
@@ -1350,10 +1353,14 @@ function initMenu(){
     type: 'GET'
   }).done(function(obj){
     // console.log(obj);
-    // db.transaction(function(t){
-    //   t.executeSql('DROP TABLE m_barang');
-    //   t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id INT PRIMARY KEY AUTOINCREMENT, id_barang INT NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT, st INT)');
-    // })
+    db.transaction(function(t){
+      t.executeSql('DROP TABLE m_barang');
+      t.executeSql('CREATE TABLE IF NOT EXISTS m_barang ( id_urut INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, id_barang INT NOT NULL UNIQUE, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT, st INT )');
+    }, function(error){
+      console.log(error);
+    }, function(msg){
+      console.log('init m_barang');
+    })
 
     for (var i = 0; i < obj.length; i++) {
       if(/*cpyProf.id_cabang == obj[i].id_cabang && cpyProf.id_client == obj[i].id_client && */obj[i].id_barang != null && obj[i].nama_barang != null){
@@ -1373,7 +1380,7 @@ function initMenu(){
                     function(){
                       console.log('sukses insert initMenu');
                     }, function(){
-                      console.log('error insert initMenu');
+                      console.log('error insert (initMenu)');
                     })
                 }              
             })
@@ -1739,7 +1746,6 @@ function updateHarga(j, ubah, jenis){
       method: 'GET'
     }).done(function(result){
       for(var i = 0; i < result.length; i++){
-        // TODO: plotting dari API status ke either APInya combo atau data buat combo
         if(result[i].id_price != j) continue;
 
         var a = function(id_barang, harga){
@@ -1758,8 +1764,6 @@ function uploadStatus(kode, jenis_ubah){
     'no_device' : device.uuid,
     'kode' : kode,
     'id_client' : cpyProf.id_client
-
-    // TODO: kirim status update beserta id_client
   }
 
   $.ajax({
@@ -1935,6 +1939,7 @@ function editBarang(q){
     }).open();
 
     listBarang();
+    cekStatus();
   })
 }
 
@@ -1973,6 +1978,7 @@ function hapusBarang(id, nama){
         }).open();
 
         listBarang();
+        cekStatus();
       })
     }, function(){
       return;
@@ -2047,3 +2053,4 @@ status => 4,  Data Anda Sudah Terdaftar, dengan status premium
 // TODO: update menu tidak muncul di API /status/ -> fixable by calling initMenu() everytime, sih
 // TODO: rebuild kalkulasi harga dengan PPN dan diskon
 // TODO: redesign cetak
+// TODO: plotting dari API status ke either APInya combo atau data buat combo

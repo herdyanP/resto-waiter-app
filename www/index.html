@@ -354,7 +354,7 @@
               <ul>
                 <li class="item-content item-input inline-label bayar-tunai" style="display: block;">
                   <div class="item-inner">
-                    <div class="item-title item-label" style="color: unset;">Diskon (%)</div>
+                    <div class="item-title item-label" style="color: unset;">Diskon</div>
                     <div class="item-input-wrap">
                       <input type="text" id="dsk_persen" value="0" onclick="this.select();" onchange="diskon(this.value)" style="text-align: right;">
                     </div>
@@ -386,7 +386,7 @@
                   <div class="item-inner">
                     <div class="item-title item-label" style="color: unset;">Dibayar</div>
                     <div class="item-input-wrap">
-                      <input type="text" id="bayar" placeholder="0" oninput="comma(this)" style="text-align: right;">
+                      <input type="number" id="bayar" placeholder="0" onchange="comma(this)" onclick="this.select();" style="text-align: right;">
                     </div>
                   </div>
                 </li>
