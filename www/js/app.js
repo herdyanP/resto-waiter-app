@@ -497,7 +497,8 @@ function cariFood(q){
         var datanya = '';
         for (i = 0; i < len; i++){
 
-          datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+          datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+          // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
           // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
         }
 
@@ -525,7 +526,8 @@ function tampilBvrg(){
       var datanya = '';
       for (i = 0; i < len; i++){
 
-        datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+        datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">free_breakfast</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+        // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
         // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;text-align:left;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
       }
 
@@ -547,7 +549,8 @@ function cariBvrg(q){
         var datanya = '';
         for (i = 0; i < len; i++){
 
-          datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+          datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">free_breakfast</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+          // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
           // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;text-align:left;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
         }
 
@@ -960,7 +963,7 @@ function nomor(){
 
   // var nomornya=d.getFullYear()+""+(d.getMonth()+1)+""+d.getDate()+""+ans1+""+ans;
 
-  var nomornya = 'TX/' + '01/' + d.getFullYear() + (('0'+(d.getMonth()+1)).slice(-2)) + '/' + (('0'+d.getDate()).slice(-2)) + '/' + dayTrans;
+  var nomornya = 'TX/' + cpyProf.id_client + '/' + cpyProf.id_outlet + '/' + d.getFullYear() + (('0'+(d.getMonth()+1)).slice(-2)) + '/' + (('0'+d.getDate()).slice(-2)) + '/' + dayTrans;
   window.localStorage.setItem("inctrx",inc);
   return nomornya;
 }
@@ -2026,9 +2029,12 @@ function listSatuan(){
     method: 'GET',
   }).done(function(result){
     for(var i = 0; i < result.length; i++){
+      if(result[i].id_satuan == null || result[i].nama_satuan == null) continue;
+
       data += '<li class="item-content ">\
       <div class="item-inner">\
       <div class="item-title">'+result[i].nama_satuan+'</div>\
+      <div class="item-after"><a href="#" onclick="hapusSatuan('+result[i].id_satuan+',\''+result[i].nama_satuan+'\')"><i class="icon material-icons md-only">close</i></a></div>\
       </div>\
       </li>'
     }
@@ -2038,6 +2044,28 @@ function listSatuan(){
   })
 }
 
+function hapusSatuan(id, nama){
+  var temp = {'act': '3'};
+
+  app.dialog.confirm('Yakin Hapus '+nama+'?', 'Konfirmasi', function(){
+      $.ajax({
+        url: 'http:/demo.medianusamandiri.com/lightpos/API/satuan/'+id+'/',
+        method: 'POST',
+        data: JSON.stringify(temp)
+      }).done(function(){
+        app.toast.create({
+          text: "Sukses Hapus Satuan",
+          closeTimeout: 3000,
+          closeButton: true
+        }).open();
+
+        listSatuan();
+      })
+    }, function(){
+      return;
+    })
+  $.ajax()
+}
 
 
 /*
@@ -2048,9 +2076,6 @@ status => 4,  Data Anda Sudah Terdaftar, dengan status premium
 
 // TODO: untuk versi free, tampilkan menu master barang.
 // TODO: upload status untuk update menu masih error
-// TODO: hapus barang kasih id_outlet + id_barang biar terhapus dari menu juga
-// TODO: hasil API /menu/id_outlet ada duplikat setelah menghapus menu
 // TODO: update menu tidak muncul di API /status/ -> fixable by calling initMenu() everytime, sih
-// TODO: rebuild kalkulasi harga dengan PPN dan diskon
 // TODO: redesign cetak
 // TODO: plotting dari API status ke either APInya combo atau data buat combo

@@ -17,6 +17,7 @@
 
     <div class="page-content">
       <div class="block">
+        <input type="hidden" id="id_satuan">
         <form id="satuan_form" class="list no-hairlines no-hairlines-between">
           <ul>
             <li class="item-content item-input inline-label">
@@ -30,7 +31,11 @@
             <li class="item-content">
               <div class="item-inner">
                 <div class="item-title"  style="width: 100%;">
-                  <a class="button button-outline" onclick="addSatuan(document.getElementById('satuan_form'));">Tambah</a>
+                  <a class="button button-outline" id="button_addSatuan" style="display: block;" onclick="addSatuan(document.getElementById('satuan_form'));">Tambah</a>
+                  <p class="row" id="buttons_editSatuan" style="display: none;">
+                    <a class="col button button-outline" onclick="hideEditSatuan(document.getElementById('satuan_form'));">Batal</a>
+                    <a class="col button button-outline" onclick="editSatuan(document.getElementById('satuan_form'))">Update</a>
+                  </p>
                 </div>
               </div>
             </li>
