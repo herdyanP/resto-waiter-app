@@ -578,7 +578,8 @@ function tampilCombo(){
       var datanya = '';
       for (i = 0; i < len; i++){
 
-        datanya += '<div onclick="simpanCombo('+rs.rows.item(i).id_combo+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_combo+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_combo+'</p></div>';
+        datanya += '<div onclick="simpanCombo('+rs.rows.item(i).id_combo+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_combo+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+rs.rows.item(i).nama_combo+'</p></div>';
+        // datanya += '<div onclick="simpanCombo('+rs.rows.item(i).id_combo+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_combo+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_combo+'</p></div>';
         // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;text-align:left;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
       }
 
@@ -1777,7 +1778,7 @@ function uploadStatus(kode, jenis_ubah){
     tampilFood();
     tampilBvrg();
     tampilCombo();
-    // console.log(result);
+    console.log('Hasil uploadStatus: '+result);
   })
 }
 
@@ -2079,3 +2080,5 @@ status => 4,  Data Anda Sudah Terdaftar, dengan status premium
 // TODO: update menu tidak muncul di API /status/ -> fixable by calling initMenu() everytime, sih
 // TODO: redesign cetak
 // TODO: plotting dari API status ke either APInya combo atau data buat combo
+// TODO: update harga tidak jalan(?)
+// TODO: field kembalian ditampilkan untuk pembayaran tunai
