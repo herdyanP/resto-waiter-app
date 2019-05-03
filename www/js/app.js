@@ -23,7 +23,7 @@ var txNmr = 0;
 var retail, cabang, lastId, user, platform, jn, modalAwal, uid, updates;
 var adid = {};
 var cpyProf;
-var diskonAmt = 0; totalSub = 0; totalGrand = 0;
+var diskonAmt = 0; totalSub = 0; totalGrand = 0; kembalian = 0;
 var modalBox = app.dialog.create({
     title: 'Modal Awal',
     closeByBackdropClick: false,
@@ -1217,6 +1217,24 @@ function printBayar(q) {
 function comma(el){
   if(el.value == '') el.value = 0;
   el.value = parseInt((el.value).replace(/\D/g, '')).toLocaleString('id-ID');
+}
+
+function commaNumber(el){
+  if(el.value == '') el.value = 0;
+
+  $(el).prop('type', 'text');
+  el.value = parseInt((el.value).replace(/\D/g, '')).toLocaleString('id-ID');
+}
+
+function changeType(el){
+  el.value = el.value.replace(/\D/g, '');
+  $(el).prop('type', 'number');
+}
+
+function hitungKembalian(val){
+  var tot = parseInt($('#subtotal').html().replace(/\D/g, ''));
+  kembalian = parseInt(val) - tot;
+  $('#kembalian').html(kembalian.toLocaleString('id-ID'));
 }
 
 // function emptyDB(){
