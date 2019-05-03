@@ -355,11 +355,7 @@ function onRetSuccess(obj){
     if(result != '0'){
       cpyProf = obj;
       console.log('succ');
-      sendPing();
-      cekStatus();
-      tampilFood();
-      tampilBvrg();
-      tampilCombo();
+
 
       // if(updates != '0'){
       //   checkUpdates();
@@ -372,6 +368,13 @@ function onRetSuccess(obj){
       $('#logoutRow').css('display', 'block');
 
       $('#currentUser').html('Operator: '+ (obj.nama ? obj.nama : obj.client));
+
+      setTimeout(function(){
+        sendPing();
+        tampilFood();
+        tampilBvrg();
+        tampilCombo();
+      }, 3000)
     } else {
       // alert('gagal');
       onLogout();
@@ -1232,9 +1235,11 @@ function changeType(el){
 }
 
 function hitungKembalian(val){
-  var tot = parseInt($('#subtotal').html().replace(/\D/g, ''));
-  kembalian = parseInt(val) - tot;
-  $('#kembalian').html(kembalian.toLocaleString('id-ID'));
+  if(val != ''){
+    var tot = parseInt($('#subtotal').html().replace(/\D/g, ''));
+    kembalian = parseInt(val) - tot;
+    $('#kembalian').html(kembalian.toLocaleString('id-ID'));
+  }
 }
 
 // function emptyDB(){
@@ -1837,10 +1842,12 @@ function register(q){
 function diskon(a){
   if(a.length <= 3){
     diskonAmt = (parseFloat(a) / 100);
-    $('#subtotal').html((totalSub - (diskonAmt * totalSub)).toLocaleString('id-ID'));
+    totalGrand = (totalSub - (diskonAmt * totalSub));
+    $('#subtotal').html(totalGrand.toLocaleString('id-ID'));
   } else {
     diskonAmt = (parseInt(a));
-    $('#subtotal').html((totalSub - diskonAmt).toLocaleString('id-ID'));
+    totalGrand = (totalSub - diskonAmt)
+    $('#subtotal').html(totalGrand.toLocaleString('id-ID'));
   }
 
   
@@ -1959,6 +1966,8 @@ function editBarang(q){
       closeTimeout: 3000,
       closeButton: true
     }).open();
+
+    $(q).trigger('reset');
 
     listBarang();
     cekStatus();
@@ -2099,4 +2108,3 @@ status => 4,  Data Anda Sudah Terdaftar, dengan status premium
 // TODO: redesign cetak
 // TODO: plotting dari API status ke either APInya combo atau data buat combo
 // TODO: update harga tidak jalan(?)
-// TODO: field kembalian ditampilkan untuk pembayaran tunai
