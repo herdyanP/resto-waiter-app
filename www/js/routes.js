@@ -73,7 +73,12 @@ var routes = [
 },
 {
   path: '/register/',
-  componentUrl: './pages/register.html'
+  componentUrl: './pages/register.html',
+  on: {
+    pageAfterIn: function(){
+      $('#appversion_r').html("v"+appVer);
+    }
+  }
 },
 {
   path: '/satuan/',

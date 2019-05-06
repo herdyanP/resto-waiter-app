@@ -521,5 +521,6 @@ user-select: auto !important;
 }
 
 .main-group .tab-link-active {
-  background-color: #0b76cc !important; 
+  /*background-color: #0b76cc !important; */
+  background-color: #ff9800 !important; 
 }

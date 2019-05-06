@@ -18,7 +18,7 @@
     <allow-intent href="geo:*" />
     <platform name="android">
         <allow-intent href="market:*" />
-        <icon src="mnm.png" />
+        <icon src="lightpos.png" />
         <preference name="android-minSdkVersion" value="26" />
         <preference name="android-targetSdkVersion" value="26" />
         <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application">
