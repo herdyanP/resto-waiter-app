@@ -1,7 +1,6 @@
 // Dom7
 // sudo cordova build android --release -- --keystore=lightpos.keystore --storePassword=bismillah --alias=lightpos --password=bismillah
 
-// note to self: maybe can use: nyimpen cred login pake token, didapet dari hasil hash di server, yang direturn sama info company
 var $$ = Dom7;
 
 // Init App
@@ -24,6 +23,8 @@ var retail, cabang, lastId, user, platform, jn, modalAwal, uid, updates;
 var adid = {};
 var cpyProf;
 var diskonAmt = 0; totalSub = 0; totalGrand = 0; kembalian = 0;
+var pingTimeout = 0;
+var appVer = 0;
 var modalBox = app.dialog.create({
     title: 'Modal Awal',
     closeByBackdropClick: false,
@@ -64,8 +65,8 @@ var modalBox = app.dialog.create({
 
 document.addEventListener('deviceready', function() {
   adid = {
-    banner: 'ca-app-pub-3940256099942544/6300978111',
-    // banner: 'ca-app-pub-8300135360648716/8651556341',
+    // banner: 'ca-app-pub-3940256099942544/6300978111',
+    banner: 'ca-app-pub-8300135360648716/8651556341',
     interstitial: 'ca-app-pub-3940256099942544/1033173712'
   }
 
@@ -139,6 +140,12 @@ document.addEventListener('deviceready', function() {
 
   document.addEventListener("backbutton", onBackPressed, false);
   document.addEventListener("online", onOnline, false);
+
+  cordova.getAppVersion.getVersionNumber(function (version) {
+    appVer = version;
+    // $('#appversion').html("v"+version);
+    // alert(version);
+  });
 });
 
 function initDB(){
@@ -407,6 +414,7 @@ function onRemSuccess(){
 
   // emptyDB();
   clearDB();
+  stopPing();
   app.views.main.router.navigate('/login/');
 
   // db.transaction(function(tx){
@@ -1628,12 +1636,19 @@ function sendPing(){
     data: JSON.stringify(stamp)
   }).done(function(result){
     // console.log(result);
-    setTimeout(function(){
+    pingTimeout = setTimeout(function(){
       sendPing();
     }, 300 * 1000);
   }).fail(function(a,b,error){
     // console.log(error);
   })
+}
+
+function stopPing(){
+  if(pingTimeout){
+    clearTimeout(pingTimeout);
+    pingTimeout = 0;
+  }
 }
 
 function cekUUID(){

@@ -55,7 +55,12 @@ var routes = [
 },
 {
   path: '/login/',
-  componentUrl: './pages/login.html'
+  componentUrl: './pages/login.html',
+  on: {
+    pageAfterIn: function(){
+      $('#appversion').html("v"+appVer);
+    }
+  }
 },
 {
   path: '/penjualan/',

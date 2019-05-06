@@ -7662,7 +7662,7 @@ html.with-modal-dialog .page-content {
   color: #000000;
 }
 .md .dialog {
-  width: auto;
+  /*width: auto;*/
   min-width: 280px;
   margin-left: -140px;
   border-radius: 4px;
