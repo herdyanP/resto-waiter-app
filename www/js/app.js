@@ -472,6 +472,33 @@ function onBackPressed(){
 
 function tampilFood(){
   console.log('food');
+  /* // to be used as direct connection to server
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/namaAPI/id/',
+    type: 'GET'
+  }).done(function(result){
+
+    var len, i;
+    if(result.length > 20) {
+      len = 20;
+    } else {
+      len = result.length;
+    }
+
+    var all_rows = [];
+    var datanya = '';
+    for (i = 0; i < len; i++){
+      datanya += '<div onclick="simpan('+result.idblabla+', 1,'+result.hargablabla+',\''+result.namablabla+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+    }
+
+    datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
+
+    $('#foodlist').html(datanya);
+  }).fail(function(a,b,error){
+    alert(error);
+  })
+  */
+
   db.transaction(function(tx) {
     tx.executeSql('SELECT * FROM m_barang WHERE kategori = "1" AND st = "1" ORDER BY nama_barang ASC LIMIT 30', [], function(tx, rs) {
       var len, i;
@@ -617,6 +644,32 @@ function getCombo(a){
 // id_barang INT, id_combo INT, qty INT, total DOUBLE, harga DOUBLE, nama_barang VARCHAR(20), nama_combo VARCHAR(20)
 
 function simpan(a,b,c,d){
+  /* // to be used as direct connection to server
+  var temp = {
+    'idblabla' : a,
+    'qtyblabla' : b,
+    'hargablabla' : c,
+    'namablabla' : d
+  }
+
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/namaAPI/id/',
+    type: 'POST',
+    data: JSON.stringify(temp)
+  }).done(function(result){
+    app.toast.create({
+      text: "Sukses Tambah ke Menu",
+      closeTimeout: 3000,
+      closeButton: true
+    }).open();
+  
+  keranjang('a','b','c','d');
+
+  }).fail(function(a,b,error){
+    alert(error);
+  })
+  */
+
   db.transaction(function(transaction) {
     var c1=0;
     var qty=0;
@@ -683,7 +736,28 @@ function simpanCombo(a,b,c,d){
 }
 
 function keranjang(a,b,c,d){
-  var data = '<ul>'
+
+  /* // to be used as direct connection to server
+  var data = '<ul>';
+  var jumlah = 0;
+  var temp = {
+    'idpelblabla' : cpyProf.,
+    'idmenublabla' : cpyProf.
+  }
+
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/namaAPI/id/',
+    type: 'POST',
+    data: JSON.stringify(temp)
+  }).done(function(result){
+    
+  
+  }).fail(function(a,b,error){
+    alert(error);
+  })
+  */
+
+  var data = '<ul>';
   var jumlah = 0;
   db.transaction(function(tx) {
     tx.executeSql('SELECT * FROM pj_dtl_tmp', [], function(tx, rs) {
@@ -1279,33 +1353,33 @@ function listPenjualan(){
 }
 
 // function checkUpdates(){
-//   $.ajax({
-//     url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
-//     type: 'GET'
-//   }).done(function(obj){
+  // $.ajax({
+  //   url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+  //   type: 'GET'
+  // }).done(function(obj){
 
-//     db.transaction(function(t){
-//       t.executeSql('DROP TABLE m_barang');
-//       t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
-//     })
+  //   db.transaction(function(t){
+  //     t.executeSql('DROP TABLE m_barang');
+  //     t.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT)');
+  //   })
 
-//     for (var i = 0; i < obj.length; i++) {
-//       // var harga = obj[i].harga.split('-');
-//       var insert = function(id_barang, nama_barang, harga_jual, kategori){
-//         db.transaction(function(t){
-//           t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
-//             function(error){
-//               console.log(error.message);
-//             })
-//         })
-//       }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], obj[i].tipe);
-//     }
-//   }).fail(function(a,b,error){
-//     alert(error);
-//   }).always(function(){
-//     tampilFood();
-//     tampilBvrg();
-//   })
+  //   for (var i = 0; i < obj.length; i++) {
+  //     // var harga = obj[i].harga.split('-');
+  //     var insert = function(id_barang, nama_barang, harga_jual, kategori){
+  //       db.transaction(function(t){
+  //         t.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori], function(t, success){}, 
+  //           function(error){
+  //             console.log(error.message);
+  //           })
+  //       })
+  //     }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], obj[i].tipe);
+  //   }
+  // }).fail(function(a,b,error){
+  //   alert(error);
+  // }).always(function(){
+  //   tampilFood();
+  //   tampilBvrg();
+  // })
 // }
 
 // function checkUpdates(){
@@ -2143,3 +2217,4 @@ status => 4,  Data Anda Sudah Terdaftar, dengan status premium
 // TODO: gajadi pake 1 outlet 1 device
 // TODO: 100% online, termasuk tambah ke keranjang
 // TODO: plugin hasilin screenshot dari page
+// TODO: mencatat utang / kasbon
