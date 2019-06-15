@@ -2137,3 +2137,9 @@ status => 4,  Data Anda Sudah Terdaftar, dengan status premium
 // TODO: redesign cetak
 // TODO: plotting dari API status ke either APInya combo atau data buat combo
 // TODO: update harga tidak jalan(?)
+// TODO: menu kategori pindah jadiin select
+// TODO: search diganti seperti kopkar
+// TODO: login jadi pake alamat email
+// TODO: gajadi pake 1 outlet 1 device
+// TODO: 100% online, termasuk tambah ke keranjang
+// TODO: plugin hasilin screenshot dari page
