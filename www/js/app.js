@@ -519,7 +519,7 @@ function tampilFood(){
 
       datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
 
-      $('#foodlist').html(datanya);
+      $('#itemlist').html(datanya);
     }, function(tx, error) {
       alert('SELECT error: ' + error.message);
     });
