@@ -694,6 +694,7 @@ function simpan(a,b,c,d){
           },
           function(error){
             alert('Error occurred'); 
+            console.log(error.message);
           });
       }
     }, function(tx, error) {
@@ -2211,6 +2212,7 @@ status => 4,  Data Anda Sudah Terdaftar, dengan status premium
 // TODO: redesign cetak
 // TODO: plotting dari API status ke either APInya combo atau data buat combo
 // TODO: update harga tidak jalan(?)
+
 // TODO: menu kategori pindah jadiin select
 // TODO: search diganti seperti kopkar
 // TODO: login jadi pake alamat email

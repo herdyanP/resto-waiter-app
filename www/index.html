@@ -18,7 +18,7 @@
 
     <div class="panel panel-left panel-cover">
       <div class="block" style="background: #2196f3; color: white; margin: 0; padding: 20px; font-size: 20px">
-        <br><strong>LightPOS</strong>
+        <br><strong>MediaPOS</strong>
         <br>Aplikasi POS Resto
       </div>
 
@@ -246,11 +246,23 @@
                 <i class="f7-icons">menu</i>
               </a>
             </div>
-            <div class="title">LightPOS</div>
+            <div class="title">MediaPOS</div>
             <div class="right">
               <p id="currentUser" style="font-size: 14px; margin-right: 20px"></p>
+              <a class="link icon-only searchbar-enable" data-searchbar=".searchbar"><i class="icon material-icons md-only">search</i></a>
             </div>
-            <div class="subnavbar">
+            <form class="searchbar searchbar-expandable">
+              <div class="searchbar-inner">
+                <div class="searchbar-input-wrap">
+                  <!-- <input type="search" placeholder="Search" onkeyup="searched(event, this.value)" /> -->
+                  <input type="search" placeholder="Search" oninput="cariBvrg(this.value)" />
+                  <i class="searchbar-icon"></i>
+                  <span class="input-clear-button"></span>
+                </div>
+                <span class="searchbar-disable-button">Cancel</span>
+              </div>
+            </form>
+            <!-- <div class="subnavbar">
               <div class="subnavbar-inner">
                 <div class="segmented main-group">
                   <a href="#foods" class="button tab-link tab-link-active">Foods</a>
@@ -258,7 +270,7 @@
                   <a href="#combos" class="button tab-link">Combos</a>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -273,6 +285,17 @@
 
         <div class="page-content hide-navbar-on-scroll">
           <div class="card card-outline" style="margin-top: 20px">
+
+            <!-- TO BE ADDED START -->
+            <!-- <div class="block">
+              <div class="grid-demo">
+                <div class="row" id="itemlist" style="overflow: scroll; height: 35vh; padding-top: 15px;">
+                  <div onclick="simpan('a', 1,'b','c')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">barang 1</p></div>
+                  <div class="col-33" style="height: 100px; visibility: hidden;"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>
+                </div>
+              </div>
+            </div> -->
+            <!-- TO BE ADDED END -->
 
             <div class="tabs">
               <div class="tab tab-active" id="foods">
