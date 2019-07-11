@@ -658,7 +658,7 @@ function simpan(a,b,c,d){
     data: JSON.stringify(temp)
   }).done(function(result){
     app.toast.create({
-      text: "Sukses Tambah ke Menu",
+      text: "Sukses Tambah ke Keranjang",
       closeTimeout: 3000,
       closeButton: true
     }).open();
@@ -2036,10 +2036,11 @@ function listBarang(){
       // var temp = {};
       for(var i = 0; i < result.length; i++){
         if(result[i].id_barang == null || result[i].nama_barang == null) continue;
+        var hrg = result[i].harga.split('-')[0];
 
         data += '<li class="item-content ">\
         <div class="item-inner">\
-        <div class="item-title" onclick="showEditBarang('+result[i].id_barang+','+result[i].tipe+',\''+result[i].kode_barang+'\',\''+result[i].nama_barang+'\',\''+result[i].harga+'\','+result[i].id_satuan+');">'+result[i].nama_barang+'</div>\
+        <div class="item-title" onclick="showEditBarang('+result[i].id_barang+','+result[i].tipe+',\''+result[i].kode_barang+'\',\''+result[i].nama_barang+'\',\''+hrg+'\','+result[i].id_satuan+');">'+result[i].nama_barang+'</div>\
         <div class="item-after"><a href="#" onclick="hapusBarang('+result[i].id_barang+',\''+result[i].nama_barang+'\')"><i class="icon material-icons md-only">close</i></a></div>\
         </div>\
         </li>'
