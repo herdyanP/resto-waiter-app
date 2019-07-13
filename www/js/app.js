@@ -644,16 +644,28 @@ function getCombo(a){
 // id_barang INT, id_combo INT, qty INT, total DOUBLE, harga DOUBLE, nama_barang VARCHAR(20), nama_combo VARCHAR(20)
 
 function simpan(a,b,c,d){
+  // API pbam
+  $.ajax({
+    url: 'http://demo.medianusamandiri.com/lightpos/API/insert_penj_dtl_tmp.php?id_barang='+a+'&harga='+c+'&id_login='+cpyProf.id_outlet+'&qty='+b
+  }).done(function(result){
+    app.toast.create({
+      text: "Sukses Tambah ke Keranjang",
+      closeTimeout: 3000,
+      closeButton: true
+    }).open();
+
+    keranjang();
+  })
+
   /* // to be used as direct connection to server
   var temp = {
-    'idblabla' : a,
-    'qtyblabla' : b,
-    'hargablabla' : c,
-    'namablabla' : d
+    'id_barang' : a,
+    'qty_jual' : b,
+    'harga_jual' : c
   }
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/namaAPI/id/',
+    url: 'http://demo.medianusamandiri.com/lightpos/API/cart/'+cpyProf.id_outlet+'/',
     type: 'POST',
     data: JSON.stringify(temp)
   }).done(function(result){
@@ -670,144 +682,166 @@ function simpan(a,b,c,d){
   })
   */
 
-  db.transaction(function(transaction) {
-    var c1=0;
-    var qty=0;
-    transaction.executeSql('SELECT count(*) as c, qty, harga FROM pj_dtl_tmp where id_barang=?', [a], function(tx, rs) {
-      if(rs.rows.item(0).c<1){
-        var executeQuery = "INSERT INTO pj_dtl_tmp (id_barang, qty, total, nama_barang, harga, tipe) VALUES (?,?,?,?,?,?)";
-        transaction.executeSql(executeQuery, [a,b,c,d,c,1]
-          , function(tx, result) {
-            keranjang(a,b,c,d);
-          },
-          function(error){
-            alert('Error occurred'); 
-          });
-      } else { //update apabila ada data dikeranjang
+//   db.transaction(function(transaction) {
+//     var c1=0;
+//     var qty=0;
+//     transaction.executeSql('SELECT count(*) as c, qty, harga FROM pj_dtl_tmp where id_barang=?', [a], function(tx, rs) {
+//       if(rs.rows.item(0).c<1){
+//         var executeQuery = "INSERT INTO pj_dtl_tmp (id_barang, qty, total, nama_barang, harga, tipe) VALUES (?,?,?,?,?,?)";
+//         transaction.executeSql(executeQuery, [a,b,c,d,c,1]
+//           , function(tx, result) {
+//             keranjang(a,b,c,d);
+//           },
+//           function(error){
+//             alert('Error occurred'); 
+//           });
+//       } else { //update apabila ada data dikeranjang
 
-        var q=parseInt(rs.rows.item(0).qty)+1;
-        var t=parseInt(rs.rows.item(0).harga)*q;
-        var executeQuery = "UPDATE pj_dtl_tmp SET qty="+ q +", total="+t+" where id_barang=?";             
-        transaction.executeSql(executeQuery, [a], 
-          function(tx, result) {
-            keranjang(a,b,c,d);
-          },
-          function(error){
-            alert('Error occurred'); 
-            console.log(error.message);
-          });
-      }
-    }, function(tx, error) {
-      alert('SELECT error: ' + error.message);
-    });
-  });
+//         var q=parseInt(rs.rows.item(0).qty)+1;
+//         var t=parseInt(rs.rows.item(0).harga)*q;
+//         var executeQuery = "UPDATE pj_dtl_tmp SET qty="+ q +", total="+t+" where id_barang=?";             
+//         transaction.executeSql(executeQuery, [a], 
+//           function(tx, result) {
+//             keranjang(a,b,c,d);
+//           },
+//           function(error){
+//             alert('Error occurred'); 
+//             console.log(error.message);
+//           });
+//       }
+//     }, function(tx, error) {
+//       alert('SELECT error: ' + error.message);
+//     });
+//   });
+// }
+
+// function simpanCombo(a,b,c,d){
+//   db.transaction(function(transaction) {
+//     var c1=0;
+//     var qty=0;
+//     transaction.executeSql('SELECT count(*) as c, qty, harga FROM pj_dtl_tmp where id_combo=?', [a], function(tx, rs) {
+//       if(rs.rows.item(0).c<1){
+//         var executeQuery = "INSERT INTO pj_dtl_tmp (id_combo, qty, total, nama_combo, harga, tipe) VALUES (?,?,?,?,?,?)";
+//         transaction.executeSql(executeQuery, [a,b,c,d,c,2]
+//           , function(tx, result) {
+//             keranjang(a,b,c,d);
+//           },
+//           function(error){
+//             alert('Error occurred'); 
+//           });
+//       } else { //update apabila ada data dikeranjang
+
+//         var q=parseInt(rs.rows.item(0).qty)+1;
+//         var t=parseInt(rs.rows.item(0).harga)*q;
+//         var executeQuery = "UPDATE pj_dtl_tmp SET qty="+ q +", total="+t+" where id_combo=?";             
+//         transaction.executeSql(executeQuery, [a], 
+//           function(tx, result) {
+//             keranjang(a,b,c,d);
+//           },
+//           function(error){
+//             alert('Error occurred'); 
+//           });
+//       }
+//     }, function(tx, error) {
+//       alert('SELECT error: ' + error.message);
+//     });
+//   });
 }
 
-function simpanCombo(a,b,c,d){
-  db.transaction(function(transaction) {
-    var c1=0;
-    var qty=0;
-    transaction.executeSql('SELECT count(*) as c, qty, harga FROM pj_dtl_tmp where id_combo=?', [a], function(tx, rs) {
-      if(rs.rows.item(0).c<1){
-        var executeQuery = "INSERT INTO pj_dtl_tmp (id_combo, qty, total, nama_combo, harga, tipe) VALUES (?,?,?,?,?,?)";
-        transaction.executeSql(executeQuery, [a,b,c,d,c,2]
-          , function(tx, result) {
-            keranjang(a,b,c,d);
-          },
-          function(error){
-            alert('Error occurred'); 
-          });
-      } else { //update apabila ada data dikeranjang
+function keranjang(){
+  // API pbam
+  // $.ajax({
+  //   url: "http://demo.medianusamandiri.com/lightpos/API/view_penjualan_tmp.php?id_login="+cpyProf.id_outlet
+  // }).done(function(rs){
 
-        var q=parseInt(rs.rows.item(0).qty)+1;
-        var t=parseInt(rs.rows.item(0).harga)*q;
-        var executeQuery = "UPDATE pj_dtl_tmp SET qty="+ q +", total="+t+" where id_combo=?";             
-        transaction.executeSql(executeQuery, [a], 
-          function(tx, result) {
-            keranjang(a,b,c,d);
-          },
-          function(error){
-            alert('Error occurred'); 
-          });
-      }
-    }, function(tx, error) {
-      alert('SELECT error: ' + error.message);
-    });
-  });
-}
+  // })
 
-function keranjang(a,b,c,d){
-
-  /* // to be used as direct connection to server
+   // to be used as direct connection to server
   var data = '<ul>';
   var jumlah = 0;
-  var temp = {
-    'idpelblabla' : cpyProf.,
-    'idmenublabla' : cpyProf.
-  }
+  // var temp = {
+  //   'idpelblabla' : cpyProf.,
+  //   'idmenublabla' : cpyProf.
+  // }
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/namaAPI/id/',
-    type: 'POST',
-    data: JSON.stringify(temp)
+    url: 'http://demo.medianusamandiri.com/lightpos/API/cart/'+cpyProf.id_outlet+'/',
+    type: 'GET'
   }).done(function(result){
-    
+    var testp = JSON.parse(result);
+    for(i = 0; i < testp.length; i++){
+      // console.log(testp[i].id_barang, testp[i].total_tmp, testp[i].nama_barang, testp[i].qty_tmp);
+      data += '<li class="item-content ">\
+          <div class="item-inner">\
+          '+/*<div class="item-title" onclick="ubahAmount('+rs.rows.item(i).id_tmp+');">'+rs.rows.item(i).nama_barang+'\*/'\
+          <div class="item-title" >'+testp[i].nama_barang+'\
+          <div class="item-footer">'+testp[i].qty_tmp+' x '+testp[i].harga_tmp+'</div>\
+          </div>\
+          <div class="item-after"><a href="#" onclick="pilihHapus('+testp[i].id_tmp+','+testp[i].qty_tmp+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
+          </div>\
+          </li>'
+          // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
+          jumlah += parseInt(testp[i].qty_tmp * testp[i].harga_tmp) * 1.1 /* PPN */;
+    }
+
+    data += '</ul>';
+    $('#keranjang').html(data);
   
   }).fail(function(a,b,error){
     alert(error);
   })
-  */
+  
 
-  var data = '<ul>';
-  var jumlah = 0;
-  db.transaction(function(tx) {
-    tx.executeSql('SELECT * FROM pj_dtl_tmp', [], function(tx, rs) {
-      var len = rs.rows.length;
-      var all_rows = [];
-      for (i = 0; i < len; i++){
-        if(rs.rows.item(i).nama_barang){
-          data += '<li class="item-content ">\
-          <div class="item-inner">\
-          <div class="item-title" onclick="ubahAmount('+rs.rows.item(i).id_tmp+');">'+rs.rows.item(i).nama_barang+'\
-          <div class="item-footer">'+rs.rows.item(i).qty+' x '+rs.rows.item(i).harga+'</div>\
-          </div>\
-          <div class="item-after"><a href="#" onclick="pilihHapus('+rs.rows.item(i).id_tmp+','+rs.rows.item(i).qty+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
-          </div>\
-          </li>'
-          // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
-          jumlah += parseInt(rs.rows.item(i).qty * rs.rows.item(i).harga) * 1.1 /* PPN */;
-        } else {
-          data += '<li class="item-content ">\
-          <div class="item-inner">\
-          <div class="item-title">'+rs.rows.item(i).nama_combo+'\
-          <div class="item-footer">'+rs.rows.item(i).qty+' x '+rs.rows.item(i).harga+'</div>\
-          </div>\
-          <div class="item-after"><a href="#" onclick="pilihHapus('+rs.rows.item(i).id_tmp+','+rs.rows.item(i).qty+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
-          </div>\
-          </li>'
-          // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
-          jumlah += parseInt(rs.rows.item(i).qty * rs.rows.item(i).harga) * 1.1 /* PPN */;
-        }
-      }
+  // var data = '<ul>';
+  // var jumlah = 0;
+  // db.transaction(function(tx) {
+  //   tx.executeSql('SELECT * FROM pj_dtl_tmp', [], function(tx, rs) {
+  //     var len = rs.rows.length;
+  //     var all_rows = [];
+  //     for (i = 0; i < len; i++){
+  //       if(rs.rows.item(i).nama_barang){
+  //         data += '<li class="item-content ">\
+  //         <div class="item-inner">\
+  //         <div class="item-title" onclick="ubahAmount('+rs.rows.item(i).id_tmp+');">'+rs.rows.item(i).nama_barang+'\
+  //         <div class="item-footer">'+rs.rows.item(i).qty+' x '+rs.rows.item(i).harga+'</div>\
+  //         </div>\
+  //         <div class="item-after"><a href="#" onclick="pilihHapus('+rs.rows.item(i).id_tmp+','+rs.rows.item(i).qty+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
+  //         </div>\
+  //         </li>'
+  //         // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
+  //         jumlah += parseInt(rs.rows.item(i).qty * rs.rows.item(i).harga) * 1.1 /* PPN */;
+  //       } else {
+  //         data += '<li class="item-content ">\
+  //         <div class="item-inner">\
+  //         <div class="item-title">'+rs.rows.item(i).nama_combo+'\
+  //         <div class="item-footer">'+rs.rows.item(i).qty+' x '+rs.rows.item(i).harga+'</div>\
+  //         </div>\
+  //         <div class="item-after"><a href="#" onclick="pilihHapus('+rs.rows.item(i).id_tmp+','+rs.rows.item(i).qty+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
+  //         </div>\
+  //         </li>'
+  //         // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
+  //         jumlah += parseInt(rs.rows.item(i).qty * rs.rows.item(i).harga) * 1.1 /* PPN */;
+  //       }
+  //     }
 
-      // if(len == 0){
-      //   data += '<li class="item-content "><div class="item-inner"><div class="item-title">Kosong</div></div></li>';
-      // }
+  //     // if(len == 0){
+  //     //   data += '<li class="item-content "><div class="item-inner"><div class="item-title">Kosong</div></div></li>';
+  //     // }
 
-      data += '</ul>';
-      totalSub = jumlah;
+  //     data += '</ul>';
+  //     totalSub = jumlah;
 
 
-      $('#keranjang').html(data);
-      $('#subtotal').html((jumlah - (jumlah * diskonAmt)).toLocaleString('id-ID'));
-      // var ppn=jumlah*(10/100);
-      // var gt=jumlah+ppn;
-      // $('#ppn').html(ppn.toLocaleString());
-      // $('#grandtot').html(gt.toLocaleString());
-    }, function(tx, error) {
-      alert('SELECT error: ' + error.message);
-    });
-  });
+  //     $('#keranjang').html(data);
+  //     $('#subtotal').html((jumlah - (jumlah * diskonAmt)).toLocaleString('id-ID'));
+  //     // var ppn=jumlah*(10/100);
+  //     // var gt=jumlah+ppn;
+  //     // $('#ppn').html(ppn.toLocaleString());
+  //     // $('#grandtot').html(gt.toLocaleString());
+  //   }, function(tx, error) {
+  //     alert('SELECT error: ' + error.message);
+  //   });
+  // });
 }
 
 function pilihHapus(a, b){
