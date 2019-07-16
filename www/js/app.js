@@ -25,6 +25,7 @@ var cpyProf;
 var diskonAmt = 0; totalSub = 0; totalGrand = 0; kembalian = 0;
 var pingTimeout = 0;
 var appVer = 0;
+var site = 'http://demo.medianusamandiri.com/lightpos';
 var modalBox = app.dialog.create({
     title: 'Modal Awal',
     closeByBackdropClick: false,
@@ -220,7 +221,7 @@ function afterOnline(a){
   for(var i = 0; i < a.length; i++){
     // console.log(JSON.stringify(a[i]));
     $.ajax({
-      url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+      url: site+'/API/data/',
       method: 'POST',
       data: JSON.stringify(a[i])
     }).done(function(data, text, XHR){
@@ -254,7 +255,7 @@ function onNewLogin(q){
   // console.log(temp);
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/login/',
+    url: site+'/API/login/',
     method: 'POST',
     data: JSON.stringify(temp),
     timeout: 10000
@@ -330,7 +331,7 @@ function onStoreSuccess(obj){
   $('#currentUser').html('Operator: '+ (cpyProf.nama ? cpyProf.nama : cpyProf.client));
   
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/satuan/'+cpyProf.id_client+'/',
+    url: site+'/API/satuan/'+cpyProf.id_client+'/',
     method: 'GET'
   }).done(function(result){
     if(result.length == 0){
@@ -355,7 +356,7 @@ function onLogin(){
 
 function onRetSuccess(obj){
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/login/',
+    url: site+'/API/login/',
     method: 'POST',
     data: JSON.stringify({'user':obj.user, 'pass':obj.pass, 'device':device.uuid})
   }).done(function(result){
@@ -474,7 +475,7 @@ function tampilFood(){
   console.log('food');
   /* // to be used as direct connection to server
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/namaAPI/id/',
+    url: site+'/API/namaAPI/id/',
     type: 'GET'
   }).done(function(result){
 
@@ -646,7 +647,7 @@ function getCombo(a){
 function simpan(a,b,c,d){
   // API pbam
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/insert_penj_dtl_tmp.php?id_barang='+a+'&harga='+c+'&id_login='+cpyProf.id_outlet+'&qty='+b
+    url: site+'/API/insert_penj_dtl_tmp.php?id_barang='+a+'&harga='+c+'&id_login='+cpyProf.id_outlet+'&qty='+b
   }).done(function(result){
     app.toast.create({
       text: "Sukses Tambah ke Keranjang",
@@ -665,7 +666,7 @@ function simpan(a,b,c,d){
   }
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/cart/'+cpyProf.id_outlet+'/',
+    url: site+'/API/cart/'+cpyProf.id_outlet+'/',
     type: 'POST',
     data: JSON.stringify(temp)
   }).done(function(result){
@@ -765,19 +766,20 @@ function keranjang(){
   // }
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/cart/'+cpyProf.id_outlet+'/',
+    url: site+'/API/cart/'+cpyProf.id_outlet+'/',
     type: 'GET'
   }).done(function(result){
     var testp = JSON.parse(result);
     for(i = 0; i < testp.length; i++){
       // console.log(testp[i].id_barang, testp[i].total_tmp, testp[i].nama_barang, testp[i].qty_tmp);
+      // <div class="item-title" onclick="ubahAmount('+testp[i].id_tmp+');">\
+      // <div class="item-after"><a href="#" onclick="pilihHapus('+testp[i].id_barang+','+testp[i].qty_tmp+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
       data += '<li class="item-content ">\
           <div class="item-inner">\
-          '+/*<div class="item-title" onclick="ubahAmount('+rs.rows.item(i).id_tmp+');">'+rs.rows.item(i).nama_barang+'\*/'\
-          <div class="item-title" >'+testp[i].nama_barang+'\
+          <div class="item-title" onclick="ubahAmount('+testp[i].id_barang+','+testp[i].harga_tmp+');">'+testp[i].nama_barang+'\
           <div class="item-footer">'+testp[i].qty_tmp+' x '+testp[i].harga_tmp+'</div>\
           </div>\
-          <div class="item-after"><a href="#" onclick="pilihHapus('+testp[i].id_tmp+','+testp[i].qty_tmp+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
+          <div class="item-after"><a href="#" onclick="pilihHapus('+testp[i].id_barang+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
           </div>\
           </li>'
           // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
@@ -786,6 +788,7 @@ function keranjang(){
 
     data += '</ul>';
     $('#keranjang').html(data);
+    $('#subtotal').html((jumlah - (jumlah * diskonAmt)).toLocaleString('id-ID'));
   
   }).fail(function(a,b,error){
     alert(error);
@@ -844,12 +847,24 @@ function keranjang(){
   // });
 }
 
-function pilihHapus(a, b){
-  if(b > 1) {
-    hapusSatu(a)
-  } else {
-    hapusKeranjang(a)
-  }
+function pilihHapus(a){
+  $.ajax({
+    url: site+'/API/hapus_penj_dtl_tmp.php?id_barang='+a+'&id_login='+cpyProf.id_outlet
+  }).done(function(){
+    app.toast.create({
+      text: "Sukses Hapus",
+      closeTimeout: 3000,
+      closeButton: true
+    }).open();
+
+    keranjang();
+  })
+  // http://demo.medianusamandiri.com/lightpos/API/hapus_penj_dtl_tmp.php?id_barang=1&id_login=1
+  // if(b > 1) {
+  //   hapusSatu(a)
+  // } else {
+  //   hapusKeranjang(a)
+  // }
 }
 
 function hapusSatu(a){
@@ -915,140 +930,145 @@ function metode(a){
 function bayar(){
   var list = '';
   var paid = parseInt($('#bayar').val().replace(/\D/g, ''));
+  var tot = $('#subtotal').html();
+  var totInt = tot.replace(/\D/g, '');
+  var kembali = parseInt(paid) - parseInt(totInt);
   platform = $('#platform').val();
 
   if(paid){
 
-    if(mtd == '1'){
-      jn = 'Tunai';
-    } else if (mtd == '2'){
-      jn = 'Kartu Kredit';
-    } else if (mtd == '3'){
-      if(platform == '1'){
-        jn = 'GO-PAY';
-      } else if(platform == '2'){
-        jn = 'OVO';
-      }
-    }
+    ordernya(kembali, totInt, paid);
+
+    // if(mtd == '1'){
+    //   jn = 'Tunai';
+    // } else if (mtd == '2'){
+    //   jn = 'Kartu Kredit';
+    // } else if (mtd == '3'){
+    //   if(platform == '1'){
+    //     jn = 'GO-PAY';
+    //   } else if(platform == '2'){
+    //     jn = 'OVO';
+    //   }
+    // }
   
-    app.dialog.create({
-      title: 'Konfirmasi',
-      text: 'Cetak receipt via:',
-      buttons: [{
-        text: 'Cancel',
-        close: true
-      }, {
-        text: 'Print',
-        onClick: function(){
-          db.transaction(function(tx){
-            tx.executeSql('SELECT * FROM pj_dtl_tmp', [], 
-              function(t, rs){
-                for(var i = 0; i < rs.rows.length; i++){
-                  var ws = '';
-                  var satuan = parseInt(rs.rows.item(i).harga).toLocaleString('id-ID');
-                  var jumlah = (parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID');
+    // app.dialog.create({
+    //   title: 'Konfirmasi',
+    //   text: 'Cetak receipt via:',
+    //   buttons: [{
+    //     text: 'Cancel',
+    //     close: true
+    //   }, {
+    //     text: 'Print',
+    //     onClick: function(){
+    //       db.transaction(function(tx){
+    //         tx.executeSql('SELECT * FROM pj_dtl_tmp', [], 
+    //           function(t, rs){
+    //             for(var i = 0; i < rs.rows.length; i++){
+    //               var ws = '';
+    //               var satuan = parseInt(rs.rows.item(i).harga).toLocaleString('id-ID');
+    //               var jumlah = (parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID');
   
-                  for(var j = 0; j < 27 - satuan.length - jumlah.length; j++){
-                    ws += ' ';
-                  }
+    //               for(var j = 0; j < 27 - satuan.length - jumlah.length; j++){
+    //                 ws += ' ';
+    //               }
   
-                  list += '{left}'+rs.rows.item(i).nama_barang+'{br}  '+rs.rows.item(i).qty+' x '+parseInt(rs.rows.item(i).harga)+ws+(parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID')+'{br}';
-                }
+    //               list += '{left}'+rs.rows.item(i).nama_barang+'{br}  '+rs.rows.item(i).qty+' x '+parseInt(rs.rows.item(i).harga)+ws+(parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID')+'{br}';
+    //             }
   
-                list += '--------------------------------{br}{left}';
-                txNmr = nomor();
+    //             list += '--------------------------------{br}{left}';
+    //             txNmr = nomor();
   
-                connectToPrinter(list);
-              }, function(t, error){
-                alert('error')
-              })
-          })
-        }
-      }, {
-        text: 'WhatsApp',
-        onClick: function(){
-          app.dialog.prompt('Masukkan nomor WhatsApp (+62):', 'Konfirmasi', function(result){
-            if(result != ''){
-              txNmr = nomor();
-              db.transaction(function(tx){
-                tx.executeSql('SELECT * FROM pj_dtl_tmp', [], 
-                  function(t, rs){
-                    var dt = new Date();
-                    var tot = $('#subtotal').html();
-                    var totInt = tot.replace(/\D/g, '');
-                    var kembali = parseInt(paid) - parseInt(totInt);
+    //             connectToPrinter(list);
+    //           }, function(t, error){
+    //             alert('error')
+    //           })
+    //       })
+    //     }
+    //   }, {
+    //     text: 'WhatsApp',
+    //     onClick: function(){
+    //       app.dialog.prompt('Masukkan nomor WhatsApp (+62):', 'Konfirmasi', function(result){
+    //         if(result != ''){
+    //           txNmr = nomor();
+    //           db.transaction(function(tx){
+    //             tx.executeSql('SELECT * FROM pj_dtl_tmp', [], 
+    //               function(t, rs){
+    //                 var dt = new Date();
+    //                 var tot = $('#subtotal').html();
+    //                 var totInt = tot.replace(/\D/g, '');
+    //                 var kembali = parseInt(paid) - parseInt(totInt);
   
-                    var kop = '';
-                    var cab = '';
+    //                 var kop = '';
+    //                 var cab = '';
   
-                    var dy = ('00'+dt.getDate()).slice(-2);
-                    var hr = ('00'+dt.getHours()).slice(-2);
-                    var mn = ('00'+dt.getMinutes()).slice(-2);
+    //                 var dy = ('00'+dt.getDate()).slice(-2);
+    //                 var hr = ('00'+dt.getHours()).slice(-2);
+    //                 var mn = ('00'+dt.getMinutes()).slice(-2);
   
-                    var sub = 'Sub-total';
-                    var byr = 'Via: ' + jn;
-                    var crd = 'CC';
-                    var kbl = 'Kembali';
+    //                 var sub = 'Sub-total';
+    //                 var byr = 'Via: ' + jn;
+    //                 var crd = 'CC';
+    //                 var kbl = 'Kembali';
   
-                    for(var i = 0; i < (31 - cpyProf.outlet.length)/2; i++){
-                      kop += ' ';
-                    } kop += cpyProf.outlet + '\n';
+    //                 for(var i = 0; i < (31 - cpyProf.outlet.length)/2; i++){
+    //                   kop += ' ';
+    //                 } kop += cpyProf.outlet + '\n';
   
-                    for(var i = 0; i < (24 - cpyProf.cabang.length)/2; i++){
-                      cab += ' ';
-                    } cab += 'Cabang ' + cpyProf.cabang + '\n';
+    //                 for(var i = 0; i < (24 - cpyProf.cabang.length)/2; i++){
+    //                   cab += ' ';
+    //                 } cab += 'Cabang ' + cpyProf.cabang + '\n';
   
-                    var header = '```\n          Sales Receipt\n\n'+kop+cab+'--------------------------------\nNo. Trans : '+txNmr+'\nTanggal   : '+dy+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+hr+':'+mn+'\nOperator  : '+cpyProf.nama+'\n--------------------------------\n';
-                    var thanks = ' \n--------------------------------\n\n        Terima Kasih Atas\n         Kunjungan Anda\n';
+    //                 var header = '```\n          Sales Receipt\n\n'+kop+cab+'--------------------------------\nNo. Trans : '+txNmr+'\nTanggal   : '+dy+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+hr+':'+mn+'\nOperator  : '+cpyProf.nama+'\n--------------------------------\n';
+    //                 var thanks = ' \n--------------------------------\n\n        Terima Kasih Atas\n         Kunjungan Anda\n';
   
   
-                    for(var i = 0; i < 22-tot.length; i++){
-                      sub += ' ';
-                    } sub += tot + ' \n';
+    //                 for(var i = 0; i < 22-tot.length; i++){
+    //                   sub += ' ';
+    //                 } sub += tot + ' \n';
   
-                    for(var i = 0; i < 29-tot.length; i++){
-                      crd += ' ';
-                    } crd += tot + ' \n';
+    //                 for(var i = 0; i < 29-tot.length; i++){
+    //                   crd += ' ';
+    //                 } crd += tot + ' \n';
   
-                    for(var i = 0; i < 26 - jn.length - parseInt(paid).toLocaleString().length; i++){
-                      byr += ' ';
-                    } byr += parseInt(paid).toLocaleString('id-ID') + ' \n';
+    //                 for(var i = 0; i < 26 - jn.length - parseInt(paid).toLocaleString().length; i++){
+    //                   byr += ' ';
+    //                 } byr += parseInt(paid).toLocaleString('id-ID') + ' \n';
   
-                    for(var i = 0; i < 24-parseInt(kembali).toLocaleString().length; i++){
-                      kbl += ' ';
-                    } kbl += parseInt(kembali).toLocaleString('id-ID');
+    //                 for(var i = 0; i < 24-parseInt(kembali).toLocaleString().length; i++){
+    //                   kbl += ' ';
+    //                 } kbl += parseInt(kembali).toLocaleString('id-ID');
                     
-                    for(var i = 0; i < rs.rows.length; i++){
-                      var ws = '';
-                      var q = parseInt(rs.rows.item(i).qty).toLocaleString('id-ID');
-                      var satuan = parseInt(rs.rows.item(i).harga).toLocaleString('id-ID');
-                      var jumlah = (parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID');
+    //                 for(var i = 0; i < rs.rows.length; i++){
+    //                   var ws = '';
+    //                   var q = parseInt(rs.rows.item(i).qty).toLocaleString('id-ID');
+    //                   var satuan = parseInt(rs.rows.item(i).harga).toLocaleString('id-ID');
+    //                   var jumlah = (parseInt(rs.rows.item(i).harga) * parseInt(rs.rows.item(i).qty)).toLocaleString('id-ID');
   
-                      // console.log('q: '+q.length+', satuan: '+satuan.length+', jumlah: '+jumlah.length);
+    //                   // console.log('q: '+q.length+', satuan: '+satuan.length+', jumlah: '+jumlah.length);
   
-                      var tlen = 26 - (satuan.length + jumlah.length + q.length);
+    //                   var tlen = 26 - (satuan.length + jumlah.length + q.length);
   
-                      for(var j = 0; j < tlen; j++){
-                        ws += ' ';
-                      }
+    //                   for(var j = 0; j < tlen; j++){
+    //                     ws += ' ';
+    //                   }
   
-                      list += rs.rows.item(i).nama_barang+'\n  '+ q +' x '+ satuan + ws + jumlah +' \n';
-                    }
+    //                   list += rs.rows.item(i).nama_barang+'\n  '+ q +' x '+ satuan + ws + jumlah +' \n';
+    //                 }
   
-                    list += '--------------------------------\n';
+    //                 list += '--------------------------------\n';
   
-                    ordernya(kembali, totInt, paid);
-                    window.location = 'https://wa.me/62'+result+'?text='+encodeURI(header + list + sub + byr + kbl + thanks + '```');
+    //                 ordernya(kembali, totInt, paid);
+    //                 window.location = 'https://wa.me/62'+result+'?text='+encodeURI(header + list + sub + byr + kbl + thanks + '```');
                     
-                  }, function(t, error){
-                    alert('error')
-                  })
-              })
-            }
-          }, function(){})
-        }
-      }]
-    }).open();
+    //               }, function(t, error){
+    //                 alert('error')
+    //               })
+    //           })
+    //         }
+    //       }, function(){})
+    //     }
+    //   }]
+    // }).open();
   } else {
     app.dialog.alert('Jumlah dibayar harus lebih dari 0', 'Alert');
   }
@@ -1094,16 +1114,32 @@ function ordernya(kembali, subTot, uang){
   if(mtd != '1') {
     kembali = 0;
     uang = 0;
-  }
+  } 
 
   var d = new Date();
   var tgl = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+("0" + d.getDate()).slice(-2);
   var tgltime = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+("0" + d.getDate()).slice(-2)+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+  var nomor_kartu = $('#nkartu').val();
+  var dct = $('#dsk_persen').val();
 
   // var uang = 0;
   // var subTot = parseInt($('#subtotal').html().replace(/\D/g, ''));
+
+  $.ajax({
+    url: site+'/API/insertpenjualan.php?bayar='+uang+'&diskon='+dct+'&kembali='+kembali+'&id_login='+cpyProf.id_outlet+'&jenis_bayar='+mtd+'&nomer_kartu='+nomor_kartu+'&tgl='+tgl
+  }).done(function(){
+    app.toast.create({
+      text: "Sukses Bayar",
+      closeTimeout: 3000,
+      closeButton: true
+    }).open();
+
+    $('#bayar').val('');
+    $('#kembalian').empty().append('0');
+    keranjang();
+  })
   
-  db.transaction(function(transaction) {
+  /*db.transaction(function(transaction) {
     var executeQuery = "INSERT INTO pj (no_penjualan, no_faktur, tgl_penjualan, jenis_jual, id_user, stamp_date, no_meja, id_gudang, meja, st, total_jual, grantot_jual, bayar_tunai, bayar_card, kembali_tunai, jenis_bayar) \
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     transaction.executeSql(executeQuery, [txNmr, txNmr, tgl, '1', '1', tgltime, '0', '1', '1', '1', subTot, subTot, uang, subTot, kembali, mtd], 
@@ -1113,7 +1149,7 @@ function ordernya(kembali, subTot, uang){
       function(error){
         alert('Error occurred'); 
       });
-  });
+  });*/
 }
 
 function orderdtl(id){
@@ -1389,7 +1425,7 @@ function listPenjualan(){
 
 // function checkUpdates(){
   // $.ajax({
-  //   url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+  //   url: site+'/API/data/',
   //   type: 'GET'
   // }).done(function(obj){
 
@@ -1419,7 +1455,7 @@ function listPenjualan(){
 
 // function checkUpdates(){
 //   $.ajax({
-//     url: 'http://demo.medianusamandiri.com/lightpos/API/menu/',
+//     url: site+'/API/menu/',
 //     type: 'GET'
 //   }).done(function(obj){
 //     db.transaction(function(t){
@@ -1450,7 +1486,7 @@ function listPenjualan(){
 
 // function checkUpdates2(){
 //   $.ajax({
-//     url: 'http://demo.medianusamandiri.com/lightpos/API/combo/',
+//     url: site+'/API/combo/',
 //     type: 'GET'
 //   }).done(function(obj){
 
@@ -1493,7 +1529,7 @@ function listPenjualan(){
 
 function initMenu(){
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/menu/'+cpyProf.id_outlet+'/',
+    url: site+'/API/menu/'+cpyProf.id_outlet+'/',
     type: 'GET'
   }).done(function(obj){
     // console.log(obj);
@@ -1556,7 +1592,7 @@ function initMenu(){
 
 function initCombo(){
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/combo/',
+    url: site+'/API/combo/',
     type: 'GET'
   }).done(function(obj){
 
@@ -1633,7 +1669,7 @@ function uploadPenjualan(){
           // console.log(temp);
 
           $.ajax({
-            url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+            url: site+'/API/data/',
             method: 'POST',
             data: JSON.stringify(temp)
           }).done(function(data, text, XHR){
@@ -1669,7 +1705,7 @@ function cariSesuatu(a, b, c){
   }
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/cari/',
+    url: site+'/API/cari/',
     method: 'POST',
     data: JSON.stringify(data)
   }).done(function(result){
@@ -1702,7 +1738,7 @@ function cariLaporan(){
   }
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/cari/',
+    url: site+'/API/cari/',
     method: 'POST',
     data: JSON.stringify(data)
   }).done(function(result){
@@ -1754,7 +1790,7 @@ function sendPing(){
   }
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/log/',
+    url: site+'/API/log/',
     method: 'POST',
     data: JSON.stringify(stamp)
   }).done(function(result){
@@ -1783,7 +1819,7 @@ function cekStatus(){
   initMenu();
   initCombo();
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/status/'+cpyProf.id_client+'/',
+    url: site+'/API/status/'+cpyProf.id_client+'/',
     method: 'GET',
   }).done(function(result){
     console.log('cekstatus ajax');
@@ -1827,7 +1863,7 @@ function tambahBarang(j, ubah){
   uploadStatus('A', ubah);
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+    url: site+'/API/data/',
     method: 'GET'
   }).done(function(result){
     for(var i = 0; i < result.length; i++){
@@ -1847,7 +1883,7 @@ function updateMenu(j, ubah){
   uploadStatus('B', ubah);
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+    url: site+'/API/data/',
     method: 'GET'
   }).done(function(result){
     db.transaction(function(tx){
@@ -1871,7 +1907,7 @@ function updateCombo(j, ubah){
   uploadStatus('C', ubah);
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+    url: site+'/API/data/',
     method: 'GET'
   }).done(function(result){
     for(var i = 0; i < result.length; i++){
@@ -1892,7 +1928,7 @@ function updateHarga(j, ubah, jenis){
 
   if(jenis == '1'){
     $.ajax({
-      url: 'http://demo.medianusamandiri.com/lightpos/API/data/',
+      url: site+'/API/data/',
       method: 'GET'
     }).done(function(result){
       for(var i = 0; i < result.length; i++){
@@ -1907,7 +1943,7 @@ function updateHarga(j, ubah, jenis){
     })
   }else {
     $.ajax({
-      url: 'http://demo.medianusamandiri.com/lightpos/API/combo/',
+      url: site+'/API/combo/',
       method: 'GET'
     }).done(function(result){
       for(var i = 0; i < result.length; i++){
@@ -1932,7 +1968,7 @@ function uploadStatus(kode, jenis_ubah){
   }
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/status/',
+    url: site+'/API/status/',
     method: 'POST',
     data: JSON.stringify(temp)
   }).done(function(result){
@@ -1954,15 +1990,25 @@ function register(q){
   })
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/daftar/',
+    url: site+'/API/daftar/',
     method: 'POST',
     data: JSON.stringify(temp),
     timeout: 10000
   }).always(function(result){
     $('#register_button').removeClass('disabled');
-    // console.log(result);
 
-    if(result.responseText.slice(0, 1) == '0'){
+    // if(result.responseText.slice(0, 1) == '0'){
+    //   app.dialog.alert('Email konfirmasi berisi link untuk aktivasi akun akan segera dikirim ke email anda. Harap lakukan aktivasi terlebih dahulu sebelum melakukan login.', 'Register', function(){
+    //     $('#register_cred').trigger('reset');
+    //     app.views.main.router.navigate('/login/');
+    //     $('#userlogin').val(temp.user);
+    //     $('#passlogin').val(temp.pass);
+    //   })
+    // } else {
+    //   alert('Email / Username Sudah Terdaftar');
+    // }
+
+    if(result.status == '1'){
       app.dialog.alert('Email konfirmasi berisi link untuk aktivasi akun akan segera dikirim ke email anda. Harap lakukan aktivasi terlebih dahulu sebelum melakukan login.', 'Register', function(){
         $('#register_cred').trigger('reset');
         app.views.main.router.navigate('/login/');
@@ -1998,7 +2044,7 @@ function diskon(a){
   
 }
 
-function ubahAmount(id){
+function ubahAmount(id, hrg){
   // console.log(id);
   app.dialog.create({
     title: 'Konfirmasi',
@@ -2025,13 +2071,25 @@ function ubahAmount(id){
       text: 'Simpan',
       onClick: function(dialog, e){
         var v = $('#edit_amt').val();
-        db.transaction(function(t){
-          t.executeSql('UPDATE pj_dtl_tmp SET qty = ? WHERE id_tmp = ?', [v, id], 
-            function(){
-              keranjang('a','b','c','d');
-              dialog.close();
-            })
+
+        $.ajax({
+          url: site+'/API/update_penj_dtl_tmp.php?id_barang='+id+'&harga='+hrg+'&id_login='+cpyProf.id_outlet+'&qty='+v
+        }).done(function(){
+          app.toast.create({
+            text: "Sukses Ubah",
+            closeTimeout: 3000,
+            closeButton: true
+          }).open();
+
+          keranjang();
         })
+        // db.transaction(function(t){
+        //   t.executeSql('UPDATE pj_dtl_tmp SET qty = ? WHERE id_tmp = ?', [v, id], 
+        //     function(){
+        //       keranjang('a','b','c','d');
+        //       dialog.close();
+        //     })
+        // })
       }
     }]
   }).open();
@@ -2044,7 +2102,7 @@ function addBarang(q){
   })
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/barang/'+cpyProf.id_client+'/',
+    url: site+'/API/barang/'+cpyProf.id_client+'/',
     method: 'POST',
     data: JSON.stringify(temp)
   }).done(function(){
@@ -2063,7 +2121,7 @@ function addBarang(q){
 function listBarang(){
   var data = '<ul>';
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/menu/'+cpyProf.id_outlet+'/',
+    url: site+'/API/menu/'+cpyProf.id_outlet+'/',
     method: 'GET',
   }).done(function(result){
       // var tempArr = [];
@@ -2096,7 +2154,7 @@ function editBarang(q){
   })
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/barang/'+id+'/',
+    url: site+'/API/barang/'+id+'/',
     method: 'POST',
     data: JSON.stringify(temp)
   }).done(function(){
@@ -2163,7 +2221,7 @@ function addSatuan(q){
   })
 
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/satuan/'+cpyProf.id_client+'/',
+    url: site+'/API/satuan/'+cpyProf.id_client+'/',
     method: 'POST',
     data: JSON.stringify(temp)
   }).done(function(){
@@ -2177,7 +2235,7 @@ function addSatuan(q){
     listSatuan();
 
     $.ajax({
-      url: 'http://demo.medianusamandiri.com/lightpos/API/menu/'+cpyProf.id_outlet+'/',
+      url: site+'/API/menu/'+cpyProf.id_outlet+'/',
       method: 'GET'
     }).done(function(result){
       if(result[0].id_barang == null){
@@ -2192,7 +2250,7 @@ function addSatuan(q){
 function listSatuan(){
   var data = '<ul>';
   $.ajax({
-    url: 'http://demo.medianusamandiri.com/lightpos/API/satuan/'+cpyProf.id_client+'/',
+    url: site+'/API/satuan/'+cpyProf.id_client+'/',
     method: 'GET',
   }).done(function(result){
     for(var i = 0; i < result.length; i++){

@@ -81,6 +81,15 @@ var routes = [
   }
 },
 {
+  path: '/lupapass/',
+  componentUrl: './pages/lupapassword.html'
+  /*on: {
+    pageAfterIn: function(){
+      $('#appversion_r').html("v"+appVer);
+    }
+  }*/
+},
+{
   path: '/satuan/',
   componentUrl: './pages/satuan.html',
   on: {
