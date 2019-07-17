@@ -355,7 +355,7 @@ function onStoreSuccess(obj){
         app.views.main.router.navigate('/satuan/');
       })
     } else {
-      initMenu();
+      // initMenu();
       initCombo();
     }
   })
@@ -489,9 +489,9 @@ function onBackPressed(){
 
 function tampilFood(){
   console.log('food');
-  /* // to be used as direct connection to server
+  // to be used as direct connection to server
   $.ajax({
-    url: site+'/API/namaAPI/id/',
+    url: site+'/API/menu/'+cpyProf.id_outlet+'/',
     type: 'GET'
   }).done(function(result){
 
@@ -502,45 +502,44 @@ function tampilFood(){
       len = result.length;
     }
 
-    var all_rows = [];
     var datanya = '';
     for (i = 0; i < len; i++){
-      datanya += '<div onclick="simpan('+result.idblabla+', 1,'+result.hargablabla+',\''+result.namablabla+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+      datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+result[i].nama_barang+'</p></div>';
     }
 
     datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
 
-    $('#foodlist').html(datanya);
+    $('#itemlist').html(datanya);
   }).fail(function(a,b,error){
     alert(error);
   })
-  */
+  
 
-  db.transaction(function(tx) {
-    tx.executeSql('SELECT * FROM m_barang WHERE kategori = "1" AND st = "1" ORDER BY nama_barang ASC LIMIT 30', [], function(tx, rs) {
-      var len, i;
-      if(rs.rows.length > 20) {
-        len = 20
-      } else {
-        len = rs.rows.length
-      }
+  // db.transaction(function(tx) {
+  //   tx.executeSql('SELECT * FROM m_barang WHERE kategori = "1" AND st = "1" ORDER BY nama_barang ASC LIMIT 30', [], function(tx, rs) {
+  //     var len, i;
+  //     if(rs.rows.length > 20) {
+  //       len = 20
+  //     } else {
+  //       len = rs.rows.length
+  //     }
 
-      var all_rows = [];
-      var datanya = '';
-      for (i = 0; i < len; i++){
+  //     var all_rows = [];
+  //     var datanya = '';
+  //     for (i = 0; i < len; i++){
 
-        datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
-        // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
-        // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
-      }
+  //       datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+  //       // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+', 1,'+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">'+rs.rows.item(i).nama_barang+'</p></div>';
+  //       // datanya += '<div onclick="simpan('+rs.rows.item(i).id_barang+','+1+','+rs.rows.item(i).harga_jual+',\''+rs.rows.item(i).nama_barang+'\')" class="col-33" style="height: 100px;\"><br><br><br>'+rs.rows.item(i).nama_barang+'<br><strong>Rp. '+parseInt(rs.rows.item(i).harga_jual).toLocaleString('id-ID')+'</strong></div>';
+  //     }
 
-      datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
+  //     datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
 
-      $('#itemlist').html(datanya);
-    }, function(tx, error) {
-      alert('SELECT error: ' + error.message);
-    });
-  });
+      // $('#itemlist').html(datanya);
+  //   }, function(tx, error) {
+  //     alert('SELECT error: ' + error.message);
+  //   });
+  // });
 }
 
 function cariFood(q){
@@ -1543,71 +1542,71 @@ function listPenjualan(){
 //   })
 // }
 
-function initMenu(){
-  $.ajax({
-    url: site+'/API/menu/'+cpyProf.id_outlet+'/',
-    type: 'GET'
-  }).done(function(obj){
-    // console.log(obj);
-    db.transaction(function(t){
-      t.executeSql('DROP TABLE m_barang');
-      t.executeSql('CREATE TABLE IF NOT EXISTS m_barang ( id_urut INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, id_barang INT NOT NULL UNIQUE, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT, st INT )');
+// function initMenu(){
+//   $.ajax({
+//     url: site+'/API/menu/'+cpyProf.id_outlet+'/',
+//     type: 'GET'
+//   }).done(function(obj){
+//     // console.log(obj);
+//     db.transaction(function(t){
+//       t.executeSql('DROP TABLE m_barang');
+//       t.executeSql('CREATE TABLE IF NOT EXISTS m_barang ( id_urut INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, id_barang INT NOT NULL UNIQUE, nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE, kategori INT, st INT )');
 
-      if(!obj[0]){
-        t.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', ['997','TEST FOOD 1','15000', '1', '1']);
-        t.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', ['998','TEST FOOD 2','10000', '1', '1']);
-        t.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', ['999','TEST DRINK 1','8000', '2', '1']);
-      }
+//       if(!obj[0]){
+//         t.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', ['997','TEST FOOD 1','15000', '1', '1']);
+//         t.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', ['998','TEST FOOD 2','10000', '1', '1']);
+//         t.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', ['999','TEST DRINK 1','8000', '2', '1']);
+//       }
 
-      // t.executeSql('INSERT INTO m_combo VALUES (?,?,?)', ['2', 'TEST COMBO 2', '10000']);
+//       // t.executeSql('INSERT INTO m_combo VALUES (?,?,?)', ['2', 'TEST COMBO 2', '10000']);
 
-      // t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['1', '1']);
-      // t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['1', '4']);
-      // t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '3']);
-      // t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '4']);
-      // t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '5']);
-    }, function(error){
-      console.log(error);
-    }, function(msg){
-      console.log('init m_barang');
-    })
+//       // t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['1', '1']);
+//       // t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['1', '4']);
+//       // t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '3']);
+//       // t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '4']);
+//       // t.executeSql('INSERT INTO combo_dtl (id_combo, id_barang) VALUES (?,?)', ['2', '5']);
+//     }, function(error){
+//       console.log(error);
+//     }, function(msg){
+//       console.log('init m_barang');
+//     })
 
-    for (var i = 0; i < obj.length; i++) {
-      if(/*cpyProf.id_cabang == obj[i].id_cabang && cpyProf.id_client == obj[i].id_client && */obj[i].id_barang != null && obj[i].nama_barang != null){
-        // console.log(obj[i])
-        var insert = function(id_barang, nama_barang, harga_jual, kategori){
-          db.transaction(function(t){
-            t.executeSql('SELECT COUNT(*) AS jml FROM m_barang WHERE id_barang = ?', [id_barang], function(rt, result){
-                if(result.rows.item(0).jml > 0){
-                  t.executeSql('UPDATE m_barang SET nama_barang = ?, harga_jual = ?, kategori = ? WHERE id_barang = ?', [nama_barang, harga_jual, kategori, id_barang],
-                    function(){
-                      console.log('sukses update initMenu');
-                    }, function(){
-                      console.log('error update initMenu');
-                    })
-                } else {
-                  t.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori, 1],
-                    function(){
-                      console.log('sukses insert initMenu');
-                    }, function(){
-                      console.log('error insert (initMenu)');
-                    })
-                }              
-            })
-          })
-        }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], obj[i].tipe);
-      }
-    }
-  }).fail(function(a,b,error){
-    alert('connection error');
-  }).then(function(){
-    tampilFood();
-    tampilBvrg();
-  })
-}
+//     for (var i = 0; i < obj.length; i++) {
+//       if(/*cpyProf.id_cabang == obj[i].id_cabang && cpyProf.id_client == obj[i].id_client && */obj[i].id_barang != null && obj[i].nama_barang != null){
+//         // console.log(obj[i])
+//         var insert = function(id_barang, nama_barang, harga_jual, kategori){
+//           db.transaction(function(t){
+//             t.executeSql('SELECT COUNT(*) AS jml FROM m_barang WHERE id_barang = ?', [id_barang], function(rt, result){
+//                 if(result.rows.item(0).jml > 0){
+//                   t.executeSql('UPDATE m_barang SET nama_barang = ?, harga_jual = ?, kategori = ? WHERE id_barang = ?', [nama_barang, harga_jual, kategori, id_barang],
+//                     function(){
+//                       console.log('sukses update initMenu');
+//                     }, function(){
+//                       console.log('error update initMenu');
+//                     })
+//                 } else {
+//                   t.executeSql('INSERT INTO m_barang (id_barang, nama_barang, harga_jual, kategori, st) VALUES (?,?,?,?,?)', [id_barang, nama_barang, harga_jual, kategori, 1],
+//                     function(){
+//                       console.log('sukses insert initMenu');
+//                     }, function(){
+//                       console.log('error insert (initMenu)');
+//                     })
+//                 }              
+//             })
+//           })
+//         }(obj[i].id_barang, obj[i].nama_barang, obj[i].harga.split('-')[0], obj[i].tipe);
+//       }
+//     }
+//   }).fail(function(a,b,error){
+//     alert('connection error');
+//   }).then(function(){
+//     tampilFood();
+//     tampilBvrg();
+//   })
+// }
 
 function initCombo(){
-  $.ajax({
+  /*$.ajax({
     url: site+'/API/combo/',
     type: 'GET'
   }).done(function(obj){
@@ -1654,7 +1653,7 @@ function initCombo(){
     alert('connection error');
   }).then(function(){
     tampilCombo();
-  })
+  })*/
 }
 
 function uploadPenjualan(){
@@ -1831,47 +1830,47 @@ function cekUUID(){
 }
 
 function cekStatus(){
-  console.log('cekstatus in:');
-  initMenu();
-  initCombo();
-  $.ajax({
-    url: site+'/API/status/'+cpyProf.id_client+'/',
-    method: 'GET',
-  }).done(function(result){
-    console.log('cekstatus ajax');
-    var c = 0;
+  // console.log('cekstatus in:');
+  // initMenu();
+  // initCombo();
+  // $.ajax({
+  //   url: site+'/API/status/'+cpyProf.id_client+'/',
+  //   method: 'GET',
+  // }).done(function(result){
+  //   console.log('cekstatus ajax');
+  //   var c = 0;
     
-    $.each(result, function(i,j){
-      if(j.nomor_device == device.uuid){
-        switch(j.kode){
-          case 'A':
-          console.log('tambahBarang');
-          tambahBarang(j.id_barang, j.jenis_ubah);
-          c++;
-          break;
+  //   $.each(result, function(i,j){
+  //     if(j.nomor_device == device.uuid){
+  //       switch(j.kode){
+  //         case 'A':
+  //         console.log('tambahBarang');
+  //         tambahBarang(j.id_barang, j.jenis_ubah);
+  //         c++;
+  //         break;
 
-          case 'B':
-          console.log('updateMenu');
-          updateMenu(j.id_menu, j.jenis_ubah);
-          c++;
-          break;
+  //         case 'B':
+  //         console.log('updateMenu');
+  //         updateMenu(j.id_menu, j.jenis_ubah);
+  //         c++;
+  //         break;
 
-          case 'C':
-          console.log('updateCombo');
-          updateCombo(j.id_combo, j.jenis_ubah);
-          c++;
-          break;
+  //         case 'C':
+  //         console.log('updateCombo');
+  //         updateCombo(j.id_combo, j.jenis_ubah);
+  //         c++;
+  //         break;
 
-          case 'D':
-          console.log('updateHarga');
-          updateHarga(j.id_harga, j.jenis_ubah, j.id_harga_status);
-          c++;
-          break;
-        }
-      }
-    })
-    updates = c;
-  })
+  //         case 'D':
+  //         console.log('updateHarga');
+  //         updateHarga(j.id_harga, j.jenis_ubah, j.id_harga_status);
+  //         c++;
+  //         break;
+  //       }
+  //     }
+  //   })
+  //   updates = c;
+  // })
 }
 
 function tambahBarang(j, ubah){
