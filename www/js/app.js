@@ -113,7 +113,7 @@ document.addEventListener('deviceready', function() {
 
   app.init();
 
-  app.searchbar.create({
+  /*app.searchbar.create({
     el: '#foodSearch',
     backdrop: false,
     on: {
@@ -131,7 +131,16 @@ document.addEventListener('deviceready', function() {
         tampilBvrg();
       }
     }
-  })
+  })*/
+
+  searchBar = app.searchbar.create({
+        el: '.searchbar',
+        on: {
+          disable: function(){
+            tampilFood();
+          }
+        }
+      })
 
   onLogin();
   // tampilFood();
@@ -2305,6 +2314,62 @@ function hapusSatuan(id, nama){
       return;
     })
   $.ajax()
+}
+
+function searched(e, q){
+  if ( (window.event ? event.keyCode : e.which) == 13) { 
+    cariItem(q);
+  }
+}
+
+function cariItem(q){
+  var que = {'cari': q};
+  var datanya = "";
+
+  $.ajax({
+    // http://demo.medianusamandiri.com/lightpos/API/json_cari_barang.php?id_gudang=20&nama_barang=es
+    url: site+'/API/json_cari_barang.php?id_gudang='+cpyProf.id_outlet+'&nama_barang='+q,
+    type: 'GET',
+  }).done(function(result){
+    var json = JSON.parse(result.slice(1, result.length-1));
+    var item = json.length / 13;
+    var itemArray = [];
+    var step = 0;
+    var c = 0;
+
+    // console.log(json[step+1].id_barang);
+    // console.log(json[step+2].nama_barang);
+    // console.log(json[step+10].harga);
+
+    // console.log(item);
+
+    while(c < item){
+      console.log(json[step+1].id_barang);
+      console.log(json[step+10].harga);
+      console.log(json[step+2].nama_barang);
+      var temp = {
+        id_barang : json[step+1].id_barang,
+        harga : json[step+10].harga,
+        nama_barang : json[step+2].nama_barang
+      };
+
+      itemArray.push(temp);
+      step = step + 13;
+      c++;
+    }
+
+    for (i = 0; i < itemArray.length; i++){
+
+      datanya += '<div onclick="simpan('+itemArray[i].id_barang+', 1,'+itemArray[i].harga.split('-')[0]+',\''+itemArray[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+itemArray[i].nama_barang+'</p></div>';
+
+    }
+
+    datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
+
+    $('#itemlist').html(datanya);
+  }).fail(function(a,b,error){
+    console.log(error);
+  })
 }
 
 

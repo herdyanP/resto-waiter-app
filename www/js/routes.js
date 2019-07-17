@@ -44,7 +44,7 @@ var routes = [
     },
     pageAfterOut: function(){
       tampilFood();
-      tampilBvrg();
+      // tampilBvrg();
       // emptyDB();
     }
   }
