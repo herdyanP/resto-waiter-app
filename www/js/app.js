@@ -264,36 +264,52 @@ function onNewLogin(q){
     var c = 0;
     if(result != '0') {
       console.log(result);
+
       for(var i = 0; i < result.length; i++){
-        if(result[i].nomor_device == device.uuid){
-          temp.nama = result[i].nama_pegawai;
-          temp.cabang = result[i].nama_cabang;
-          temp.outlet = result[i].nama_outlet;
-          temp.client = result[i].nama_client;
-          temp.id_cabang = result[i].id_cabang;
-          temp.id_client = result[i].id_client;
-          temp.id_outlet = result[i].id_outlet;
-          temp.id_pegawai = result[i].id_pegawai;
+        temp.nama = result[i].nama_pegawai;
+        temp.cabang = result[i].nama_cabang;
+        temp.outlet = result[i].nama_outlet;
+        temp.client = result[i].nama_client;
+        temp.id_cabang = result[i].id_cabang;
+        temp.id_client = result[i].id_client;
+        temp.id_outlet = result[i].id_outlet;
+        temp.id_pegawai = result[i].id_pegawai;
 
-          // console.log(temp);
+        NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
+        app.views.main.router.navigate('/');
 
-          NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
-          app.views.main.router.navigate('/');
-
-          break;
-        }
-
-        c++;
-        // console.log(c);
+        break;
       }
+      // for(var i = 0; i < result.length; i++){
+      //   if(result[i].nomor_device == device.uuid){
+          // temp.nama = result[i].nama_pegawai;
+          // temp.cabang = result[i].nama_cabang;
+          // temp.outlet = result[i].nama_outlet;
+          // temp.client = result[i].nama_client;
+          // temp.id_cabang = result[i].id_cabang;
+          // temp.id_client = result[i].id_client;
+          // temp.id_outlet = result[i].id_outlet;
+          // temp.id_pegawai = result[i].id_pegawai;
 
-      if(c > 0) {
-        app.toast.create({
-          text: "Device Belum Terdaftar, Mohon Tambahkan Device Melalui Menu Back-End",
-          closeTimeout: 3000,
-          closeButton: true
-        }).open();
-      } 
+      //     // console.log(temp);
+
+      //     NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
+      //     app.views.main.router.navigate('/');
+
+      //     break;
+      //   }
+
+      //   c++;
+      //   // console.log(c);
+      // }
+
+      // if(c > 0) {
+      //   app.toast.create({
+      //     text: "Device Belum Terdaftar, Mohon Tambahkan Device Melalui Menu Back-End",
+      //     closeTimeout: 3000,
+      //     closeButton: true
+      //   }).open();
+      // } 
     } else {
       app.toast.create({
         text: "Cek lagi username / password anda",
