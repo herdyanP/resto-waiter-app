@@ -349,6 +349,7 @@ function onStoreSuccess(obj){
   tampilFood();
   tampilBvrg();
   tampilCombo();
+  keranjang();
 
   $('#loginRow').css('display', 'none');
   $('#logoutRow').css('display', 'block');
@@ -1174,6 +1175,56 @@ function ordernya(kembali, subTot, uang){
         alert('Error occurred'); 
       });
   });*/
+}
+
+function cetakan(){
+  $.ajax({
+    url: site+"/API/view_penjualan.php?id_client="+cpyProf.id_client
+  }).done(function(result){
+    var json = JSON.parse(result.slice(1, result.length-1));
+    var temp = {
+      no_penjualan : json[0].no_penjualan,
+      tgl_penjualan : json[1].tgl_penjualan,
+      jenis : json[2].jns_jual,
+      bayar : json[3].jns_bayar,
+      cust : json[4].nama_cus,
+      total : json[5].total_jual
+    }
+
+    cetaklagi(temp);
+  })
+}
+
+function cetaklagi(q){
+  $.ajax({
+    url: site+"/API/view_penjualan_dtl.php?id_client="+cpyProf.id_client
+  }).done(function(result){
+    var json = JSON.parse(result.slice(1, result.length-1));
+    var item = json.length / 5;
+    var itemArray = [];
+    var step = 0;
+    var c = 0;
+
+    // console.log(json[step+1].id_barang);
+    // console.log(json[step+2].nama_barang);
+    // console.log(json[step+10].harga);
+
+    // console.log(item);
+
+    while(c < item){
+      var temp = {
+        id_barang : json[step+3].id_barang,
+        nama_barang : json[step].nama_barang,
+        qty : json[step+1].qty_jual,
+        harga : json[step+2].harga_jual,
+        total : json[step+4].dtl_total
+      };
+
+      itemArray.push(temp);
+      step = step + 5;
+      c++;
+    }
+  })
 }
 
 function orderdtl(id){
