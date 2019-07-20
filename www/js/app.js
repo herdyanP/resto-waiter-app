@@ -953,7 +953,6 @@ function metode(a){
 }
 
 function bayar(){
-  var list = '';
   var paid = parseInt($('#bayar').val().replace(/\D/g, ''));
   var tot = $('#subtotal').html();
   var totInt = tot.replace(/\D/g, '');
@@ -1162,6 +1161,7 @@ function ordernya(kembali, subTot, uang){
     $('#bayar').val('');
     $('#kembalian').empty().append('0');
     keranjang();
+    cetakan();
   })
   
   /*db.transaction(function(transaction) {
@@ -1179,31 +1179,14 @@ function ordernya(kembali, subTot, uang){
 
 function cetakan(){
   $.ajax({
-    url: site+"/API/view_penjualan.php?id_client="+cpyProf.id_client
-  }).done(function(result){
-    var json = JSON.parse(result.slice(1, result.length-1));
-    var temp = {
-      no_penjualan : json[0].no_penjualan,
-      tgl_penjualan : json[1].tgl_penjualan,
-      jenis : json[2].jns_jual,
-      bayar : json[3].jns_bayar,
-      cust : json[4].nama_cus,
-      total : json[5].total_jual
-    }
-
-    cetaklagi(temp);
-  })
-}
-
-function cetaklagi(q){
-  $.ajax({
-    url: site+"/API/view_penjualan_dtl.php?id_client="+cpyProf.id_client
+    url: site+"/API/view_penjualan_dtl.php?id_client="+cpyProf.id_outlet
   }).done(function(result){
     var json = JSON.parse(result.slice(1, result.length-1));
     var item = json.length / 5;
     var itemArray = [];
     var step = 0;
     var c = 0;
+    var list = '';
 
     // console.log(json[step+1].id_barang);
     // console.log(json[step+2].nama_barang);
@@ -1224,6 +1207,22 @@ function cetaklagi(q){
       step = step + 5;
       c++;
     }
+
+    for(i = 0; i < itemArray.length; i++){
+      var ws = '';
+      var satuan = parseInt(itemArray[i].harga).toLocaleString('id-ID');
+      var jumlah = (parseInt(itemArray[i].harga) * parseInt(itemArray[i].qty)).toLocaleString('id-ID');
+  
+      for(var j = 0; j < 27 - satuan.length - jumlah.length; j++){
+        ws += ' ';
+      }
+  
+      list += '{left}'+itemArray[i].nama_barang+'{br}  '+itemArray[i].qty+' x '+parseInt(itemArray[i].harga)+ws+(parseInt(itemArray[i].harga) * parseInt(itemArray[i].qty)).toLocaleString('id-ID')+'{br}';
+    }
+  
+    list += '--------------------------------{br}{left}';
+  
+    connectToPrinter(list);
   })
 }
 
@@ -1392,48 +1391,58 @@ function connectToPrinter(q){
 }
 
 function printBayar(q) {
-  var tot = $('#subtotal').html();
-  var totInt = tot.replace(/\D/g, '');
-  var paid = $('#bayar').val().replace(/\D/g, ''); if(mtd != '1') paid = totInt;
-  var kembali = parseInt(paid) - parseInt(totInt);
-  var dt = new Date();
+  $.ajax({
+    url: site+"/API/view_penjualan.php?id_client="+cpyProf.id_outlet
+  }).done(function(result){
+    var json = JSON.parse(result.slice(1, result.length-1));
+    var temp = {
+      no_penjualan : json[0].no_penjualan,
+      tgl_penjualan : json[1].tgl_penjualan,
+      jenis : json[2].jns_jual,
+      bayar : json[3].jns_bayar,
+      cust : json[4].nama_cus,
+      total : json[5].total_jual
+    }
 
-  var dy = ('00'+dt.getDate()).slice(-2);
-  var hr = ('00'+dt.getHours()).slice(-2);
-  var mn = ('00'+dt.getMinutes()).slice(-2);
+    var tot = temp.total;
+    var totInt = tot.replace(/\D/g, '');
+    var paid = $('#bayar').val().replace(/\D/g, ''); if(mtd != '1') paid = totInt;
+    var kembali = parseInt(paid) - parseInt(totInt);
+    var byr = 'Via :' + temp.bayar;
+    var kbl = 'Kembali';
+    var sub = 'Sub-total';
+    var crd = 'CC';
 
-  var header = '{br}{center}{h}LightPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
-  var subheader = '{left}No. Trans : '+txNmr+'{br}Tanggal   : '+dy+' '+shortMonths[dt.getMonth()]+' '+dt.getFullYear()+', '+hr+':'+mn+'{br}Operator  : '+user+'{br}--------------------------------{br}';
-  var thanks = '{br}{center}Terima Kasih Atas {br}Kunjungan Anda {br}{br}{br}{br}{br}';
-  var sub = 'Sub-total';
-  var byr = 'Via :' + jn;
-  var crd = 'CC';
-  var kbl = 'Kembali';
+    var header = '{br}{center}{h}LightPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
+    var subheader = '{left}No. Trans : '+temp.no_penjualan+'{br}Tanggal   : '+temp.tgl_penjualan+'{br}Operator  : '+user+'{br}--------------------------------{br}';
+    var thanks = '{br}{center}Terima Kasih Atas {br}Kunjungan Anda {br}{br}{br}{br}{br}';
 
-  for(var i = 0; i < 23-tot.length; i++){
-    sub += ' ';
-  } sub += tot + '{br}';
+    // for(var i = 0; i < 23-tot.length; i++){
+    //   sub += ' ';
+    // } sub += tot + '{br}';
 
-  for(var i = 0; i < 30-tot.length; i++){
-    crd += ' ';
-  } crd += tot + '{br}';
+    for(var i = 0; i < 30-tot.length; i++){
+      crd += ' ';
+    } crd += tot + '{br}';
 
-  for(var i = 0; i < 26 - jn.length - parseInt(paid).toLocaleString().length; i++){
-    byr += ' ';
-  } byr += parseInt(paid).toLocaleString('id-ID') + '{br}';
+    for(var i = 0; i < 26 - temp.bayar.length - parseInt(paid).toLocaleString().length; i++){
+      byr += ' ';
+    } byr += parseInt(paid).toLocaleString('id-ID') + '{br}';
 
-  for(var i = 0; i < 25-parseInt(kembali).toLocaleString().length; i++){
-    kbl += ' ';
-  } kbl += parseInt(kembali).toLocaleString('id-ID');
+    for(var i = 0; i < 25-parseInt(kembali).toLocaleString().length; i++){
+      kbl += ' ';
+    } kbl += parseInt(kembali).toLocaleString('id-ID');
 
-  // if(mtd == '1'){
-    window.DatecsPrinter.printText(header + subheader + q + sub + byr + kbl +'{br}' + thanks, 'ISO-8859-1', 
-      function(){
-        alert('success!');
-        ordernya(kembali, totInt, paid);
-      }, function() {
-        alert(JSON.stringify(error));
-      });
+    // if(mtd == '1'){
+      window.DatecsPrinter.printText(header + subheader + q + byr + kbl +'{br}' + thanks, 'ISO-8859-1', 
+        function(){
+          alert('success!');
+          // ordernya(kembali, totInt, paid);
+        }, function() {
+          alert(JSON.stringify(error));
+        });
+  })
+  
   // }else if (mtd == '2'){
   //   window.DatecsPrinter.printText(header + subheader + q + sub + crd +'{br}' + thanks, 'ISO-8859-1', 
   //     function(){
