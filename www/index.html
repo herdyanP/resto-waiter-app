@@ -295,7 +295,7 @@
                 <div class="item-inner">
                   <div class="item-title item-label"></div>
                   <div class="item-input-wrap input-dropdown-wrap">
-                    <select name="" id="">
+                    <select name="kategori" id="kategori" onchange="ubahKategori(this.value)">
                       <option value="1">Foods</option>
                       <option value="2">Beverages</option>
                       <option value="3">Others</option>
@@ -397,7 +397,7 @@
                   <div class="item-inner">
                     <div class="item-title item-label" style="color: unset;">Diskon (Rp)</div>
                     <div class="item-input-wrap">
-                      <input type="text" lang="id" id="dsk_persen" value="0" style="text-align: right;">
+                      <input type="text" lang="id" id="disk_rp" value="0" onchange="hitungDiskon(this.value); commaNumber(this);" style="text-align: right;">
                       <!-- <input type="text" lang="id" id="dsk_persen" value="0" onclick="this.select();" onchange="diskon(this.value); hitungKembalian(document.getElementById(bayar).value)" style="text-align: right;"> -->
                     </div>
                   </div>
