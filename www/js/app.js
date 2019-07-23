@@ -794,7 +794,7 @@ function keranjang(){
     url: site+'/API/cart/'+cpyProf.id_outlet+'/',
     type: 'GET'
   }).done(function(result){
-    var testp = JSON.parse(result);
+    var testp = result;
     for(i = 0; i < testp.length; i++){
       // console.log(testp[i].id_barang, testp[i].total_tmp, testp[i].nama_barang, testp[i].qty_tmp);
       // <div class="item-title" onclick="ubahAmount('+testp[i].id_tmp+');">\
