@@ -775,6 +775,7 @@ function simpan(a,b,c,d){
 }
 
 function keranjang(){
+  //alert (site+'/API/cart/'+cpyProf.id_outlet+'/');
   // API pbam
   // $.ajax({
   //   url: "http://demo.medianusamandiri.com/lightpos/API/view_penjualan_tmp.php?id_login="+cpyProf.id_outlet
@@ -789,16 +790,17 @@ function keranjang(){
   //   'idpelblabla' : cpyProf.,
   //   'idmenublabla' : cpyProf.
   // }
-
+  //alert (data);
   $.ajax({
     url: site+'/API/cart/'+cpyProf.id_outlet+'/',
     type: 'GET'
   }).done(function(result){
-    var testp = JSON.parse(result);
+    var testp = result;
     for(i = 0; i < testp.length; i++){
       // console.log(testp[i].id_barang, testp[i].total_tmp, testp[i].nama_barang, testp[i].qty_tmp);
       // <div class="item-title" onclick="ubahAmount('+testp[i].id_tmp+');">\
       // <div class="item-after"><a href="#" onclick="pilihHapus('+testp[i].id_barang+','+testp[i].qty_tmp+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
+    
       data += '<li class="item-content ">\
           <div class="item-inner">\
           <div class="item-title" onclick="ubahAmount('+testp[i].id_barang+','+testp[i].harga_tmp+');">'+testp[i].nama_barang+'\
@@ -806,15 +808,17 @@ function keranjang(){
           </div>\
           <div class="item-after"><a href="#" onclick="pilihHapus('+testp[i].id_barang+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
           </div>\
-          </li>'
+          </li>';
           // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
-          jumlah += parseInt(testp[i].qty_tmp * testp[i].harga_tmp) * 1.1 /* PPN */;
+     
+          jumlah += parseInt(testp[i].qty_tmp * testp[i].harga_tmp);  // PPN 
     }
 
-    data += '</ul>';
+    //data += '</ul>';
+    alert(data);
     $('#keranjang').html(data);
-    $('#subtotal').html((jumlah - (jumlah * diskonAmt)).toLocaleString('id-ID'));
-  
+   // $('#subtotal').html((jumlah - (jumlah * diskonAmt)).toLocaleString('id-ID'));
+   $('#subtotal').html((jumlah).toLocaleString('id-ID'));
   }).fail(function(a,b,error){
     alert(error);
   })
@@ -953,15 +957,17 @@ function metode(a){
 }
 
 function bayar(){
+  var dct = parseInt($('#disk_rp').val().replace(/\D/g, ''));
   var paid = parseInt($('#bayar').val().replace(/\D/g, ''));
   var tot = $('#subtotal').html();
   var totInt = tot.replace(/\D/g, '');
   var kembali = parseInt(paid) - parseInt(totInt);
   platform = $('#platform').val();
 
+
   if(paid){
 
-    ordernya(kembali, totInt, paid);
+    ordernya(kembali, totInt, paid ,dct );
 
     // if(mtd == '1'){
     //   jn = 'Tunai';
@@ -1133,7 +1139,7 @@ function nomor(){
   return nomornya;
 }
 
-function ordernya(kembali, subTot, uang){
+function ordernya(kembali, subTot, uang,dct){
 
   if(mtd != '1') {
     kembali = 0;
@@ -1144,7 +1150,9 @@ function ordernya(kembali, subTot, uang){
   var tgl = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+("0" + d.getDate()).slice(-2);
   var tgltime = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+("0" + d.getDate()).slice(-2)+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
   var nomor_kartu = $('#nkartu').val();
-  var dct = $('#dsk_persen').val();
+  //var dct = $('#disk_rp').val();
+ //var dct = parseInt($('#disk_rp').html().replace(/\D/g, ''));
+
 
   // var uang = 0;
   // var subTot = parseInt($('#subtotal').html().replace(/\D/g, ''));
@@ -1401,7 +1409,11 @@ function printBayar(q) {
       jenis : json[2].jns_jual,
       bayar : json[3].jns_bayar,
       cust : json[4].nama_cus,
-      total : json[5].total_jual
+      total : json[5].total_jual,
+      bt : json[6].bayar_tunai,
+      kt : json[7].kembali_tunai,   
+      disc_rp : json[8].disc_rp   
+
     }
 
     var tot = temp.total;
@@ -1410,10 +1422,12 @@ function printBayar(q) {
     var kembali = parseInt(paid) - parseInt(totInt);
     var byr = 'Via :' + temp.bayar;
     var kbl = 'Kembali';
+    var uang = 'Pembayaran';  
+    var disk = 'Diskon (Rp)';
     var sub = 'Sub-total';
     var crd = 'CC';
 
-    var header = '{br}{center}{h}LightPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
+    var header = '{br}{center}{h}MediaPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
     var subheader = '{left}No. Trans : '+temp.no_penjualan+'{br}Tanggal   : '+temp.tgl_penjualan+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
     var thanks = '{br}{center}Terima Kasih Atas {br}Kunjungan Anda {br}{br}{br}{br}{br}';
 
@@ -1424,17 +1438,27 @@ function printBayar(q) {
     for(var i = 0; i < 30-tot.length; i++){
       crd += ' ';
     } crd += tot + '{br}';
-
-    for(var i = 0; i < 26 - temp.bayar.length - parseInt(paid).toLocaleString().length; i++){
+   
+   
+    for(var i = 0; i < 27-temp.bayar.length-parseInt(temp.total-temp.disc_rp).toLocaleString().length; i++){
       byr += ' ';
-    } byr += parseInt(paid).toLocaleString('id-ID') + '{br}';
+    } byr += parseInt(temp.total-temp.disc_rp).toLocaleString('id-ID') + '{br}';
 
-    for(var i = 0; i < 25-parseInt(kembali).toLocaleString().length; i++){
+    for(var i = 0; i < 21-parseInt(temp.disc_rp).toLocaleString().length; i++){
+      disk += ' ';
+    } disk += parseInt(temp.disc_rp).toLocaleString('id-ID') + '{br}';
+
+    for(var i = 0; i < 22-parseInt(temp.bt).toLocaleString().length; i++){
+      uang += ' ';
+    } uang += parseInt(temp.bt).toLocaleString('id-ID') + '{br}';
+
+    for(var i = 0; i < 25-parseInt(temp.kt).toLocaleString().length; i++){
       kbl += ' ';
-    } kbl += parseInt(kembali).toLocaleString('id-ID');
+    } kbl += parseInt(temp.kt).toLocaleString('id-ID');
+  
 
     // if(mtd == '1'){
-      window.DatecsPrinter.printText(header + subheader + q + byr + kbl +'{br}' + thanks, 'ISO-8859-1', 
+      window.DatecsPrinter.printText(header + subheader + q + disk + byr +  uang +  kbl +'{br}' + thanks, 'ISO-8859-1', 
         function(){
           alert('success!');
           // ordernya(kembali, totInt, paid);
@@ -1479,6 +1503,13 @@ function hitungKembalian(val){
   }
 }
 
+function hitungDiskon(val){
+  if(val != ''){
+    var tot = parseInt($('#subtotal').html().replace(/\D/g, ''));
+    diskon = tot - parseInt(val) ;
+    $('#subtotal').html(diskon.toLocaleString('id-ID'));
+  }
+}
 // function emptyDB(){
 //   db.transaction(function(t){
 //     t.executeSql("DELETE FROM pj_dtl_tmp", [],
@@ -2432,6 +2463,10 @@ function cariItem(q){
   })
 }
 
+
+function ubahKategori(a){
+  
+}
 
 /*
 status => 2,  Silahkan Konfirmasi Register di Email Anda
