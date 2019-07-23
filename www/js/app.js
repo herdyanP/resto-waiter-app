@@ -408,6 +408,7 @@ function onRetSuccess(obj){
         tampilFood();
         tampilBvrg();
         tampilCombo();
+        keranjang();
       }, 3000)
     } else {
       // alert('gagal');
@@ -815,7 +816,7 @@ function keranjang(){
     }
 
     //data += '</ul>';
-    alert(data);
+    // alert(data);
     $('#keranjang').html(data);
    // $('#subtotal').html((jumlah - (jumlah * diskonAmt)).toLocaleString('id-ID'));
    $('#subtotal').html((jumlah).toLocaleString('id-ID'));
@@ -1399,83 +1400,106 @@ function connectToPrinter(q){
 }
 
 function printBayar(q) {
-  $.ajax({
-    url: site+"/API/view_penjualan.php?id_client="+cpyProf.id_outlet
-  }).done(function(result){
-    var json = JSON.parse(result.slice(1, result.length-1));
-    var temp = {
-      no_penjualan : json[0].no_penjualan,
-      tgl_penjualan : json[1].tgl_penjualan,
-      jenis : json[2].jns_jual,
-      bayar : json[3].jns_bayar,
-      cust : json[4].nama_cus,
-      total : json[5].total_jual,
-      bt : json[6].bayar_tunai,
-      kt : json[7].kembali_tunai,   
-      disc_rp : json[8].disc_rp   
 
-    }
+  var image = new Image();
+  image.onload = function() {
+      var canvas = document.createElement('canvas');
+      canvas.height = 100;
+      canvas.width = 200;
+      var context = canvas.getContext('2d');
+      context.drawImage(image, 0, 0);
+      var imageData = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/, ""); //remove mimetype
+      window.DatecsPrinter.printImage(
+          imageData, //base64
+          canvas.width, 
+          canvas.height, 
+          1, 
+          function() {
+            // printMyBarcode();
+            $.ajax({
+              url: site+"/API/view_penjualan.php?id_client="+cpyProf.id_outlet
+            }).done(function(result){
+              var json = JSON.parse(result.slice(1, result.length-1));
+              var temp = {
+                no_penjualan : json[0].no_penjualan,
+                tgl_penjualan : json[1].tgl_penjualan,
+                jenis : json[2].jns_jual,
+                bayar : json[3].jns_bayar,
+                cust : json[4].nama_cus,
+                total : json[5].total_jual,
+                bt : json[6].bayar_tunai,
+                kt : json[7].kembali_tunai,   
+                disc_rp : json[8].disc_rp   
 
-    var tot = temp.total;
-    var totInt = tot.replace(/\D/g, '');
-    var paid = $('#bayar').val().replace(/\D/g, ''); if(mtd != '1') paid = totInt;
-    var kembali = parseInt(paid) - parseInt(totInt);
-    var byr = 'Via :' + temp.bayar;
-    var kbl = 'Kembali';
-    var uang = 'Pembayaran';  
-    var disk = 'Diskon (Rp)';
-    var sub = 'Sub-total';
-    var crd = 'CC';
+              }
 
-    var header = '{br}{center}{h}MediaPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
-    var subheader = '{left}No. Trans : '+temp.no_penjualan+'{br}Tanggal   : '+temp.tgl_penjualan+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
-    var thanks = '{br}{center}Terima Kasih Atas {br}Kunjungan Anda {br}{br}{br}{br}{br}';
+              var tot = temp.total;
+              var totInt = tot.replace(/\D/g, '');
+              var paid = $('#bayar').val().replace(/\D/g, ''); if(mtd != '1') paid = totInt;
+              var kembali = parseInt(paid) - parseInt(totInt);
+              var byr = 'Via :' + temp.bayar;
+              var kbl = 'Kembali';
+              var uang = 'Pembayaran';  
+              var disk = 'Diskon (Rp)';
+              var sub = 'Sub-total';
+              var crd = 'CC';
 
-    // for(var i = 0; i < 23-tot.length; i++){
-    //   sub += ' ';
-    // } sub += tot + '{br}';
+              var header = '{br}{center}{h}MediaPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
+              var subheader = '{left}No. Trans : '+temp.no_penjualan+'{br}Tanggal   : '+temp.tgl_penjualan+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
+              var thanks = '{br}{center}Terima Kasih Atas {br}Kunjungan Anda {br}{br}{br}{br}{br}';
 
-    for(var i = 0; i < 30-tot.length; i++){
-      crd += ' ';
-    } crd += tot + '{br}';
-   
-   
-    for(var i = 0; i < 27-temp.bayar.length-parseInt(temp.total-temp.disc_rp).toLocaleString().length; i++){
-      byr += ' ';
-    } byr += parseInt(temp.total-temp.disc_rp).toLocaleString('id-ID') + '{br}';
+              // for(var i = 0; i < 23-tot.length; i++){
+              //   sub += ' ';
+              // } sub += tot + '{br}';
 
-    for(var i = 0; i < 21-parseInt(temp.disc_rp).toLocaleString().length; i++){
-      disk += ' ';
-    } disk += parseInt(temp.disc_rp).toLocaleString('id-ID') + '{br}';
+              for(var i = 0; i < 30-tot.length; i++){
+                crd += ' ';
+              } crd += tot + '{br}';
+             
+             
+              for(var i = 0; i < 27-temp.bayar.length-parseInt(temp.total-temp.disc_rp).toLocaleString().length; i++){
+                byr += ' ';
+              } byr += parseInt(temp.total-temp.disc_rp).toLocaleString('id-ID') + '{br}';
 
-    for(var i = 0; i < 22-parseInt(temp.bt).toLocaleString().length; i++){
-      uang += ' ';
-    } uang += parseInt(temp.bt).toLocaleString('id-ID') + '{br}';
+              for(var i = 0; i < 21-parseInt(temp.disc_rp).toLocaleString().length; i++){
+                disk += ' ';
+              } disk += parseInt(temp.disc_rp).toLocaleString('id-ID') + '{br}';
 
-    for(var i = 0; i < 25-parseInt(temp.kt).toLocaleString().length; i++){
-      kbl += ' ';
-    } kbl += parseInt(temp.kt).toLocaleString('id-ID');
-  
+              for(var i = 0; i < 22-parseInt(temp.bt).toLocaleString().length; i++){
+                uang += ' ';
+              } uang += parseInt(temp.bt).toLocaleString('id-ID') + '{br}';
 
-    // if(mtd == '1'){
-      window.DatecsPrinter.printText(header + subheader + q + disk + byr +  uang +  kbl +'{br}' + thanks, 'ISO-8859-1', 
-        function(){
-          alert('success!');
-          // ordernya(kembali, totInt, paid);
-        }, function() {
-          alert(JSON.stringify(error));
-        });
-  })
-  
-  // }else if (mtd == '2'){
-  //   window.DatecsPrinter.printText(header + subheader + q + sub + crd +'{br}' + thanks, 'ISO-8859-1', 
-  //     function(){
-  //       alert('success!');
-  //       ordernya(kembali, totInt, paid);
-  //     }, function() {
-  //       alert(JSON.stringify(error));
-  //     });
-  // }
+              for(var i = 0; i < 25-parseInt(temp.kt).toLocaleString().length; i++){
+                kbl += ' ';
+              } kbl += parseInt(temp.kt).toLocaleString('id-ID');
+            
+
+              // if(mtd == '1'){
+                window.DatecsPrinter.printText(header + subheader + q + disk + byr +  uang +  kbl +'{br}' + thanks, 'ISO-8859-1', 
+                  function(){
+                    alert('success!');
+                    // ordernya(kembali, totInt, paid);
+                  }, function() {
+                    alert(JSON.stringify(error));
+                  });
+            })
+            
+            // }else if (mtd == '2'){
+            //   window.DatecsPrinter.printText(header + subheader + q + sub + crd +'{br}' + thanks, 'ISO-8859-1', 
+            //     function(){
+            //       alert('success!');
+            //       ordernya(kembali, totInt, paid);
+            //     }, function() {
+            //       alert(JSON.stringify(error));
+            //     });
+            // }
+          },
+          function(error) {
+              alert(JSON.stringify(error));
+          }
+      )
+  };
+  image.src = './img/mediapos_mini.png';
 }
 
 function comma(el){
