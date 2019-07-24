@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#2196f3">
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:">
+  <title>LightPOS</title>
+  <link rel="stylesheet" href="css/framework7.min.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="apple-touch-icon" href="img/f7-icon-square.png">
+  <link rel="icon" href="img/fav/android-icon-144x144.png">
+  <style type="text/css">
+  /*remove hairline nav*/
+  .navbar:after {
+   display:none;
+ }
+ .navbar:before {
+   display:none;
+ }   
+</style>
+</head>
+<body>
+  <div id="app">
+    <div class="statusbar"></div>
+    <div class="panel panel-right panel-reveal theme-dark">
+      <div class="view view-init view-right" data-url="/">
+        <div class="page" data-name="r_panel">
+          <div class="navbar">
+            <div class="navbar-inner sliding">
+              <div class="title">Detail Meja</div>
+            </div>
+          </div>
+          <div class="page-content">
+            <div class="block" id="panelmeja">
+              Nothing selected
+              <!-- <div class="block-title">Panel Navigation</div> -->
+              <!-- <p>This is a right side panel. You can close it by clicking outsite or on this link: <a href="#" class="panel-close">close me</a>. You can put here anything, even another isolated view.</p> -->
+            </div>
+
+            <!-- <div class="list links-list">
+              <ul>
+                <li><a href="/panel-right-1/">Right panel page 1</a></li>
+                <li><a href="/panel-right-2/">Right panel page 2</a></li>
+              </ul>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view view-main view-init ios-edges" data-url="/">
+      <div class="page" data-name="home">
+        <div class="navbar" style="height: 50px;position: fixed;/*top: 200;*/width: 100%;">
+          <div class="navbar-inner">
+            <div class="title sliding">LightPOS</div>
+            <!-- <div class="right">
+              <a class="link icon-only searchbar-enable" data-searchbar=".searchbar-components">
+                <i class="icon f7-icons ios-only">search_strong</i>
+                <i class="icon material-icons md-only">search</i>
+              </a>
+              <a href="#" class="link icon-only panel-open" onclick="dtlmeja()" data-panel="right">
+                <i class="icon f7-icons ios-only">save</i>
+                <i class="icon material-icons md-only">save</i>
+              </a>
+            </div> -->
+            <form data-search-container=".components-list" data-search-in="a" class="searchbar searchbar-expandable searchbar-components searchbar-init">
+              <div class="searchbar-inner">
+                <div class="searchbar-input-wrap">
+                  <input type="search" placeholder="Search components"/>
+                  <i class="searchbar-icon"></i>
+                  <span class="input-clear-button"></span>
+                </div>
+                <span class="searchbar-disable-button">Cancel</span>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="toolbar tabbar tabbar-labels toolbar-bottom-md">
+         <div class="toolbar-inner">
+           <a href="#tab-1" class="tab-link" onclick="dash()">
+             <i class="icon f7-icons ios-only">home</i>
+             <i class="icon icon-fill f7-icons ios-only">home_fill</i>
+             <i class="icon material-icons md-only">home</i>
+             <span class="tabbar-label">Home</span>
+           </a>
+           <a href="#tab-2" class="tab-link tab-link-active">
+             <i class="icon f7-icons ios-only">restaurant</i>
+             <i class="icon icon-fill f7-icons ios-only">list_fill</i>
+             <i class="icon material-icons md-only">restaurant</i>
+             <span class="tabbar-label">Shop</span>
+           </a>
+           <a href="#tab-3" class="tab-link">
+             <i class="icon f7-icons ios-only">more</i>
+             <i class="icon icon-fill f7-icons ios-only">more_fill</i>
+             <i class="icon material-icons md-only">settings</i>
+             <span class="tabbar-label">Profile</span>
+           </a>
+         </div>
+       </div>
+       <div class="tabs">
+        <div id="tab-1" class="page-content tab">
+          <div id="container1" class="block">Its a me mario</div>
+          <div id="container2" class="block">Its a me luigi</div>
+        </div>
+        <div id="tab-2" class="page-content tab tab-active" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden;">
+          <div class="block">
+            <div class="row" id="home_grid">
+              <div class="grid-demo">
+                <div class="row" id="mejaaktif" style=" overflow:scroll;max-height: calc( 90vh - 50px );justify-content: normal"></div>
+              </div>
+              <div class="side-menu">
+                <div class="list no-hairlines-between" style="overflow:scroll;max-height: calc( 70vh - 50px );margin:1px;">
+                  <ul id="menusamping">
+                    <li>
+                      <a class="item-content item-link" href="/pesanan/">
+                        <div class="item-media"><i class="icon material-icons md-only">local_dining</i></div>
+                        <div class="item-inner">
+                          <div class="item-title">Dine-in</div>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="item-content item-link" href="/pesanan-takeaway/">
+                        <div class="item-media"><i class="icon material-icons md-only">shopping_basket</i></div>
+                        <div class="item-inner">
+                          <div class="item-title">Take Away</div>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="item-content item-link panel-open" href="#" onclick="dtlmeja()" data-panel="right">
+                        <div class="item-media"><i class="icon material-icons md-only">room_service</i></div>
+                        <div class="item-inner">
+                          <div class="item-title">Serve Food</div>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="item-content item-link" href="/pesanan-reorder/" onclick="reorder()">
+                        <div class="item-media"><i class="icon material-icons md-only">reorder</i></div>
+                        <div class="item-inner">
+                          <div class="item-title">New Order</div>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="item-content item-link" href="/payment/" onclick="pay(0)">
+                        <div class="item-media"><i class="icon material-icons md-only">payment</i></div>
+                        <div class="item-inner">
+                          <div class="item-title">Payment</div>
+                        </div>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="tab-3" class="page-content tab">
+         <div class="block">
+          <div class="row">
+            <div class="col-30">
+              <img src="img/index.png" alt="foto" style="display: block; margin:auto; height: 100px; width: 100px; border-radius: 50%;">
+            </div>
+            <div class="col-70">
+              <p>the quick brown fox</p>
+              <p>jumps over the lazy dog</p>
+            </div>
+          </div>
+           <!-- <a href="#" class="button button-raised" @click="showToastBottom">Toast on Bottom</a> -->
+           <hr>
+         </div>
+
+         <!-- <div class="block" style="height: 3px; background-color: #000000"></div> -->
+
+         <div class="block">
+          <div class="list">
+            <p>
+              <a class="button button-raised" href="#">Satu</a>
+            </p>
+            <p>
+              <a class="button button-raised" href="#">Dua</a>
+            </p>
+            <p>
+              <a class="button button-raised" href="#">Tiga</a>
+            </p>
+          </div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>
+</div>
+<script src="js/framework7.min.js"></script>
+<script src="js/highcharts.js"></script>
+
+<script src="js/routes.js"></script>
+<script src="js/app.js"></script>
+<script type="text/javascript" src="cordova.js"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+<!-- <script type="text/javascript" src="js/index.js"></script> -->
+</body>
+</html>
