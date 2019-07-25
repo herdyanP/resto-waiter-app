@@ -34,6 +34,7 @@ var split = 0;
 var splitItem = [];
 var toBeMerged = [];
 var mergeItem = [];
+var addr = "http://dev.cloudmnm.com/resto/";
 // var mainView = app.views.main;
 // var chart = Highcharts.chart('container1', {});
 
@@ -315,26 +316,44 @@ function test(){
       return;
     }
 
-    db.transaction(function(tx){
-      tx.executeSql("SELECT COUNT(*) c FROM pj WHERE id_pj = ?", [idtemp],
-        function(t, result){
-          if(result.rows.item(0).c < 1){
-            db.transaction(function(transaction) {
-             var executeQuery = "INSERT INTO pj (no_penjualan,no_faktur,tgl_penjualan,jenis_jual,id_user,stamp_date,no_meja,id_gudang,meja,st) VALUES (?,?,?,?,?,?,?,?,?,?)";
-             transaction.executeSql(executeQuery, [nomorx,nomorx,tgl,st,'1',tgltime,nomormeja,'1','1',c1]
-              , function(tx, result) {
-               orderdtl(result.insertId);
-               listmeja();
-             },
-             function(error){
-               alert('Error occurred'); 
+    app.dialog.prompt('PIN:', 'Konfirmasi', 
+    function(nomor){
+      if(nomor != '1234'){
+        app.toast.create({text: 'PIN not recognized', closeButton: true, destroyOnClose: true}).open();
+        return;
+      }else {
+        // nomormeja = parseInt(nomor);
+        // app.toast.create({text: 'Table '+nomormeja+' successfully added', closeTimeout: 2000, destroyOnClose: true}).open();
+
+        db.transaction(function(tx){
+        tx.executeSql("SELECT COUNT(*) c FROM pj WHERE id_pj = ?", [idtemp],
+          function(t, result){
+            if(result.rows.item(0).c < 1){
+              db.transaction(function(transaction) {
+               var executeQuery = "INSERT INTO pj (no_penjualan,no_faktur,tgl_penjualan,jenis_jual,id_user,stamp_date,no_meja,id_gudang,meja,st) VALUES (?,?,?,?,?,?,?,?,?,?)";
+               transaction.executeSql(executeQuery, [nomorx,nomorx,tgl,st,'1',tgltime,nomormeja,'1','1',c1]
+                , function(tx, result) {
+                 orderdtl(result.insertId);
+                 listmeja();
+
+                 alert(nomor);
+               },
+               function(error){
+                 alert('Error occurred'); 
+               });
              });
-           });
-          } else{
-            orderdtl(idtemp);
-          }
-        })
-    })
+            } else{
+              orderdtl(idtemp);
+            }
+          })
+      })
+      }
+    },
+    function(){
+      // app.toast.create({text: 'Batal', closeTimeout: 2000}).open()
+    });
+
+    
   }
 
   // function ordernya(){
@@ -510,11 +529,11 @@ function meja(){
   app.dialog.prompt('Nomor meja:', 'Konfirmasi', 
     function(nomor){
       if(arr.includes(parseInt(nomor))){
-        app.toast.create({text: 'Meja dipilih sedang terpakai. Mohon pilih meja lain.', closeButton: true, destroyOnClose: true}).open();
+        app.toast.create({text: 'Selected table currently in use, please choose another', closeButton: true, destroyOnClose: true}).open();
         return;
       }else {
         nomormeja = parseInt(nomor);
-        app.toast.create({text: 'Sukses meja '+nomormeja, closeTimeout: 2000, destroyOnClose: true}).open();
+        app.toast.create({text: 'Table '+nomormeja+' successfully added', closeTimeout: 2000, destroyOnClose: true}).open();
       }
     },
     function(){
@@ -523,17 +542,40 @@ function meja(){
 }
 
 function listmeja(){
+  var content = '';
+  var st_meja = '';
   nomormeja = 0;
+// /meja/ API starts here
+  app.request({
+    url: addr+"API/meja/",
+    method: "GET",
+    success: function(json){
+      // console.log(result);
+      var result = JSON.parse(json);
+      for(var i = 0; i < result.length; i++){
+        // console.log(result[i].NAMA);
+        if(result[i].ST == '0' || result[i].ST == '1'){
+          st_meja = "(In use)";
+        } else {
+          st_meja = "(Available)";
+        }
+        content += '<div id="'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkmeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
+      }
 
-  db.transaction(function(transaction){
+      $('#mejaaktif').html(content);
+    }
+  })
+// /meja/ API ends here
+
+  /*db.transaction(function(transaction){
     transaction.executeSql("SELECT no_meja FROM pj WHERE st = 1 AND no_meja > 0 AND jenis_jual = 1 ORDER BY no_meja ASC", [], function (tx, result){
-      var content = '';
+      
       for(var i = 0; i < result.rows.length; i++){
-        content += '<div id="meja'+result.rows.item(i).no_meja+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkmeja(this)">Meja '+result.rows.item(i).no_meja+'</div>';
+        content += '<div id="meja'+result.rows.item(i).no_meja+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkmeja(this)">Table '+result.rows.item(i).no_meja+'</div>';
       }
       $('#mejaaktif').html(content);
     }, function(error){});
-  })
+  })*/
 }
 
 function checkmeja(e){

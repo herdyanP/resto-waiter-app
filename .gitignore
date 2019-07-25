@@ -2,3 +2,5 @@ platforms/
 plugins/
 node_modules/
 .gradle/
+build_resto.bat
+resto_batch.bat
