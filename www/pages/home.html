@@ -1,0 +1,122 @@
+<div class="page" data-name="home">
+      <div class="navbar" style="height: 50px;position: fixed;/*top: 200;*/width: 100%;">
+        <div class="navbar-inner">
+          <div class="title sliding">LightPOS</div>
+        </div>
+      </div>
+
+      <div class="toolbar tabbar tabbar-labels toolbar-bottom-md">
+       <div class="toolbar-inner">
+         <a href="#tab-1" class="tab-link" onclick="dash()">
+           <i class="icon f7-icons ios-only">home</i>
+           <i class="icon icon-fill f7-icons ios-only">home_fill</i>
+           <i class="icon material-icons md-only">home</i>
+           <span class="tabbar-label">Home</span>
+         </a>
+         <a href="#tab-2" class="tab-link tab-link-active">
+           <i class="icon f7-icons ios-only">restaurant</i>
+           <i class="icon icon-fill f7-icons ios-only">list_fill</i>
+           <i class="icon material-icons md-only">restaurant</i>
+           <span class="tabbar-label">Shop</span>
+         </a>
+         <a href="#tab-3" class="tab-link">
+           <i class="icon f7-icons ios-only">more</i>
+           <i class="icon icon-fill f7-icons ios-only">more_fill</i>
+           <i class="icon material-icons md-only">settings</i>
+           <span class="tabbar-label">Profile</span>
+         </a>
+       </div>
+     </div>
+     <div class="tabs">
+      <div id="tab-1" class="page-content tab">
+        <div id="container1" class="block">Its a me mario</div>
+        <div id="container2" class="block">Its a me luigi</div>
+      </div>
+      <div id="tab-2" class="page-content tab tab-active" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden;">
+        <div class="block">
+          <div class="row" id="home_grid">
+            <div class="grid-demo">
+              <div class="row" id="mejaaktif" style=" overflow:scroll;max-height: calc( 90vh - 50px );justify-content: normal"></div>
+            </div>
+            <div class="side-menu">
+              <div class="list no-hairlines-between" style="overflow:scroll;max-height: calc( 70vh - 50px );margin:1px;">
+                <ul id="menusamping">
+                  <li>
+                    <a class="item-content item-link" href="/pesanan/">
+                      <div class="item-media"><i class="icon material-icons md-only">local_dining</i></div>
+                      <div class="item-inner">
+                        <div class="item-title">Dine-in</div>
+                      </div>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="item-content item-link" href="/pesanan-takeaway/">
+                      <div class="item-media"><i class="icon material-icons md-only">shopping_basket</i></div>
+                      <div class="item-inner">
+                        <div class="item-title">Take Away</div>
+                      </div>
+                    </a>
+                  </li>
+                  <!-- <li>
+                    <a class="item-content item-link panel-open" href="#" onclick="dtlmeja()" data-panel="right">
+                      <div class="item-media"><i class="icon material-icons md-only">room_service</i></div>
+                      <div class="item-inner">
+                        <div class="item-title">Serve Food</div>
+                      </div>
+                    </a>
+                  </li> -->
+                  <li>
+                    <a class="item-content item-link" href="/pesanan-reorder/" onclick="reorder()">
+                      <div class="item-media"><i class="icon material-icons md-only">reorder</i></div>
+                      <div class="item-inner">
+                        <div class="item-title">New Order</div>
+                      </div>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="item-content item-link" href="/payment/" onclick="pay(0)">
+                      <div class="item-media"><i class="icon material-icons md-only">payment</i></div>
+                      <div class="item-inner">
+                        <div class="item-title">Payment</div>
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="tab-3" class="page-content tab">
+       <div class="block">
+        <div class="row">
+          <div class="col-30">
+            <img src="img/index.png" alt="foto" style="display: block; margin:auto; height: 100px; width: 100px; border-radius: 50%;">
+          </div>
+          <div class="col-70">
+            <p>the quick brown fox</p>
+            <p>jumps over the lazy dog</p>
+          </div>
+        </div>
+         <!-- <a href="#" class="button button-raised" @click="showToastBottom">Toast on Bottom</a> -->
+         <hr>
+       </div>
+
+       <!-- <div class="block" style="height: 3px; background-color: #000000"></div> -->
+
+       <div class="block">
+        <div class="list">
+          <p>
+            <a class="button button-raised" href="#">Satu</a>
+          </p>
+          <p>
+            <a class="button button-raised" href="#">Dua</a>
+          </p>
+          <p>
+            <a class="button button-raised" href="#">Tiga</a>
+          </p>
+        </div>
+       </div>
+     </div>
+   </div>
+ </div>

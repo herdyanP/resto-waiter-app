@@ -51,150 +51,72 @@
       </div>
     </div>
 
-    <div class="view view-main view-init ios-edges" data-url="/">
-      <div class="page" data-name="home">
-        <div class="navbar" style="height: 50px;position: fixed;/*top: 200;*/width: 100%;">
-          <div class="navbar-inner">
-            <div class="title sliding">LightPOS</div>
-            <!-- <div class="right">
-              <a class="link icon-only searchbar-enable" data-searchbar=".searchbar-components">
-                <i class="icon f7-icons ios-only">search_strong</i>
-                <i class="icon material-icons md-only">search</i>
-              </a>
-              <a href="#" class="link icon-only panel-open" onclick="dtlmeja()" data-panel="right">
-                <i class="icon f7-icons ios-only">save</i>
-                <i class="icon material-icons md-only">save</i>
-              </a>
-            </div> -->
-            <form data-search-container=".components-list" data-search-in="a" class="searchbar searchbar-expandable searchbar-components searchbar-init">
-              <div class="searchbar-inner">
-                <div class="searchbar-input-wrap">
-                  <input type="search" placeholder="Search components"/>
-                  <i class="searchbar-icon"></i>
-                  <span class="input-clear-button"></span>
-                </div>
-                <span class="searchbar-disable-button">Cancel</span>
-              </div>
-            </form>
-          </div>
-        </div>
+  <div class="view view-main view-init ios-edges" data-url="/">
+    <div class="page" data-name="index">
 
-        <div class="toolbar tabbar tabbar-labels toolbar-bottom-md">
-         <div class="toolbar-inner">
-           <a href="#tab-1" class="tab-link" onclick="dash()">
-             <i class="icon f7-icons ios-only">home</i>
-             <i class="icon icon-fill f7-icons ios-only">home_fill</i>
-             <i class="icon material-icons md-only">home</i>
-             <span class="tabbar-label">Home</span>
-           </a>
-           <a href="#tab-2" class="tab-link tab-link-active">
-             <i class="icon f7-icons ios-only">restaurant</i>
-             <i class="icon icon-fill f7-icons ios-only">list_fill</i>
-             <i class="icon material-icons md-only">restaurant</i>
-             <span class="tabbar-label">Shop</span>
-           </a>
-           <a href="#tab-3" class="tab-link">
-             <i class="icon f7-icons ios-only">more</i>
-             <i class="icon icon-fill f7-icons ios-only">more_fill</i>
-             <i class="icon material-icons md-only">settings</i>
-             <span class="tabbar-label">Profile</span>
-           </a>
-         </div>
-       </div>
-       <div class="tabs">
-        <div id="tab-1" class="page-content tab">
-          <div id="container1" class="block">Its a me mario</div>
-          <div id="container2" class="block">Its a me luigi</div>
-        </div>
-        <div id="tab-2" class="page-content tab tab-active" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden;">
-          <div class="block">
-            <div class="row" id="home_grid">
-              <div class="grid-demo">
-                <div class="row" id="mejaaktif" style=" overflow:scroll;max-height: calc( 90vh - 50px );justify-content: normal"></div>
-              </div>
-              <div class="side-menu">
-                <div class="list no-hairlines-between" style="overflow:scroll;max-height: calc( 70vh - 50px );margin:1px;">
-                  <ul id="menusamping">
-                    <li>
-                      <a class="item-content item-link" href="/pesanan/">
-                        <div class="item-media"><i class="icon material-icons md-only">local_dining</i></div>
-                        <div class="item-inner">
-                          <div class="item-title">Dine-in</div>
-                        </div>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="item-content item-link" href="/pesanan-takeaway/">
-                        <div class="item-media"><i class="icon material-icons md-only">shopping_basket</i></div>
-                        <div class="item-inner">
-                          <div class="item-title">Take Away</div>
-                        </div>
-                      </a>
-                    </li>
-                    <!-- <li>
-                      <a class="item-content item-link panel-open" href="#" onclick="dtlmeja()" data-panel="right">
-                        <div class="item-media"><i class="icon material-icons md-only">room_service</i></div>
-                        <div class="item-inner">
-                          <div class="item-title">Serve Food</div>
-                        </div>
-                      </a>
-                    </li> -->
-                    <li>
-                      <a class="item-content item-link" href="/pesanan-reorder/" onclick="reorder()">
-                        <div class="item-media"><i class="icon material-icons md-only">reorder</i></div>
-                        <div class="item-inner">
-                          <div class="item-title">New Order</div>
-                        </div>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="item-content item-link" href="/payment/" onclick="pay(0)">
-                        <div class="item-media"><i class="icon material-icons md-only">payment</i></div>
-                        <div class="item-inner">
-                          <div class="item-title">Payment</div>
-                        </div>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+        <div class="page-content login-screen-content">
+          <div class="login-screen-title" style="font-size: 28px">MediaPOS
+            <!-- <div class="mt-20"><img src="logov2-transparent.png" width="150" height="150"></div> -->
+            <!-- <div style="font-size: 22px">Login Anggota</div> -->
           </div>
-        </div>
-        <div id="tab-3" class="page-content tab">
-         <div class="block">
-          <div class="row">
-            <div class="col-30">
-              <img src="img/index.png" alt="foto" style="display: block; margin:auto; height: 100px; width: 100px; border-radius: 50%;">
-            </div>
-            <div class="col-70">
-              <p>the quick brown fox</p>
-              <p>jumps over the lazy dog</p>
-            </div>
-          </div>
-           <!-- <a href="#" class="button button-raised" @click="showToastBottom">Toast on Bottom</a> -->
-           <hr>
-         </div>
 
-         <!-- <div class="block" style="height: 3px; background-color: #000000"></div> -->
+          <form id="login_form" name="login_form">
+            <div class="list no-hairlines no-hairlines-between">
+              <ul>
+                <li class="item-content item-input">
+                  <div class="item-inner">
+                    <div class="item-title item-label">Username</div>
+                    <div class="item-input-wrap">
+                      <input type="text" id="username" name="username" placeholder="Type your username here">
+                      <!-- <input type="text" id="username" name="username" placeholder="Your username" value="2377"> -->
+                    </div>
+                  </div>
+                </li>
+                <li class="item-content item-input">
+                  <div class="item-inner">
+                    <div class="item-title item-label">Password</div>
+                    <div class="item-input-wrap">
+                      <input type="password" id="pwd" name="pwd" placeholder="Type your password here" onkeydown="">
+                      <!-- <input type="password" id="pass" name="pass" placeholder="Your password" onkeydown="checkKey(event)" value="admin2019"> -->
+                    </div>
+                  </div>
+                </li>
+                <li class="item-content">
+                  <div class="item-inner">
+                    <div class="item-title" style="width: 100%;">
+                      <a id="login_button" class="button button-outline button-round" href="#" onclick="newLogin();">Sign In</a>
+                    </div>
+                  </div>
+                </li>
+                <!-- <li class="item-content">
+                  <div class="item-inner">
+                    <div class="item-title" style="width: 100%;" align="center">
+                      <a href="/lupapassword/"><b>Lupa Password</b></a>
+                      <a href="#"><b>Formulir Pendaftaran Baru</b></a>
+                    </div>
+                  </div>
+                </li> -->
+                <li class="item-content">
+                  <div class="item-inner">
+                    <div class="item-title" style="width: 100%;" align="center">
+                      <div class="row">
+                        <a href="/lupapassword/" class="button button-small col"><b>Reset your password here</b></a>
+                        <!-- <a href="#" class="button button-small col" onclick="onConstruction();"><b>Daftar Baru</b></a> -->
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
 
-         <div class="block">
-          <div class="list">
-            <p>
-              <a class="button button-raised" href="#">Satu</a>
-            </p>
-            <p>
-              <a class="button button-raised" href="#">Dua</a>
-            </p>
-            <p>
-              <a class="button button-raised" href="#">Tiga</a>
-            </p>
-          </div>
-         </div>
-       </div>
-     </div>
-   </div>
- </div>
+            <div class="block-footer">
+              <p>&copy; 2019 PT Media Nusa Mandiri</p>
+              <p id="appversion"></p>
+            </div>
+          </form>
+        </div>
+      </div>
+  </div>
 </div>
 <script src="js/framework7.min.js"></script>
 <script src="js/highcharts.js"></script>

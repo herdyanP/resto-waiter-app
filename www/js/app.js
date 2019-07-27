@@ -35,6 +35,7 @@ var splitItem = [];
 var toBeMerged = [];
 var mergeItem = [];
 var addr = "http://dev.cloudmnm.com/resto/";
+var currMeja = 0;
 // var mainView = app.views.main;
 // var chart = Highcharts.chart('container1', {});
 
@@ -136,7 +137,101 @@ document.addEventListener('deviceready', function() {
     })
    });
 
+function newLogin(){
+  var loginform = app.form.convertToData('#login_form');
+  // var mainView = myApp.views.main;
+
+  app.request({
+    url: addr+"API/login/",
+    method: "POST",
+    data: JSON.stringify(loginform),
+    success: function(json){
+      if(json){
+        app.views.main.router.navigate('/home/');
+      } else {
+        app.toast.create({text: 'Wrong Username / Password', closeButton: true, destroyOnClose: true}).open();
+      }
+      
+      // var result = JSON.parse(json);
+      // var datanya = '';
+
+      // for (i = 0; i < result.length; i++){
+      //   // datanya+="<div onclick=\"simpan('"+rs.rows.item(i).id_barang+"','1','"+rs.rows.item(i).harga_jual+"','"+rs.rows.item(i).nama_barang+"')\" class=\"col-25 tablet-25\" style=\"height: 100px;text-align:left;margin:5px;position:relative;\">"+rs.rows.item(i).nama_barang+"<div style=\"position:absolute;bottom:0\"><h3><strong> Rp. "+parseInt(rs.rows.item(i).harga_jual).toLocaleString()+"</strong></h3></div></div>";
+      //   datanya+="<div onclick=\"simpan('"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
+      // }
+      // $('#menuku').html(datanya);
+
+      // console.log(result);
+    }
+  })
+
+  console.log(loginform);
+
+  // $('#login_button').prop('disabled', true);
+  // $('#login_button').addClass('disabled');
+
+  // $.ajax({
+  //   dataType: 'jsonp',
+  //   url: 'https://kopdanamon.cloudmnm.com/android/json_status.php?' +str,
+  //   timeout: timeoutAjax
+  // }).done(function(json){
+  //   if (json[0].status == '1') {
+  //     user = $('input[name="username"]').val();
+  //     myApp.toast.create({
+  //       text: "Login sukses!",
+  //       destroyOnClose: true,
+  //       closeTimeout: 3000
+  //     }).open();
+  //     mainView.router.navigate({
+  //       name: 'Dashboard'
+  //     }, 
+  //     {
+  //       history: false
+  //     });
+
+  //     networkinterface.getWiFiIPAddress(onNetworkSuccess);
+  //     networkinterface.getCarrierIPAddress(onNetworkSuccess);
+
+  //     userLog();
+  //     countNotif();   
+  //   } else{
+  //     myApp.toast.create({
+  //       text: "Login gagal! Cek username dan/atau password anda.",
+  //       destroyOnClose: true,
+  //       closeTimeout: 3000
+  //     }).open();
+  //   }
+  // }).fail(function(a, b, c){
+  //   alert(a);
+  //   alert(b);
+  //   alert(c);
+  //   myApp.toast.create({
+  //     text: "Koneksi Timed-Out, mohon coba lagi.",
+  //     destroyOnClose: true,
+  //     closeTimeout: 3000,
+  //     closeButton: true
+  //   }).open();
+  // }).always(function(){
+  //   $('#login_button').prop('disabled', false);
+  //   $('#login_button').removeClass('disabled');
+  // });
+}
+
 function simpan(a,b,c,d){
+  /*var temp = {
+    id_barang : a,
+    qty : b,
+    harga : c
+  }
+
+  app.request({
+    url: addr+"API/cart/"+currMeja+"/",
+    method: "POST",
+    success: function(json){
+
+    }
+  })*/
+
   db.transaction(function(transaction) {
    var c1=0;
    var qty=0;
@@ -188,21 +283,38 @@ function simpan(a,b,c,d){
 
 function tampil(a){
   st = a;   // 1 = dine-in, 2 = takeaway, 3 = extra order
-  db.transaction(function(tx) {
-   tx.executeSql('SELECT * FROM m_barang', [], function(tx, rs) {
-     var len = rs.rows.length, i;
-     var all_rows = [];
-     var datanya="";
-     for (i = 0; i < len; i++){
-      // datanya+="<div onclick=\"simpan('"+rs.rows.item(i).id_barang+"','1','"+rs.rows.item(i).harga_jual+"','"+rs.rows.item(i).nama_barang+"')\" class=\"col-25 tablet-25\" style=\"height: 100px;text-align:left;margin:5px;position:relative;\">"+rs.rows.item(i).nama_barang+"<div style=\"position:absolute;bottom:0\"><h3><strong> Rp. "+parseInt(rs.rows.item(i).harga_jual).toLocaleString()+"</strong></h3></div></div>";
-      datanya+="<div onclick=\"simpan('"+rs.rows.item(i).id_barang+"','1','"+rs.rows.item(i).harga_jual+"','"+rs.rows.item(i).nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+rs.rows.item(i).nama_barang+"<div><h3><strong> Rp. "+parseInt(rs.rows.item(i).harga_jual).toLocaleString()+"</strong></h3></div></div>";
+  app.request({
+    url: addr+"API/barang/",
+    method: "GET",
+    success: function(json){
+      var result = JSON.parse(json);
+      var datanya = '';
+
+      for (i = 0; i < result.length; i++){
+        // datanya+="<div onclick=\"simpan('"+rs.rows.item(i).id_barang+"','1','"+rs.rows.item(i).harga_jual+"','"+rs.rows.item(i).nama_barang+"')\" class=\"col-25 tablet-25\" style=\"height: 100px;text-align:left;margin:5px;position:relative;\">"+rs.rows.item(i).nama_barang+"<div style=\"position:absolute;bottom:0\"><h3><strong> Rp. "+parseInt(rs.rows.item(i).harga_jual).toLocaleString()+"</strong></h3></div></div>";
+        datanya+="<div onclick=\"simpan('"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
+      }
+      $('#menuku').html(datanya);
+
+      console.log(result);
     }
-    $('#menuku').html(datanya);
-         //alert(datanya);
-       }, function(tx, error) {
-         alert('SELECT error: ' + error.message);
-       });
- });
+  })
+
+ //  db.transaction(function(tx) {
+ //   tx.executeSql('SELECT * FROM m_barang', [], function(tx, rs) {
+ //     var len = rs.rows.length, i;
+ //     var all_rows = [];
+ //     var datanya="";
+    //  for (i = 0; i < len; i++){
+    //   // datanya+="<div onclick=\"simpan('"+rs.rows.item(i).id_barang+"','1','"+rs.rows.item(i).harga_jual+"','"+rs.rows.item(i).nama_barang+"')\" class=\"col-25 tablet-25\" style=\"height: 100px;text-align:left;margin:5px;position:relative;\">"+rs.rows.item(i).nama_barang+"<div style=\"position:absolute;bottom:0\"><h3><strong> Rp. "+parseInt(rs.rows.item(i).harga_jual).toLocaleString()+"</strong></h3></div></div>";
+    //   datanya+="<div onclick=\"simpan('"+rs.rows.item(i).id_barang+"','1','"+rs.rows.item(i).harga_jual+"','"+rs.rows.item(i).nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+rs.rows.item(i).nama_barang+"<div><h3><strong> Rp. "+parseInt(rs.rows.item(i).harga_jual).toLocaleString()+"</strong></h3></div></div>";
+    // }
+    // $('#menuku').html(datanya);
+ //         //alert(datanya);
+ //       }, function(tx, error) {
+ //         alert('SELECT error: ' + error.message);
+ //       });
+ // });
 }
 
 function keranjang(a,b,c,d){
@@ -559,7 +671,8 @@ function listmeja(){
         } else {
           st_meja = "(Available)";
         }
-        content += '<div id="'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkmeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
+        // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkmeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
+        content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
       }
 
       $('#mejaaktif').html(content);
@@ -576,6 +689,18 @@ function listmeja(){
       $('#mejaaktif').html(content);
     }, function(error){});
   })*/
+}
+
+function lihatmeja(meja, pj){
+  if(pj > 0){
+    // app.views.main.router.navigate('/pesanan/');
+    alert('1');
+  } else {
+    // app.views.main.router.navigate('/menu/');
+    alert('0');
+  }
+  
+  console.log(meja, pj);
 }
 
 function checkmeja(e){
