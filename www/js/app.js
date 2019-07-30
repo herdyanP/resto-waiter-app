@@ -319,7 +319,7 @@ function tampil(meja){
       }
       $('#menuku').html(datanya);
 
-      console.log(result);
+      // console.log(result);
     }
   })
 
@@ -733,6 +733,7 @@ function lihatmeja(meja, pj){
 }
 
 function lihatPesanan(meja, pj){
+  var jumlah = 0;
   var data = "";
   app.request({
     url: addr+"API/penjualan/"+meja+"/",
@@ -740,22 +741,91 @@ function lihatPesanan(meja, pj){
     success: function(json){
       var result = JSON.parse(json);
       for(i = 0; i < result.length; i++){
-    
-      data += ` <li class="item-content ">
-                  <div class="item-inner">
-                    <div class="item-title" >`+result[i].nama_barang+`
-                      <div class="item-footer">`+json[i].qty_tmp+` x `+json[i].harga_tmp+`</div>
+        jumlah += parseInt(result[i].harga_jual * result[i].qty_jual);
+        data += ` <li class="item-content ">
+                    <div class="item-inner">
+                      <div class="item-title" >`+result[i].nama_barang+`
+                        <div class="item-footer">`+result[i].qty_jual+` x `+result[i].harga_jual+`</div>
+                      </div>
+                      <div class="item-after">`+parseInt(result[i].qty_jual * result[i].harga_jual).toLocaleString()+`
+                      </div>
                     </div>
-                    <div class="item-after"><a href="#"><i class="icon material-icons md-only">remove_shopping_cart</i></a>
-                    </div>
-                  </div>
-                </li>`;
+                  </li>`;
     }
 
     $('#pesanan').html(data);
 
     }
   })
+}
+
+function cetakPreBill(id){
+  
+}
+
+function cetakBill(id){
+  var jumlah = 0;
+  app.request({
+    url: addr+"API/penjualan/"+id+"/",
+    method: "GET",
+    success: function(json){
+      var result = JSON.parse(json);
+      var bill = '';
+      var list = '';
+      var header = '{br}{center}{h}MediaPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
+      var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
+      // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
+      var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}--------------------------------{br}';
+      var subtotal = 'Subtotal';
+
+      for(i = 0; i < result.length; i++){
+        var ws = '';
+        var price_satuan = parseInt(result[i].harga_jual).toLocaleString();
+        var price_bulk = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString();
+    
+        for(var j = 0; j < 27 - price_satuan.length - price_bulk.length; j++){
+          ws += ' ';
+        }
+    
+        list += '{left}'+result[i].nama_barang+'{br}  '+result[i].qty_jual+' x '+parseInt(result[i].harga_jual)+ws+(parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString()+'{br}';
+        jumlah += parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual);
+        // console.log(jumlah);
+      }
+
+      for(var i = 0; i < 23-jumlah.toLocaleString().length; i++){
+        subtotal += ' ';
+      } subtotal += jumlah.toLocaleString() + '{br}';
+
+      list += '--------------------------------{br}{left}';
+      bill = header + subheader + list + subtotal;
+
+      connectToPrinter(bill);
+
+      // console.log(parseInt(jumlah).toLocaleString());
+    }
+  })
+}
+
+function connectToPrinter(q){
+  window.DatecsPrinter.listBluetoothDevices(
+    function (devices) {
+      window.DatecsPrinter.connect(devices[0].address, 
+        function() {
+          window.DatecsPrinter.printText(q + "{br}{br}{br}{br}{br}", 'ISO-8859-1', 
+            function(){
+              alert('Bill Printed!');
+            }, function() {
+              alert("Datecs.printText error: " + JSON.stringify(error));
+            });
+        },
+        function() {
+          alert("Datecs.connect error: " + JSON.stringify(error));
+        }
+        );
+    },
+    function (error) {
+      alert("Datecs.listBluetoothDevices error: " + JSON.stringify(error));
+    });
 }
 
 function checkmeja(e){

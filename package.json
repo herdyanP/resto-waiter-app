@@ -13,7 +13,9 @@
     "connect": "^3.6.6",
     "connect-livereload": "^0.6.0",
     "cordova-android": "^7.1.4",
+    "cordova-android-support-gradle-release": "^3.0.1",
     "cordova-browser": "^5.0.4",
+    "cordova-plugin-datecs-printer": "^0.10.0",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-dialog": "0.0.1",
     "cordova-plugin-dialogs": "^2.0.1",
@@ -41,7 +43,11 @@
       "cordova-sqlite-storage": {},
       "cordova-plugin-screen-orientation": {},
       "cordova-plugin-device": {},
-      "cordova-plugin-dialogs": {}
+      "cordova-plugin-dialogs": {},
+      "cordova-plugin-datecs-printer": {},
+      "cordova-android-support-gradle-release": {
+        "ANDROID_SUPPORT_VERSION": "27.+"
+      }
     },
     "platforms": [
       "android",
