@@ -759,10 +759,6 @@ function lihatPesanan(meja, pj){
   })
 }
 
-function cetakPreBill(id){
-  
-}
-
 function cetakBill(id){
   var jumlah = 0;
   app.request({
@@ -806,12 +802,50 @@ function cetakBill(id){
   })
 }
 
+function cetakPreBill(id){
+  app.request({
+    url: addr+"API/penjualan/"+id+"/",
+    method: "GET",
+    success: function(json){
+      var result = JSON.parse(json);
+      var bill = '';
+      var list = '';
+      var header = '{br}{center}{h}MediaPOS{/h}{br}Pre-Sales Receipt{br}--------------------------------{br}';
+      var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
+      // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
+      var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}--------------------------------{br}';
+
+      for(var i = 0; i < result.length; i++){
+        var ws = '';
+        for(var j = 0; j < 29 - (result[i].nama_barang.length + result[i].qty_jual.length); j++){
+          ws += ' ';
+        }
+    
+        list += '{left}' + result[i].nama_barang + ws + 'x ' + result[i].qty_jual + '{br}   CATATAN : ' + (result[i].catatan ? result[i].catatan : '-') + '{br}';
+        // console.log(jumlah);
+      }
+
+      list += '--------------------------------{br}{left}';
+      bill = header + subheader + list;
+
+      connectToPrinter(bill);
+
+      // console.log(parseInt(jumlah).toLocaleString());
+    }
+  })
+}
+
+function testPrint(){
+  var q = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  connectToPrinter(q);
+}
+
 function connectToPrinter(q){
   window.DatecsPrinter.listBluetoothDevices(
     function (devices) {
       window.DatecsPrinter.connect(devices[0].address, 
         function() {
-          window.DatecsPrinter.printText(q + "{br}{br}{br}{br}{br}", 'ISO-8859-1', 
+          window.DatecsPrinter.printText(q + "{br}{br}{br}", 'ISO-8859-1', 
             function(){
               alert('Bill Printed!');
             }, function() {

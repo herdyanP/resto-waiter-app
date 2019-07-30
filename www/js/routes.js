@@ -103,7 +103,7 @@ var routes = [
       <div class="toolbar toolbar-bottom-md no-shadow" style="height: 36px;">
         <div class="toolbar-inner">
           <!-- <button class="button" onclick="splitBill()">Split</button> -->
-          <button class="button" onclick="cetakBill({{$route.params.idMeja}})">Print Bill</button>
+          <button class="button" onclick="cetakPreBill({{$route.params.idMeja}})">Print Bill</button>
           <!-- <button class="button" onclick="mergeBill()">Merge</button> -->
         </div>
       </div>
