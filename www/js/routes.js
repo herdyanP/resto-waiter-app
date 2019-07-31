@@ -11,7 +11,10 @@ var routes = [
     name: 'home',
     on: {
       pageAfterIn: function (){
-        listmeja();
+        listMeja();
+      },
+      pageAfterOut: function(){
+        clearTimeout(refresh_meja);
       }
     }
   },
@@ -23,20 +26,20 @@ var routes = [
   },
   {
     name: 'menu',
-    path: '/menu/:idMeja/',
+    path: '/menu/:idMeja/:idPJ/',
     template: `
     <div class="page" data-name="menu">
       <div class="navbar" >
         <div class="navbar-inner sliding">
           <div class="left">
-            <a href="#" onclick="testEmpty()" class="link back">
+            <a href="#" class="link back">
               <i class="icon icon-back"></i>
               <span class="ios-only">Back</span>
             </a>
           </div>
           <div class="title">Menus</div>
           <div class="right">
-            <a class="link icon-only searchbar-enable" data-searchbar=".searchbar" onclick="keranjang({{$route.params.idMeja}})"><i class="icon material-icons md-only">shopping_cart</i></a>
+            <a class="link icon-only" href="/keranjang/{{$route.params.idMeja}}/{{$route.params.idPJ}}/"><i class="icon material-icons md-only">shopping_cart</i></a>
           </div>
         </div>
       </div>
@@ -76,6 +79,48 @@ var routes = [
       }
   },
   {
+    name: 'keranjang',
+    path: '/keranjang/:idMeja/:idPJ/',
+    template: `
+    <div class="page" data-name="keranjang">
+      <div class="navbar" >
+        <div class="navbar-inner sliding">
+          <div class="left">
+            <a href="#" class="link back">
+              <i class="icon icon-back"></i>
+              <span class="ios-only">Back</span>
+            </a>
+          </div>
+          <div class="title">Cart</div>
+        </div>
+      </div>
+      <div class="page-content">
+        <input type="hidden" id="subTotal">
+        <input type="hidden" id="grandTotal">
+        <div class="list no-hairlines no-hairlines-between" style="margin-top: 0;">
+          <ul id="keranjang">
+          </ul>
+        </div>
+      </div>
+      <div class="toolbar toolbar-bottom-md no-shadow" style="height: 36px;">
+        <div class="toolbar-inner">
+          <!-- <button class="button" onclick="splitBill()">Split</button> -->
+          <button class="button" onclick="simpanPesanan({{$route.params.idMeja}}, {{$route.params.idPJ}})">Save Orders</button>
+          <!-- <button class="button" onclick="mergeBill()">Merge</button> -->
+        </div>
+      </div>
+    </div>`,
+    on: {
+        pageAfterIn: function test (e, page) {
+          // do something after page gets into the view
+        },
+        pageInit: function (e, page) {
+          // do something when page initialized          
+          lihatKeranjang(page.route.params.idMeja);
+        },
+      }
+  },
+  {
     name: 'pesanan',
     path: '/pesanan/:idMeja/:idPJ/',
     template: `
@@ -90,7 +135,7 @@ var routes = [
           </div>
           <div class="title">Pesanan</div>
           <div class="right">
-            <a class="link icon-only" href="/menu/{{$route.params.idMeja}}/"><i class="icon material-icons md-only">add_shopping_cart</i></a>
+            <a class="link icon-only" href="/menu/{{$route.params.idMeja}}/{{$route.params.idPJ}}/"><i class="icon material-icons md-only">add_shopping_cart</i></a>
           </div>
         </div>
       </div>
