@@ -139,6 +139,40 @@ document.addEventListener('deviceready', function() {
     })
    });
 
+function onBackPressed(){
+  var mv = app.views.main;
+  if(mv.router.currentPageEl.f7Page.name == 'home'){
+    app.dialog.confirm('Keluar aplikasi?', 'Konfirmasi', function(){navigator.app.exitApp();}, function(){return;})
+  }else{
+    testEmpty();
+    mv.router.back();
+    return;
+  }
+}
+
+function checkOrientation(){
+  var width = $(window).width();
+  var height = $(window).height();
+
+  if(width >= 800 || height >= 800){
+    if(window.screen.orientation.type == 'portrait-primary' || window.screen.orientation.type == 'portrait-secondary'){
+      $('#home_grid .grid-demo').removeClass('col-70').addClass('col-60');
+      $('#home_grid .side-menu').removeClass('col-30').addClass('col-40');
+    } else if(window.screen.orientation.type == 'landscape-primary' || window.screen.orientation.type == 'landscape-secondary'){
+      $('#home_grid .grid-demo').removeClass('col-60').addClass('col-70');
+      $('#home_grid .side-menu').removeClass('col-40').addClass('col-30');
+    }
+  } else{
+    if(window.screen.orientation.type == 'portrait-primary' || window.screen.orientation.type == 'portrait-secondary'){
+      $('#home_grid .grid-demo').removeClass('col-60').addClass('col-100');
+      $('#home_grid .side-menu').removeClass('col-40').addClass('col-100');
+    } else if(window.screen.orientation.type == 'landscape-primary' || window.screen.orientation.type == 'landscape-secondary'){
+      $('#home_grid .grid-demo').removeClass('col-100').addClass('col-60');
+      $('#home_grid .side-menu').removeClass('col-100').addClass('col-40');
+    }
+  }
+}
+
 function newLogin(){
   var loginform = app.form.convertToData('#login_form');
 
@@ -164,29 +198,51 @@ function newLogin(){
   // console.log(loginform);
 }
 
-function simpan(meja, id, qty, harga, nama){
-  var idp = window.localStorage.getItem("id_peg");
-  var temp = {
-    id_barang : id,
-    harga : harga,
-    qty : qty,
-    user_id : idp,
-    act : "add"
-  }
-
+function listMeja(){
+  var content = '';
+  var st_meja = '';
+  nomormeja = 0;
   app.request({
-    url: addr+"API/cart/"+meja+"/",
-    method: "POST",
-    data: JSON.stringify(temp),
-    success: function(){
-      app.toast.create({
-        text: 'Added to cart', 
-        closeButton: true, 
-        destroyOnClose: true, 
-        closeTimeout: 2000
-      }).open();
+    url: addr+"API/meja/",
+    method: "GET",
+    success: function(json){
+      // console.lengthog(result);
+      var result = JSON.parse(json);
+      for(var i = 0; i < result.length; i++){
+        // console.log(result[i].NAMA);
+        if(result[i].ST == '0' || result[i].ST == '1'){
+          st_meja = "(In use)";
+        } else {
+          st_meja = "(Available)";
+        }
+        // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
+        content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
+      }
+
+      $('#mejaaktif').html(content);
+      refresh_meja = setTimeout(listMeja, 5 * 1000);
     }
   })
+}
+
+function lihatmeja(meja, pj){
+  app.views.main.router.navigate({
+    name: 'menu',
+    params: {idMeja : meja, idPJ : pj}
+  });
+  // if(pj > 0){
+  //   app.views.main.router.navigate({
+  //     name: 'pesanan',
+  //     params: {idMeja : meja, idPJ : pj}
+  //   });
+  //   // alert('1');
+  // } else {
+  //   app.views.main.router.navigate({
+  //     name: 'menu',
+  //     params: {idMeja : meja, idPJ : 0}
+  //   });
+  //   // alert('0');
+  // }
 }
 
 function ubahKategori(a){
@@ -210,6 +266,31 @@ function tampil(meja){
   })
 }
 
+function simpan(meja, id, qty, harga, nama){
+  var idp = window.localStorage.getItem("id_peg");
+  var temp = {
+    id_barang : id,
+    harga : harga,
+    qty : qty,
+    user_id : idp,
+    act : "add"
+  }
+
+  app.request({
+    url: addr+"API/cart/"+meja+"/",
+    method: "POST",
+    data: JSON.stringify(temp),
+    success: function(){
+      app.toast.create({
+        text: 'Added to cart', 
+        closeButton: true, 
+        destroyOnClose: true, 
+        closeTimeout: 1000
+      }).open();
+    }
+  })
+}
+
 function lihatKeranjang(meja){
   var data = "";
   var jumlah = 0;
@@ -223,11 +304,11 @@ function lihatKeranjang(meja){
         data += ` <li class="item-content ">
                     <div class="item-inner">
                       <div class="item-title" >`+result[i].qty_tmp+` x `+result[i].nama_barang+`
-                        <div class="item-footer" id="catt`+result[i].id_barang+`"></div>
+                        <div class="item-footer">`+(result[i].catatan ? result[i].catatan : '')+`</div>
                       </div>
                       <div class="item-after">
-                        <a href="#" onclick="addCatatan()" style="margin: 0px 5px;"><i class="icon material-icons md-only">edit</i></a>
-                        <a href="#" onclick="hapusItem()" style="margin: 0px 5px;"><i class="icon material-icons md-only">remove_shopping_cart</i></a>
+                        <a href="#" onclick="addCatatan(`+result[i].id_tmp+`,`+meja+`)" style="margin: 0px 5px;"><i class="icon material-icons md-only">edit</i></a>
+                        <a href="#" onclick="hapusItem(`+result[i].id_tmp+`,`+meja+`)" style="margin: 0px 5px;"><i class="icon material-icons md-only">remove_shopping_cart</i></a>
                       </div>
                     </div>
                   </li>`;
@@ -241,12 +322,77 @@ function lihatKeranjang(meja){
   })
 }
 
-function addCatatan(){
-  alert("addCatatan");
+function addCatatan(idtmp, meja){
+  app.dialog.prompt('Notes:', 'Title', 
+    function(catt){
+      var temp = {
+        act : "catatan",
+        id_tmp : idtmp,
+        catatan : catt
+      }
+
+      app.request({
+        url: addr+"API/cart/"+meja+"/",
+        method: "POST",
+        data: JSON.stringify(temp),
+        success: function(json){
+          if(json){
+            app.toast.create({
+              text: 'Notes successfully added', 
+              closeButton: true, 
+              destroyOnClose: true, 
+              closeTimeout: 2000
+            }).open();
+          } else {
+            app.toast.create({
+              text: 'Failed to add note', 
+              closeButton: true, 
+              destroyOnClose: true, 
+              closeTimeout: 2000
+            }).open();
+          }
+
+          lihatKeranjang(meja);
+        }
+      })
+
+      console.log(temp);
+    },
+    function(){
+      // app.toast.create({text: 'Batal', closeTimeout: 2000}).open()
+    });
 }
 
-function hapusItem(){
-  alert("hapusItem");
+function hapusItem(idtmp, meja){
+  var temp = {
+    act : "delete",
+    id_tmp : idtmp,
+  }
+
+  app.request({
+    url: addr+"API/cart/"+meja+"/",
+    method: "POST",
+    data: JSON.stringify(temp),
+    success: function(json){
+      if(json){
+        app.toast.create({
+          text: 'Order cancelled', 
+          closeButton: true, 
+          destroyOnClose: true, 
+          closeTimeout: 2000
+        }).open();
+      } else {
+        app.toast.create({
+          text: 'Failed to cancel order', 
+          closeButton: true, 
+          destroyOnClose: true, 
+          closeTimeout: 2000
+        }).open();
+      }
+
+      lihatKeranjang(meja);
+    }
+  })
 }
 
 function simpanPesanan(nMeja, id){
@@ -257,7 +403,7 @@ function simpanPesanan(nMeja, id){
   var temp = {
     action : "pesan",
     meja : nMeja,
-    idPJ : id,
+    idpj : id,
     subtotal : sub,
     grantotal : grand,
     idpeg : idp
@@ -268,10 +414,177 @@ function simpanPesanan(nMeja, id){
     method: "POST",
     data: JSON.stringify(temp),
     success: function(json){
-      console.log(json);
+      if(json){
+        cetakPreBill(nMeja);
+        app.views.main.router.navigate('/home/')
+      }
+    },
+    error: function(xhr, status){
+      alert("simpanPesanan cannot be processed");
     }
   })
 }
+
+function lihatPesanan(meja, pj){
+  var jumlah = 0;
+  var data = "";
+  app.request({
+    url: addr+"API/penjualan/"+meja+"/",
+    method: "GET",
+    success: function(json){
+      var result = JSON.parse(json);
+      for(i = 0; i < result.length; i++){
+        jumlah += parseInt(result[i].harga_jual * result[i].qty_jual);
+        data += ` <li class="item-content ">
+                    <div class="item-inner">
+                      <div class="item-title" >`+result[i].nama_barang+`
+                        <div class="item-footer">`+result[i].qty_jual+` x `+result[i].harga_jual+`</div>
+                      </div>
+                      <div class="item-after">`+parseInt(result[i].qty_jual * result[i].harga_jual).toLocaleString()+`
+                      </div>
+                    </div>
+                  </li>`;
+    }
+
+    $('#pesanan').html(data);
+
+    }
+  })
+}
+
+function cetakPreBill(meja){
+  app.request({
+    url: addr+"API/penjualan/"+meja+"/",
+    method: "GET",
+    success: function(json){
+      var result = JSON.parse(json);
+      var bill = '';
+      var list = '';
+      var header = '{br}{center}{h}MediaPOS{/h}{br}Pre-Sales Receipt{br}--------------------------------{br}';
+      var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
+      // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
+      var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}--------------------------------{br}';
+
+      for(var i = 0; i < result.length; i++){
+        var ws = '';
+        for(var j = 0; j < 29 - (result[i].nama_barang.length + result[i].qty_jual.length); j++){
+          ws += ' ';
+        }
+    
+        list += '{left}' + result[i].nama_barang + ws + 'x ' + result[i].qty_jual + (result[i].catatan ? '{br}   CATT : ' +  result[i].catatan : '') + '{br}';
+        // console.log(jumlah);
+      }
+
+      list += '--------------------------------{br}{left}';
+      bill = header + subheader + list;
+
+      console.log(result);
+      connectToPrinter(bill);
+
+      // console.log(parseInt(jumlah).toLocaleString());
+    }
+  })
+}
+
+function connectToPrinter(q){
+  window.DatecsPrinter.listBluetoothDevices(
+    function (devices) {
+      window.DatecsPrinter.connect(devices[0].address, 
+        function() {
+          window.DatecsPrinter.printText(q + "{br}{br}{br}", 'ISO-8859-1', 
+            function(){
+              alert('Bill Printed!');
+            }, function(error) {
+              alert("Datecs.printText error: " + JSON.stringify(error));
+            });
+        },
+        function(error) {
+          alert("Datecs.connect error: " + JSON.stringify(error));
+        }
+        );
+    },
+    function (error) {
+      alert("Datecs.listBluetoothDevices error: " + JSON.stringify(error));
+    });
+}
+
+/*function cetakBill(id){
+  var jumlah = 0;
+  app.request({
+    url: addr+"API/penjualan/"+id+"/",
+    method: "GET",
+    success: function(json){
+      var result = JSON.parse(json);
+      var bill = '';
+      var list = '';
+      var header = '{br}{center}{h}MediaPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
+      var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
+      // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
+      var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}--------------------------------{br}';
+      var subtotal = 'Subtotal';
+
+      for(i = 0; i < result.length; i++){
+        var ws = '';
+        var price_satuan = parseInt(result[i].harga_jual).toLocaleString();
+        var price_bulk = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString();
+    
+        for(var j = 0; j < 27 - price_satuan.length - price_bulk.length; j++){
+          ws += ' ';
+        }
+    
+        list += '{left}'+result[i].nama_barang+'{br}  '+result[i].qty_jual+' x '+parseInt(result[i].harga_jual)+ws+(parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString()+'{br}';
+        jumlah += parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual);
+        // console.log(jumlah);
+      }
+
+      for(var i = 0; i < 23-jumlah.toLocaleString().length; i++){
+        subtotal += ' ';
+      } subtotal += jumlah.toLocaleString() + '{br}';
+
+      list += '--------------------------------{br}{left}';
+      bill = header + subheader + list + subtotal;
+
+      connectToPrinter(bill);
+
+      // console.log(parseInt(jumlah).toLocaleString());
+    }
+  })
+}*/
+
+function testPrint(){
+  var q = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  connectToPrinter(q);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ========================= UNUSED CODE BELOW ===================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*function lihatKeranjang(a,b,c,d){
  var data="";
@@ -532,40 +845,6 @@ function test(){
 // // });
 // }
 
-function onBackPressed(){
-  var mv = app.views.main;
-  if(mv.router.currentPageEl.f7Page.name == 'home'){
-    app.dialog.confirm('Keluar aplikasi?', 'Konfirmasi', function(){navigator.app.exitApp();}, function(){return;})
-  }else{
-    testEmpty();
-    mv.router.back();
-    return;
-  }
-}
-
-function checkOrientation(){
-  var width = $(window).width();
-  var height = $(window).height();
-
-  if(width >= 800 || height >= 800){
-    if(window.screen.orientation.type == 'portrait-primary' || window.screen.orientation.type == 'portrait-secondary'){
-      $('#home_grid .grid-demo').removeClass('col-70').addClass('col-60');
-      $('#home_grid .side-menu').removeClass('col-30').addClass('col-40');
-    } else if(window.screen.orientation.type == 'landscape-primary' || window.screen.orientation.type == 'landscape-secondary'){
-      $('#home_grid .grid-demo').removeClass('col-60').addClass('col-70');
-      $('#home_grid .side-menu').removeClass('col-40').addClass('col-30');
-    }
-  } else{
-    if(window.screen.orientation.type == 'portrait-primary' || window.screen.orientation.type == 'portrait-secondary'){
-      $('#home_grid .grid-demo').removeClass('col-60').addClass('col-100');
-      $('#home_grid .side-menu').removeClass('col-40').addClass('col-100');
-    } else if(window.screen.orientation.type == 'landscape-primary' || window.screen.orientation.type == 'landscape-secondary'){
-      $('#home_grid .grid-demo').removeClass('col-100').addClass('col-60');
-      $('#home_grid .side-menu').removeClass('col-100').addClass('col-40');
-    }
-  }
-}
-
 /*function meja(){
   var arr = [];
   db.transaction(function(tx){
@@ -593,181 +872,6 @@ function checkOrientation(){
       app.toast.create({text: 'Batal', closeTimeout: 2000}).open()
     });
 }*/
-
-function listMeja(){
-  var content = '';
-  var st_meja = '';
-  nomormeja = 0;
-  app.request({
-    url: addr+"API/meja/",
-    method: "GET",
-    success: function(json){
-      // console.lengthog(result);
-      var result = JSON.parse(json);
-      for(var i = 0; i < result.length; i++){
-        // console.log(result[i].NAMA);
-        if(result[i].ST == '0' || result[i].ST == '1'){
-          st_meja = "(In use)";
-        } else {
-          st_meja = "(Available)";
-        }
-        // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
-        content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
-      }
-
-      $('#mejaaktif').html(content);
-      refresh_meja = setTimeout(listMeja, 5 * 1000);
-    }
-  })
-}
-
-function lihatmeja(meja, pj){
-  if(pj > 0){
-    app.views.main.router.navigate({
-      name: 'pesanan',
-      params: {idMeja : meja, idPJ : pj}
-    });
-    // alert('1');
-  } else {
-    app.views.main.router.navigate({
-      name: 'menu',
-      params: {idMeja : meja, idPJ : 0}
-    });
-    // alert('0');
-  }
-  
-  // console.log(meja, pj);
-}
-
-function lihatPesanan(meja, pj){
-  var jumlah = 0;
-  var data = "";
-  app.request({
-    url: addr+"API/penjualan/"+meja+"/",
-    method: "GET",
-    success: function(json){
-      var result = JSON.parse(json);
-      for(i = 0; i < result.length; i++){
-        jumlah += parseInt(result[i].harga_jual * result[i].qty_jual);
-        data += ` <li class="item-content ">
-                    <div class="item-inner">
-                      <div class="item-title" >`+result[i].nama_barang+`
-                        <div class="item-footer">`+result[i].qty_jual+` x `+result[i].harga_jual+`</div>
-                      </div>
-                      <div class="item-after">`+parseInt(result[i].qty_jual * result[i].harga_jual).toLocaleString()+`
-                      </div>
-                    </div>
-                  </li>`;
-    }
-
-    $('#pesanan').html(data);
-
-    }
-  })
-}
-
-function cetakBill(id){
-  var jumlah = 0;
-  app.request({
-    url: addr+"API/penjualan/"+id+"/",
-    method: "GET",
-    success: function(json){
-      var result = JSON.parse(json);
-      var bill = '';
-      var list = '';
-      var header = '{br}{center}{h}MediaPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
-      var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
-      // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
-      var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}--------------------------------{br}';
-      var subtotal = 'Subtotal';
-
-      for(i = 0; i < result.length; i++){
-        var ws = '';
-        var price_satuan = parseInt(result[i].harga_jual).toLocaleString();
-        var price_bulk = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString();
-    
-        for(var j = 0; j < 27 - price_satuan.length - price_bulk.length; j++){
-          ws += ' ';
-        }
-    
-        list += '{left}'+result[i].nama_barang+'{br}  '+result[i].qty_jual+' x '+parseInt(result[i].harga_jual)+ws+(parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString()+'{br}';
-        jumlah += parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual);
-        // console.log(jumlah);
-      }
-
-      for(var i = 0; i < 23-jumlah.toLocaleString().length; i++){
-        subtotal += ' ';
-      } subtotal += jumlah.toLocaleString() + '{br}';
-
-      list += '--------------------------------{br}{left}';
-      bill = header + subheader + list + subtotal;
-
-      connectToPrinter(bill);
-
-      // console.log(parseInt(jumlah).toLocaleString());
-    }
-  })
-}
-
-function cetakPreBill(id){
-  app.request({
-    url: addr+"API/penjualan/"+id+"/",
-    method: "GET",
-    success: function(json){
-      var result = JSON.parse(json);
-      var bill = '';
-      var list = '';
-      var header = '{br}{center}{h}MediaPOS{/h}{br}Pre-Sales Receipt{br}--------------------------------{br}';
-      var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
-      // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
-      var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}--------------------------------{br}';
-
-      for(var i = 0; i < result.length; i++){
-        var ws = '';
-        for(var j = 0; j < 29 - (result[i].nama_barang.length + result[i].qty_jual.length); j++){
-          ws += ' ';
-        }
-    
-        list += '{left}' + result[i].nama_barang + ws + 'x ' + result[i].qty_jual + (result[i].catatan ? '{br}   CATT : ' +  result[i].catatan : '') + '{br}';
-        // console.log(jumlah);
-      }
-
-      list += '--------------------------------{br}{left}';
-      bill = header + subheader + list;
-
-      connectToPrinter(bill);
-
-      // console.log(parseInt(jumlah).toLocaleString());
-    }
-  })
-}
-
-function testPrint(){
-  var q = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  connectToPrinter(q);
-}
-
-function connectToPrinter(q){
-  window.DatecsPrinter.listBluetoothDevices(
-    function (devices) {
-      window.DatecsPrinter.connect(devices[0].address, 
-        function() {
-          window.DatecsPrinter.printText(q + "{br}{br}{br}", 'ISO-8859-1', 
-            function(){
-              alert('Bill Printed!');
-            }, function() {
-              alert("Datecs.printText error: " + JSON.stringify(error));
-            });
-        },
-        function() {
-          alert("Datecs.connect error: " + JSON.stringify(error));
-        }
-        );
-    },
-    function (error) {
-      alert("Datecs.listBluetoothDevices error: " + JSON.stringify(error));
-    });
-}
 
 function checkMeja(e){
   if($(e).hasClass('selected')){
