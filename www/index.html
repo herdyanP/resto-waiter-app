@@ -51,6 +51,226 @@
       </div>
     </div>
 
+    <div class="panel panel-left panel-cover">
+      <div class="block" style="background: #2196f3; color: white; margin: 0; padding: 20px; font-size: 20px">
+        <br><strong>MediaPOS</strong>
+        <br>Waiter App
+      </div>
+
+      <div class="list no-hairlines no-hairlines-between no-chevron" style="margin: 0;">
+        <ul>
+          <!-- <li class="divider" style="margin-top: 0;"><strong>Store Management</strong></li> -->
+          <!-- <li>
+            <a href="#" class="item-link item-content panel-close" onclick="tampilFood();">
+              <div class="item-media">
+                <i class="f7-icons">reload_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Update Menu</div>
+              </div>
+            </a>
+          </li> -->
+          <li>
+            <a href="#" class="item-content item-link panel-close" onclick="app.dialog.prompt('Table Number:', 'Print Bill', function(meja){cetakBillWaiter(meja);}, function(){alert('no');})">
+              <div class="item-media">
+                <i class="icon material-icons">print</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Bills</div>
+              </div>
+            </a>
+          </li>
+          <!-- <li class="accordion-item for-admin">
+            <a href="#" class="item-link item-content">
+              <div class="item-media">
+                <i class="f7-icons">box</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Inventory</div>
+              </div>
+            </a>
+
+            <div class="accordion-item-content list inset no-chevron">
+              <ul>
+                <li>
+                  <a href="/satuan/" class="item-content item-link panel-close">
+                    <div class="item-media">
+                      <i class="f7-icons">box</i>
+                    </div>
+                    <div class="item-inner">
+                      <div class="item-title">Units</div>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <a href="/tambah/" class="item-content item-link panel-close">
+                    <div class="item-media">
+                      <i class="f7-icons">box</i>
+                    </div>
+                    <div class="item-inner">
+                      <div class="item-title">Menus</div>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="item-content item-link panel-close" onclick="onConstruction();">
+                    <div class="item-media">
+                      <i class="f7-icons">box</i>
+                    </div>
+                    <div class="item-inner">
+                      <div class="item-title">Combos</div>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li> -->
+
+          <!-- <li class="accordion-item for-admin">
+            <a href="#" class="item-link item-content">
+              <div class="item-media">
+                <i class="f7-icons">document_text</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Report</div>
+              </div>
+            </a>
+          
+            <div class="accordion-item-content list inset no-chevron">
+              <ul>
+                <li>
+                  <a href="/penjualan/" class="item-content item-link panel-close">
+                    <div class="item-media">
+                      <i class="f7-icons">bars_chart</i>
+                    </div>
+                    <div class="item-inner">
+                      <div class="item-title">Sales</div>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="item-content item-link panel-close" onclick="onConstruction();">
+                    <div class="item-media">
+                      <i class="f7-icons">bars_chart</i>
+                    </div>
+                    <div class="item-inner">
+                      <div class="item-title">Expenditures</div>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li> -->
+
+          <!-- <li>
+            <div class="item-content">
+              <div class="item-media">
+                <i class="f7-icons">box</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Master Barang</div>
+              </div>
+            </div>
+            <ul>
+              <li>
+                <a href="#" class="item-content item-link panel-close" onclick="onConstruction();">
+                  <div class="item-media">
+                    <i class="f7-icons">add</i>
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title">Tambah Baru</div>
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </li> -->
+          <!-- <li>
+            <div class="item-content">
+              <div class="item-media">
+                <i class="f7-icons">document_text</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Laporan</div>
+              </div>
+            </div>
+            <ul>
+              <li>
+                <a href="/penjualan/" class="item-content item-link panel-close">
+                  <div class="item-media">
+                    <i class="f7-icons">bars_chart</i>
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title">Penjualan</div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="item-content item-link panel-close" onclick="onConstruction();">
+                  <div class="item-media">
+                    <i class="f7-icons">bars_chart</i>
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title">Pembelian</div>
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </li> -->
+          <!-- <li>
+            <a href="#" class="item-link item-content panel-close" onclick="onConstruction();">
+              <div class="item-media">
+                <i class="f7-icons">business</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Keuangan Toko</div>
+              </div>
+            </a>
+          </li> -->
+          <!-- <li class="divider">Account Management</li> -->
+          <!-- <li>
+            <a href="#" class="item-link item-content panel-close" onclick="cekUUID();">
+              <div class="item-media">
+                <i class="f7-icons">info_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title"></div>
+              </div>
+            </a>
+          </li> -->
+          <!-- <li>
+            <a href="/profil/" class="item-link item-content panel-close">
+              <div class="item-media">
+                <i class="f7-icons">person_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Profile</div>
+              </div>
+            </a>
+          </li>
+          <li id="loginRow">
+            <a href="/login/" class="item-link item-content panel-close">
+              <div class="item-media">
+                <i class="f7-icons">person_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Login</div>
+              </div>
+            </a>
+          </li>
+          <li id="logoutRow">
+            <a href="#" class="item-link item-content panel-close" onclick="onLogout();">
+              <div class="item-media">
+                <i class="f7-icons">person_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Logout</div>
+              </div>
+            </a>
+          </li> -->
+        </ul>
+      </div>
+    </div>
+
   <div class="view view-main view-init ios-edges" data-url="/">
     <div class="page" data-name="index">
 

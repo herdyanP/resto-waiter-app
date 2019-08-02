@@ -512,3 +512,10 @@ user-select: auto !important;
 #totals select{
   text-align: right;
 }
+
+.divider {
+  background: #ddd; 
+  padding: 0 15px; 
+  margin: 15px 0;
+  font-weight: bold;
+}

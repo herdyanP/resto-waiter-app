@@ -181,8 +181,8 @@ function newLogin(){
     method: "POST",
     data: JSON.stringify(loginform),
     success: function(json){
-      var result = JSON.parse(json);
       if(json){
+        var result = JSON.parse(json);
         window.localStorage.setItem("gudang", result[0].ID_GUDANG);
         window.localStorage.setItem("cabang", result[0].id_cabang);
         window.localStorage.setItem("pegawai", result[0].nama_pegawai);
@@ -415,7 +415,7 @@ function simpanPesanan(nMeja, id){
     data: JSON.stringify(temp),
     success: function(json){
       if(json){
-        cetakPreBill(nMeja);
+        cetakBillDapur(nMeja);
         app.views.main.router.navigate('/home/')
       }
     },
@@ -452,7 +452,7 @@ function lihatPesanan(meja, pj){
   })
 }
 
-function cetakPreBill(meja){
+function cetakBillDapur(meja){
   app.request({
     url: addr+"API/penjualan/"+meja+"/",
     method: "GET",
@@ -463,7 +463,7 @@ function cetakPreBill(meja){
       var header = '{br}{center}{h}MediaPOS{/h}{br}Pre-Sales Receipt{br}--------------------------------{br}';
       var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
-      var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}--------------------------------{br}';
 
       for(var i = 0; i < result.length; i++){
         var ws = '';
@@ -508,10 +508,10 @@ function connectToPrinter(q){
     });
 }
 
-/*function cetakBill(id){
+function cetakBillWaiter(id){
   var jumlah = 0;
   app.request({
-    url: addr+"API/penjualan/"+id+"/",
+    url: addr+"API/bill/"+id+"/",
     method: "GET",
     success: function(json){
       var result = JSON.parse(json);
@@ -520,7 +520,7 @@ function connectToPrinter(q){
       var header = '{br}{center}{h}MediaPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
       var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
-      var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+id+'{br}--------------------------------{br}';
       var subtotal = 'Subtotal';
 
       for(i = 0; i < result.length; i++){
@@ -528,7 +528,7 @@ function connectToPrinter(q){
         var price_satuan = parseInt(result[i].harga_jual).toLocaleString();
         var price_bulk = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString();
     
-        for(var j = 0; j < 27 - price_satuan.length - price_bulk.length; j++){
+        for(var j = 0; j < 2 - price_satuan.length - price_bulk.length; j++){
           ws += ' ';
         }
     
@@ -537,7 +537,7 @@ function connectToPrinter(q){
         // console.log(jumlah);
       }
 
-      for(var i = 0; i < 23-jumlah.toLocaleString().length; i++){
+      for(var i = 0; i < 24 - jumlah.toLocaleString().length; i++){
         subtotal += ' ';
       } subtotal += jumlah.toLocaleString() + '{br}';
 
@@ -549,7 +549,7 @@ function connectToPrinter(q){
       // console.log(parseInt(jumlah).toLocaleString());
     }
   })
-}*/
+}
 
 function testPrint(){
   var q = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";

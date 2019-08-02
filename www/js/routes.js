@@ -133,22 +133,23 @@ var routes = [
               <span class="ios-only">Back</span>
             </a>
           </div>
-          <div class="title">Pesanan</div>
-          <div class="right">
-            <a class="link icon-only" href="/menu/{{$route.params.idMeja}}/{{$route.params.idPJ}}/"><i class="icon material-icons md-only">add_shopping_cart</i></a>
-          </div>
+          <div class="title">Split Bills</div>
         </div>
       </div>
       <div class="page-content">
         <div class="list no-hairlines-between" style=" overflow-y:scroll;height: calc( 60vh - 50px );margin:1px;">
-          <ul id="pesanan">
+          <ul id="old_bill">
+          </ul>
+        </div>
+        <div class="list no-hairlines-between" style=" overflow-y:scroll;height: calc( 35vh - 50px );margin:1px;">
+          <ul id="new_bill">
           </ul>
         </div>
       </div>
       <div class="toolbar toolbar-bottom-md no-shadow" style="height: 36px;">
         <div class="toolbar-inner">
           <!-- <button class="button" onclick="splitBill()">Split</button> -->
-          <button class="button" onclick="cetakPreBill({{$route.params.idMeja}})">Print Bill</button>
+          <button class="button" onclick="cetakBillDapur({{$route.params.idMeja}})">Print Bill</button>
           <!-- <button class="button" onclick="mergeBill()">Merge</button> -->
         </div>
       </div>
@@ -169,6 +170,41 @@ var routes = [
       }
   },
   {
+    name: 'split',
+    path: '/split/',
+    template: `
+    <div class="page" data-name="split">
+      <div class="navbar" >
+        <div class="navbar-inner sliding">
+          <div class="left">
+            <a href="#" class="link back">
+              <i class="icon icon-back"></i>
+              <span class="ios-only">Back</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="page-content" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden;">
+        <div class="block">
+          <div class="row" id="home_grid">
+            <div class="grid-demo">
+              <div class="row" id="meja_split" style=" overflow:scroll;max-height: calc( 90vh - 50px );justify-content: normal"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`,
+    on: {
+      pageAfterIn: function test (e, page) {
+        // do something after page gets into the view
+        listSplit();
+      },
+      pageInit: function (e, page) {
+        // do something when page initialized
+      },
+    }
+  },
+  {
     path: '/pesanan-takeaway/',
     componentUrl: './pages/pesanan-takeaway.html',
     on: {
@@ -185,27 +221,27 @@ var routes = [
     path: '/pesanan-reorder/',
     componentUrl: './pages/pesanan-reorder.html',
     on: {
-        pageAfterIn: function test (e, page) {
-          // do something after page gets into the view
-        },
-        pageInit: function (e, page) {
-          // do something when page initialized          
-          tampil(3);
-        },
-      }
+      pageAfterIn: function test (e, page) {
+        // do something after page gets into the view
+      },
+      pageInit: function (e, page) {
+        // do something when page initialized          
+        tampil(3);
+      },
+    }
   },
   {
     path: '/payment/',
     componentUrl: './pages/payment.html',
     on: {
-        pageAfterIn: function test (e, page) {
-          // do something after page gets into the view
-        },
-        pageInit: function (e, page) {
-          // do something when page initialized          
-          // tampil(3);
-        },
-      }
+      pageAfterIn: function test (e, page) {
+        // do something after page gets into the view
+      },
+      pageInit: function (e, page) {
+        // do something when page initialized          
+        // tampil(3);
+      },
+    }
   },
 
   // Default route (404 page). MUST BE THE LAST
