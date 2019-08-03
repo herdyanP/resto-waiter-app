@@ -226,23 +226,23 @@ function listMeja(){
 }
 
 function lihatmeja(meja, pj){
-  app.views.main.router.navigate({
-    name: 'menu',
-    params: {idMeja : meja, idPJ : pj}
-  });
-  // if(pj > 0){
-  //   app.views.main.router.navigate({
-  //     name: 'pesanan',
-  //     params: {idMeja : meja, idPJ : pj}
-  //   });
-  //   // alert('1');
-  // } else {
-  //   app.views.main.router.navigate({
-  //     name: 'menu',
-  //     params: {idMeja : meja, idPJ : 0}
-  //   });
-  //   // alert('0');
-  // }
+  // app.views.main.router.navigate({
+  //   name: 'menu',
+  //   params: {idMeja : meja, idPJ : pj}
+  // });
+  if(pj > 0){
+    app.views.main.router.navigate({
+      name: 'pesanan',
+      params: {idMeja : meja, idPJ : pj}
+    });
+    // alert('1');
+  } else {
+    app.views.main.router.navigate({
+      name: 'menu',
+      params: {idMeja : meja, idPJ : 0}
+    });
+    // alert('0');
+  }
 }
 
 function ubahKategori(a){
@@ -428,12 +428,14 @@ function simpanPesanan(nMeja, id){
 function lihatPesanan(meja, pj){
   var jumlah = 0;
   var data = "";
+  var old = "";
   app.request({
-    url: addr+"API/penjualan/"+meja+"/",
+    url: addr+"API/bill/"+meja+"/",
     method: "GET",
     success: function(json){
       var result = JSON.parse(json);
       for(i = 0; i < result.length; i++){
+        if(old != result[i].no_penjualan) data += '<li class="list-group-title">'+result[i].no_penjualan+'</li>'
         jumlah += parseInt(result[i].harga_jual * result[i].qty_jual);
         data += ` <li class="item-content ">
                     <div class="item-inner">
@@ -441,13 +443,57 @@ function lihatPesanan(meja, pj){
                         <div class="item-footer">`+result[i].qty_jual+` x `+result[i].harga_jual+`</div>
                       </div>
                       <div class="item-after">`+parseInt(result[i].qty_jual * result[i].harga_jual).toLocaleString()+`
+                        <input type="checkbox" class="to-split hidden" id="`+result[i].id_dtl_jual+`" style="margin: 0 10px;"/>
                       </div>
                     </div>
                   </li>`;
+        old = result[i].no_penjualan;
+      }
+
+      $('#orders').html(data);
     }
+  })
+}
 
-    $('#pesanan').html(data);
+function cetakBillWaiter(meja){
+  var jumlah = 0;
+  app.request({
+    url: addr+"API/bill/"+meja+"/",
+    method: "GET",
+    success: function(json){
+      var result = JSON.parse(json);
+      var bill = '';
+      var list = '';
+      var header = '{br}{center}{h}MediaPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
+      var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
+      // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+id+'{br}--------------------------------{br}';
+      var subtotal = 'Subtotal';
 
+      for(i = 0; i < result.length; i++){
+        var ws = '';
+        var price_satuan = parseInt(result[i].harga_jual).toLocaleString();
+        var price_bulk = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString();
+    
+        for(var j = 0; j < 2 - price_satuan.length - price_bulk.length; j++){
+          ws += ' ';
+        }
+    
+        list += '{left}'+result[i].nama_barang+'{br}  '+result[i].qty_jual+' x '+parseInt(result[i].harga_jual)+ws+(parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString()+'{br}';
+        jumlah += parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual);
+        // console.log(jumlah);
+      }
+
+      for(var i = 0; i < 24 - jumlah.toLocaleString().length; i++){
+        subtotal += ' ';
+      } subtotal += jumlah.toLocaleString() + '{br}';
+
+      list += '--------------------------------{br}{left}';
+      bill = header + subheader + list + subtotal;
+
+      connectToPrinter(bill);
+
+      // console.log(parseInt(jumlah).toLocaleString());
     }
   })
 }
@@ -508,52 +554,56 @@ function connectToPrinter(q){
     });
 }
 
-function cetakBillWaiter(id){
-  var jumlah = 0;
-  app.request({
-    url: addr+"API/bill/"+id+"/",
-    method: "GET",
-    success: function(json){
-      var result = JSON.parse(json);
-      var bill = '';
-      var list = '';
-      var header = '{br}{center}{h}MediaPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
-      var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
-      // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
-      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+id+'{br}--------------------------------{br}';
-      var subtotal = 'Subtotal';
-
-      for(i = 0; i < result.length; i++){
-        var ws = '';
-        var price_satuan = parseInt(result[i].harga_jual).toLocaleString();
-        var price_bulk = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString();
-    
-        for(var j = 0; j < 2 - price_satuan.length - price_bulk.length; j++){
-          ws += ' ';
-        }
-    
-        list += '{left}'+result[i].nama_barang+'{br}  '+result[i].qty_jual+' x '+parseInt(result[i].harga_jual)+ws+(parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString()+'{br}';
-        jumlah += parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual);
-        // console.log(jumlah);
-      }
-
-      for(var i = 0; i < 24 - jumlah.toLocaleString().length; i++){
-        subtotal += ' ';
-      } subtotal += jumlah.toLocaleString() + '{br}';
-
-      list += '--------------------------------{br}{left}';
-      bill = header + subheader + list + subtotal;
-
-      connectToPrinter(bill);
-
-      // console.log(parseInt(jumlah).toLocaleString());
-    }
-  })
-}
-
 function testPrint(){
   var q = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
   connectToPrinter(q);
+}
+
+function toSplit(){
+  var list = "";
+  if($('.to-split').hasClass('hidden')){
+    $('input[type=checkbox]').prop('checked', false);
+    $('.to-split').addClass('showed');
+    $('.to-split').removeClass('hidden');
+
+    $('#split_bill').removeClass('hidden');
+    $('#cetak_bill').addClass('hidden');
+  } else {
+    $('input[type=checkbox]').prop('checked', false);
+    $('.to-split').addClass('hidden');
+    $('.to-split').removeClass('showed');
+
+    $('#split_bill').addClass('hidden');
+    $('#cetak_bill').removeClass('hidden');
+  }
+}
+
+function splitBill(idpj, meja){
+  var gudang = window.localStorage.getItem("gudang");
+  var idpeg = window.localStorage.getItem("id_peg");
+  var c = $('input:checked');
+  c.each(function(key, val){
+    var temp = {
+      id_pj_dtl : val.id,
+      id_pj : idpj,
+      idpeg : idpeg,
+      action : 'split'
+    }
+
+    app.request({
+      url: addr+"API/penjualan/"+gudang+"/",
+      method: "POST",
+      data: JSON.stringify(temp),
+      success: function(){
+        console.log("sukses " + val.id);
+      }
+    })
+  })
+  // alert('ini split');
+
+  $('#split_bill').addClass('hidden');
+  $('#cetak_bill').removeClass('hidden');
+  $('input[type=checkbox]').prop('checked', false);
 }
 
 
@@ -1342,7 +1392,7 @@ function testClick(e){
   }
 }
 
-function splitBill(){
+/*function splitBill(){
   app.dialog.confirm('Split Bill?', 'Konfirmasi', function(){
     split = 1;
     var arr = [];
@@ -1399,7 +1449,7 @@ function splitBill(){
         }, function(error){})
     })
   })
-}
+}*/
 
 function testSplit(a, jmlBarang, idBarang, newId, oldId){
   // console.log('testSplit');

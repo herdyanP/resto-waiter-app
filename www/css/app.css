@@ -519,3 +519,11 @@ user-select: auto !important;
   margin: 15px 0;
   font-weight: bold;
 }
+
+.hidden {
+  display: none;
+}
+
+.showed {
+  display: initial;
+}

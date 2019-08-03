@@ -102,7 +102,7 @@ var routes = [
           </ul>
         </div>
       </div>
-      <div class="toolbar toolbar-bottom-md no-shadow" style="height: 36px;">
+      <div class="toolbar toolbar-bottom-md no-shadow" style="height: 70px;">
         <div class="toolbar-inner">
           <!-- <button class="button" onclick="splitBill()">Split</button> -->
           <button class="button" onclick="simpanPesanan({{$route.params.idMeja}}, {{$route.params.idPJ}})">Save Orders</button>
@@ -133,23 +133,23 @@ var routes = [
               <span class="ios-only">Back</span>
             </a>
           </div>
-          <div class="title">Split Bills</div>
+          <div class="title">Orders for table #{{$route.params.idMeja}}</div>
+          <div class="right">
+            <a class="link icon-only" onclick="toSplit();" style="margin: 0 10px 0 0;"><i class="icon material-icons md-only">call_split</i></a>
+            <a class="link icon-only" href="/menu/{{$route.params.idMeja}}/{{$route.params.idPJ}}/" style="margin: 0 10px 0 0;"><i class="icon material-icons md-only">add_shopping_cart</i></a>
+          </div>
         </div>
       </div>
       <div class="page-content">
-        <div class="list no-hairlines-between" style=" overflow-y:scroll;height: calc( 60vh - 50px );margin:1px;">
-          <ul id="old_bill">
-          </ul>
-        </div>
-        <div class="list no-hairlines-between" style=" overflow-y:scroll;height: calc( 35vh - 50px );margin:1px;">
-          <ul id="new_bill">
+        <div class="list no-hairlines-between no-hairlines" style=" overflow-y:scroll;height: calc( 60vh - 50px );margin:1px;">
+          <ul id="orders">
           </ul>
         </div>
       </div>
-      <div class="toolbar toolbar-bottom-md no-shadow" style="height: 36px;">
+      <div class="toolbar toolbar-bottom-md no-shadow" style="height: 70px;">
         <div class="toolbar-inner">
-          <!-- <button class="button" onclick="splitBill()">Split</button> -->
-          <button class="button" onclick="cetakBillDapur({{$route.params.idMeja}})">Print Bill</button>
+          <button id="split_bill" class="button hidden" onclick="splitBill({{$route.params.idPJ}}, {{$route.params.idMeja}})">Split Into New Bill</button>
+          <button id="cetak_bill" class="button" onclick="cetakBillWaiter({{$route.params.idMeja}})">Print Bill</button>
           <!-- <button class="button" onclick="mergeBill()">Merge</button> -->
         </div>
       </div>
@@ -157,13 +157,14 @@ var routes = [
     // componentUrl: './pages/pesanan.html',
     on: {
         pageAfterIn: function test (e, page) {
-          console.log('afterin');
+          // console.log('afterin');
+          lihatPesanan(page.route.params.idMeja, page.route.params.idPJ);
           // console.log(page.route.params.idMeja, page.route.params.idPJ);
           // do something after page gets into the view
         },
         pageInit: function (e, page) {
-          console.log('init');
-          lihatPesanan(page.route.params.idMeja, page.route.params.idPJ);
+          // console.log('init');
+          // lihatPesanan(page.route.params.idMeja, page.route.params.idPJ);
           // do something when page initialized          
           // tampil(1);
         },
