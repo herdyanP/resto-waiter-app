@@ -250,8 +250,11 @@ function ubahKategori(a){
 }
 
 function tampil(meja){
+  var id_gudang = window.localStorage.getItem('gudang');
+  var id_cabang = window.localStorage.getItem('cabang');
+
   app.request({
-    url: addr+"API/barang/",
+    url: addr+"API/barang/"+id_cabang+"/"+id_gudang+"/",
     method: "GET",
     success: function(json){
       var result = JSON.parse(json);
@@ -395,6 +398,14 @@ function hapusItem(idtmp, meja){
   })
 }
 
+function clearCart(meja){
+  app.request({
+    url: addr+"API/cart/"+meja+"/",
+    method: "POST",
+    data: JSON.stringify({act: "clear"})
+  })
+}
+
 function simpanPesanan(nMeja, id){
   var sub = parseInt($('#subTotal').val());
   var grand = parseInt($('#grandTotal').val());
@@ -435,7 +446,7 @@ function lihatPesanan(meja, pj){
     success: function(json){
       var result = JSON.parse(json);
       for(i = 0; i < result.length; i++){
-        if(old != result[i].no_penjualan) data += '<li class="list-group-title">'+result[i].no_penjualan+'</li>'
+        if(old != result[i].no_penjualan) data += '<li class="list-group-title">'+result[i].no_penjualan+'<span style="float: right;"><a class="link icon-only" onclick="app.views.main.router.navigate({name: \'merge\',params: {idMeja : '+meja+', idPJ : '+result[i].id_pj+'}});" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only">call_merge</i></a></span></li>'
         jumlah += parseInt(result[i].harga_jual * result[i].qty_jual);
         data += ` <li class="item-content ">
                     <div class="item-inner">
@@ -467,7 +478,7 @@ function cetakBillWaiter(meja){
       var header = '{br}{center}{h}MediaPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
       var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
-      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+id+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}--------------------------------{br}';
       var subtotal = 'Subtotal';
 
       for(i = 0; i < result.length; i++){
@@ -560,7 +571,6 @@ function testPrint(){
 }
 
 function toSplit(){
-  var list = "";
   if($('.to-split').hasClass('hidden')){
     $('input[type=checkbox]').prop('checked', false);
     $('.to-split').addClass('showed');
@@ -596,16 +606,64 @@ function splitBill(idpj, meja){
       data: JSON.stringify(temp),
       success: function(){
         console.log("sukses " + val.id);
+        lihatPesanan(meja, idpj);
       }
     })
   })
   // alert('ini split');
 
-  $('#split_bill').addClass('hidden');
-  $('#cetak_bill').removeClass('hidden');
-  $('input[type=checkbox]').prop('checked', false);
+  // toSplit();
 }
 
+function lihatMergeable(meja, idpj){
+  var data = "";
+  var old = "";
+  app.request({
+    url: addr+"API/merge/"+idpj+"/",
+    method: "GET",
+    success: function(json){
+      if(json){
+        var result = JSON.parse(json);
+        for(var i = 0; i < result.length; i++){
+          if(old != result[i].no_penjualan) data += '<li class="list-group-title">Table #'+result[i].meja+' '+result[i].no_penjualan+'<span style="float: right;"><a class="link icon-only" onclick="mergeBill('+meja+','+idpj+','+result[i].id_pj+');" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only">call_merge</i></a></span></li>'
+          // jumlah += parseInt(result[i].harga_jual * result[i].qty_jual);
+          data += ` <li class="item-content ">
+                      <div class="item-inner">
+                        <div class="item-title" >`+result[i].nama_barang+`
+                          <div class="item-footer">`+result[i].qty_jual+` x `+result[i].harga_jual+`</div>
+                        </div>
+                        <div class="item-after">`+parseInt(result[i].qty_jual * result[i].harga_jual).toLocaleString()+`</div>
+                      </div>
+                    </li>`;
+          old = result[i].no_penjualan;
+        }
+
+        $('#mergeable').html(data);
+      }
+    }
+
+  })
+}
+
+function mergeBill(meja, idpj, oldpj){
+  var gudang = window.localStorage.getItem('gudang');
+  var temp = {
+    pj_baru : idpj,
+    pj_lama : oldpj,
+    action : 'merge'
+  }
+
+  app.request({
+    url: addr+"API/penjualan/"+gudang+"/",
+    method: "POST",
+    data: JSON.stringify(temp),
+    success: function(json){
+      if(json){
+        lihatMergeable(meja, idpj);
+      }
+    }
+  })
+}
 
 
 
