@@ -39,8 +39,19 @@ var routes = [
           </div>
           <div class="title">Menus</div>
           <div class="right">
-            <a class="link icon-only" href="/keranjang/{{$route.params.idMeja}}/{{$route.params.idPJ}}/"><i class="icon material-icons md-only">shopping_cart</i></a>
-          </div>
+              <a class="link icon-only searchbar-enable" data-searchbar=".searchbar"><i class="icon material-icons md-only">search</i></a>
+              <a class="link icon-only" href="/keranjang/{{$route.params.idMeja}}/{{$route.params.idPJ}}/"><i class="icon material-icons md-only">shopping_cart</i></a>
+            </div>
+            <form class="searchbar searchbar-expandable">
+              <div class="searchbar-inner">
+                <div class="searchbar-input-wrap">
+                  <input type="search" placeholder="Search" onkeyup="cariItem(event, this.value, {{$route.params.idMeja}})"/>
+                  <i class="searchbar-icon"></i>
+                  <span class="input-clear-button"></span>
+                </div>
+                <span class="searchbar-disable-button">Cancel</span>
+              </div>
+            </form>
         </div>
       </div>
       <div class="page-content" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden">
@@ -50,10 +61,8 @@ var routes = [
               <div class="item-inner">
                 <div class="item-title item-label"></div>
                 <div class="item-input-wrap input-dropdown-wrap">
-                  <select name="kategori" id="kategori" onchange="ubahKategori(this.value);">
-                    <option value="1">Foods</option>
-                    <option value="2">Beverages</option>
-                    <option value="3">Others</option>
+                  <select name="kategori" id="kategori" onchange="tampil({{$route.params.idMeja}}, this.value);">
+
                   </select>
                 </div>
               </div>
@@ -71,10 +80,18 @@ var routes = [
     on: {
         pageAfterIn: function test (e, page) {
           // do something after page gets into the view
+          searchBar = app.searchbar.create({
+            el: '.searchbar',
+            on: {
+              disable: function(){
+                tampil(page.route.params.idMeja, $('#kategori').val());
+              }
+            }
+          });
         },
         pageInit: function (e, page) {
-          // do something when page initialized          
-          tampil(page.route.params.idMeja);
+          // do something when page initialized
+          listKategori(page.route.params.idMeja);
         },
       }
   },

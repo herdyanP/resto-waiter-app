@@ -245,28 +245,67 @@ function lihatmeja(meja, pj){
   }
 }
 
-function ubahKategori(a){
-  console.log(a);
+function listKategori(meja){
+  var data = "";
+  app.request({
+    url: addr+"API/kategori/",
+    method: "GET",
+    success: function(json){
+      var result = JSON.parse(json);
+      for(var i = 0; i < result.length; i++){
+        data += `<option value="`+result[i].id_kat+`" `+(result[i].id_kat == 1 ? 'selected' : '')+`>`+result[i].nama_kat+`</option>`;
+      }
+
+      $('#kategori').html(data);
+      tampil(meja, $('#kategori').val());
+    }
+  })
 }
 
-function tampil(meja){
+function tampil(meja, kat){
   var id_gudang = window.localStorage.getItem('gudang');
   var id_cabang = window.localStorage.getItem('cabang');
 
   app.request({
-    url: addr+"API/barang/"+id_cabang+"/"+id_gudang+"/",
+    url: addr+"API/barang/"+id_cabang+"/"+id_gudang+"/"+kat+"/",
     method: "GET",
     success: function(json){
-      var result = JSON.parse(json);
-      var datanya = '';
+      if(json){
+        var result = JSON.parse(json);
+        var datanya = '';
 
-      for (i = 0; i < result.length; i++){
-        datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
+        for (i = 0; i < result.length; i++){
+          datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
+        }
+        $('#menuku').html(datanya);
       }
-      $('#menuku').html(datanya);
-
     }
   })
+}
+
+function cariItem(e, q, meja){
+  var cabang = window.localStorage.getItem('cabang');
+  var gudang = window.localStorage.getItem('gudang');
+  var temp = {
+    query : q
+  }
+
+  if ( (window.event ? event.keyCode : e.which) == 13) {
+    app.request({
+      url: addr+"API/barang/"+cabang+"/"+gudang+"/",
+      method: "POST",
+      data: JSON.stringify(temp),
+      success: function(json){
+        var result = JSON.parse(json);
+        var datanya = '';
+
+        for (i = 0; i < result.length; i++){
+          datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
+        }
+        $('#menuku').html(datanya);
+      }
+    }) 
+  }
 }
 
 function simpan(meja, id, qty, harga, nama){
