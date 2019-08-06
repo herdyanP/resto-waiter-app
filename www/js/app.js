@@ -485,7 +485,7 @@ function lihatPesanan(meja, pj){
     success: function(json){
       var result = JSON.parse(json);
       for(i = 0; i < result.length; i++){
-        if(old != result[i].no_penjualan) data += '<li class="list-group-title">'+result[i].no_penjualan+'<span style="float: right;"><a class="link icon-only" onclick="app.views.main.router.navigate({name: \'merge\',params: {idMeja : '+meja+', idPJ : '+result[i].id_pj+'}});" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only">call_merge</i></a></span></li>'
+        if(old != result[i].no_penjualan) data += '<li class="list-group-title">'+result[i].no_penjualan+'<a class="link icon-only" onclick="cetakBillPisah('+meja+','+result[i].id_pj+')" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only">print</i></a><span style="float: right;"><a class="link icon-only" onclick="app.views.main.router.navigate({name: \'merge\',params: {idMeja : '+meja+', idPJ : '+result[i].id_pj+'}});" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only">call_merge</i></a></span></li>'
         jumlah += parseInt(result[i].harga_jual * result[i].qty_jual);
         data += ` <li class="item-content ">
                     <div class="item-inner">
@@ -509,6 +509,49 @@ function cetakBillWaiter(meja){
   var jumlah = 0;
   app.request({
     url: addr+"API/bill/"+meja+"/",
+    method: "GET",
+    success: function(json){
+      var result = JSON.parse(json);
+      var bill = '';
+      var list = '';
+      var header = '{br}{center}{h}MediaPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
+      var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
+      // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}--------------------------------{br}';
+      var subtotal = 'Subtotal';
+
+      for(i = 0; i < result.length; i++){
+        var ws = '';
+        var price_satuan = parseInt(result[i].harga_jual).toLocaleString();
+        var price_bulk = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString();
+    
+        for(var j = 0; j < 2 - price_satuan.length - price_bulk.length; j++){
+          ws += ' ';
+        }
+    
+        list += '{left}'+result[i].nama_barang+'{br}  '+result[i].qty_jual+' x '+parseInt(result[i].harga_jual)+ws+(parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString()+'{br}';
+        jumlah += parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual);
+        // console.log(jumlah);
+      }
+
+      for(var i = 0; i < 24 - jumlah.toLocaleString().length; i++){
+        subtotal += ' ';
+      } subtotal += jumlah.toLocaleString() + '{br}';
+
+      list += '--------------------------------{br}{left}';
+      bill = header + subheader + list + subtotal;
+
+      connectToPrinter(bill);
+
+      // console.log(parseInt(jumlah).toLocaleString());
+    }
+  })
+}
+
+function cetakBillPisah(meja, idpj){
+  var jumlah = 0;
+  app.request({
+    url: addr+"API/split/"+idpj+"/",
     method: "GET",
     success: function(json){
       var result = JSON.parse(json);
@@ -639,15 +682,17 @@ function splitBill(idpj, meja){
       action : 'split'
     }
 
-    app.request({
-      url: addr+"API/penjualan/"+gudang+"/",
-      method: "POST",
-      data: JSON.stringify(temp),
-      success: function(){
-        console.log("sukses " + val.id);
-        lihatPesanan(meja, idpj);
-      }
-    })
+    setTimeout(function(){
+      app.request({
+        url: addr+"API/penjualan/"+gudang+"/",
+        method: "POST",
+        data: JSON.stringify(temp),
+        success: function(){
+          console.log("sukses " + val.id);
+          lihatPesanan(meja, idpj);
+        }
+      })
+    }, 800);
   })
   // alert('ini split');
 
