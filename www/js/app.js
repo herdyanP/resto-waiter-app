@@ -253,7 +253,7 @@ function listKategori(meja){
     success: function(json){
       var result = JSON.parse(json);
       for(var i = 0; i < result.length; i++){
-        data += `<option value="`+result[i].id_kat+`" `+(result[i].id_kat == 1 ? 'selected' : '')+`>`+result[i].nama_kat+`</option>`;
+        data += `<option value="`+result[i].id_sub+`" `+(result[i].id_sub == 1 ? 'selected' : '')+`>`+result[i].nama_kat+`</option>`;
       }
 
       $('#kategori').html(data);
@@ -750,7 +750,23 @@ function mergeBill(meja, idpj, oldpj){
 }
 
 
+/*
+  TODO:
+  - bill dapur
+    - Subtitle table checker receipt
+    - nama user berdasar pin
+    - catt diganti note
 
+  - homescreen
+    - profile tab bisa buat logout
+    - home tab nampilkan dashboard penjualan berdasar waiter
+
+  - proses
+    - addition ke meja masuk ke no penjualan yg sama
+    - bill refers to meja, kecuali ketika split, in which bisa meja sama tapi nomor trans beda
+    - split bill menghasilkan penjualan baru dalam meja sama
+    - qty input buat item yg di split
+*/
 
 
 
@@ -1650,3 +1666,4 @@ function testSplit(a, jmlBarang, idBarang, newId, oldId){
 //       [a.id_barang, a.id_barang, a.qty_jual, a.id_barang, a.dtl_total, a.harga_jual, a.nama_barang])
 //   })
 // }
+
