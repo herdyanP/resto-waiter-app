@@ -36,8 +36,46 @@ var toBeMerged = [];
 var mergeItem = [];
 var addr = "http://dev.cloudmnm.com/resto/";
 var currMeja = 0;
+var currentWaitress = '';
 var refresh_meja = '';
-var session
+/*var pinBox = app.dialog.create({
+    title: 'Employee PIN',
+    closeByBackdropClick: false,
+    content: `<div class="list no-hairlines no-hairlines-between">
+                <ul>
+                  <li class="item-content item-input">
+                    <div class="item-inner">
+                    <div class="item-input-wrap">
+                      <input type="number" name="pin" id="pin" style="text-align: center;" />
+                    </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>`,
+    buttons: [
+    {
+      text: 'Simpan',
+      onClick: function(dialog, e){
+        var v = $('#pin').val();
+        var gudang = window.localStorage.getItem('gudang');
+        var temp = {
+          id_waitress : v,
+        }
+
+        if(v){
+          app.request({
+            url: addr+"API/login/"+gudang+"/",
+            method: "POST",
+            data: JSON.stringify(temp),
+            success: function(json){
+              alert(json);
+              dialog.close();
+            }
+          })
+        }
+      }
+    }]
+  });*/
 // var mainView = app.views.main;
 // var chart = Highcharts.chart('container1', {});
 
@@ -201,6 +239,7 @@ function newLogin(){
 function listMeja(){
   var content = '';
   var st_meja = '';
+  var img = '';
   nomormeja = 0;
   app.request({
     url: addr+"API/meja/",
@@ -212,11 +251,14 @@ function listMeja(){
         // console.log(result[i].NAMA);
         if(result[i].ST == '0' || result[i].ST == '1'){
           st_meja = "(In use)";
+          img = 'img/'+result[i].KODE+'.png';
         } else {
           st_meja = "(Available)";
+          img = 'img/'+result[i].KODE+' Hijau.png';
         }
-        // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
-        content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
+        // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
+        // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
+        content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="transform: translateY(20px);"></div>';
       }
 
       $('#mejaaktif').html(content);
@@ -445,7 +487,53 @@ function clearCart(meja){
   })
 }
 
-function simpanPesanan(nMeja, id){
+function cekPIN(meja, id){
+  app.dialog.create({
+    title: 'Employee PIN',
+    closeByBackdropClick: false,
+    content: `<div class="list no-hairlines no-hairlines-between">
+                <ul>
+                  <li class="item-content item-input">
+                    <div class="item-inner">
+                    <div class="item-input-wrap">
+                      <input type="number" name="pin" id="pin" style="text-align: center;" />
+                    </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>`,
+    buttons: [
+    {
+      text: 'Confirm',
+      onClick: function(dialog, e){
+        var v = $('#pin').val();
+        var gudang = window.localStorage.getItem('gudang');
+        var temp = {
+          id_waitress : v,
+        }
+
+        if(v){
+          app.request({
+            url: addr+"API/login/"+gudang+"/",
+            method: "POST",
+            data: JSON.stringify(temp),
+            success: function(json){
+              if(json){
+                var result = JSON.parse(json);
+                simpanPesanan(meja, id, result[0].id_waitress);
+                dialog.close();
+              } else {
+                app.toast.create({text: 'PIN not recognized', closeButton: true, destroyOnClose: true, closeTimeout: 3000}).open();
+              }
+            }
+          })
+        }
+      }
+    }]
+  }).open()
+}
+
+function simpanPesanan(nMeja, id, waitress){
   var sub = parseInt($('#subTotal').val());
   var grand = parseInt($('#grandTotal').val());
   var gudang = window.localStorage.getItem("gudang");
@@ -456,7 +544,8 @@ function simpanPesanan(nMeja, id){
     idpj : id,
     subtotal : sub,
     grantotal : grand,
-    idpeg : idp
+    idpeg : idp,
+    waitress : waitress
   }
 
   app.request({
@@ -465,7 +554,7 @@ function simpanPesanan(nMeja, id){
     data: JSON.stringify(temp),
     success: function(json){
       if(json){
-        cetakBillDapur(nMeja);
+        cetakBillDapur(nMeja, id);
         app.views.main.router.navigate('/home/')
       }
     },
@@ -517,7 +606,7 @@ function cetakBillWaiter(meja){
       var header = '{br}{center}{h}MediaPOS{/h}{br}Sales Receipt{br}--------------------------------{br}';
       var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
-      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
       var subtotal = 'Subtotal';
 
       for(i = 0; i < result.length; i++){
@@ -591,18 +680,18 @@ function cetakBillPisah(meja, idpj){
   })
 }
 
-function cetakBillDapur(meja){
+function cetakBillDapur(meja, id){
   app.request({
-    url: addr+"API/penjualan/"+meja+"/",
+    url: addr+"API/dapur/"+id+"/",
     method: "GET",
     success: function(json){
       var result = JSON.parse(json);
       var bill = '';
       var list = '';
-      var header = '{br}{center}{h}MediaPOS{/h}{br}Pre-Sales Receipt{br}--------------------------------{br}';
+      var header = '{br}{center}{h}MediaPOS{/h}{br}Table Checker Receipt{br}--------------------------------{br}';
       var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
-      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
 
       for(var i = 0; i < result.length; i++){
         var ws = '';
@@ -610,7 +699,7 @@ function cetakBillDapur(meja){
           ws += ' ';
         }
     
-        list += '{left}' + result[i].nama_barang + ws + 'x ' + result[i].qty_jual + (result[i].catatan ? '{br}   CATT : ' +  result[i].catatan : '') + '{br}';
+        list += '{left}' + result[i].nama_barang + ws + 'x ' + result[i].qty_jual + (result[i].catatan ? '{br}   NOTE : ' +  result[i].catatan : '') + '{br}';
         // console.log(jumlah);
       }
 
@@ -703,7 +792,7 @@ function lihatMergeable(meja, idpj){
   var data = "";
   var old = "";
   app.request({
-    url: addr+"API/merge/"+idpj+"/",
+    url: addr+"API/merge/"+meja+"/",
     method: "GET",
     success: function(json){
       if(json){
@@ -753,19 +842,23 @@ function mergeBill(meja, idpj, oldpj){
 /*
   TODO:
   - bill dapur
-    - Subtitle table checker receipt
-    - nama user berdasar pin
-    - catt diganti note
+    - Subtitle table checker receipt (done)
+    - nama user berdasar pin (done)
+    - catt diganti note (done)
 
   - homescreen
     - profile tab bisa buat logout
     - home tab nampilkan dashboard penjualan berdasar waiter
 
   - proses
-    - addition ke meja masuk ke no penjualan yg sama
-    - bill refers to meja, kecuali ketika split, in which bisa meja sama tapi nomor trans beda
+    - addition ke meja masuk ke no penjualan yg sama (done)
+    - bill refers to meja, kecuali ketika split, in which bisa meja sama tapi nomor trans beda (done)
     - split bill menghasilkan penjualan baru dalam meja sama
     - qty input buat item yg di split
+
+  -interface
+    - tampilan menu barang
+    - tampilan meja
 */
 
 

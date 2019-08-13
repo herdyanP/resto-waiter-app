@@ -121,7 +121,7 @@ var routes = [
       </div>
       <div class="toolbar toolbar-bottom-md no-shadow" style="height: 70px;">
         <div class="toolbar-inner">
-          <button class="button" onclick="simpanPesanan({{$route.params.idMeja}}, {{$route.params.idPJ}})">Save Orders</button>
+          <button class="button" onclick="cekPIN({{$route.params.idMeja}}, {{$route.params.idPJ}})">Save Orders</button>
         </div>
       </div>
     </div>`,
