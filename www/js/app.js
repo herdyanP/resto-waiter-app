@@ -254,7 +254,7 @@ function listMeja(){
           img = 'img/'+result[i].KODE+'.png';
         } else {
           st_meja = "(Available)";
-          img = 'img/'+result[i].KODE+' Hijau.png';
+          img = 'img/'+result[i].KODE+'-Hijau.png';
         }
         // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
         // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
@@ -317,7 +317,8 @@ function tampil(meja, kat){
         var datanya = '';
 
         for (i = 0; i < result.length; i++){
-          datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
+          // datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
+          datanya+="<button onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
         }
         $('#menuku').html(datanya);
       }
@@ -487,7 +488,7 @@ function clearCart(meja){
   })
 }
 
-function cekPIN(meja, id){
+function cekPIN(meja, id, tipe){
   app.dialog.create({
     title: 'Employee PIN',
     closeByBackdropClick: false,
@@ -520,7 +521,13 @@ function cekPIN(meja, id){
             success: function(json){
               if(json){
                 var result = JSON.parse(json);
-                simpanPesanan(meja, id, result[0].id_waitress);
+                if(tipe == 'pesan'){
+                  // alert('pesan');
+                  simpanPesanan(meja, id, result[0].id_waitress);
+                } else if(tipe == 'split'){
+                  splitBill(id, meja, result[0].id_waitress);
+                  // alert('split');
+                }
                 dialog.close();
               } else {
                 app.toast.create({text: 'PIN not recognized', closeButton: true, destroyOnClose: true, closeTimeout: 3000}).open();
@@ -759,7 +766,7 @@ function toSplit(){
   }
 }
 
-function splitBill(idpj, meja){
+function splitBill(idpj, meja, id_waitress){
   var gudang = window.localStorage.getItem("gudang");
   var idpeg = window.localStorage.getItem("id_peg");
   var c = $('input:checked');
@@ -768,6 +775,7 @@ function splitBill(idpj, meja){
       id_pj_dtl : val.id,
       id_pj : idpj,
       idpeg : idpeg,
+      waitress : id_waitress,
       action : 'split'
     }
 
@@ -778,14 +786,13 @@ function splitBill(idpj, meja){
         data: JSON.stringify(temp),
         success: function(){
           console.log("sukses " + val.id);
+          toSplit();
           lihatPesanan(meja, idpj);
         }
       })
     }, 800);
   })
   // alert('ini split');
-
-  // toSplit();
 }
 
 function lihatMergeable(meja, idpj){
@@ -838,6 +845,135 @@ function mergeBill(meja, idpj, oldpj){
   })
 }
 
+function dash(){
+  var penj = Highcharts.chart('container1',{
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false
+    },
+    title: {
+        text: '10 Besar Penjualan'
+    },
+    tooltip: {
+      pointFormat: '{series.name}: <b>{point.y}</b>'
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: false
+            },
+            showInLegend: true
+        }
+    },
+    series: [{
+        type: 'pie',
+        name: 'Jumlah'
+    }]
+  })
+
+  app.request({
+    url: addr+"API/dash1/",
+    method: "GET",
+    success: function(json){
+      if(json){
+        var result = JSON.parse(json);
+        for(var i = 0; i < result.length; i++){
+          penj.series[0].addPoint({
+            name: result[i].nama_barang,
+            y: parseInt(result[i].total),
+            id: result[i].id_barang
+          }, false);
+        }
+      } else {
+        penj.series[0].addPoint({
+          name: 'kosong',
+          y: 1,
+          id: '1'
+        }, false);
+      }
+
+      penj.redraw();
+    }
+  })
+
+  var waitress = Highcharts.chart('container2',{
+    chart: {
+      plotBackgroundColor: null,
+      plotBorderWidth: null,
+      plotShadow: false
+    },
+    title: {
+      text: '10 Besar Waitress'
+    },
+    tooltip: {
+      pointFormat: '{series.name}: <b>{point.y}</b>'
+    },
+    plotOptions: {
+      pie: {
+          allowPointSelect: true,
+          cursor: 'pointer',
+          dataLabels: {
+              enabled: false
+          },
+          showInLegend: true
+      }
+    },
+    series: [{
+      type: 'pie',
+      name: 'Jumlah'
+    }]
+  })
+
+  app.request({
+    url: addr+"API/dash2/",
+    method: "GET",
+    success: function(json){
+      if(json){
+        var result = JSON.parse(json);
+        for(var i = 0; i < result.length; i++){
+          waitress.series[0].addPoint({
+            name: result[i].nama_waitress,
+            y: parseInt(result[i].jumlah),
+            id: result[i].id_waitress
+          }, false);
+        }
+      } else {
+        waitress.series[0].addPoint({
+          name: 'kosong',
+          y: 0,
+          id: '1'
+        }, false);
+      }
+
+      waitress.redraw();
+    }
+  })
+/*<?php
+          
+        $bl = date('m');
+$th = date('th'); 
+$cb=$db->select("pj_penjualan a inner join pj_penjualan_dtl b on a.id_pj = b.id_pj
+inner join m_waitress c on a.id_waitress = c.id_waitress ",
+"a.id_customer,c.nama_waitress,sum(grantot_jual) as jumlah",
+"a.void_jual is null group by a.id_waitress order by sum(grantot_jual) desc limit 0,10");
+
+
+$jum=count($cb);
+if($jum>0){
+    foreach($cb as $pros){
+      echo"{name:'$pros[nama_waitress]', y:$pros[jumlah],id:'$pros[id_waitress]'},";  
+    }
+}else{
+    echo "{name:'kosong',y:0,id:'1'},"; 
+}
+?>*/
+
+    
+}
+
 
 /*
   TODO:
@@ -848,18 +984,21 @@ function mergeBill(meja, idpj, oldpj){
 
   - homescreen
     - profile tab bisa buat logout
-    - home tab nampilkan dashboard penjualan berdasar waiter
+    - home tab nampilkan dashboard penjualan berdasar waiter (done)
 
   - proses
     - addition ke meja masuk ke no penjualan yg sama (done)
     - bill refers to meja, kecuali ketika split, in which bisa meja sama tapi nomor trans beda (done)
-    - split bill menghasilkan penjualan baru dalam meja sama
+    - split bill menghasilkan penjualan baru dalam meja sama (done)
     - qty input buat item yg di split
 
   -interface
-    - tampilan menu barang
-    - tampilan meja
+    - tampilan menu barang (done)
+    - tampilan meja (done)
 */
+
+
+
 
 
 
@@ -885,7 +1024,22 @@ function mergeBill(meja, idpj, oldpj){
 
 
 
+/*<?php
+          
+$cb=$db->select("pj_penjualan_dtl a inner join m_barang b on a.id_barang = b.id_barang inner join pj_penjualan c on a.id_pj = c.id_pj",
+"a.id_barang,b.nama_barang,ifnull(count(a.qty_jual),0) as total",
+"void_jual is null group by a.id_barang limit 0,10");
 
+
+$jum=count($cb);
+if($jum>0){
+    foreach($cb as $pros){
+      echo"{name:'$pros[nama_barang]', y:$pros[total],id:'$pros[id_barang]'},"; 
+    }
+}else{
+    echo "{name:'kosong',y:0,id:'1'},"; 
+}
+?>*/
 
 /*function lihatKeranjang(a,b,c,d){
  var data="";
@@ -1183,116 +1337,6 @@ function checkMeja(e){
     $(e).addClass('selected');
     toBeMerged.push(e.id);
   }
-}
-
-function dash(){
-  app.preloader.show();
-  var dt = new Date();
-  var penjualan = Highcharts.chart('container1', {
-    chart: {
-      height: '150%',
-      type: 'bar',
-      plotBackgroundColor: null,
-      plotBorderWidth: null,
-      plotShadow: false
-    },
-    title: {
-      text: 'Grafik Penjualan',
-    },
-    tooltip: {
-      pointFormat: 'Penjualan: <b>{point.y}</b>'
-    },
-    plotOptions: {
-      bar: {
-        allowPointSelect: true,
-        cursor: 'pointer',
-        dataLabels: { enabled: false },
-        showInLegend: true,
-      }
-    },
-    xAxis: {
-      type: 'datetime',
-      tickInterval: 24 * 3600 * 1000
-    },
-    series: [{
-      name: "Penjualan dalam rupiah",
-    }]
-  })
-
-  var favorit = Highcharts.chart('container2', {
-    chart: {
-      type: 'pie',
-      plotBackgroundColor: null,
-      plotBorderWidth: null,
-      plotShadow: false
-    },
-    title: {
-      text: 'Chart Favorit',
-    },
-    tooltip: {
-      pointFormat: 'Total: <b>{point.y} ({point.percentage:.1f}%)</b>'
-    },
-    plotOptions: {
-      pie: {
-        allowPointSelect: true,
-        cursor: 'pointer',
-        dataLabels: { enabled: false },
-        showInLegend: true 
-      }
-    },
-    series: [{
-      name: "Favorit"
-    }]
-  })
-
-  for(var i = 1; i <= dt.getDate(); i++){
-    var a = function(tgl){
-      db.transaction(function(tx){
-        tx.executeSql('SELECT sum(dtl_total) AS total, tgl_penjualan FROM pj_dtl a JOIN pj b ON a.id_pj = b.id_pj WHERE b.tgl_penjualan = ?', [tgl], 
-          function(tx, result){
-            if(result.rows.item(0).tgl_penjualan){
-              var d = new Date(result.rows.item(0).tgl_penjualan);
-              var temp = {
-                x: Date.parse(d),
-                y: parseInt(result.rows.item(0).total)
-              }
-
-              penjualan.series[0].addPoint(temp, false);
-            } else {
-              var d = new Date(tgl);
-              var temp = {
-                x: Date.parse(d),
-                y: 0
-              }
-
-              penjualan.series[0].addPoint(temp, false);
-            }
-          }, 
-          function(error){})
-      })
-    }(dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+("0" + i).slice(-2));
-  }
-
-  db.transaction(function(fv){
-    fv.executeSql('SELECT nama_barang AS barang, SUM(a.qty_jual) AS terjual FROM pj_dtl a JOIN m_barang b ON a.id_barang = b.id_barang WHERE a.dtpesan LIKE "'+dt.getFullYear()+'-'+(dt.getMonth()+1)+'%" GROUP BY nama_barang ORDER BY terjual DESC', [],
-      function(t, result){
-        for(var i = 0; i < result.rows.length; i++){
-          var temp = {
-            y: result.rows.item(i).terjual,
-            name: result.rows.item(i).barang
-          }
-
-          favorit.series[0].addPoint(temp, false);
-        }
-      },
-      function(error){})
-  })
-
-  setTimeout(function(){
-    app.preloader.hide();
-    penjualan.redraw();
-    favorit.redraw();
-  }, 1 * 1000);
 }
 
 function dtlMeja(){
@@ -1759,4 +1803,114 @@ function testSplit(a, jmlBarang, idBarang, newId, oldId){
 //       [a.id_barang, a.id_barang, a.qty_jual, a.id_barang, a.dtl_total, a.harga_jual, a.nama_barang])
 //   })
 // }
+
+/*function dash(){
+  app.preloader.show();
+  var dt = new Date();
+  var penjualan = Highcharts.chart('container1', {
+    chart: {
+      height: '150%',
+      type: 'bar',
+      plotBackgroundColor: null,
+      plotBorderWidth: null,
+      plotShadow: false
+    },
+    title: {
+      text: 'Grafik Penjualan',
+    },
+    tooltip: {
+      pointFormat: 'Penjualan: <b>{point.y}</b>'
+    },
+    plotOptions: {
+      bar: {
+        allowPointSelect: true,
+        cursor: 'pointer',
+        dataLabels: { enabled: false },
+        showInLegend: true,
+      }
+    },
+    xAxis: {
+      type: 'datetime',
+      tickInterval: 24 * 3600 * 1000
+    },
+    series: [{
+      name: "Penjualan dalam rupiah",
+    }]
+  })
+
+  var favorit = Highcharts.chart('container2', {
+    chart: {
+      type: 'pie',
+      plotBackgroundColor: null,
+      plotBorderWidth: null,
+      plotShadow: false
+    },
+    title: {
+      text: 'Chart Favorit',
+    },
+    tooltip: {
+      pointFormat: 'Total: <b>{point.y} ({point.percentage:.1f}%)</b>'
+    },
+    plotOptions: {
+      pie: {
+        allowPointSelect: true,
+        cursor: 'pointer',
+        dataLabels: { enabled: false },
+        showInLegend: true 
+      }
+    },
+    series: [{
+      name: "Favorit"
+    }]
+  })
+
+  for(var i = 1; i <= dt.getDate(); i++){
+    var a = function(tgl){
+      db.transaction(function(tx){
+        tx.executeSql('SELECT sum(dtl_total) AS total, tgl_penjualan FROM pj_dtl a JOIN pj b ON a.id_pj = b.id_pj WHERE b.tgl_penjualan = ?', [tgl], 
+          function(tx, result){
+            if(result.rows.item(0).tgl_penjualan){
+              var d = new Date(result.rows.item(0).tgl_penjualan);
+              var temp = {
+                x: Date.parse(d),
+                y: parseInt(result.rows.item(0).total)
+              }
+
+              penjualan.series[0].addPoint(temp, false);
+            } else {
+              var d = new Date(tgl);
+              var temp = {
+                x: Date.parse(d),
+                y: 0
+              }
+
+              penjualan.series[0].addPoint(temp, false);
+            }
+          }, 
+          function(error){})
+      })
+    }(dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+("0" + i).slice(-2));
+  }
+
+  db.transaction(function(fv){
+    fv.executeSql('SELECT nama_barang AS barang, SUM(a.qty_jual) AS terjual FROM pj_dtl a JOIN m_barang b ON a.id_barang = b.id_barang WHERE a.dtpesan LIKE "'+dt.getFullYear()+'-'+(dt.getMonth()+1)+'%" GROUP BY nama_barang ORDER BY terjual DESC', [],
+      function(t, result){
+        for(var i = 0; i < result.rows.length; i++){
+          var temp = {
+            y: result.rows.item(i).terjual,
+            name: result.rows.item(i).barang
+          }
+
+          favorit.series[0].addPoint(temp, false);
+        }
+      },
+      function(error){})
+  })
+
+  setTimeout(function(){
+    app.preloader.hide();
+    penjualan.redraw();
+    favorit.redraw();
+  }, 1 * 1000);
+}*/
 

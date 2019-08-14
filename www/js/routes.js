@@ -121,7 +121,7 @@ var routes = [
       </div>
       <div class="toolbar toolbar-bottom-md no-shadow" style="height: 70px;">
         <div class="toolbar-inner">
-          <button class="button" onclick="cekPIN({{$route.params.idMeja}}, {{$route.params.idPJ}})">Save Orders</button>
+          <button class="button" onclick="cekPIN({{$route.params.idMeja}}, {{$route.params.idPJ}}, 'pesan')">Save Orders</button>
         </div>
       </div>
     </div>`,
@@ -163,11 +163,12 @@ var routes = [
       </div>
       <div class="toolbar toolbar-bottom-md no-shadow" style="height: 70px;">
         <div class="toolbar-inner">
-          <button id="split_bill" class="button hidden" onclick="splitBill({{$route.params.idPJ}}, {{$route.params.idMeja}})">Split Into New Bill</button>
+          <button id="split_bill" class="button hidden" onclick="cekPIN({{$route.params.idMeja}}, {{$route.params.idPJ}}, 'split')">Split Into New Bill</button>
           <button id="cetak_bill" class="button" onclick="cetakBillWaiter({{$route.params.idMeja}})">Print Bill</button>
         </div>
       </div>
     </div>`,
+    // <button id="split_bill" class="button hidden" onclick="splitBill({{$route.params.idPJ}}, {{$route.params.idMeja}})">Split Into New Bill</button>
     // componentUrl: './pages/pesanan.html',
     on: {
         pageAfterIn: function test (e, page) {
