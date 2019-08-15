@@ -258,7 +258,7 @@ function listMeja(){
         }
         // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
         // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
-        content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="transform: translateY(20px);"></div>';
+        content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="transform: translateY(15px) scale(1.2);"><p style="transform: translateY(5px);font-size: 1.8em;">Table '+result[i].NAMA+'</p></div>';
       }
 
       $('#mejaaktif').html(content);
@@ -550,7 +550,7 @@ function simpanPesanan(nMeja, id, waitress){
     meja : nMeja,
     idpj : id,
     subtotal : sub,
-    grantotal : grand,
+    grantotal : sub,
     idpeg : idp,
     waitress : waitress
   }
@@ -1016,7 +1016,7 @@ if($jum>0){
     - catt diganti note (done)
 
   - homescreen
-    - profile tab bisa buat logout
+    - profile tab bisa buat logout (postponed)
     - home tab nampilkan dashboard penjualan berdasar waiter (done)
 
   - proses
@@ -1028,6 +1028,12 @@ if($jum>0){
   -interface
     - tampilan menu barang (done)
     - tampilan meja (done)
+
+  - centered list meja
+  - nama meja dibawah list meja
+  - hapus pesanan
+  - link history
+  - font size
 */
 
 
