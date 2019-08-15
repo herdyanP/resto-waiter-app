@@ -80,6 +80,7 @@ var routes = [
     on: {
         pageAfterIn: function test (e, page) {
           // do something after page gets into the view
+          clearTimeout(refresh_meja);
           searchBar = app.searchbar.create({
             el: '.searchbar',
             on: {
@@ -128,6 +129,7 @@ var routes = [
     on: {
         pageAfterIn: function test (e, page) {
           // do something after page gets into the view
+          clearTimeout(refresh_meja);
         },
         pageInit: function (e, page) {
           // do something when page initialized          
@@ -173,6 +175,7 @@ var routes = [
     on: {
         pageAfterIn: function test (e, page) {
           // do something after page gets into the view
+          clearTimeout(refresh_meja);
           lihatPesanan(page.route.params.idMeja, page.route.params.idPJ);
         },
         pageInit: function (e, page) {
@@ -207,6 +210,7 @@ var routes = [
     on: {
         pageAfterIn: function test (e, page) {
           // do something after page gets into the view
+          clearTimeout(refresh_meja);
           lihatMergeable(page.route.params.idMeja, page.route.params.idPJ);
         },
         pageInit: function (e, page) {

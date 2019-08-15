@@ -262,7 +262,7 @@ function listMeja(){
       }
 
       $('#mejaaktif').html(content);
-      refresh_meja = setTimeout(listMeja, 5 * 1000);
+      refresh_meja = setTimeout(listMeja, 10 * 1000);
     }
   })
 }
@@ -589,7 +589,8 @@ function lihatPesanan(meja, pj){
                         <div class="item-footer">`+result[i].qty_jual+` x `+result[i].harga_jual+`</div>
                       </div>
                       <div class="item-after">`+parseInt(result[i].qty_jual * result[i].harga_jual).toLocaleString()+`
-                        <input type="checkbox" class="to-split hidden" id="`+result[i].id_dtl_jual+`" style="margin: 0 10px;"/>
+                        <input type="checkbox" id="c-`+result[i].id_dtl_jual+`" class="to-split hidden" style="margin: 0 10px;" onchange="splitQty(this, `+result[i].id_dtl_jual+`, `+result[i].qty_jual+`)"/>
+                        <input type="hidden" id="item-`+result[i].id_dtl_jual+`" value="`+result[i].qty_jual+`"/>
                       </div>
                     </div>
                   </li>`;
@@ -637,9 +638,8 @@ function cetakBillWaiter(meja){
       list += '--------------------------------{br}{left}';
       bill = header + subheader + list + subtotal;
 
+      console.log(bill);
       connectToPrinter(bill);
-
-      // console.log(parseInt(jumlah).toLocaleString());
     }
   })
 }
@@ -680,16 +680,15 @@ function cetakBillPisah(meja, idpj){
       list += '--------------------------------{br}{left}';
       bill = header + subheader + list + subtotal;
 
+      console.log(bill);
       connectToPrinter(bill);
-
-      // console.log(parseInt(jumlah).toLocaleString());
     }
   })
 }
 
 function cetakBillDapur(meja, id){
   app.request({
-    url: addr+"API/dapur/"+id+"/",
+    url: (id) ? addr+"API/dapur/"+id+"/" : addr+"API/penjualan/"+meja+"/",
     method: "GET",
     success: function(json){
       var result = JSON.parse(json);
@@ -707,16 +706,13 @@ function cetakBillDapur(meja, id){
         }
     
         list += '{left}' + result[i].nama_barang + ws + 'x ' + result[i].qty_jual + (result[i].catatan ? '{br}   NOTE : ' +  result[i].catatan : '') + '{br}';
-        // console.log(jumlah);
       }
 
       list += '--------------------------------{br}{left}';
       bill = header + subheader + list;
 
-      console.log(result);
+      console.log(bill);
       connectToPrinter(bill);
-
-      // console.log(parseInt(jumlah).toLocaleString());
     }
   })
 }
@@ -766,18 +762,55 @@ function toSplit(){
   }
 }
 
+function splitQty(e, id, amt){
+  if(e.checked){
+    app.dialog.create({
+      title: 'Split Amt',
+      closeByBackdropClick: false,
+      content: `<div class="list no-hairlines no-hairlines-between">
+                  <ul>
+                    <li class="item-content item-input">
+                      <div class="item-inner">
+                      <div class="item-input-wrap">
+                        <input type="number" name="qty" id="qty" value="`+amt+`" style="text-align: center;" />
+                      </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>`,
+      buttons: [
+      {
+        text: 'Confirm',
+        onClick: function(dialog, e){
+          var qty = $('#qty').val();
+          if(qty > amt){
+            app.toast.create({text: 'Invalid split amount', closeButton: true, destroyOnClose: true, closeTimeout: 3000}).open();
+            $('#c-'+id).prop('checked', false);
+          }else if(qty){
+            $('#item-'+id).val(qty);
+            // alert(qty);
+          }
+        }
+      }]
+    }).open();
+  }
+}
+
 function splitBill(idpj, meja, id_waitress){
   var gudang = window.localStorage.getItem("gudang");
   var idpeg = window.localStorage.getItem("id_peg");
   var c = $('input:checked');
   c.each(function(key, val){
     var temp = {
-      id_pj_dtl : val.id,
+      id_pj_dtl : val.id.replace(/\D/g, ''),
       id_pj : idpj,
       idpeg : idpeg,
       waitress : id_waitress,
-      action : 'split'
+      action : 'split',
+      qty : $('#item-'+val.id.replace(/\D/g, '')).val()
     }
+
+    // console.log(temp);
 
     setTimeout(function(){
       app.request({
@@ -785,7 +818,7 @@ function splitBill(idpj, meja, id_waitress){
         method: "POST",
         data: JSON.stringify(temp),
         success: function(){
-          console.log("sukses " + val.id);
+          // console.log("sukses " + val.id);
           toSplit();
           lihatPesanan(meja, idpj);
         }
@@ -990,7 +1023,7 @@ if($jum>0){
     - addition ke meja masuk ke no penjualan yg sama (done)
     - bill refers to meja, kecuali ketika split, in which bisa meja sama tapi nomor trans beda (done)
     - split bill menghasilkan penjualan baru dalam meja sama (done)
-    - qty input buat item yg di split
+    - qty input buat item yg di split (almost done, tinggal ubah API)
 
   -interface
     - tampilan menu barang (done)
@@ -1140,7 +1173,7 @@ function test(){
     app.dialog.prompt('PIN:', 'Konfirmasi', 
     function(nomor){
       if(nomor != '1234'){
-        app.toast.create({text: 'PIN not recognized', closeButton: true, destroyOnClose: true}).open();
+        app.toast.create({text: 'PIN not recognized', closeButton: true, destroyOnClose: true, closeTimeout: 3000}).open();
         return;
       }else {
         // nomormeja = parseInt(nomor);
