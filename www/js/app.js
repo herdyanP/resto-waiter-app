@@ -581,7 +581,7 @@ function lihatPesanan(meja, pj){
     success: function(json){
       var result = JSON.parse(json);
       for(i = 0; i < result.length; i++){
-        if(old != result[i].no_penjualan) data += '<li class="list-group-title">'+result[i].no_penjualan+'<a class="link icon-only" onclick="cetakBillPisah('+meja+','+result[i].id_pj+')" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only">print</i></a><span style="float: right;"><a class="link icon-only" onclick="app.views.main.router.navigate({name: \'merge\',params: {idMeja : '+meja+', idPJ : '+result[i].id_pj+'}});" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only">call_merge</i></a></span></li>'
+        if(old != result[i].no_penjualan) data += '<li class="list-group-title" style="font-size: 1.2em; height: 65px; padding-top: 10px;">'+result[i].no_penjualan+'<a class="link icon-only" onclick="cetakBillPisah('+meja+','+result[i].id_pj+')" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">print</i></a><span style="float: right;"><a class="link icon-only" onclick="app.views.main.router.navigate({name: \'merge\',params: {idMeja : '+meja+', idPJ : '+result[i].id_pj+'}});" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">call_merge</i></a></span></li>'
         jumlah += parseInt(result[i].harga_jual * result[i].qty_jual);
         data += ` <li class="item-content ">
                     <div class="item-inner">
@@ -591,6 +591,7 @@ function lihatPesanan(meja, pj){
                       <div class="item-after">`+parseInt(result[i].qty_jual * result[i].harga_jual).toLocaleString()+`
                         <input type="checkbox" id="c-`+result[i].id_dtl_jual+`" class="to-split hidden" style="margin: 0 10px;" onchange="splitQty(this, `+result[i].id_dtl_jual+`, `+result[i].qty_jual+`)"/>
                         <input type="hidden" id="item-`+result[i].id_dtl_jual+`" value="`+result[i].qty_jual+`"/>
+                        <a class="link icon-only" onClick="delItem(`+meja+`, `+pj+`, `+result[i].id_dtl_jual+`)" style="margin-left: 10px; transform: translateY(-3px);"><i class="icon f7-icons md-only">trash</i></a>
                       </div>
                     </div>
                   </li>`;
@@ -598,6 +599,23 @@ function lihatPesanan(meja, pj){
       }
 
       $('#orders').html(data);
+    }
+  })
+}
+
+function delItem(meja, pj, id){
+  var gudang = window.localStorage.getItem('gudang');
+  var temp = {
+    action : "hapus",
+    id_dtl_jual : id
+  }
+
+  app.request({
+    url: addr+"API/penjualan/"+gudang+"/",
+    method: "POST",
+    data: JSON.stringify(temp),
+    success: function(json){
+      lihatPesanan(meja, pj);
     }
   })
 }
@@ -1029,11 +1047,11 @@ if($jum>0){
     - tampilan menu barang (done)
     - tampilan meja (done)
 
-  - centered list meja
-  - nama meja dibawah list meja
-  - hapus pesanan
+  - centered list meja (done)
+  - nama meja dibawah list meja (done)
+  - hapus pesanan (done)
   - link history
-  - font size
+  - font size (partially done)
 */
 
 
