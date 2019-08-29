@@ -19569,7 +19569,7 @@ label.item-radio.disabled,
 .ios .row.no-gap .col:nth-last-child(21) ~ .col {
   width: 4.76190476%;
 }
-@media (min-width: 768px) {
+@media (min-width: 500px) {
   .ios .row .tablet-100 {
     width: 100%;
     width: calc((100% - 15px*0) / 1);

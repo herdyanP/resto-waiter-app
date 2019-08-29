@@ -70,9 +70,7 @@ var routes = [
           </ul>
         </div>
         <div class="block">
-          <div class="grid-demo">
-            <div class="row" id="menuku" style=" overflow-y:scroll;max-height: calc( 90vh - 50px );justify-content: normal;">
-            </div>
+          <div class="row" id="menuku" style=" overflow-y:scroll; max-height: calc( 90vh - 50px ); justify-content: space-between;">
           </div>
         </div>
       </div>

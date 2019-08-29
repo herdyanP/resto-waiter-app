@@ -18,6 +18,7 @@ var app = new Framework7({
     init: function(){
       // listMeja();
       checkOrientation();
+      checkDisplay();
     }
   },
   routes: routes,
@@ -87,95 +88,38 @@ Highcharts.setOptions({
   }
 })
 
-screen.orientation.addEventListener('change', checkOrientation);
+// screen.orientation.addEventListener('change', checkOrientation);
 document.addEventListener('deviceready', function() {
-     /*window.sqlitePlugin.echoTest(function() {
-       alert('ECHO test OK');
-     });*/
-     // screen.orientation.lock('landscape');
+  var d = new Date();
+  var tgls=d.getFullYear()+"-"+("0" + (d.getMonth()+1)).slice(-2)+"-"+("0" + d.getDate()).slice(-2);
+  var stime = window.localStorage.getItem("tgl");
+  if(stime=="" || stime==null){
+    window.localStorage.setItem("tgl",tgls);
+    window.localStorage.setItem("inctrx",1);
+  }
 
-     db = window.sqlitePlugin.openDatabase({
-       name: 'LightPOS.db',
-       location: 'default',
-     });
+  if(stime!=tgls){
+    window.localStorage.setItem("tgl",tgls);
+    window.localStorage.setItem("inctrx",1);
+  }
+     
+  app.init();
+  document.addEventListener('backbutton', onBackPressed, false);
 
-     db.transaction(function(transaction) {
-       var executeQuery = "DELETE FROM pj_dtl_tmp";
-       transaction.executeSql(executeQuery, [],
-       //On Success
-       function(tx, result) {
-         //alert('Delete successfully');
-       },
-       //On Error
-       function(error){
-         //alert('Something went Wrong');
-       });
-     });
-
-     db.transaction(function(tx) {
-       tx.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, kode_barang VARCHAR(20)  NOT NULL,nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE)');
-       tx.executeSql('CREATE TABLE IF NOT EXISTS pj (id_pj INTEGER PRIMARY KEY AUTOINCREMENT, no_penjualan VARCHAR(30), no_faktur VARCHAR(30), tgl_penjualan DATE,   jenis_jual int, jenis_bayar int, id_customer int, id_user  int, stamp_date datetime, disc_prs double, disc_rp double, sc_prs double, sc_rp double, ppn double, total_jual double, grantot_jual double, bayar_tunai double, bayar_card double, nomor_kartu varchar, ref_kartu varchar, kembali_tunai double, void_jual varchar, no_meja int, ip varchar,   id_gudang int, pl_retail text, meja int, st int)');
-       tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl (id_dtl_jual int, id_pj int, id_barang int, qty_jual double, harga_jual double, discprs double, discrp double, dtl_total double, harga_jual_cetak double, user int, dtpesan datetime, ready int default 0)');
-       tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl_tmp (id_tmp INTEGER PRIMARY KEY AUTOINCREMENT,id_barang INT NOT NULL UNIQUE, qty INT  NOT NULL,total DOUBLE, harga DOUBLE,nama_barang VARCHAR(20) NOT NULL)');
-       
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['1', 'B00001','AYAM GORENG KALASAN','15000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['2', 'B00002','AYAM OPOR','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['3', 'B00003','AYAM RENDANG','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['4', 'B00004','AYAM SAUCE LADA HITAM','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['5', 'B00005','IKAN BAKAR SAMBAL MATA','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['6', 'B00006','IKAN WOKU BELANGA','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['7', 'B00007','SAPI SEMUR','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['8', 'B00008','SATE LILIT','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['9', 'B00009','SOTO AYAM','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['10', 'B00010','7UP','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['11', 'B00011','A1 SAUCE','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['12', 'B00012','ABC SAOS TOMAT 5LTR','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['13', 'B00013','ABON AYAM','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['14', 'B00014','ABON IKAN','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['15', 'B00015','ABON SAPI','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['16', 'B00016','ADAS MANIS','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['17', 'B00017','ADAS PEDAS','20000']);
-       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['18', 'B00018','ADONAN BAKSO','20000']);
-
-     }, function(error) {
-       //alert('Transaction ERROR: ' + error.message);
-     }, function() {
-       //alert('Populated database OK');
-     });
-
-     //tampil();
-     //test();
-     var d = new Date();
-     var tgls=d.getFullYear()+"-"+("0" + (d.getMonth()+1)).slice(-2)+"-"+("0" + d.getDate()).slice(-2);
-     var stime = window.localStorage.getItem("tgl");
-     if(stime=="" || stime==null){
-      window.localStorage.setItem("tgl",tgls);
-      window.localStorage.setItem("inctrx",1);
+  $(document).on('page:afterin', '.page[data-name="reorder"]', function(e){
+    if($('.selected').length == 0){
+      alert('Silahkan pilih meja terlebih dahulu.');
+      app.views.main.router.back();
     }
-    if(stime!=tgls){
-      window.localStorage.setItem("tgl",tgls);
-      window.localStorage.setItem("inctrx",1);
+  })
+
+  $(document).on('page:afterin', '.page[data-name="payment"]', function(e){
+    if($('.selected').length == 0){
+      alert('Silahkan pilih meja terlebih dahulu.');
+      app.views.main.router.back();
     }
-
-    //alert(window.localStorage.getItem("tgl"));
-     //window.localStorage.setItem("loggedIn", tgl);
-     app.init();
-     document.addEventListener('backbutton', onBackPressed, false);
-
-     $(document).on('page:afterin', '.page[data-name="reorder"]', function(e){
-      if($('.selected').length == 0){
-        alert('Silahkan pilih meja terlebih dahulu.');
-        app.views.main.router.back();
-      }
-    })
-
-     $(document).on('page:afterin', '.page[data-name="payment"]', function(e){
-      if($('.selected').length == 0){
-        alert('Silahkan pilih meja terlebih dahulu.');
-        app.views.main.router.back();
-      }
-    })
-   });
+  })
+}); 
 
 function onBackPressed(){
   var mv = app.views.main;
@@ -185,6 +129,15 @@ function onBackPressed(){
     testEmpty();
     mv.router.back();
     return;
+  }
+}
+
+function checkDisplay(){
+  var w = $(window).width();
+  var h = $(window).height();
+
+  if(w >= 800 || h >= 800){
+  } else{
   }
 }
 
@@ -251,14 +204,15 @@ function listMeja(){
         // console.log(result[i].NAMA);
         if(result[i].ST == '0' || result[i].ST == '1'){
           st_meja = "(In use)";
-          img = 'img/'+result[i].KODE+'.png';
+          img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'.png' : 'img/'+result[i].KODE+'-150.png';
         } else {
           st_meja = "(Available)";
-          img = 'img/'+result[i].KODE+'-Hijau.png';
+          img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'-Hijau.png' : 'img/'+result[i].KODE+'-Biru-150.png';
         }
         // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
         // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
-        content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="transform: translateY(15px) scale(1.2);"><p style="transform: translateY(5px);font-size: 1.8em;">Table '+result[i].NAMA+'</p></div>';
+        // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-50 floated" style="height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="transform: translateY(15px) scale(1.2);"><p style="transform: translateY(5px);">Table '+result[i].NAMA+'</p></div>';
+        content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p style="text-align: center; font-size: '+(window.innerWidth < 600 ? '20px' : '24px')+'; display: table; margin: 0 auto;">Table '+result[i].NAMA+'</p></div></div>';
       }
 
       $('#mejaaktif').html(content);
@@ -294,8 +248,10 @@ function listKategori(meja){
     method: "GET",
     success: function(json){
       var result = JSON.parse(json);
+      data += `<option value="0" selected>SELECT CATEGORIES HERE</option>`;;
       for(var i = 0; i < result.length; i++){
-        data += `<option value="`+result[i].id_sub+`" `+(result[i].id_sub == 1 ? 'selected' : '')+`>`+result[i].nama_kat+`</option>`;
+        // data += `<option value="`+result[i].id_sub+`" `+(result[i].id_sub == 1 ? 'selected' : '')+`>`+result[i].nama_kat+`</option>`;
+        data += `<option value="`+result[i].id_sub+`">`+result[i].nama_kat+`</option>`;
       }
 
       $('#kategori').html(data);
@@ -318,7 +274,9 @@ function tampil(meja, kat){
 
         for (i = 0; i < result.length; i++){
           // datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
-          datanya+="<button onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+          // datanya+="<button onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+          // datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+          datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
         }
         $('#menuku').html(datanya);
       }
@@ -351,6 +309,32 @@ function cariItem(e, q, meja){
   }
 }
 
+function addQty(meja, id, amt, harga, nama){
+  app.dialog.create({
+    title: 'Amt of '+nama+' to add:',
+    closeByBackdropClick: true,
+    content: `<div class="list no-hairlines no-hairlines-between">
+                <ul>
+                  <li class="item-content item-input">
+                    <div class="item-inner">
+                    <div class="item-input-wrap">
+                      <input type="number" name="addAmt" id="addAmt" value="`+amt+`" style="text-align: center;" />
+                    </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>`,
+    buttons: [
+    {
+      text: 'Confirm',
+      onClick: function(dialog, e){
+        var amt_to_add = $('#addAmt').val();
+        simpan(meja, id, amt_to_add, harga, nama)
+      }
+    }]
+  }).open();
+}
+
 function simpan(meja, id, qty, harga, nama){
   var idp = window.localStorage.getItem("id_peg");
   var temp = {
@@ -366,6 +350,7 @@ function simpan(meja, id, qty, harga, nama){
     method: "POST",
     data: JSON.stringify(temp),
     success: function(){
+      lihatKeranjang(meja);
       app.toast.create({
         text: 'Added to cart', 
         closeButton: true, 
@@ -392,6 +377,7 @@ function lihatKeranjang(meja){
                         <div class="item-footer">`+(result[i].catatan ? result[i].catatan : '')+`</div>
                       </div>
                       <div class="item-after">
+                        <a href="#" onclick="addQty(`+meja+`, `+result[i].id_barang+`, 1, `+result[i].harga_tmp+`, '`+result[i].nama_barang+`')" style="margin: 0px 5px;"><i class="icon f7-icons">add</i></a>
                         <a href="#" onclick="addCatatan(`+result[i].id_tmp+`,`+meja+`)" style="margin: 0px 5px;"><i class="icon material-icons md-only">edit</i></a>
                         <a href="#" onclick="hapusItem(`+result[i].id_tmp+`,`+meja+`)" style="margin: 0px 5px;"><i class="icon material-icons md-only">remove_shopping_cart</i></a>
                       </div>
@@ -461,14 +447,14 @@ function hapusItem(idtmp, meja){
     success: function(json){
       if(json){
         app.toast.create({
-          text: 'Order cancelled', 
+          text: 'Item cancelled', 
           closeButton: true, 
           destroyOnClose: true, 
           closeTimeout: 2000
         }).open();
       } else {
         app.toast.create({
-          text: 'Failed to cancel order', 
+          text: 'Failed to cancel item', 
           closeButton: true, 
           destroyOnClose: true, 
           closeTimeout: 2000
@@ -640,7 +626,7 @@ function cetakBillWaiter(meja){
         var price_satuan = parseInt(result[i].harga_jual).toLocaleString();
         var price_bulk = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString();
     
-        for(var j = 0; j < 2 - price_satuan.length - price_bulk.length; j++){
+        for(var j = 0; j < 24 - price_satuan.length - price_bulk.length; j++){
           ws += ' ';
         }
     
@@ -682,7 +668,7 @@ function cetakBillPisah(meja, idpj){
         var price_satuan = parseInt(result[i].harga_jual).toLocaleString();
         var price_bulk = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString();
     
-        for(var j = 0; j < 2 - price_satuan.length - price_bulk.length; j++){
+        for(var j = 0; j < 24 - price_satuan.length - price_bulk.length; j++){
           ws += ' ';
         }
     
@@ -850,7 +836,7 @@ function lihatMergeable(meja, idpj){
   var data = "";
   var old = "";
   app.request({
-    url: addr+"API/merge/"+meja+"/",
+    url: addr+"API/merge/"+idpj+"/",
     method: "GET",
     success: function(json){
       if(json){
@@ -1436,14 +1422,14 @@ function orderDone(a){
 }
 
 function testEmpty(){
-  idtemp = 0;
-  nomormeja = 0;
-  toBeMerged = [];
-  splitItem = [];
+  // idtemp = 0;
+  // nomormeja = 0;
+  // toBeMerged = [];
+  // splitItem = [];
   listMeja();
-  db.transaction(function(t){
-    t.executeSql("DELETE FROM pj_dtl_tmp")
-  })
+  // db.transaction(function(t){
+  //   t.executeSql("DELETE FROM pj_dtl_tmp")
+  // })
 }
 
 function reorder(){
@@ -1971,3 +1957,60 @@ function testSplit(a, jmlBarang, idBarang, newId, oldId){
   }, 1 * 1000);
 }*/
 
+
+/*window.sqlitePlugin.echoTest(function() {
+       alert('ECHO test OK');
+     });*/
+     // screen.orientation.lock('landscape');
+
+     /*db = window.sqlitePlugin.openDatabase({
+       name: 'LightPOS.db',
+       location: 'default',
+     });*/
+
+     /*db.transaction(function(transaction) {
+       var executeQuery = "DELETE FROM pj_dtl_tmp";
+       transaction.executeSql(executeQuery, [],
+       //On Success
+       function(tx, result) {
+         //alert('Delete successfully');
+       },
+       //On Error
+       function(error){
+         //alert('Something went Wrong');
+       });
+     });*/
+
+     /*db.transaction(function(tx) {
+       tx.executeSql('CREATE TABLE IF NOT EXISTS m_barang (id_barang INT PRIMARY KEY NOT NULL, kode_barang VARCHAR(20)  NOT NULL,nama_barang VARCHAR(200) NOT NULL, harga_jual DOUBLE)');
+       tx.executeSql('CREATE TABLE IF NOT EXISTS pj (id_pj INTEGER PRIMARY KEY AUTOINCREMENT, no_penjualan VARCHAR(30), no_faktur VARCHAR(30), tgl_penjualan DATE,   jenis_jual int, jenis_bayar int, id_customer int, id_user  int, stamp_date datetime, disc_prs double, disc_rp double, sc_prs double, sc_rp double, ppn double, total_jual double, grantot_jual double, bayar_tunai double, bayar_card double, nomor_kartu varchar, ref_kartu varchar, kembali_tunai double, void_jual varchar, no_meja int, ip varchar,   id_gudang int, pl_retail text, meja int, st int)');
+       tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl (id_dtl_jual int, id_pj int, id_barang int, qty_jual double, harga_jual double, discprs double, discrp double, dtl_total double, harga_jual_cetak double, user int, dtpesan datetime, ready int default 0)');
+       tx.executeSql('CREATE TABLE IF NOT EXISTS pj_dtl_tmp (id_tmp INTEGER PRIMARY KEY AUTOINCREMENT,id_barang INT NOT NULL UNIQUE, qty INT  NOT NULL,total DOUBLE, harga DOUBLE,nama_barang VARCHAR(20) NOT NULL)');
+       
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['1', 'B00001','AYAM GORENG KALASAN','15000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['2', 'B00002','AYAM OPOR','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['3', 'B00003','AYAM RENDANG','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['4', 'B00004','AYAM SAUCE LADA HITAM','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['5', 'B00005','IKAN BAKAR SAMBAL MATA','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['6', 'B00006','IKAN WOKU BELANGA','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['7', 'B00007','SAPI SEMUR','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['8', 'B00008','SATE LILIT','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['9', 'B00009','SOTO AYAM','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['10', 'B00010','7UP','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['11', 'B00011','A1 SAUCE','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['12', 'B00012','ABC SAOS TOMAT 5LTR','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['13', 'B00013','ABON AYAM','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['14', 'B00014','ABON IKAN','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['15', 'B00015','ABON SAPI','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['16', 'B00016','ADAS MANIS','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['17', 'B00017','ADAS PEDAS','20000']);
+       tx.executeSql('INSERT INTO m_barang VALUES (?,?,?,?)', ['18', 'B00018','ADONAN BAKSO','20000']);
+
+     }, function(error) {
+       //alert('Transaction ERROR: ' + error.message);
+     }, function() {
+       //alert('Populated database OK');
+     });*/
+
+     //tampil();
+     //test();
