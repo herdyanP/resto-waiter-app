@@ -27,7 +27,7 @@
         bottom: 18vh;
       }
     }
-    
+
     @media (max-width: 480px){
       #login-title{
         bottom: 10vh;
@@ -58,6 +58,47 @@
               </div>
             </a>
           </li>
+          <li class="list-group-title">Reports</li>
+          <li>
+            <a href="/report/payment/1/" class="item-link item-content panel-close">
+              <div class="item-media">
+                <i class="f7-icons">bars_chart</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Payment</div>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="/report/sales/1/" class="item-link item-content panel-close">
+              <div class="item-media">
+                <i class="f7-icons">bars_chart</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Sales</div>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="/report/waitress/1/" class="item-link item-content panel-close">
+              <div class="item-media">
+                <i class="f7-icons">bars_chart</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Waitress</div>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="/report/order/1/" class="item-link item-content panel-close">
+              <div class="item-media">
+                <i class="f7-icons">bars_chart</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Avg. Order</div>
+              </div>
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -76,7 +117,7 @@
                       <div class="item-inner">
                         <div class="item-title item-label" style="font-size: 1.2em; line-height: normal; color: white; padding-bottom: 10px;">Username</div>
                         <div class="item-input-wrap" style="background: white; border-radius: 30px; padding-left: 15px; margin-left: -7px;">
-                          <input type="text" id="username" name="username" placeholder="Type your username here" value="admin">
+                          <input type="text" onclick="this.select();" id="username" name="username" placeholder="Type your username here" value="admin">
                         </div>
                       </div>
                     </li>
@@ -84,7 +125,7 @@
                       <div class="item-inner">
                         <div class="item-title item-label" style="font-size: 1.2em; line-height: normal; color: white; padding-bottom: 10px;">Password</div>
                         <div class="item-input-wrap" style="background: white; border-radius: 30px; padding-left: 15px; margin-left: -7px;">
-                          <input type="password" id="pwd" name="pwd" placeholder="Type your password here" onkeydown="" value="admin">
+                          <input type="password" onclick="this.select();" id="pwd" name="pwd" placeholder="Type your password here" onkeydown="" value="admin">
                         </div>
                       </div>
                     </li>
@@ -134,6 +175,7 @@
 
   <script src="js/routes.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/test.js"></script>
   <script type="text/javascript" src="cordova.js"></script>
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
   <!-- <script type="text/javascript" src="js/index.js"></script> -->

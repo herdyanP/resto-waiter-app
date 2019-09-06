@@ -531,3 +531,47 @@ user-select: auto !important;
 .showed {
   display: initial;
 }
+
+@media (max-width: 720px){
+  .box-appear{
+    height: 200px;
+  }
+
+  .input-box{
+    font-size: 6em !important;
+  }
+
+  .table-name{
+    text-align: center;
+    font-size: 24px;
+    display: table;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 480px){
+  .box-appear{
+    height: 100px;
+  }
+
+  .input-box{
+    font-size: 4em !important;
+  }
+
+  .table-name{
+    text-align: center;
+    font-size: 20px;
+    display: table;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 320px){
+  .table-name{
+    text-align: center;
+    font-size: 16px;
+    display: table;
+    margin: 0 auto;
+  }
+}
+

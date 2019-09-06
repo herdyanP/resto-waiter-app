@@ -216,6 +216,39 @@ var routes = [
         },
       }
   },
+  {
+    name: 'report',
+    path: '/report/:type/:id/',
+    template: `
+    <div class="page" data-name="report">
+      <div class="navbar">
+        <div class="navbar-inner sliding">
+          <div class="left">
+            <a href="#" class="link back">
+              <i class="icon icon-back"></i>
+              <span class="ios-only">Back</span>
+            </a>
+          </div>
+          <div class="title"></div>
+        </div>
+      </div>
+      <div class="page-content">
+        <div id="dashreport" class="block">
+        </div>
+      </div>
+    </div>`,
+    // componentUrl: './pages/pesanan.html',
+    on: {
+        pageAfterIn: function test (e, page) {
+          // do something after page gets into the view
+          clearTimeout(refresh_meja);
+          tampilReport(page.route.params.type, page.route.params.id);
+        },
+        pageInit: function (e, page) {
+          // do something when page initialized
+        },
+      }
+  },
 
   // Default route (404 page). MUST BE THE LAST
   {
