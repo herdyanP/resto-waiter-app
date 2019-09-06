@@ -19,7 +19,7 @@
     <div class="panel panel-left panel-cover">
       <div class="block" style="background: #2196f3; color: white; margin: 0; padding: 20px; font-size: 20px">
         <br><strong>MediaPOS</strong>
-        <br>Aplikasi POS Resto
+        <br>POS Application
       </div>
 
       <div class="list no-hairlines no-hairlines-between no-chevron" style="margin: 0;">
@@ -41,7 +41,7 @@
                 <i class="f7-icons">box</i>
               </div>
               <div class="item-inner">
-                <div class="item-title">Inventaris</div>
+                <div class="item-title">Inventory</div>
               </div>
             </a>
 
@@ -63,7 +63,7 @@
                       <i class="f7-icons">box</i>
                     </div>
                     <div class="item-inner">
-                      <div class="item-title">Satuan</div>
+                      <div class="item-title">Units</div>
                     </div>
                   </a>
                 </li>
@@ -73,7 +73,7 @@
                       <i class="f7-icons">box</i>
                     </div>
                     <div class="item-inner">
-                      <div class="item-title">Menu</div>
+                      <div class="item-title">Menus</div>
                     </div>
                   </a>
                 </li>
@@ -83,7 +83,7 @@
                       <i class="f7-icons">box</i>
                     </div>
                     <div class="item-inner">
-                      <div class="item-title">Combo</div>
+                      <div class="item-title">Combos</div>
                     </div>
                   </a>
                 </li>
@@ -97,7 +97,7 @@
                 <i class="f7-icons">document_text</i>
               </div>
               <div class="item-inner">
-                <div class="item-title">Laporan</div>
+                <div class="item-title">Report</div>
               </div>
             </a>
 
@@ -109,7 +109,7 @@
                       <i class="f7-icons">bars_chart</i>
                     </div>
                     <div class="item-inner">
-                      <div class="item-title">Penjualan</div>
+                      <div class="item-title">Sales</div>
                     </div>
                   </a>
                 </li>
@@ -119,7 +119,7 @@
                       <i class="f7-icons">bars_chart</i>
                     </div>
                     <div class="item-inner">
-                      <div class="item-title">Pembelian</div>
+                      <div class="item-title">Expenditures</div>
                     </div>
                   </a>
                 </li>
@@ -192,16 +192,16 @@
             </a>
           </li> -->
           <li class="divider">Account Management</li>
-          <li>
+          <!-- <li>
             <a href="#" class="item-link item-content panel-close" onclick="cekUUID();">
               <div class="item-media">
                 <i class="f7-icons">info_round</i>
               </div>
               <div class="item-inner">
-                <div class="item-title">Cek ID Device</div>
+                <div class="item-title"></div>
               </div>
             </a>
-          </li>
+          </li> -->
           <li>
             <a href="/profil/" class="item-link item-content panel-close">
               <div class="item-media">
@@ -377,7 +377,7 @@
 
           <div class="card card-outline">
             <div class="card-header">
-              <strong>Keranjang</strong>
+              <strong>Cart</strong>
             </div>
 
             <div class="block" style="max-height: 40vh; overflow: scroll;">
@@ -388,14 +388,14 @@
 
           <div class="card card-outline">
             <div class="card-header">
-              <strong>Detail Pembayaran</strong>
+              <strong>Payment Details</strong>
             </div>
 
             <div class="list no-hairlines no-hairlines-between">
               <ul>
                 <li class="item-content item-input inline-label bayar-tunai" style="display: block;">
                   <div class="item-inner">
-                    <div class="item-title item-label" style="color: unset;">Diskon (Rp)</div>
+                    <div class="item-title item-label" style="color: unset;">Discount (Rp)</div>
                     <div class="item-input-wrap">
                       <input type="text" lang="id" id="disk_rp" value="0" onchange="hitungDiskon(this.value); commaNumber(this);" style="text-align: right;">
                       <!-- <input type="text" lang="id" id="dsk_persen" value="0" onclick="this.select();" onchange="diskon(this.value); hitungKembalian(document.getElementById(bayar).value)" style="text-align: right;"> -->
@@ -417,8 +417,8 @@
                     <div class="item-title item-label" style="color: unset;">Metode</div>
                     <div class="item-input-wrap input-dropdown-wrap">
                       <select id="metode" name="" onchange="metode(this.value)">
-                        <option value="1" selected>Tunai</option>
-                        <option value="2">Kartu Kredit</option>
+                        <option value="1" selected>Cash</option>
+                        <option value="2">Credit/Debit Card</option>
                         <option value="3">e-Wallet</option>
                       </select>
                     </div>
@@ -426,7 +426,7 @@
                 </li>
                 <li class="item-content item-input inline-label bayar-tunai" style="display: block;">
                   <div class="item-inner">
-                    <div class="item-title item-label" style="color: unset;">Dibayar</div>
+                    <div class="item-title item-label" style="color: unset;">Amt Paid</div>
                     <div class="item-input-wrap">
                       <input type="number" id="bayar" value="0" onchange="hitungKembalian(this.value); commaNumber(this);" onclick="changeType(this); this.select();" style="text-align: right;">
                     </div>
@@ -436,7 +436,7 @@
                   <div class="item-inner">
                     <div class="item-title" style="width: 100%;">
                       <div class="row">
-                        <div class="col-70">Kembalian</div>
+                        <div class="col-70">Change</div>
                         <div class="col-30" id="kembalian" style="text-align: right;">0</div>
                       </div>
                     </div>
@@ -497,7 +497,7 @@
             </div>
 
             <div class="card-footer">
-              <button class="button button-fill color-green" id="bayarButton" onclick="bayar()">Bayar</button>
+              <button class="button button-fill color-green" id="bayarButton" onclick="bayar()">Finalize Payment</button>
             </div>
           </div>
         </div>
