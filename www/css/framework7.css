@@ -4627,8 +4627,7 @@ html.device-pixel-ratio-3 .ios li:last-child li .item-inner:after {
   margin-left: 0;
 }
 .md .list ul ul {
-  /*padding-left: 56px;*/
-  padding-left: 20px;
+  padding-left: 56px;
 }
 .md .list .item-media {
   padding-top: 8px;
@@ -6243,7 +6242,6 @@ button {
 .md .button.button-active,
 .md .button.tab-link-active {
   background-color: #2196f3;
-  
   color: #fff;
 }
 .md .button.button-fill.active-state,
@@ -7662,8 +7660,7 @@ html.with-modal-dialog .page-content {
   color: #000000;
 }
 .md .dialog {
-  /*width: auto;*/
-  min-width: 280px;
+  width: 280px;
   margin-left: -140px;
   border-radius: 4px;
   color: #757575;
@@ -19572,7 +19569,7 @@ label.item-radio.disabled,
 .ios .row.no-gap .col:nth-last-child(21) ~ .col {
   width: 4.76190476%;
 }
-@media (min-width: 768px) {
+@media (min-width: 500px) {
   .ios .row .tablet-100 {
     width: 100%;
     width: calc((100% - 15px*0) / 1);

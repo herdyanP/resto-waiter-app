@@ -524,3 +524,8 @@ user-select: auto !important;
   /*background-color: #0b76cc !important; */
   background-color: #ff9800 !important; 
 }
+
+.md .dialog {
+  width: calc(90vw - 40px);
+  margin-left: -40vw;
+}

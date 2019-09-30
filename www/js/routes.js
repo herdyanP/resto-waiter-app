@@ -5,6 +5,7 @@ var routes = [
   name: 'home',
   on: {
     pageAfterIn: function(){
+      $('#currentUser').html('Operator: '+ (cpyProf.nama ? cpyProf.nama : cpyProf.client));
       // tampilFood();
       // tampilBvrg();
       // tampilCombo();
