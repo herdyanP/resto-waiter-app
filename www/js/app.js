@@ -1906,7 +1906,8 @@ function register(q){
   })
 
   $.ajax({
-    url: site+'/API/daftar/',
+    // url: site+'/API/daftar/',
+    url: 'https://bprbangli.cloudmnm.com/lightpos/getDaftar.php',
     method: 'POST',
     data: JSON.stringify(temp),
     timeout: 10000
