@@ -241,7 +241,7 @@ function onStoreSuccess(obj){
   cpyProf = obj;
   app.views.main.router.navigate('/');
 
-  tampilMenu();
+  // tampilMenu();
   
   // $.ajax({
   //   url: site+'/API/satuan/'+obj.id_client+'/',
@@ -273,8 +273,12 @@ function onRetSuccess(obj){
     method: 'POST',
     data: JSON.stringify({'user':obj.user, 'pass':obj.pass, 'device':device.uuid})
   }).done(function(result){
+    console.log(result);
     if(result != '0'){
       cpyProf = obj;
+      cpyProf.client = result[0].nama_client;
+      cpyProf.outlet = result[0].nama_outlet;
+      cpyProf.cabang = result[0].nama_cabang;
       console.log('succ');
 
 
@@ -288,17 +292,24 @@ function onRetSuccess(obj){
       // $('#loginRow').css('display', 'none');
       // $('#logoutRow').css('display', 'block');
 
-      $('#currentUser').html('Operator: '+ (obj.nama ? obj.nama : obj.client));
+      // $('#currentUser').html('Operator: '+ (obj.nama ? obj.nama : obj.client));
 
-      setTimeout(function(){
+      if(screen.width < 400){
+        $('#icon_home').css('font-size', '18px');
+        $('#title_home').css('font-size', '14px');
+        $('#currentUser').css('font-size', '12px');
+        $('#currentUser').css('margin-right', '14px');
+      }
+
+      // setTimeout(function(){
         tampilMenu();
         keranjang();
-        // sendPing();
-        // tampilFood();
-        // tampilBvrg();
-        // tampilCombo();
-        // keranjang();
-      }, 3000)
+      //   // sendPing();
+      //   // tampilFood();
+      //   // tampilBvrg();
+      //   // tampilCombo();
+      //   // keranjang();
+      // }, 3000)
     } else {
       // alert('gagal');
       onLogout();
@@ -375,10 +386,11 @@ function tampilMenu(){
 
     var datanya = '';
     for (i = 0; i < result.length; i++){
-      datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+result[i].nama_barang+'</p></div>';
+      datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ' +(screen.width < 400 ? 'font-size: 10px;' : '')+ '">' +result[i].nama_barang+ '</p></div>';
+      // datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: ' +(screen.width < 400 ? '40px' : '50px')+ '; height: ' +(screen.width < 400 ? '40px' : '50px')+ '; border: solid black 1px; border-radius: 20px;"><i style="font-size: ' +(screen.width < 400 ? '30px' : '40px')+ '; line-height: ' +(screen.width < 400 ? '40px' : '50px')+ '; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ' +(screen.width < 400 ? 'font-size: 10px;')+ '">'+result[i].nama_barang+'</p></div>';
     }
 
-    datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
+    if(result.length % 3 != 0)datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
 
     $('#itemlist').html(datanya);
   }).fail(function(a,b,error){
@@ -744,6 +756,26 @@ function hapusSatuan(id, nama){
 
 
 // ========== PROSES UTILITY STARTS HERE ==========
+
+function updateProfil(){
+  var temp = app.form.convertToData("#profil_cred");
+  console.log(temp);
+
+  if(temp.pass1 == temp.pass2){
+    $.ajax({
+      url: site+'/API/profil/'+cpyProf.id_client+'/',
+      method: "POST",
+      data: JSON.stringify(temp)
+    }).done(function(json){
+      if(json){
+        alert("Sukses update profil");
+        app.views.main.router.navigate('/');
+      }
+    })
+  } else {
+    alert("Password baru tidak sama");
+  }
+}
   
 function cetakReceipt(id){
   $.ajax({
@@ -821,8 +853,8 @@ function cetakReceipt(id){
     list += '--------------------------------{br}{left}';
 
     var q = header + subheader + list + sub +  paid + kbl + '{br}' + thanks + eol;
-    console.log(q);
-    // connectToPrinter(q);
+    // console.log(q);
+    connectToPrinter(q);
   })
 }
 
@@ -1878,7 +1910,8 @@ function register(q){
     method: 'POST',
     data: JSON.stringify(temp),
     timeout: 10000
-  }).always(function(result){
+  }).always(function(json){
+    var result = JSON.parse(json);
     $('#register_button').removeClass('disabled');
 
     // if(result.responseText.slice(0, 1) == '0'){
@@ -2042,6 +2075,13 @@ function ubahKategori(a){
 
 function resetPass(){
   alert('Feature under development');
+}
+
+function debug(){
+  alert('width: '+$(window).width());
+  alert('height: '+$(window).height());
+  alert('screen w: '+screen.width);
+  alert('screen h: '+screen.height);
 }
 
 /*

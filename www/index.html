@@ -24,7 +24,7 @@
 
       <div class="list no-hairlines no-hairlines-between no-chevron" style="margin: 0;">
         <ul>
-          <li class="divider" style="margin-top: 0;"><strong>Store Management</strong></li>
+          <li class="divider" style="margin-top: 0;"><strong>Manajemen Toko</strong></li>
           <!-- <li>
             <a href="#" class="item-link item-content panel-close" onclick="tampilFood();">
               <div class="item-media">
@@ -41,7 +41,7 @@
                 <i class="f7-icons">box</i>
               </div>
               <div class="item-inner">
-                <div class="item-title">Inventory</div>
+                <div class="item-title">Master</div>
               </div>
             </a>
 
@@ -63,7 +63,7 @@
                       <i class="f7-icons">box</i>
                     </div>
                     <div class="item-inner">
-                      <div class="item-title">Units</div>
+                      <div class="item-title">Satuan</div>
                     </div>
                   </a>
                 </li>
@@ -73,11 +73,11 @@
                       <i class="f7-icons">box</i>
                     </div>
                     <div class="item-inner">
-                      <div class="item-title">Menus</div>
+                      <div class="item-title">Barang</div>
                     </div>
                   </a>
                 </li>
-                <li>
+                <!-- <li>
                   <a href="#" class="item-content item-link panel-close" onclick="onConstruction();">
                     <div class="item-media">
                       <i class="f7-icons">box</i>
@@ -86,7 +86,7 @@
                       <div class="item-title">Combos</div>
                     </div>
                   </a>
-                </li>
+                </li> -->
               </ul>
             </div>
           </li>
@@ -97,7 +97,7 @@
                 <i class="f7-icons">document_text</i>
               </div>
               <div class="item-inner">
-                <div class="item-title">Report</div>
+                <div class="item-title">Laporan</div>
               </div>
             </a>
 
@@ -109,7 +109,7 @@
                       <i class="f7-icons">bars_chart</i>
                     </div>
                     <div class="item-inner">
-                      <div class="item-title">Sales</div>
+                      <div class="item-title">Penjualan</div>
                     </div>
                   </a>
                 </li>
@@ -119,7 +119,7 @@
                       <i class="f7-icons">bars_chart</i>
                     </div>
                     <div class="item-inner">
-                      <div class="item-title">Expenditures</div>
+                      <div class="item-title">Pembelian</div>
                     </div>
                   </a>
                 </li>
@@ -191,7 +191,7 @@
               </div>
             </a>
           </li> -->
-          <li class="divider">Account Management</li>
+          <li class="divider">Manajemen Akun</li>
           <!-- <li>
             <a href="#" class="item-link item-content panel-close" onclick="cekUUID();">
               <div class="item-media">
@@ -208,7 +208,7 @@
                 <i class="f7-icons">person_round</i>
               </div>
               <div class="item-inner">
-                <div class="item-title">Profile</div>
+                <div class="item-title">Profil</div>
               </div>
             </a>
           </li>
@@ -232,6 +232,16 @@
               </div>
             </a>
           </li>
+          <li>
+            <a href="#" class="item-link item-content panel-close" onclick="debug();">
+              <div class="item-media">
+                <i class="f7-icons">info_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Debug</div>
+              </div>
+            </a>
+          </li>
         </ul>
       </div>
 
@@ -244,12 +254,12 @@
           <div class="navbar-inner">
             <div class="left">
               <a href="#" class="link icon-only panel-open" data-panel="left">
-                <i class="f7-icons">menu</i>
+                <i class="f7-icons" id="icon_home">menu</i>
               </a>
             </div>
-            <div class="title">MediaPOS</div>
+            <div class="title" id="title_home">MediaPOS</div>
             <div class="right">
-              <p id="currentUser" style="font-size: 14px; margin-right: 20px"></p>
+              <p id="currentUser" style="font-size: 14px; margin-right: 18px;"></p>
               <a class="link icon-only searchbar-enable" data-searchbar=".searchbar"><i class="icon material-icons md-only">search</i></a>
             </div>
             <form class="searchbar searchbar-expandable">
@@ -296,10 +306,10 @@
                   <div class="item-title item-label"></div>
                   <div class="item-input-wrap input-dropdown-wrap">
                     <select name="kategori" id="kategori" onchange="tampilMenu();">
-                      <option value="0">All Menu</option>
-                      <option value="1">Foods</option>
-                      <option value="2">Beverages</option>
-                      <option value="3">Others</option>
+                      <option value="0">Semua menu</option>
+                      <option value="1">Makanan</option>
+                      <option value="2">Minuman</option>
+                      <option value="3">Lainnya</option>
                     </select>
                   </div>
                 </div>
@@ -378,7 +388,7 @@
 
           <div class="card card-outline">
             <div class="card-header">
-              <strong>Cart</strong>
+              <strong>Keranjang</strong>
             </div>
 
             <div class="block" style="max-height: 40vh; overflow: scroll;">
@@ -389,14 +399,14 @@
 
           <div class="card card-outline">
             <div class="card-header">
-              <strong>Payment Details</strong>
+              <strong>Detil Pembayaran</strong>
             </div>
 
             <div class="list no-hairlines no-hairlines-between">
               <ul>
                 <li class="item-content item-input inline-label bayar-tunai" style="display: block;">
                   <div class="item-inner">
-                    <div class="item-title item-label" style="color: unset;">Discount (Rp)</div>
+                    <div class="item-title item-label" style="color: unset;">Diskon (Rp)</div>
                     <div class="item-input-wrap">
                       <input type="text" lang="id" id="disk_rp" value="0" onchange="hitungDiskon(this.value); commaNumber(this);" style="text-align: right;">
                       <!-- <input type="text" lang="id" id="dsk_persen" value="0" onclick="this.select();" onchange="diskon(this.value); hitungKembalian(document.getElementById(bayar).value)" style="text-align: right;"> -->
@@ -427,7 +437,7 @@
                 </li>
                 <li class="item-content item-input inline-label bayar-tunai" style="display: block;">
                   <div class="item-inner">
-                    <div class="item-title item-label" style="color: unset;">Amt Paid</div>
+                    <div class="item-title item-label" style="color: unset;">Terbayar</div>
                     <div class="item-input-wrap">
                       <input type="number" id="bayar" value="0" onchange="hitungKembalian(this.value); commaNumber(this);" onclick="changeType(this); this.select();" style="text-align: right;">
                     </div>
@@ -437,7 +447,7 @@
                   <div class="item-inner">
                     <div class="item-title" style="width: 100%;">
                       <div class="row">
-                        <div class="col-70">Change</div>
+                        <div class="col-70">Kembalian</div>
                         <div class="col-30" id="kembalian" style="text-align: right;">0</div>
                       </div>
                     </div>
@@ -446,7 +456,7 @@
                 <div class="bayar-card" style="display: none;">
                   <li class="item-content item-input inline-label">
                     <div class="item-inner">
-                      <div class="item-title item-label" style="color: unset;">Card Number</div>
+                      <div class="item-title item-label" style="color: unset;">No. CC</div>
                       <div class="item-input-wrap">
                         <input type="text" id="nkartu" value="-" style="text-align: right;">
                       </div>
@@ -498,7 +508,7 @@
             </div>
 
             <div class="card-footer">
-              <button class="button button-fill color-green" id="bayarButton" onclick="bayar()">Finalize Payment</button>
+              <button class="button button-fill color-green" id="bayarButton" onclick="bayar()">Bayar</button>
             </div>
           </div>
         </div>

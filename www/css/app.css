@@ -529,3 +529,39 @@ user-select: auto !important;
   width: calc(90vw - 40px);
   margin-left: -40vw;
 }
+
+/*@media (max-width: 720px)  {
+  .variasi {
+    font-size: 12px;
+  }
+}*/
+
+/*.md .inline-labels .item-label,
+.md .inline-label .item-label,
+.md .inline-labels .item-floating-label,
+.md .inline-label .item-floating-label {
+  font-size: 12px;
+  width: 30%;
+  line-height: 1.5;
+  -webkit-align-self: flex-start;
+  -ms-flex-item-align: start;
+  align-self: flex-start;
+  padding-top: 7px;
+}
+
+}
+.md .list input[type="text"],
+.md .list input[type="password"],
+.md .list input[type="search"],
+.md .list input[type="email"],
+.md .list input[type="tel"],
+.md .list input[type="url"],
+.md .list input[type="date"],
+.md .list input[type="datetime-local"],
+.md .list input[type="time"],
+.md .list input[type="number"],
+.md .list select {
+  height: 36px;
+  color: #212121;
+  font-size: 12px;
+}*/
