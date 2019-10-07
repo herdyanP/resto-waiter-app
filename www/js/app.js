@@ -398,6 +398,101 @@ function tampilMenu(){
   })
 }
 
+function ubahAmount(id, hrg){
+  // console.log(id);
+  app.dialog.create({
+    title: 'Konfirmasi',
+    closeByBackdropClick: true,
+    content: `
+      <div class="list no-hairlines no-hairlines-between">
+        <ul>
+          <li class="item-content item-input">
+            <div class="item-inner">
+              <div class="item-input-wrap">
+                <input type="number" name="edit_amt" id="edit_amt" oninput="comma(this)" style="text-align: right;" />
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>`,
+    buttons: [
+    {
+      text: 'Batal',
+      onClick: function(dialog, e){
+        dialog.close();
+      }
+    },
+    {
+      text: 'Simpan',
+      onClick: function(dialog, e){
+        var v = $('#edit_amt').val();
+
+        $.ajax({
+          url: site+'/API/update_penj_dtl_tmp.php?id_barang='+id+'&harga='+hrg+'&id_login='+cpyProf.id_outlet+'&qty='+v
+        }).done(function(){
+          app.toast.create({
+            text: "Sukses Ubah",
+            closeTimeout: 3000,
+            closeButton: true
+          }).open();
+
+          keranjang();
+        })
+      }
+    }]
+  }).open();
+}
+
+function searched(e, q){
+  if ( (window.event ? event.keyCode : e.which) == 13) { 
+    cariItem(q);
+  }
+}
+
+function cariItem(q){
+  var que = {'cari': q};
+  var datanya = "";
+
+  $.ajax({
+    // https://demo.medianusamandiri.com/lightpos/API/json_cari_barang.php?id_gudang=20&nama_barang=es
+    url: site+'/API/json_cari_barang.php?id_gudang='+cpyProf.id_outlet+'&nama_barang='+q,
+    method: 'GET',
+  }).done(function(result){
+    var json = JSON.parse(result.slice(1, result.length-1));
+    var item = json.length / 13;
+    var itemArray = [];
+    var step = 0;
+    var c = 0;
+
+    while(c < item){
+      console.log(json[step+1].id_barang);
+      console.log(json[step+10].harga);
+      console.log(json[step+2].nama_barang);
+      var temp = {
+        id_barang : json[step+1].id_barang,
+        harga : json[step+10].harga,
+        nama_barang : json[step+2].nama_barang
+      };
+
+      itemArray.push(temp);
+      step = step + 13;
+      c++;
+    }
+
+    for (i = 0; i < itemArray.length; i++){
+
+      datanya += '<div onclick="simpan('+itemArray[i].id_barang+', 1,'+itemArray[i].harga.split('-')[0]+',\''+itemArray[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+itemArray[i].nama_barang+'</p></div>';
+
+    }
+
+    datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
+
+    $('#itemlist').html(datanya);
+  }).fail(function(a,b,error){
+    console.log(error);
+  })
+}
+
 function simpan(id, qty, harga, nama){
   var temp = {
     'id_barang' : id,
@@ -756,26 +851,6 @@ function hapusSatuan(id, nama){
 
 
 // ========== PROSES UTILITY STARTS HERE ==========
-
-function updateProfil(){
-  var temp = app.form.convertToData("#profil_cred");
-  console.log(temp);
-
-  if(temp.pass1 == temp.pass2){
-    $.ajax({
-      url: site+'/API/profil/'+cpyProf.id_client+'/',
-      method: "POST",
-      data: JSON.stringify(temp)
-    }).done(function(json){
-      if(json){
-        alert("Sukses update profil");
-        app.views.main.router.navigate('/');
-      }
-    })
-  } else {
-    alert("Password baru tidak sama");
-  }
-}
   
 function cetakReceipt(id){
   $.ajax({
@@ -1034,7 +1109,84 @@ function metode(a){
   }
 }
 
+function debug(){
+  alert('width: '+$(window).width());
+  alert('height: '+$(window).height());
+  alert('screen w: '+screen.width);
+  alert('screen h: '+screen.height);
+}
+
 // ========== PROSES UTILITY ENDS HERE ==========
+
+
+
+// ========== ACCOUNT RELATED PROCESS STARTS HERE ==========
+
+function register(q){
+  $('#register_button').addClass('disabled');
+  var temp = {
+    'device' : device.uuid
+  };
+
+  $.each($(q).serializeArray(), function(){
+    temp[this.name] = this.value;
+  })
+
+  $.ajax({
+    // url: site+'/API/daftar/',
+    url: 'https://bprbangli.cloudmnm.com/lightpos/getDaftar.php',
+    method: 'POST',
+    data: JSON.stringify(temp),
+    statusCode: {
+      201: function(result, textStatus, jqXHR){
+        if(result.status == 1){
+          app.dialog.alert('Email konfirmasi berisi link untuk aktivasi akun akan segera dikirim ke email anda. Harap lakukan aktivasi terlebih dahulu sebelum melakukan login.', 'Register', function(){
+            $('#register_cred').trigger('reset');
+            app.views.main.router.navigate('/login/');
+          });
+        } else {
+          app.dialog.alert('Email atau Username sudah terdaftar.', 'Register', function(){
+          });
+        }
+
+      }
+    },
+    timeout: 30 * 1000
+  }).fail(function(jqXHR, textStatus, errorThrown){
+    console.log(jqXHR);
+    console.log(textStatus);
+    console.log(errorThrown);
+  }).always(function(xhr, textStatus){
+    // console.log(textStatus);
+    $('#register_button').removeClass('disabled');
+  })      
+}
+
+function updateProfil(){
+  var temp = app.form.convertToData("#profil_cred");
+  console.log(temp);
+
+  if(temp.pass1 == temp.pass2){
+    $.ajax({
+      url: site+'/API/profil/'+cpyProf.id_client+'/',
+      method: "POST",
+      data: JSON.stringify(temp)
+    }).done(function(json){
+      if(json){
+        alert("Sukses update profil");
+        app.views.main.router.navigate('/');
+      }
+    })
+  } else {
+    alert("Password baru tidak sama");
+  }
+}
+
+function resetPass(){
+  
+}
+
+// ========== ACCOUNT RELATED PROCESS ENDS HERE ==========
 
 /*
   $.ajax({
@@ -1207,7 +1359,7 @@ function metode(a){
 }*/
 
 function printBayar(q) {
-  $.ajax({
+  /*$.ajax({
     url: site+"/API/view_penjualan.php?id_client="+cpyProf.id_outlet
   }).done(function(result){
     var json = JSON.parse(result.slice(1, result.length-1));
@@ -1308,7 +1460,7 @@ function printBayar(q) {
           )
       };
       image.src = './img/mediapos_supermini_white.bmp';
-  })
+  })*/
 }
 
 // function emptyDB(){
@@ -1895,52 +2047,6 @@ function uploadStatus(kode, jenis_ubah){
   })
 }
 
-function register(q){
-  $('#register_button').addClass('disabled');
-  var temp = {
-    'device' : device.uuid
-  };
-
-  $.each($(q).serializeArray(), function(){
-    temp[this.name] = this.value;
-  })
-
-  $.ajax({
-    // url: site+'/API/daftar/',
-    url: 'https://bprbangli.cloudmnm.com/lightpos/getDaftar.php',
-    method: 'POST',
-    data: JSON.stringify(temp),
-    timeout: 10000
-  }).always(function(json){
-    var result = JSON.parse(json);
-    $('#register_button').removeClass('disabled');
-
-    // if(result.responseText.slice(0, 1) == '0'){
-    //   app.dialog.alert('Email konfirmasi berisi link untuk aktivasi akun akan segera dikirim ke email anda. Harap lakukan aktivasi terlebih dahulu sebelum melakukan login.', 'Register', function(){
-    //     $('#register_cred').trigger('reset');
-    //     app.views.main.router.navigate('/login/');
-    //     $('#userlogin').val(temp.user);
-    //     $('#passlogin').val(temp.pass);
-    //   })
-    // } else {
-    //   alert('Email / Username Sudah Terdaftar');
-    // }
-
-    if(result.status == '1'){
-      app.dialog.alert('Email konfirmasi berisi link untuk aktivasi akun akan segera dikirim ke email anda. Harap lakukan aktivasi terlebih dahulu sebelum melakukan login.', 'Register', function(){
-        $('#register_cred').trigger('reset');
-        app.views.main.router.navigate('/login/');
-        $('#userlogin').val(temp.user);
-        $('#passlogin').val(temp.pass);
-      })
-    } else {
-      alert('Email / Username Sudah Terdaftar');
-    }
-  })
-
-  // console.log(temp);      
-}
-
 function diskon(a){
   if(a.length <= 3){
     diskonAmt = (parseFloat(a) / 100);
@@ -1960,129 +2066,6 @@ function diskon(a){
   // var fin = parseFloat(sub - sub * dis).toLocaleString('id-ID');
   
   
-}
-
-function ubahAmount(id, hrg){
-  // console.log(id);
-  app.dialog.create({
-    title: 'Konfirmasi',
-    closeByBackdropClick: true,
-    content: '<div class="list no-hairlines no-hairlines-between">\
-    <ul>\
-    <li class="item-content item-input">\
-    <div class="item-inner">\
-    <div class="item-input-wrap">\
-    <input type="number" name="edit_amt" id="edit_amt" oninput="comma(this)" style="text-align: right;" />\
-    </div>\
-    </div>\
-    </li>\
-    </ul>\
-    </div>',
-    buttons: [
-    {
-      text: 'Batal',
-      onClick: function(dialog, e){
-        dialog.close();
-      }
-    },
-    {
-      text: 'Simpan',
-      onClick: function(dialog, e){
-        var v = $('#edit_amt').val();
-
-        $.ajax({
-          url: site+'/API/update_penj_dtl_tmp.php?id_barang='+id+'&harga='+hrg+'&id_login='+cpyProf.id_outlet+'&qty='+v
-        }).done(function(){
-          app.toast.create({
-            text: "Sukses Ubah",
-            closeTimeout: 3000,
-            closeButton: true
-          }).open();
-
-          keranjang();
-        })
-        // db.transaction(function(t){
-        //   t.executeSql('UPDATE pj_dtl_tmp SET qty = ? WHERE id_tmp = ?', [v, id], 
-        //     function(){
-        //       keranjang('a','b','c','d');
-        //       dialog.close();
-        //     })
-        // })
-      }
-    }]
-  }).open();
-}
-
-function searched(e, q){
-  if ( (window.event ? event.keyCode : e.which) == 13) { 
-    cariItem(q);
-  }
-}
-
-function cariItem(q){
-  var que = {'cari': q};
-  var datanya = "";
-
-  $.ajax({
-    // https://demo.medianusamandiri.com/lightpos/API/json_cari_barang.php?id_gudang=20&nama_barang=es
-    url: site+'/API/json_cari_barang.php?id_gudang='+cpyProf.id_outlet+'&nama_barang='+q,
-    method: 'GET',
-  }).done(function(result){
-    var json = JSON.parse(result.slice(1, result.length-1));
-    var item = json.length / 13;
-    var itemArray = [];
-    var step = 0;
-    var c = 0;
-
-    // console.log(json[step+1].id_barang);
-    // console.log(json[step+2].nama_barang);
-    // console.log(json[step+10].harga);
-
-    // console.log(item);
-
-    while(c < item){
-      console.log(json[step+1].id_barang);
-      console.log(json[step+10].harga);
-      console.log(json[step+2].nama_barang);
-      var temp = {
-        id_barang : json[step+1].id_barang,
-        harga : json[step+10].harga,
-        nama_barang : json[step+2].nama_barang
-      };
-
-      itemArray.push(temp);
-      step = step + 13;
-      c++;
-    }
-
-    for (i = 0; i < itemArray.length; i++){
-
-      datanya += '<div onclick="simpan('+itemArray[i].id_barang+', 1,'+itemArray[i].harga.split('-')[0]+',\''+itemArray[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+itemArray[i].nama_barang+'</p></div>';
-
-    }
-
-    datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
-
-    $('#itemlist').html(datanya);
-  }).fail(function(a,b,error){
-    console.log(error);
-  })
-}
-
-
-function ubahKategori(a){
-  
-}
-
-function resetPass(){
-  alert('Feature under development');
-}
-
-function debug(){
-  alert('width: '+$(window).width());
-  alert('height: '+$(window).height());
-  alert('screen w: '+screen.width);
-  alert('screen h: '+screen.height);
 }
 
 /*
