@@ -376,7 +376,7 @@ function tampilMenu(){
     url: site+'/API/menu2/'+cpyProf.id_outlet+'/'+kat+'/',
     method: 'GET'
   }).done(function(result){
-
+    console.log(result);
     var len, i;
     /*if(result.length > 18) {
       len = 18;
@@ -659,17 +659,20 @@ function addBarang(q){
   $.ajax({
     url: site+'/API/barang/'+cpyProf.id_client+'/',
     method: 'POST',
-    data: JSON.stringify(temp)
-  }).done(function(){
-    app.toast.create({
-      text: "Sukses Tambah Barang",
-      closeTimeout: 3000,
-      closeButton: true
-    }).open();
+    data: JSON.stringify(temp),
+    statusCode: {
+      201: function(data, text, xhr){
+        app.toast.create({
+          text: "Sukses Tambah Barang",
+          closeTimeout: 3000,
+          closeButton: true
+        }).open();
 
-    $(q).trigger('reset');
-    listBarang();
-    cekStatus();
+        $(q).trigger('reset');
+        listBarang();
+        // cekStatus();
+      }
+    }
   })
 }
 
@@ -789,7 +792,7 @@ function addSatuan(q){
     $(q).trigger('reset');
     listSatuan();
 
-    $.ajax({
+    /*$.ajax({
       url: site+'/API/menu/'+cpyProf.id_outlet+'/',
       method: 'GET'
     }).done(function(result){
@@ -798,7 +801,7 @@ function addSatuan(q){
           app.views.main.router.navigate('/tambah/');
         })
       }
-    })
+    })*/
   })
 }
 
@@ -1784,7 +1787,7 @@ function cariSesuatu(a, b, c){
 }
 
 function cariLaporan(){
-  /*var a = 2;
+  var a = 2;
   var b = document.getElementById('tgl_awal');
   var c = document.getElementById('tgl_akhir');
   var jenis;
@@ -1836,7 +1839,7 @@ function cariLaporan(){
 
   }).fail(function(a,b,error){
     // console.log(error);
-  })*/
+  })
 }
 
 function sendPing(){
