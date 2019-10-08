@@ -97,11 +97,10 @@ var routes = [
 {
   path: '/penjualan/',
   componentUrl: './pages/penjualan.html',
-  on: {
-    pageInit: function(){
-      listPenjualan();
-    }
-  }
+},
+{
+  path: '/penjualan_item/',
+  componentUrl: './pages/penjualan_item.html',
 },
 {
   path: '/register/',

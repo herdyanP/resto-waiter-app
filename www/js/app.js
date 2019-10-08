@@ -1786,33 +1786,37 @@ function cariSesuatu(a, b, c){
   })*/
 }
 
-function cariLaporan(){
-  var a = 2;
+function laporanPenjualan(){
   var b = document.getElementById('tgl_awal');
   var c = document.getElementById('tgl_akhir');
   var jenis;
-  var datanya =   '<table>\
-  <thead>\
-  <tr>\
-  <th class="label-cell">No. Penjualan</th>\
-  <th>Tanggal Penjualan</th>\
-  <th class="numeric-cell">Total Penjualan</th>\
-  <th>Jenis Pembayaran</th>\
-  </tr>\
-  </thead>\
-  <tbody>';
-  
+  var datanya = `
+    <table>
+      <thead>
+        <tr>
+          <th class="label-cell">No. Penjualan</th>
+          <th>Tanggal Penjualan</th>
+          <th class="numeric-cell">Total Penjualan</th>
+          <th>Jenis Pembayaran</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
   var data = {
-    'jenis_cari' : a,
+    'act' : 'penjualan',
     'tgl' : b.value,
     'tglsd' : c.value
   }
 
+  console.log(data);
+
   $.ajax({
-    url: site+'/API/cari/',
+    url: site+'/API/laporan/' +cpyProf.id_outlet+ '/',
     method: 'POST',
     data: JSON.stringify(data)
   }).done(function(result){
+    console.log(result);
     for(var i = 0; i < result.length; i++){
       switch (result[i].jenis_bayar){
         case '1':
@@ -1835,6 +1839,48 @@ function cariLaporan(){
 
     datanya += '</tbody></table>';
     $('#table_penjualan').html(datanya);
+
+
+  }).fail(function(a,b,error){
+    // console.log(error);
+  })
+}
+
+function laporanPerItem(){
+  var b = document.getElementById('tgl_awal');
+  var c = document.getElementById('tgl_akhir');
+  var jenis;
+  var datanya = `
+    <table>
+      <thead>
+        <tr>
+          <th class="label-cell">Nama Item</th>
+          <th class="numeric-cell">Jumlah Penjualan dalam Periode</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  var data = {
+    'act' : 'item',
+    'tgl' : b.value,
+    'tglsd' : c.value
+  }
+
+  console.log(data);
+
+  $.ajax({
+    url: site+'/API/laporan/' +cpyProf.id_outlet+ '/',
+    method: 'POST',
+    data: JSON.stringify(data)
+  }).done(function(result){
+    console.log(result);
+    for(var i = 0; i < result.length; i++){
+      datanya += '<tr><td class="label-cell">'+result[i].nama_barang+'</td><td class="numeric-cell">'+parseInt(result[i].jml).toLocaleString('id-ID')+'</td>';
+    }
+
+    datanya += '</tbody></table>';
+    $('#table_item').html(datanya);
 
 
   }).fail(function(a,b,error){
