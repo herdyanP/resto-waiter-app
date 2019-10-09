@@ -601,6 +601,8 @@ function bayar(){
     diskon : diskon,
     kembali : kembali,
     id_login : cpyProf.id_outlet,
+    id_client : cpyProf.id_client,
+    id_cabang : cpyProf.id_cabang,
     jenis_bayar : jenis,
     nomor_kartu : nomor_kartu,
     tgl : tgltime

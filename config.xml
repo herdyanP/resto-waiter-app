@@ -23,6 +23,10 @@
         <icon density="xhdpi" src="res/icon/android/mipmap-xhdpi/ic_launcher.png" />
         <icon density="xxhdpi" src="res/icon/android/mipmap-xxhdpi/ic_launcher.png" />
         <icon density="xxxhdpi" src="res/icon/android/mipmap-xxxhdpi/ic_launcher.png" />
+        <splash density="ldpi" src="res/screen/android/mediapos-ldpi-portrait.png" />
+        <splash density="mdpi" src="res/screen/android/mediapos-mdpi-portrait.png" />
+        <splash density="hdpi" src="res/screen/android/mediapos-hdpi-portrait.png" />
+        <splash density="xhdpi" src="res/screen/android/mediapos-xhdpi-portrait.png" />
         <preference name="android-minSdkVersion" value="26" />
         <preference name="android-targetSdkVersion" value="26" />
         <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application">
@@ -47,6 +51,7 @@
     <plugin name="cordova-plugin-app-version" spec="^0.1.9" />
     <plugin name="cordova-sqlite-storage" spec="^3.2.1" />
     <plugin name="cordova-plugin-datecs-printer" spec="^0.9.0" />
+    <plugin name="cordova-plugin-splashscreen" spec="^5.0.3" />
     <engine name="android" spec="^7.1.4" />
     <engine name="browser" spec="^5.0.4" />
 </widget>
