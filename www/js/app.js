@@ -647,6 +647,13 @@ function bayar(){
   }
 }
 
+function unduhLaporan(){
+  var tgl = $('#tgl_awal').val();
+  var tglsd = $('#tgl_akhir').val();
+  // alert('sss');
+  window.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ 'id=' +cpyProf.id_client, '_self');
+}
+
 // ========== PROSES UTAMA ENDS HERE ==========
 
 
