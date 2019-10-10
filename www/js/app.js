@@ -53,6 +53,14 @@ var modalBox = app.dialog.create({
   }]
 });
 
+Highcharts.setOptions({
+  lang: {
+    months: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
+    shortMonths: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
+    weekdays: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]
+  }
+})
+
 document.addEventListener('deviceready', function() {
   adid = {
     // banner: 'ca-app-pub-3940256099942544/6300978111', /*test ID*/
@@ -651,7 +659,7 @@ function unduhLaporan(){
   var tgl = $('#tgl_awal').val();
   var tglsd = $('#tgl_akhir').val();
   // alert('sss');
-  window.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ 'id=' +cpyProf.id_client, '_self');
+  window.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client, '_self');
 }
 
 // ========== PROSES UTAMA ENDS HERE ==========
@@ -1821,7 +1829,7 @@ function laporanPenjualan(){
   console.log(data);
 
   $.ajax({
-    url: site+'/API/laporan/' +cpyProf.id_outlet+ '/',
+    url: site+'/API/laporan/' +cpyProf.id_client+ '/',
     method: 'POST',
     data: JSON.stringify(data)
   }).done(function(result){
@@ -1859,7 +1867,68 @@ function laporanPerItem(){
   var b = document.getElementById('tgl_awal');
   var c = document.getElementById('tgl_akhir');
   var jenis;
-  var datanya = `
+  var data = {
+    'act' : 'item',
+    'tgl' : b.value,
+    'tglsd' : c.value
+  }
+
+  var fav = Highcharts.chart('container1',{
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false
+    },
+    title: {
+        text: 'Penjualan Favorit'
+    },
+    tooltip: {
+      pointFormat: '{series.name}: <b>{point.y}</b>'
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: false
+            },
+            showInLegend: true
+        }
+    },
+    series: [{
+        type: 'pie',
+        name: 'Jumlah'
+    }]
+  })
+
+  app.request({
+    url: site+'/API/laporan/' +cpyProf.id_outlet+ '/',
+    method: 'POST',
+    data: JSON.stringify(data),
+    success: function(json){
+      if(json){
+        var result = JSON.parse(json);
+        for(var i = 0; i < result.length; i++){
+          console.log(result[i]);
+          fav.series[0].addPoint({
+            name: result[i].nama_barang,
+            y: parseInt(result[i].jml),
+            id: result[i].id_barang
+          }, false);
+        }
+      } else {
+        fav.series[0].addPoint({
+          name: 'kosong',
+          y: 1,
+          id: '1'
+        }, false);
+      }
+
+      fav.redraw();
+    }
+  })
+
+  /*var datanya = `
     <table>
       <thead>
         <tr>
@@ -1869,14 +1938,6 @@ function laporanPerItem(){
       </thead>
       <tbody>
   `;
-
-  var data = {
-    'act' : 'item',
-    'tgl' : b.value,
-    'tglsd' : c.value
-  }
-
-  console.log(data);
 
   $.ajax({
     url: site+'/API/laporan/' +cpyProf.id_outlet+ '/',
@@ -1894,7 +1955,7 @@ function laporanPerItem(){
 
   }).fail(function(a,b,error){
     // console.log(error);
-  })
+  })*/
 }
 
 function sendPing(){
