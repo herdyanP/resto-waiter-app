@@ -95,6 +95,18 @@ var routes = [
   }
 },
 {
+  path: '/dashboard/',
+  componentUrl: './pages/dashboard.html',
+  on: {
+    pageAfterIn: function(){
+      var dt = new Date();
+      dashboardFavorit();
+      dashboardHarian(dt.getFullYear(), dt.getMonth());
+      console.log('tahun: '+dt.getFullYear(), 'bulan: '+(dt.getMonth() + 1));
+    }
+  }
+},
+{
   path: '/penjualan/',
   componentUrl: './pages/penjualan.html',
 },

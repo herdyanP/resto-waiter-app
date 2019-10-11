@@ -25,6 +25,8 @@ var diskonAmt = 0; totalSub = 0; totalGrand = 0; kembalian = 0;
 var pingTimeout = 0;
 var appVer = 0;
 var site = 'https://demo.medianusamandiri.com/lightpos';
+var trueHeight = window.innerHeight
+var moddedHeight = Math.floor(trueHeight / 100) * 100;
 var modalBox = app.dialog.create({
   title: 'Modal Awal',
   closeByBackdropClick: false,
@@ -655,6 +657,70 @@ function bayar(){
   }
 }
 
+// ========== PROSES UTAMA ENDS HERE ==========
+
+// ========== LAPORAN & DASHBOARD STARTS HERE =========
+
+function laporanPenjualan(){
+  var b = document.getElementById('tgl_awal');
+  var c = document.getElementById('tgl_akhir');
+  var jenis;
+  var datanya = `
+    <table>
+      <thead>
+        <tr>
+          <th class="label-cell">No. Penjualan</th>
+          <th>Tanggal Penjualan</th>
+          <th class="numeric-cell">Total Penjualan</th>
+          <th>Jenis Pembayaran</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  var data = {
+    'act' : 'penjualan',
+    'tgl' : b.value,
+    'tglsd' : c.value
+  }
+
+  console.log(data);
+
+  $.ajax({
+    url: site+'/API/laporan/' +cpyProf.id_client+ '/',
+    method: 'POST',
+    data: JSON.stringify(data)
+  }).done(function(result){
+    console.log(result);
+    for(var i = 0; i < result.length; i++){
+      switch (result[i].jenis_bayar){
+        case '1':
+        jenis = 'Tunai';
+        break;
+        case '2':
+        jenis = 'Kartu Kredit';
+        break;
+        case '3':
+        jenis = 'E-Money';
+        break;
+      }
+
+      if(i == 0){
+        datanya += '<tr><td class="label-cell">'+result[i].no_penjualan+'</td><td>'+result[i].tgl_penjualan+'</td><td class="numeric-cell">'+parseInt(result[i].total_jual).toLocaleString('id-ID')+'</td><td>'+jenis+'</td></tr>';
+      }else if(result[i].no_penjualan != result[i-1].no_penjualan){
+        datanya += '<tr><td class="label-cell">'+result[i].no_penjualan+'</td><td>'+result[i].tgl_penjualan+'</td><td class="numeric-cell">'+parseInt(result[i].total_jual).toLocaleString('id-ID')+'</td><td>'+jenis+'</td></tr>';
+      }
+    }
+
+    datanya += '</tbody></table>';
+    $('#table_penjualan').html(datanya);
+
+
+  }).fail(function(a,b,error){
+    // console.log(error);
+  })
+}
+
 function unduhLaporan(){
   var tgl = $('#tgl_awal').val();
   var tglsd = $('#tgl_akhir').val();
@@ -662,7 +728,263 @@ function unduhLaporan(){
   window.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client, '_self');
 }
 
-// ========== PROSES UTAMA ENDS HERE ==========
+function laporanPerItem(){
+  var b = document.getElementById('tgl_awal');
+  var c = document.getElementById('tgl_akhir');
+
+  var datanya = `
+    <table>
+      <thead>
+        <tr>
+          <th class="label-cell">Nama Barang</th>
+          <th class="numeric-cell">Jumlah Terjual</th>
+          <th class="numeric-cell">Total Penjualan</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  var data = {
+    'act' : 'item',
+    'tgl' : b.value,
+    'tglsd' : c.value
+  }
+
+  app.request({
+    url: site+'/API/laporan/' +cpyProf.id_client+ '/',
+    method: 'POST',
+    data: JSON.stringify(data),
+    success: function(json){
+      if(json){
+        var result = JSON.parse(json);
+        for(var i = 0; i < result.length; i++){
+          datanya += `<tr>
+                        <td class="label-cell">` +result[i].nama_barang+ `</td>
+                        <td class="numeric-cell">` +result[i].jml+ `</td>
+                        <td class="numeric-cell">` +parseInt(result[i].total).toLocaleString('id-ID')+ `</td>
+                      </tr>`;
+        }
+      } else {
+        app.toast.create({text: 'Tidak ada data yang bisa ditampilkan', closeTimeout: 3000}).open();
+      }
+
+      datanya += '</tbody></table>';
+      $('#table_item').html(datanya);
+    }
+  })
+}
+
+function dashboardFavorit(){
+  var b = document.getElementById('tgl_awal');
+  var c = document.getElementById('tgl_akhir');
+  var jenis;
+  var data = {
+    'act' : 'dashFav',
+  }
+
+  var fav = Highcharts.chart('container1',{
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false
+    },
+    title: {
+        text: 'Penjualan Favorit'
+    },
+    tooltip: {
+      pointFormat: '{series.name}: <b>{point.y}</b>'
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: false
+            },
+            showInLegend: true
+        }
+    },
+    series: [{
+        type: 'pie',
+        name: 'Jumlah'
+    }]
+  })
+
+  app.request({
+    url: site+'/API/laporan/' +cpyProf.id_client+ '/',
+    method: 'POST',
+    data: JSON.stringify(data),
+    success: function(json){
+      if(json){
+        var result = JSON.parse(json);
+        for(var i = 0; i < result.length; i++){
+          console.log(result[i]);
+          fav.series[0].addPoint({
+            name: result[i].nama_barang,
+            y: parseInt(result[i].jml),
+            id: result[i].id_barang
+          }, false);
+        }
+      } else {
+        fav.series[0].addPoint({
+          name: 'kosong',
+          y: 1,
+          id: '1'
+        }, false);
+      }
+
+      fav.redraw();
+    }
+  })
+}
+
+function dashboardHarian(tahun, bulan){
+  var dt = new Date(tahun, bulan+1, 0);
+  var data = {
+    act : "dashHarian",
+    bulan : dt.getMonth()+1
+  }
+
+  var harian = Highcharts.chart('container2', {
+    chart: {
+      /*height: '150%',*/
+      type: 'line',
+      scrollablePlotArea: {
+        minWidth: 1280,
+        scrollPositionX: 0
+      }
+      /*plotBackgroundColor: null,
+      plotBorderWidth: null,
+      plotShadow: false*/
+    },
+    title: {
+      text: 'Chart Penjualan Harian Bulan Ini',
+    },
+    tooltip: {
+      pointFormat: 'Penjualan: <b>{point.y}</b>'
+    },
+    plotOptions: {
+      bar: {
+        allowPointSelect: true,
+        cursor: 'pointer',
+        dataLabels: { enabled: false },
+        showInLegend: true,
+      }
+    },
+    xAxis: {
+      type: 'datetime',
+      // tickInterval: 24 * 3600 * 1000
+    },
+    series: [{
+      pointStart: Date.UTC(dt.getFullYear(), dt.getMonth(), 1),
+      pointInterval: 24 * 3600 * 1000,
+      type: 'line',
+      name: "Penjualan dalam rupiah",
+    }]
+  })
+
+  app.request({
+    url: site+'/API/laporan/'+cpyProf.id_client+'/',
+    method: "POST",
+    data: JSON.stringify(data),
+    success: function(json){
+      var result = JSON.parse(json);
+      var c = 1;
+      var dtArr = [];
+
+      for(var d = 1; d <= dt.getDate(); d++){
+        dtArr.push({x: d, y: 0});
+      }
+
+      for(var i = 0; i < result.length; i++){
+        dtArr[result[i].tanggal-1].x = result[i].tanggal;
+        dtArr[result[i].tanggal-1].y = parseInt(result[i].harian);
+      }
+
+      console.log(dtArr);
+
+      for(var i = 0; i < dtArr.length; i++){
+        harian.series[0].addPoint({
+          y: dtArr[i].y
+        }, false);
+      }
+
+      // for(var i = 0; i < result.length; i++){
+      //   // console.log(result[i]);
+      //   for(var j = c; j <= i; j++){
+      //     if(j == result[i].tanggal){
+      //       harian.series[0].addPoint({
+      //         // name: result[i].tanggal,
+      //         x: result[i].tanggal,
+      //         y: parseInt(result[i].harian),
+      //         /*id: result[i].id_barang*/
+      //       }, false);
+      //     } else {
+      //       harian.series[0].addPoint({
+      //         // name: c,
+      //         x: j,
+      //         y: 0,
+      //         /*id: result[i].id_barang*/
+      //       }, false);
+      //     }
+      //   }
+      // }
+
+      harian.redraw();
+    }
+  })
+
+  /*for(var i = 1; i <= dt.getDate(); i++){
+    var a = function(tgl){
+      db.transaction(function(tx){
+        tx.executeSql('SELECT sum(dtl_total) AS total, tgl_penjualan FROM pj_dtl a JOIN pj b ON a.id_pj = b.id_pj WHERE b.tgl_penjualan = ?', [tgl], 
+          function(tx, result){
+            if(result.rows.item(0).tgl_penjualan){
+              var d = new Date(result.rows.item(0).tgl_penjualan);
+              var temp = {
+                x: Date.parse(d),
+                y: parseInt(result.rows.item(0).total)
+              }
+
+              penjualan.series[0].addPoint(temp, false);
+            } else {
+              var d = new Date(tgl);
+              var temp = {
+                x: Date.parse(d),
+                y: 0
+              }
+
+              penjualan.series[0].addPoint(temp, false);
+            }
+          }, 
+          function(error){})
+      })
+    }(dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+("0" + i).slice(-2));
+  }
+
+  db.transaction(function(fv){
+    fv.executeSql('SELECT nama_barang AS barang, SUM(a.qty_jual) AS terjual FROM pj_dtl a JOIN m_barang b ON a.id_barang = b.id_barang WHERE a.dtpesan LIKE "'+dt.getFullYear()+'-'+(dt.getMonth()+1)+'%" GROUP BY nama_barang ORDER BY terjual DESC', [],
+      function(t, result){
+        for(var i = 0; i < result.rows.length; i++){
+          var temp = {
+            y: result.rows.item(i).terjual,
+            name: result.rows.item(i).barang
+          }
+
+          favorit.series[0].addPoint(temp, false);
+        }
+      },
+      function(error){})
+  })
+
+  setTimeout(function(){
+    app.preloader.hide();
+    penjualan.redraw();
+    favorit.redraw();
+  }, 1 * 1000);*/
+}
+
+// ========== LAPORAN & DASHBOARD ENDS HERE ==========
 
 
 // ========== PROSES MASTER STARTS HERE ==========
@@ -1134,6 +1456,16 @@ function debug(){
   alert('height: '+$(window).height());
   alert('screen w: '+screen.width);
   alert('screen h: '+screen.height);
+}
+
+function reScreen(){
+  // console.log('a');
+  $('#login_page').css('height', moddedHeight);
+}
+
+function returnScreen(){
+  // console.log('a');
+  $('#login_page').css('height', trueHeight);
 }
 
 // ========== PROSES UTILITY ENDS HERE ==========
@@ -1798,161 +2130,6 @@ function cariSesuatu(a, b, c){
     data: JSON.stringify(data)
   }).done(function(result){
     // console.log(result);
-  }).fail(function(a,b,error){
-    // console.log(error);
-  })*/
-}
-
-function laporanPenjualan(){
-  var b = document.getElementById('tgl_awal');
-  var c = document.getElementById('tgl_akhir');
-  var jenis;
-  var datanya = `
-    <table>
-      <thead>
-        <tr>
-          <th class="label-cell">No. Penjualan</th>
-          <th>Tanggal Penjualan</th>
-          <th class="numeric-cell">Total Penjualan</th>
-          <th>Jenis Pembayaran</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  var data = {
-    'act' : 'penjualan',
-    'tgl' : b.value,
-    'tglsd' : c.value
-  }
-
-  console.log(data);
-
-  $.ajax({
-    url: site+'/API/laporan/' +cpyProf.id_client+ '/',
-    method: 'POST',
-    data: JSON.stringify(data)
-  }).done(function(result){
-    console.log(result);
-    for(var i = 0; i < result.length; i++){
-      switch (result[i].jenis_bayar){
-        case '1':
-        jenis = 'Tunai';
-        break;
-        case '2':
-        jenis = 'Kartu Kredit';
-        break;
-        case '3':
-        jenis = 'E-Money';
-        break;
-      }
-
-      if(i == 0){
-        datanya += '<tr><td class="label-cell">'+result[i].no_penjualan+'</td><td>'+result[i].tgl_penjualan+'</td><td class="numeric-cell">'+parseInt(result[i].total_jual).toLocaleString('id-ID')+'</td><td>'+jenis+'</td></tr>';
-      }else if(result[i].no_penjualan != result[i-1].no_penjualan){
-        datanya += '<tr><td class="label-cell">'+result[i].no_penjualan+'</td><td>'+result[i].tgl_penjualan+'</td><td class="numeric-cell">'+parseInt(result[i].total_jual).toLocaleString('id-ID')+'</td><td>'+jenis+'</td></tr>';
-      }
-    }
-
-    datanya += '</tbody></table>';
-    $('#table_penjualan').html(datanya);
-
-
-  }).fail(function(a,b,error){
-    // console.log(error);
-  })
-}
-
-function laporanPerItem(){
-  var b = document.getElementById('tgl_awal');
-  var c = document.getElementById('tgl_akhir');
-  var jenis;
-  var data = {
-    'act' : 'item',
-    'tgl' : b.value,
-    'tglsd' : c.value
-  }
-
-  var fav = Highcharts.chart('container1',{
-    chart: {
-        plotBackgroundColor: null,
-        plotBorderWidth: null,
-        plotShadow: false
-    },
-    title: {
-        text: 'Penjualan Favorit'
-    },
-    tooltip: {
-      pointFormat: '{series.name}: <b>{point.y}</b>'
-    },
-    plotOptions: {
-        pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            dataLabels: {
-                enabled: false
-            },
-            showInLegend: true
-        }
-    },
-    series: [{
-        type: 'pie',
-        name: 'Jumlah'
-    }]
-  })
-
-  app.request({
-    url: site+'/API/laporan/' +cpyProf.id_outlet+ '/',
-    method: 'POST',
-    data: JSON.stringify(data),
-    success: function(json){
-      if(json){
-        var result = JSON.parse(json);
-        for(var i = 0; i < result.length; i++){
-          console.log(result[i]);
-          fav.series[0].addPoint({
-            name: result[i].nama_barang,
-            y: parseInt(result[i].jml),
-            id: result[i].id_barang
-          }, false);
-        }
-      } else {
-        fav.series[0].addPoint({
-          name: 'kosong',
-          y: 1,
-          id: '1'
-        }, false);
-      }
-
-      fav.redraw();
-    }
-  })
-
-  /*var datanya = `
-    <table>
-      <thead>
-        <tr>
-          <th class="label-cell">Nama Item</th>
-          <th class="numeric-cell">Jumlah Penjualan dalam Periode</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  $.ajax({
-    url: site+'/API/laporan/' +cpyProf.id_outlet+ '/',
-    method: 'POST',
-    data: JSON.stringify(data)
-  }).done(function(result){
-    console.log(result);
-    for(var i = 0; i < result.length; i++){
-      datanya += '<tr><td class="label-cell">'+result[i].nama_barang+'</td><td class="numeric-cell">'+parseInt(result[i].jml).toLocaleString('id-ID')+'</td>';
-    }
-
-    datanya += '</tbody></table>';
-    $('#table_item').html(datanya);
-
-
   }).fail(function(a,b,error){
     // console.log(error);
   })*/
