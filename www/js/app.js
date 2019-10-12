@@ -4,7 +4,7 @@
 
 // Init App
 var app = new Framework7({
-  id: 'com.medianusamandiri.LightPOS',
+  id: 'com.medianusamandiri.mediapos',
   root: '#app',
   init: false,
   // theme: theme,
