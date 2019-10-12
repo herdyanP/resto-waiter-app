@@ -70,11 +70,17 @@ document.addEventListener('deviceready', function() {
     // interstitial: 'ca-app-pub-3940256099942544/1033173712'
   }
 
-  AdMob.createBanner({
-    adId: adid.banner,
-    position: AdMob.AD_POSITION.BOTTOM_CENTER,
-    autoShow: true
-  });
+  if(AdMob) {
+    AdMob.createBanner({
+      adId: adid.banner,
+      position: AdMob.AD_POSITION.BOTTOM_CENTER,
+      autoShow: true
+    }, function(){
+      console.log('AdMob init success!');
+    }, function(){
+      console.log('AdMob init failed!');
+    });
+  }
 
   // AdMob.prepareInterstitial({
   //   adId: adid.interstitial,
@@ -173,7 +179,66 @@ function onNewLogin(q){
 
   // console.log(temp);
 
-  $.ajax({
+  app.request({
+    url: site+'/API/login/',
+    method: 'POST',
+    data: JSON.stringify(temp),
+    timeout: 10 * 1000,
+    success: function(json){
+      var c = 0;
+      if(json != '0') {
+        console.log(json);
+        var result = JSON.parse(json);
+
+        temp.nama = result[0].nama_pegawai;
+        temp.cabang = result[0].nama_cabang;
+        temp.outlet = result[0].nama_outlet;
+        temp.client = result[0].nama_client;
+        temp.id_cabang = result[0].id_cabang;
+        temp.id_client = result[0].id_client;
+        temp.id_outlet = result[0].id_outlet;
+        temp.id_pegawai = result[0].id_pegawai;
+
+        console.log(temp);
+
+        /*for(var i = 0; i < result.length; i++){
+          temp.nama = result[i].nama_pegawai;
+          temp.cabang = result[i].nama_cabang;
+          temp.outlet = result[i].nama_outlet;
+          temp.client = result[i].nama_client;
+          temp.id_cabang = result[i].id_cabang;
+          temp.id_client = result[i].id_client;
+          temp.id_outlet = result[i].id_outlet;
+          temp.id_pegawai = result[i].id_pegawai;
+
+          console.log(temp);
+
+         
+        }*/
+
+        NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
+        // break;
+      } else {
+        app.toast.create({
+          text: "Cek lagi username / password anda",
+          closeTimeout: 3000,
+          closeButton: true
+        }).open();
+      }
+    },
+    error: function(){
+      app.toast.create({
+        text: "Koneksi ke Server Gagal",
+        closeTimeout: 3000,
+        closeButton: true
+      }).open();
+    },
+    complete: function(){
+      $('#login_button').removeClass('disabled');
+    }
+  })
+
+  /*$.ajax({
     url: site+'/API/login/',
     method: 'POST',
     data: JSON.stringify(temp),
@@ -197,36 +262,6 @@ function onNewLogin(q){
         NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
         break;
       }
-      // for(var i = 0; i < result.length; i++){
-      //   if(result[i].nomor_device == device.uuid){
-          // temp.nama = result[i].nama_pegawai;
-          // temp.cabang = result[i].nama_cabang;
-          // temp.outlet = result[i].nama_outlet;
-          // temp.client = result[i].nama_client;
-          // temp.id_cabang = result[i].id_cabang;
-          // temp.id_client = result[i].id_client;
-          // temp.id_outlet = result[i].id_outlet;
-          // temp.id_pegawai = result[i].id_pegawai;
-
-      //     // console.log(temp);
-
-      //     NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
-      //     app.views.main.router.navigate('/');
-
-      //     break;
-      //   }
-
-      //   c++;
-      //   // console.log(c);
-      // }
-
-      // if(c > 0) {
-      //   app.toast.create({
-      //     text: "Device Belum Terdaftar, Mohon Tambahkan Device Melalui Menu Back-End",
-      //     closeTimeout: 3000,
-      //     closeButton: true
-      //   }).open();
-      // } 
     } else {
       app.toast.create({
         text: "Cek lagi username / password anda",
@@ -242,7 +277,7 @@ function onNewLogin(q){
     }).open();
   }).always(function(){
     $('#login_button').removeClass('disabled');
-  })
+  })*/
 }
 
 function onStoreSuccess(obj){
@@ -304,12 +339,12 @@ function onRetSuccess(obj){
 
       // $('#currentUser').html('Operator: '+ (obj.nama ? obj.nama : obj.client));
 
-      if(screen.width < 400){
+      /*if(screen.width < 400){
         $('#icon_home').css('font-size', '18px');
         $('#title_home').css('font-size', '14px');
         $('#currentUser').css('font-size', '12px');
         $('#currentUser').css('margin-right', '14px');
-      }
+      }*/
 
       // setTimeout(function(){
         tampilMenu();

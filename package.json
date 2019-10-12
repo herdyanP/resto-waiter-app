@@ -10,45 +10,35 @@
     "author": "Apache Cordova Team",
     "license": "Apache-2.0",
     "dependencies": {
-        "cordova-android": "^7.1.4",
-        "cordova-android-support-gradle-release": "^2.0.1",
-        "cordova-browser": "^5.0.4",
-        "cordova-plugin-admobpro": "^2.37.2",
+        "cordova-android": "^8.1.0",
+        "cordova-plugin-admobpro": "^2.49.0",
         "cordova-plugin-app-version": "^0.1.9",
-        "cordova-plugin-datecs-printer": "^0.9.0",
-        "cordova-plugin-device": "^2.0.2",
-        "cordova-plugin-dialogs": "^2.0.1",
+        "cordova-plugin-datecs-printer": "^0.10.0",
+        "cordova-plugin-device": "^2.0.3",
+        "cordova-plugin-dialogs": "^2.0.2",
         "cordova-plugin-extension": "^1.5.4",
         "cordova-plugin-nativestorage": "^2.3.2",
-        "cordova-plugin-network-information": "^2.0.1",
-        "cordova-plugin-screen-orientation": "^3.0.1",
+        "cordova-plugin-screen-orientation": "^3.0.2",
         "cordova-plugin-splashscreen": "^5.0.3",
-        "cordova-plugin-whitelist": "^1.3.3",
-        "cordova-sqlite-storage": "^3.2.1",
+        "cordova-plugin-whitelist": "^1.3.4",
         "es6-promise-plugin": "^4.2.2"
     },
     "cordova": {
         "plugins": {
-            "cordova-plugin-whitelist": {},
-            "cordova-plugin-device": {},
-            "cordova-plugin-dialogs": {},
-            "cordova-plugin-screen-orientation": {},
-            "cordova-plugin-datecs-printer": {},
-            "cordova-plugin-nativestorage": {},
-            "cordova-plugin-network-information": {},
-            "cordova-android-support-gradle-release": {
-                "ANDROID_SUPPORT_VERSION": "26.1.0"
-            },
             "cordova-plugin-admobpro": {
+                "ADMOB_APP_ID": "ca-app-pub-8300135360648716/8651556341",
                 "PLAY_SERVICES_VERSION": "16.0.0"
             },
+            "cordova-plugin-nativestorage": {},
             "cordova-plugin-app-version": {},
-            "cordova-sqlite-storage": {},
-            "cordova-plugin-splashscreen": {}
+            "cordova-plugin-datecs-printer": {},
+            "cordova-plugin-device": {},
+            "cordova-plugin-dialogs": {},
+            "cordova-plugin-splashscreen": {},
+            "es6-promise-plugin": {},
+            "cordova-plugin-whitelist": {},
+            "cordova-plugin-screen-orientation": {}
         },
-        "platforms": [
-            "android",
-            "browser"
-        ]
+        "platforms": []
     }
 }
