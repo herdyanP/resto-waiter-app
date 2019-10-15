@@ -17,6 +17,7 @@
         "cordova-plugin-device": "^2.0.3",
         "cordova-plugin-dialogs": "^2.0.2",
         "cordova-plugin-extension": "^1.5.4",
+        "cordova-plugin-inappbrowser": "^3.1.0",
         "cordova-plugin-nativestorage": "^2.3.2",
         "cordova-plugin-screen-orientation": "^3.0.2",
         "cordova-plugin-splashscreen": "^5.0.3",
@@ -37,7 +38,8 @@
             "cordova-plugin-splashscreen": {},
             "es6-promise-plugin": {},
             "cordova-plugin-whitelist": {},
-            "cordova-plugin-screen-orientation": {}
+            "cordova-plugin-screen-orientation": {},
+            "cordova-plugin-inappbrowser": {}
         },
         "platforms": []
     }

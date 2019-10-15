@@ -719,14 +719,14 @@ function laporanPenjualan(){
     'tglsd' : c.value
   }
 
-  console.log(data);
+  // console.log(data);
 
   $.ajax({
     url: site+'/API/laporan/' +cpyProf.id_client+ '/',
     method: 'POST',
     data: JSON.stringify(data)
   }).done(function(result){
-    console.log(result);
+    // console.log(result);
     for(var i = 0; i < result.length; i++){
       switch (result[i].jenis_bayar){
         case '1':
@@ -760,7 +760,10 @@ function unduhLaporan(){
   var tgl = $('#tgl_awal').val();
   var tglsd = $('#tgl_akhir').val();
   // alert('sss');
-  window.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client, '_self');
+
+  // $('#page_unduh').attr('src', site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client);
+  cordova.InAppBrowser.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client, '_blank', 'location=no');
+  // window.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client, '_self');
 }
 
 function laporanPerItem(){
@@ -936,7 +939,7 @@ function dashboardHarian(tahun, bulan){
         dtArr[result[i].tanggal-1].y = parseInt(result[i].harian);
       }
 
-      console.log(dtArr);
+      // console.log(dtArr);
 
       for(var i = 0; i < dtArr.length; i++){
         harian.series[0].addPoint({
@@ -1342,8 +1345,156 @@ function cetakWhatsApp(id){
   }).done(function(json){
     var result = JSON.parse(json);
     app.dialog.create({
-      title: 'Confirmation',
-      text: 'Enter recipient WhatsApp number:',
+      title: 'Konfirmasi',
+      text: 'Masukkan nomor WhatsApp tujuan:',
+      closeByBackdropClick: false,
+      on: {
+        opened: function(){
+          var ac = app.autocomplete.create({
+            inputEl: '#no_hp',
+            openIn: 'dropdown',
+            preloader: true,
+            limit: 10,
+            source: function(query, render){
+              var autoc = this;
+              var results = [];
+              var nohp = $('#no_hp').val();
+              if(query.length === 0){
+                render(results);
+                return;
+              }
+
+              autoc.preloaderShow();
+              app.request({
+                url: site+"/API/cust/"+cpyProf.id_client+"/"+nohp+"/",
+                method: "GET",
+                success: function(json){
+                  var result = JSON.parse(json);
+                  for(var i = 0; i < result.length; i++){
+                    if(result[i].no_hp.indexOf(query) >= 0) results.push(result[i].no_hp);
+                  }
+
+                  autoc.preloaderHide();
+                  render(results);
+                }
+              });
+            }
+          });
+        }
+      },
+      content: 
+        `<div class="block" style="height: 30vh;">
+          <div class="list no-hairlines no-hairlines-between">
+            <ul>
+              <li class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-input-wrap">
+                    <input type="number" name="no_hp" id="no_hp" style="text-align: center;"/>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>`,
+      buttons: [
+      {
+        text: 'Send',
+        onClick: function(dialog, e){
+          var nohp = $('#no_hp').val();
+          var temp = {
+            nohp: nohp,
+            id_client: cpyProf.id_client
+          }
+
+          app.request({
+            url: site+"/API/cust/",
+            method: "POST",
+            data: JSON.stringify(temp),
+            statusCode: {
+              200: function(){
+                console.log('returned OK');
+              },
+              201: function(){
+                console.log('created OK');
+              }
+            }
+          })
+
+          var dt = new Date();
+          var tot = $('#subtotal').html();
+          var totInt = tot.replace(/\D/g, '');
+          var kembali = parseInt(paid) - parseInt(totInt);
+
+          var kop = '';
+          var cab = '';
+
+          var dy = ('00'+dt.getDate()).slice(-2);
+          var hr = ('00'+dt.getHours()).slice(-2);
+          var mn = ('00'+dt.getMinutes()).slice(-2);
+          var stamp = 'Tanggal   : ' + dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
+
+          var sub = 'Sub-total';
+          var paid = 'Paid';
+          // var byr = 'Via: ' + jn;
+          // var crd = 'CC';
+          var kbl = 'Change';
+          var list = '';
+
+          for(var i = 0; i < (31 - cpyProf.outlet.length)/2; i++){
+            kop += ' ';
+          } kop += cpyProf.outlet + '\n';
+
+          for(var i = 0; i < (24 - cpyProf.cabang.length)/2; i++){
+            cab += ' ';
+          } cab += 'Cabang ' + cpyProf.cabang + '\n';
+
+          var header = '```\n          Sales Receipt\n\n' + kop + cab + '--------------------------------\nNo. Trans : ' +result[0].no_penjualan+ '\n' +stamp+ '\nOperator  : '+(cpyProf.nama ? cpyProf.nama : cpyProf.client)+'\n--------------------------------\n';
+          var thanks = ' \n--------------------------------\n\n        Terima Kasih Atas\n         Kunjungan Anda\n';
+
+
+          for(var i = 0; i < 31 - 'Sub-total'.length - parseInt(result[0].grantot_jual).toLocaleString('id-ID').length; i++){
+            sub += ' ';
+          } sub += parseInt(result[0].grantot_jual).toLocaleString('id-ID') + ' \n';
+
+          // for(var i = 0; i < 29-tot.length; i++){
+          //   crd += ' ';
+          // } crd += tot + ' \n';
+
+          for(var i = 0; i < 31 - 'Paid'.length - parseInt(result[0].bayar_tunai).toLocaleString('id-ID').length; i++){
+            paid += ' ';
+          } paid += parseInt(result[0].bayar_tunai).toLocaleString('id-ID') + ' \n';
+
+          for(var i = 0; i < 31 - 'Change'.length - parseInt(result[0].kembali_tunai).toLocaleString('id-ID').length; i++){
+            kbl += ' ';
+          } kbl += parseInt(result[0].kembali_tunai).toLocaleString('id-ID');
+
+          for(var i = 0; i < result.length; i++){
+            var ws = '';
+            var q = parseInt(result[i].qty_jual).toLocaleString('id-ID');
+            var satuan = parseInt(result[i].harga_jual).toLocaleString('id-ID');
+            var jumlah = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString('id-ID');
+
+            // console.log('q: '+q.length+', satuan: '+satuan.length+', jumlah: '+jumlah.length);
+
+            var tlen = 26 - (satuan.length + jumlah.length + q.length);
+
+            for(var j = 0; j < tlen; j++){
+              ws += ' ';
+            }
+
+            list += result[i].nama_barang+'\n  '+ q +' x '+ satuan + ws + jumlah +' \n';
+          }
+
+          list += '--------------------------------\n';
+          window.location = 'https://wa.me/62' +nohp.substring(1)+ '?text='+encodeURI(header + list + sub + paid + kbl + thanks + '```');
+
+          dialog.close();
+        }
+      }]
+    }).open();
+    /*app.dialog.create({
+      title: 'Konfirmasi',
+      text: 'Masukkan nomor WhatsApp tujuan:',
       closeByBackdropClick: false,
       content: 
         `<div class="list no-hairlines no-hairlines-between">
@@ -1432,7 +1583,7 @@ function cetakWhatsApp(id){
           dialog.close();
         }
       }]
-    }).open();
+    }).open();*/
   })
 }
 
@@ -1487,10 +1638,82 @@ function metode(a){
 }
 
 function debug(){
-  alert('width: '+$(window).width());
-  alert('height: '+$(window).height());
-  alert('screen w: '+screen.width);
-  alert('screen h: '+screen.height);
+  app.dialog.create({
+    title: 'Konfirmasi',
+    text: 'Masukkan nomor WhatsApp tujuan:',
+    closeByBackdropClick: false,
+    on: {
+      opened: function(){
+        var ac = app.autocomplete.create({
+          inputEl: '#no_hp',
+          openIn: 'dropdown',
+          preloader: true,
+          limit: 10,
+          source: function(query, render){
+            var autoc = this;
+            var results = [];
+            var nohp = $('#no_hp').val();
+            if(query.length === 0){
+              render(results);
+              return;
+            }
+
+            autoc.preloaderShow();
+            app.request({
+              url: site+"/API/cust/"+cpyProf.id_client+"/"+nohp+"/",
+              method: "GET",
+              success: function(json){
+                var result = JSON.parse(json);
+                for(var i = 0; i < result.length; i++){
+                  if(result[i].no_hp.indexOf(query) >= 0) results.push(result[i].no_hp);
+                }
+
+                autoc.preloaderHide();
+                render(results);
+              }
+            });
+          }
+        });
+      }
+    },
+    content: 
+      `<div class="block" style="height: 30vh;">
+        <div class="list no-hairlines no-hairlines-between">
+          <ul>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-input-wrap">
+                  <input type="number" name="no_hp" id="no_hp" style="text-align: center;"/>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>`,
+    buttons: [
+    {
+      text: 'Send',
+      onClick: function(dialog, e){
+        app.dialog.confirm("Simpan nomor ke sistem?", "Konfirmasi", function(){
+          var temp = {
+            nohp: nohp,
+            id_client: cpyProf.id_client
+          };
+
+          /*app.request({
+            url: site+"/API/cust/",
+            data: JSON.stringify(temp)
+          })*/
+        })
+        dialog.close();
+      }
+    }]
+  }).open();
+
+  // alert('width: '+$(window).width());
+  // alert('height: '+$(window).height());
+  // alert('screen w: '+screen.width);
+  // alert('screen h: '+screen.height);
 }
 
 function reScreen(){
@@ -1531,11 +1754,12 @@ function register(q){
             $('#register_cred').trigger('reset');
             app.views.main.router.navigate('/login/');
           });
-        } else {
-          app.dialog.alert('Email atau Username sudah terdaftar.', 'Register', function(){
-          });
         }
-
+      },
+      200: function(result, textStatus, jqXHR){
+        app.dialog.alert('Email atau Username sudah terdaftar.', 'Register', function(){
+          return 0;
+        });
       }
     },
     timeout: 30 * 1000
