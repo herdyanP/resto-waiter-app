@@ -30,6 +30,7 @@
         <preference name="android-targetSdkVersion" value="28" />
         <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:allowBackup="false" />
+            <application android:usesCleartextTraffic="true" />
         </edit-config>
     </platform>
     <platform name="ios">

@@ -1723,7 +1723,7 @@ function reScreen(){
 
 function returnScreen(){
   // console.log('a');
-  $('#login_page').css('height', trueHeight);
+  // $('#login_page').css('height', trueHeight);
 }
 
 // ========== PROSES UTILITY ENDS HERE ==========
