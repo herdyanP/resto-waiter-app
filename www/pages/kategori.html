@@ -10,31 +10,31 @@
           </a>
         </div>
         <div class="title">
-          Tambah/Edit Satuan
+          Tambah/Edit Kategori
         </div>
       </div>
     </div>
 
     <div class="page-content" id="scrollable">
       <div class="block">
-        <input type="hidden" id="id_satuan">
-        <form id="satuan_form" class="list no-hairlines no-hairlines-between">
+        <input type="hidden" id="id_kategori">
+        <form id="kategori_form" class="list no-hairlines no-hairlines-between">
           <ul>
             <li class="item-content item-input">
               <div class="item-inner">
-                <div class="item-title item-label" style="color: unset;">Nama Satuan</div>
+                <div class="item-title item-label" style="color: unset;">Nama Kategori</div>
                 <div class="item-input-wrap">
-                  <input type="text" name="nama_satuan" id="nama_satuan">
+                  <input type="text" name="nama_kategori" id="nama_kategori">
                 </div>
               </div>
             </li>
             <li class="item-content">
               <div class="item-inner">
                 <div class="item-title"  style="width: 100%;">
-                  <a class="button button-outline" id="button_addSatuan" style="display: block;" onclick="addSatuan(document.getElementById('satuan_form'));">Tambah</a>
-                  <p class="row" id="buttons_editSatuan" style="display: none;">
-                    <a class="col button button-outline" onclick="hideEditSatuan(document.getElementById('satuan_form'));">Batal</a>
-                    <a class="col button button-outline" onclick="editSatuan(document.getElementById('satuan_form'))">Update</a>
+                  <a class="button button-outline" id="button_addKategori" style="display: block;" onclick="addKategori(document.getElementById('kategori_form'));">Tambah</a>
+                  <p class="row" id="buttons_editKategori" style="display: none;">
+                    <a class="col button button-outline" onclick="hideEditKategori(document.getElementById('kategori_form'));">Batal</a>
+                    <a class="col button button-outline" onclick="editKategori(document.getElementById('kategori_form'))">Update</a>
                   </p>
                 </div>
               </div>
@@ -46,11 +46,11 @@
 
       <div class="card card-outline">
         <div class="card-header">
-          <strong>Satuan Tersedia</strong>
+          <strong>Kategori Tersedia</strong>
         </div>
 
         <div class="block" style="max-height: 60vh; overflow: scroll;">
-          <div class="list no-hairlines" id="satuan_list">
+          <div class="list no-hairlines" id="kategori_list">
           </div>
         </div>
       </div>

@@ -18,7 +18,7 @@ var db;
 var shortMonths = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 var mtd = 1;
 var txNmr = 0;
-var retail, cabang, lastId, user, platform, jn, modalAwal, uid, updates;
+var retail, cabang, lastId, user, platform, jn, uid, updates;
 var adid = {};
 var cpyProf;
 var diskonAmt = 0; totalSub = 0; totalGrand = 0; kembalian = 0;
@@ -27,33 +27,8 @@ var appVer = 0;
 var site = 'https://demo.medianusamandiri.com/lightpos';
 var trueHeight = window.innerHeight
 var moddedHeight = Math.floor(trueHeight / 100) * 100;
-var modalBox = app.dialog.create({
-  title: 'Modal Awal',
-  closeByBackdropClick: false,
-  content: 
-    `<div class="list no-hairlines no-hairlines-between">
-      <ul>
-        <li class="item-content item-input">
-          <div class="item-inner">
-            <div class="item-input-wrap">
-              <input type="text" name="modal" id="modal" oninput="comma(this)" style="text-align: right;" />
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div>`,
-  buttons: [
-  {
-    text: 'Simpan',
-    onClick: function(dialog, e){
-      var v = $('#modal').val();
-      if(v != '' && v != '0'){
-        modalAwal = v.replace(/\D/g, '');
-        dialog.close();
-      }
-    }
-  }]
-});
+var dailyModal = 0;
+var refreshMenu;
 
 Highcharts.setOptions({
   lang: {
@@ -215,7 +190,6 @@ function onNewLogin(q){
 
          
         }*/
-
         NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
         // break;
       } else {
@@ -286,6 +260,8 @@ function onStoreSuccess(obj){
   cpyProf = obj;
   app.views.main.router.navigate('/');
 
+  NativeStorage.getItem('modal', onModalFound, onModalNotFound);
+
   // tampilMenu();
   
   // $.ajax({
@@ -325,6 +301,8 @@ function onRetSuccess(obj){
       cpyProf.outlet = result[0].nama_outlet;
       cpyProf.cabang = result[0].nama_cabang;
       console.log('succ');
+
+      NativeStorage.getItem('modal', onModalFound, onModalNotFound);
 
 
       // if(updates != '0'){
@@ -374,6 +352,7 @@ function onRetFail(){
 }
 
 function onLogout(){
+  // NativeStorage.remove('modal', onRemModalSuccess, onRemModalFailed);
   NativeStorage.remove('akun', onRemSuccess, onRemFail);
 }
 
@@ -411,6 +390,78 @@ function onBackPressed(){
   }
 }
 
+function onSetModalSuccess(){
+  var dt = new Date();
+  NativeStorage.setItem('tanggal', dt.getDate(), onSetTglSuccess, onSetTglFailed);
+  console.log('set modal done');
+}
+
+function onSetModalFailed(){
+  console.log('set modal fail');
+}
+
+function onModalFound(modal){
+  dailyModal = modal;
+}
+
+function onModalNotFound(error){
+  app.dialog.create({
+    title: 'Modal Awal',
+    closeByBackdropClick: false,
+    content: 
+      `<div class="list no-hairlines no-hairlines-between">
+        <ul>
+          <li class="item-content item-input">
+            <div class="item-inner">
+              <div class="item-input-wrap">
+                <input type="text" name="modal" id="modal" oninput="comma(this)" style="text-align: right;" />
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>`,
+    buttons: [
+    {
+      text: 'Simpan',
+      onClick: function(dialog, e){
+        var modal = $('#modal').val().replace(/\D/g, '');
+        dailyModal = modal;
+
+        NativeStorage.setItem('modal', modal, onSetModalSuccess, onSetModalFailed);
+        dialog.close();
+      }
+    }]
+  }).open();
+}
+
+function onRemModalSuccess(){
+  console.log("remove modal success");
+}
+
+function onRemModalFailed(){
+  console.log("remove modal failed");
+}
+
+function onSetTglSuccess(){
+  console.log("set tgl success");
+}
+
+function onSetTglFailed(){
+  console.log("set tgl failed");
+}
+
+function onGetTglSuccess(tgl){
+  console.log("get tgl success");
+  var dt = new Date();
+  if(tgl != dt.getDate()){
+    NativeStorage.remove('modal', onRemModalSuccess, onRemModalFailed);
+  }
+}
+
+function onGetTglFailed(){
+  console.log("get tgl failed");
+}
+
 // ========== PROSES STARTING UP ENDS HERE ==========
 
 // ========== PROSES UTAMA STARTS HERE ==========
@@ -421,7 +472,8 @@ function tampilMenu(){
     url: site+'/API/menu2/'+cpyProf.id_outlet+'/'+kat+'/',
     method: 'GET'
   }).done(function(result){
-    console.log(result);
+    // console.log(result);
+    console.log('hai');
     var len, i;
     /*if(result.length > 18) {
       len = 18;
@@ -438,6 +490,7 @@ function tampilMenu(){
     if(result.length % 3 != 0)datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
 
     $('#itemlist').html(datanya);
+    refreshMenu = setTimeout(tampilMenu, 2 * 1000);
   }).fail(function(a,b,error){
     alert(error);
   })
@@ -671,6 +724,10 @@ function bayar(){
   
         $('#bayar').val(0);
         $('#kembalian').empty().append('0');
+        $('#nkartu').val(0);
+        $('#ekartu').val(0);
+        $('#ekartu2').val(0);
+        $('#ckartu').val(0);
         keranjang();
 
         app.dialog.create({
@@ -762,8 +819,8 @@ function unduhLaporan(){
   // alert('sss');
 
   // $('#page_unduh').attr('src', site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client);
-  cordova.InAppBrowser.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client, '_blank', 'location=no');
-  // window.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client, '_self');
+  // cordova.InAppBrowser.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client, '_blank', 'location=no');
+  window.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client, '_self');
 }
 
 function laporanPerItem(){
@@ -878,6 +935,8 @@ function dashboardFavorit(){
 
 function dashboardHarian(tahun, bulan){
   var dt = new Date(tahun, bulan+1, 0);
+  var dtNow = new Date();
+  var currX = (bulan == dtNow.getMonth() && tahun == dtNow.getFullYear() ? dtNow.getDate() / dt.getDate() : 0);
   var data = {
     act : "dashHarian",
     bulan : dt.getMonth()+1
@@ -889,7 +948,7 @@ function dashboardHarian(tahun, bulan){
       type: 'line',
       scrollablePlotArea: {
         minWidth: 1280,
-        scrollPositionX: 0
+        scrollPositionX: currX,
       }
       /*plotBackgroundColor: null,
       plotBorderWidth: null,
@@ -971,55 +1030,6 @@ function dashboardHarian(tahun, bulan){
       harian.redraw();
     }
   })
-
-  /*for(var i = 1; i <= dt.getDate(); i++){
-    var a = function(tgl){
-      db.transaction(function(tx){
-        tx.executeSql('SELECT sum(dtl_total) AS total, tgl_penjualan FROM pj_dtl a JOIN pj b ON a.id_pj = b.id_pj WHERE b.tgl_penjualan = ?', [tgl], 
-          function(tx, result){
-            if(result.rows.item(0).tgl_penjualan){
-              var d = new Date(result.rows.item(0).tgl_penjualan);
-              var temp = {
-                x: Date.parse(d),
-                y: parseInt(result.rows.item(0).total)
-              }
-
-              penjualan.series[0].addPoint(temp, false);
-            } else {
-              var d = new Date(tgl);
-              var temp = {
-                x: Date.parse(d),
-                y: 0
-              }
-
-              penjualan.series[0].addPoint(temp, false);
-            }
-          }, 
-          function(error){})
-      })
-    }(dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+("0" + i).slice(-2));
-  }
-
-  db.transaction(function(fv){
-    fv.executeSql('SELECT nama_barang AS barang, SUM(a.qty_jual) AS terjual FROM pj_dtl a JOIN m_barang b ON a.id_barang = b.id_barang WHERE a.dtpesan LIKE "'+dt.getFullYear()+'-'+(dt.getMonth()+1)+'%" GROUP BY nama_barang ORDER BY terjual DESC', [],
-      function(t, result){
-        for(var i = 0; i < result.rows.length; i++){
-          var temp = {
-            y: result.rows.item(i).terjual,
-            name: result.rows.item(i).barang
-          }
-
-          favorit.series[0].addPoint(temp, false);
-        }
-      },
-      function(error){})
-  })
-
-  setTimeout(function(){
-    app.preloader.hide();
-    penjualan.redraw();
-    favorit.redraw();
-  }, 1 * 1000);*/
 }
 
 // ========== LAPORAN & DASHBOARD ENDS HERE ==========
@@ -1048,6 +1058,13 @@ function addBarang(q){
         $(q).trigger('reset');
         listBarang();
         // cekStatus();
+      },
+      200: function(){
+        app.toast.create({
+          text: "Kode Barang sudah terpakai!",
+          closeTimeout: 3000,
+          closeButton: true
+        }).open();
       }
     }
   })
@@ -1065,12 +1082,16 @@ function listBarang(){
         if(result[i].id_barang == null || result[i].nama_barang == null) continue;
         var hrg = result[i].harga.split('-')[0];
 
-        data += '<li class="item-content ">\
-        <div class="item-inner">\
-        <div class="item-title" onclick="showEditBarang('+result[i].id_barang+','+result[i].tipe+',\''+result[i].kode_barang+'\',\''+result[i].nama_barang+'\',\''+hrg+'\','+result[i].id_satuan+');">'+result[i].nama_barang+'</div>\
-        <div class="item-after"><a href="#" onclick="hapusBarang('+result[i].id_barang+',\''+result[i].nama_barang+'\')"><i class="icon material-icons md-only">close</i></a></div>\
-        </div>\
-        </li>'
+        data += `
+          <li class="item-content ">
+            <div class="item-inner">
+              <div class="item-title">`+result[i].nama_barang+`</div>
+              <div class="item-after">
+                <a href="#" style="margin: 2px;" onclick="showEditBarang(`+result[i].id_barang+`,`+result[i].tipe+`,'`+result[i].kode_barang+`','`+result[i].nama_barang+`','`+hrg+`',`+result[i].id_satuan+`,`+result[i].status+`);"><i class="icon material-icons md-only">edit</i></a>
+                <a href="#" style="margin: 2px;" onclick="hapusBarang(`+result[i].id_barang+`,'`+result[i].nama_barang+`')"><i class="icon material-icons md-only">close</i></a>
+              </div>
+            </div>
+          </li>`;
       }
 
       data += '</ul>';
@@ -1081,7 +1102,8 @@ function listBarang(){
 function editBarang(q){
   var id = $('#id_barang').val();
   var temp = {
-    'act' : '2'
+    'act' : '2',
+    'id_client' : cpyProf.id_client
   };
 
   $.each($(q).serializeArray(), function(){
@@ -1099,16 +1121,17 @@ function editBarang(q){
       closeButton: true
     }).open();
 
-    $(q).trigger('reset');
-
+    // $(q).trigger('reset');
+    hideEditBarang(q);
     listBarang();
-    cekStatus();
   })
 }
 
-function showEditBarang(id, tipe, kode, nama, harga, satuan){
+function showEditBarang(id, tipe, kode, nama, harga, satuan, status){
+  document.getElementById('scrollable').scrollTop = 0;
   $('#button_addItem').css('display', 'none');
   $('#buttons_editRemove').css('display', 'flex');
+  $('#_status').css('display', 'block');
 
   $('#id_barang').val(id);
   $('#tipe_barang').val(tipe);
@@ -1116,11 +1139,13 @@ function showEditBarang(id, tipe, kode, nama, harga, satuan){
   $('#nama_barang').val(nama);
   $('#harga_addItem').val(harga.split('-')[0]);
   $('#satuan_select').val(satuan);
+  $('#status_sel').val(status);
 }
 
 function hideEditBarang(q){
   $('#button_addItem').css('display', 'block');
   $('#buttons_editRemove').css('display', 'none');
+  $('#_status').css('display', 'none');
 
   $(q).trigger('reset');
 }
@@ -1129,28 +1154,29 @@ function hapusBarang(id, nama){
   var temp = {'act': '3'};
 
   app.dialog.confirm('Yakin Hapus '+nama+'?', 'Konfirmasi', function(){
-      $.ajax({
-        url: 'http:/demo.medianusamandiri.com/lightpos/API/barang/'+id+'/',
-        method: 'POST',
-        data: JSON.stringify(temp)
-      }).done(function(){
-        app.toast.create({
-          text: "Sukses Hapus dari Menu",
-          closeTimeout: 3000,
-          closeButton: true
-        }).open();
+    $.ajax({
+      url: site+'/API/barang/'+id+'/',
+      method: 'POST',
+      data: JSON.stringify(temp)
+    }).done(function(){
+      app.toast.create({
+        text: "Sukses Hapus dari Menu",
+        closeTimeout: 3000,
+        closeButton: true
+      }).open();
 
-        listBarang();
-        cekStatus();
-      })
-    }, function(){
-      return;
+      listBarang();
     })
-  $.ajax()
+  }, function(){
+    return;
+  })
 }
 
 function addSatuan(q){
-  var temp = {};
+  var temp = {
+    act: 1
+  };
+
   $.each($(q).serializeArray(), function(){
     temp[this.name] = this.value;
   })
@@ -1158,28 +1184,27 @@ function addSatuan(q){
   $.ajax({
     url: site+'/API/satuan/'+cpyProf.id_client+'/',
     method: 'POST',
-    data: JSON.stringify(temp)
-  }).done(function(){
-    app.toast.create({
-      text: "Sukses Tambah Satuan",
-      closeTimeout: 3000,
-      closeButton: true
-    }).open();
+    data: JSON.stringify(temp),
+    statusCode: {
+      200: function(){
+        app.toast.create({
+          text: "Satuan sudah terpakai!",
+          closeTimeout: 3000,
+          closeButton: true
+        }).open();
+      },
+      201: function(){
+        app.toast.create({
+          text: "Sukses Tambah Satuan",
+          closeTimeout: 3000,
+          closeButton: true
+        }).open();
 
-    $(q).trigger('reset');
-    listSatuan();
-
-    /*$.ajax({
-      url: site+'/API/menu/'+cpyProf.id_outlet+'/',
-      method: 'GET'
-    }).done(function(result){
-      if(result[0].id_barang == null){
-        app.dialog.alert('Kemudian Silahkan Tambahkan Menu Baru', 'Alert', function(){
-          app.views.main.router.navigate('/tambah/');
-        })
+        $(q).trigger('reset');
+        listSatuan();
       }
-    })*/
-  })
+    }
+  });
 }
 
 function listSatuan(){
@@ -1191,16 +1216,63 @@ function listSatuan(){
     for(var i = 0; i < result.length; i++){
       if(result[i].id_satuan == null || result[i].nama_satuan == null) continue;
 
-      data += '<li class="item-content ">\
-      <div class="item-inner">\
-      <div class="item-title">'+result[i].nama_satuan+'</div>\
-      <div class="item-after"><a href="#" onclick="hapusSatuan('+result[i].id_satuan+',\''+result[i].nama_satuan+'\')"><i class="icon material-icons md-only">close</i></a></div>\
-      </div>\
-      </li>'
+      data += `
+        <li class="item-content ">
+          <div class="item-inner">
+            <div class="item-title">`+result[i].nama_satuan+`</div>
+            <div class="item-after">
+              <a href="#" style="margin: 2px;" onclick="showEditSatuan(`+result[i].id_satuan+`,'`+result[i].nama_satuan+`');"><i class="icon material-icons md-only">edit</i></a>
+              <a href="#" style="margin: 2px;" onclick="hapusSatuan(`+result[i].id_satuan+`,'`+result[i].nama_satuan+`')"><i class="icon material-icons md-only">close</i></a>
+              </div>
+          </div>
+        </li>`;
     }
 
     data += '</ul>';
     $('#satuan_list').html(data);
+  })
+}
+
+function showEditSatuan(id, nama){
+  document.getElementById('scrollable').scrollTop = 0;
+  $('#button_addSatuan').css('display', 'none');
+  $('#buttons_editSatuan').css('display', 'flex');
+
+  $('#id_satuan').val(id);
+  $('#nama_satuan').val(nama);
+}
+
+function hideEditSatuan(q){
+  $('#button_addSatuan').css('display', 'block');
+  $('#buttons_editSatuan').css('display', 'none');
+
+  $(q).trigger('reset');
+}
+
+function editSatuan(q){
+  var id = $('#id_satuan').val();
+  var temp = {
+    'act' : '2'
+  };
+
+  $.each($(q).serializeArray(), function(){
+    temp[this.name] = this.value;
+  })
+
+  $.ajax({
+    url: site+'/API/satuan/'+id+'/',
+    method: 'POST',
+    data: JSON.stringify(temp)
+  }).done(function(){
+    app.toast.create({
+      text: "Sukses Edit Barang",
+      closeTimeout: 3000,
+      closeButton: true
+    }).open();
+
+    $(q).trigger('reset');
+
+    listSatuan();
   })
 }
 
@@ -1209,7 +1281,7 @@ function hapusSatuan(id, nama){
 
   app.dialog.confirm('Yakin Hapus '+nama+'?', 'Konfirmasi', function(){
       $.ajax({
-        url: 'http:/demo.medianusamandiri.com/lightpos/API/satuan/'+id+'/',
+        url: site+'/API/satuan/'+id+'/',
         method: 'POST',
         data: JSON.stringify(temp)
       }).done(function(){
@@ -1224,7 +1296,122 @@ function hapusSatuan(id, nama){
     }, function(){
       return;
     })
-  $.ajax()
+}
+
+function addKategori(q){
+  var temp = {
+    act: 1
+  };
+
+  $.each($(q).serializeArray(), function(){
+    temp[this.name] = this.value;
+  })
+
+  $.ajax({
+    url: site+'/API/kategori/'+cpyProf.id_client+'/',
+    method: 'POST',
+    data: JSON.stringify(temp)
+  }).done(function(){
+    app.toast.create({
+      text: "Sukses Tambah Kategori",
+      closeTimeout: 3000,
+      closeButton: true
+    }).open();
+
+    $(q).trigger('reset');
+    listKategori();
+  })
+}
+
+function listKategori(){
+  var data = '<ul>';
+  $.ajax({
+    url: site+'/API/kategori/'+cpyProf.id_client+'/',
+    method: 'GET',
+  }).done(function(result){
+    for(var i = 0; i < result.length; i++){
+      if(result[i].id_kategori == null || result[i].nama_kategori == null) continue;
+
+      data += `
+        <li class="item-content ">
+          <div class="item-inner">
+            <div class="item-title">`+result[i].nama_kategori+`</div>
+            <div class="item-after">
+              <a href="#" style="margin: 2px;" onclick="showEditKategori(`+result[i].id_kategori+`,'`+result[i].nama_kategori+`');"><i class="icon material-icons md-only">edit</i></a>
+              <a href="#" style="margin: 2px;" onclick="hapuskategori(`+result[i].id_kategori+`,'`+result[i].nama_kategori+`')"><i class="icon material-icons md-only">close</i></a>
+            </div>
+          </div>
+        </li>`;
+    }
+
+    data += '</ul>';
+    $('#kategori_list').html(data);
+  })
+}
+
+function showEditKategori(id, nama){
+  document.getElementById('scrollable').scrollTop = 0;
+  $('#button_addKategori').css('display', 'none');
+  $('#buttons_editKategori').css('display', 'flex');
+
+  $('#id_kategori').val(id);
+  $('#nama_kategori').val(nama);
+}
+
+function hideEditKategori(q){
+  $('#button_addKategori').css('display', 'block');
+  $('#buttons_editKategori').css('display', 'none');
+
+  $(q).trigger('reset');
+}
+
+function editKategori(q){
+  var id = $('#id_kategori').val();
+  var temp = {
+    'act' : '2'
+  };
+
+  $.each($(q).serializeArray(), function(){
+    temp[this.name] = this.value;
+  })
+
+  $.ajax({
+    url: site+'/API/kategori/'+id+'/',
+    method: 'POST',
+    data: JSON.stringify(temp)
+  }).done(function(){
+    app.toast.create({
+      text: "Sukses Edit Kategori",
+      closeTimeout: 3000,
+      closeButton: true
+    }).open();
+
+    $(q).trigger('reset');
+
+    listKategori();
+  })
+}
+
+function hapusKategori(id, nama){
+  var temp = {'act': '3'};
+
+  app.dialog.confirm('Yakin Hapus '+nama+'?', 'Konfirmasi', function(){
+      $.ajax({
+        url: site+'/API/kategori/'+id+'/',
+        method: 'POST',
+        data: JSON.stringify(temp)
+      }).done(function(){
+        app.toast.create({
+          text: "Sukses Hapus Kategori",
+          closeTimeout: 3000,
+          closeButton: true
+        }).open();
+
+        listKategori();
+      })
+    }, function(){
+      return;
+    })
 }
 
 // ========== PROSES MASTER ENDS HERE ==========
@@ -1242,6 +1429,18 @@ function cetakReceipt(id){
     var tot = $('#subtotal').html();
     var totInt = tot.replace(/\D/g, '');
     var kembali = parseInt(paid) - parseInt(totInt);
+    var jn = '';
+    switch($('#metode').val()){
+      case '1':
+        jn = 'Tunai';
+        break;
+      case '2':
+        jn = 'Kartu Debit/Kredit';
+        break;
+      case '3':
+        jn = ($('#platform').val() == 1 ? 'GO-PAY' : 'OVO');
+        break;
+    }
 
     var kop = '';
     var cab = '';
@@ -1253,8 +1452,7 @@ function cetakReceipt(id){
 
     var sub = 'Sub-total';
     var paid = 'Paid';
-    // var byr = 'Via: ' + jn;
-    // var crd = 'CC';
+    var via = 'Via: ';
     var kbl = 'Change';
     var list = '';
 
@@ -1288,6 +1486,10 @@ function cetakReceipt(id){
       kbl += ' ';
     } kbl += parseInt(result[0].kembali_tunai).toLocaleString('id-ID');
 
+    for(var i = 0; i < 32 - 'Via: '.length - jn.length; i++){
+      via += ' ';
+    } via += jn + '{br}';
+
     for(var i = 0; i < result.length; i++){
       var ws = '';
       var q = parseInt(result[i].qty_jual).toLocaleString('id-ID');
@@ -1307,7 +1509,7 @@ function cetakReceipt(id){
 
     list += '--------------------------------{br}{left}';
 
-    var q = header + subheader + list + sub +  paid + kbl + '{br}' + thanks + eol;
+    var q = header + subheader + list + sub + via + paid + kbl + '{br}' + thanks + eol;
     // console.log(q);
     connectToPrinter(q);
   })
@@ -1424,6 +1626,18 @@ function cetakWhatsApp(id){
           var tot = $('#subtotal').html();
           var totInt = tot.replace(/\D/g, '');
           var kembali = parseInt(paid) - parseInt(totInt);
+          var jn = '';
+          switch($('#metode').val()){
+            case '1':
+              jn = "Tunai\n";
+              break;
+            case '2':
+              jn = "Kartu Debit/Kredit\n";
+              break;
+            case '3':
+              jn = ($('#platform').val() == 1 ? 'GO-PAY\n' : 'OVO\n');
+              break;
+          }
 
           var kop = '';
           var cab = '';
@@ -1433,6 +1647,7 @@ function cetakWhatsApp(id){
           var mn = ('00'+dt.getMinutes()).slice(-2);
           var stamp = 'Tanggal   : ' + dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
 
+          var via = "Via"
           var sub = 'Sub-total';
           var paid = 'Paid';
           // var byr = 'Via: ' + jn;
@@ -1468,6 +1683,10 @@ function cetakWhatsApp(id){
             kbl += ' ';
           } kbl += parseInt(result[0].kembali_tunai).toLocaleString('id-ID');
 
+          for(var i = 0; i < 32 - 'Via'.length - jn.length; i++){
+            via += ' ';
+          } via += jn;
+
           for(var i = 0; i < result.length; i++){
             var ws = '';
             var q = parseInt(result[i].qty_jual).toLocaleString('id-ID');
@@ -1486,7 +1705,7 @@ function cetakWhatsApp(id){
           }
 
           list += '--------------------------------\n';
-          window.location = 'https://wa.me/62' +nohp.substring(1)+ '?text='+encodeURI(header + list + sub + paid + kbl + thanks + '```');
+          window.location = 'https://wa.me/62' +nohp.substring(1)+ '?text='+encodeURI(header + list + sub + via + paid + kbl + thanks + '```');
 
           dialog.close();
         }

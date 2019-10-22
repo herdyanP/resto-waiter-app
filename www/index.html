@@ -68,12 +68,22 @@
                   </a>
                 </li>
                 <li>
+                  <a href="/kategori/" class="item-content item-link panel-close">
+                    <div class="item-media">
+                      <i class="f7-icons">box</i>
+                    </div>
+                    <div class="item-inner">
+                      <div class="item-title">Kategori</div>
+                    </div>
+                  </a>
+                </li>
+                <li>
                   <a href="/tambah/" class="item-content item-link panel-close">
                     <div class="item-media">
                       <i class="f7-icons">box</i>
                     </div>
                     <div class="item-inner">
-                      <div class="item-title">Barang</div>
+                      <div class="item-title">Produk</div>
                     </div>
                   </a>
                 </li>
@@ -134,6 +144,17 @@
               </div>
               <div class="item-inner">
                 <div class="item-title">Dashboard</div>
+              </div>
+            </a>
+          </li>
+
+          <li>
+            <a href="/closing/" class="item-content item-link panel-close">
+              <div class="item-media">
+                <i class="f7-icons">document_text</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Closing</div>
               </div>
             </a>
           </li>
@@ -417,7 +438,7 @@
 
             <div class="list no-hairlines no-hairlines-between">
               <ul>
-                <li class="item-content item-input inline-label bayar-tunai" style="display: block;">
+                <li class="item-content item-input inline-label" style="display: block;">
                   <div class="item-inner">
                     <div class="item-title item-label" style="color: unset;">Diskon (Rp)</div>
                     <div class="item-input-wrap">
@@ -483,13 +504,13 @@
                           <div class="row">
                             <div class="col">
                               <div class="item-input-wrap">
-                                <input type="text" id="ekartu" style="text-align: right;">
+                                <input type="tel" maxlength="2" pattern="[0-9]{2}" id="ekartu" style="text-align: right;" placeholder="MM">
                               </div>
                             </div>
                             &nbsp;/&nbsp;
                             <div class="col">
                               <div class="item-input-wrap">
-                                <input type="text" id="ekartu2" style="text-align: right;">
+                                <input type="tel" maxlength="2" pattern="[0-9]{2}" id="ekartu2" style="text-align: right;" placeholder="YY">
                               </div>
                             </div>
                           </div>
@@ -497,7 +518,7 @@
                         <div class="item-cell">
                           <div class="item-title item-label" style="color: unset;">CVV</div>
                           <div class="item-input-wrap">
-                            <input type="text" id="ckartu" style="text-align: right;">
+                            <input type="tel" id="ckartu" maxlength="3" pattern="[0-9]{3}" style="text-align: right;">
                           </div>
                         </div>
                       </div>
@@ -509,10 +530,18 @@
                     <div class="item-inner">
                       <div class="item-title item-label" style="color: unset;">Platform</div>
                       <div class="item-input-wrap input-dropdown-wrap">
-                        <select id="platform" name="platform">
+                        <select id="platform" name="platform" onchange="getElementById('idewallet').select();">
                           <option value="1" selected>GO-PAY</option>
                           <option value="2">OVO</option>
                         </select>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="item-content item-input inline-label">
+                    <div class="item-inner">
+                      <div class="item-title item-label" style="color: unset;">No. HP</div>
+                      <div class="item-input-wrap">
+                        <input type="tel" maxlength="12" pattern="[0-9]{10,11,12}" id="idewallet" value="">
                       </div>
                     </div>
                   </li>

@@ -42,6 +42,19 @@ var routes = [
     pageAfterIn: function(){
       listBarang();
       console.log('afterin');
+
+      $.ajax({
+        url: site+'/API/kategori/'+cpyProf.id_client+'/',
+        method: 'GET'
+      }).always(function(result){
+        var data = '<option value="" selected="" disabled="">-- Pilih Kategori --</option>';
+        for(var i = 0; i < result.length; i++){
+          data += '<option value="'+result[i].id_kategori+'">'+result[i].nama_kategori+'</option>';
+        }
+
+        $('#tipe_barang').html(data);
+      });
+
       $.ajax({
         url: site+'/API/satuan/'+cpyProf.id_client+'/',
         method: 'GET'
@@ -52,7 +65,7 @@ var routes = [
         }
 
         $('#satuan_select').html(data);
-      })
+      });
     },
     pageAfterOut: function(){
       tampilMenu();
@@ -111,6 +124,15 @@ var routes = [
   componentUrl: './pages/penjualan.html',
 },
 {
+  path: '/closing/',
+  componentUrl: './pages/closing.html',
+  on: {
+    pageAfterIn: function(){
+      console.log('closing');
+    }
+  }
+},
+{
   path: '/penjualan_item/',
   componentUrl: './pages/penjualan_item.html',
 },
@@ -140,17 +162,15 @@ var routes = [
       listSatuan();
     }
   }
-  /*on: {
-    pageInit: function(){
-      emptyDB();
-      // allItems();
-    },
-    pageAfterOut: function(){
-      tampilFood();
-      tampilBvrg();
-      emptyDB();
+},
+{
+  path: '/kategori/',
+  componentUrl: './pages/kategori.html',
+  on: {
+    pageAfterIn: function(){
+      listKategori();
     }
-  }*/
+  }
 },
 {
   path: '/combo/',
