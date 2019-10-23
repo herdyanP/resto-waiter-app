@@ -1,12 +1,27 @@
 var routes = [
 {
-  path: '/',
-  url: './index.html',
-  name: 'home',
+  path: '/home/',
+  componentUrl: './pages/home.html',
   on: {
     pageAfterIn: function(){
       tampilMenu();
       keranjang();
+
+      NativeStorage.getItem('modal', onModalFound, onModalNotFound);
+
+      $.ajax({
+        url: site+'/API/kategori/'+cpyProf.id_client+'/',
+        method: 'GET',
+      }).done(function(result){
+        var data = '<option value="0">Semua menu</option>';
+        for(var i = 0; i < result.length; i++){
+          if(result[i].id_kategori == null || result[i].nama_kategori == null) continue;
+
+          data += `<option value="${result[i].id_kategori}">${result[i].nama_kategori}</option>`;
+        }
+
+        $('#kategori').html(data);
+      });
 
       // $('#currentUser').html('Operator: '+ (cpyProf.nama ? cpyProf.nama : cpyProf.client));
 
@@ -99,8 +114,8 @@ var routes = [
   }
 },
 {
-  path: '/login/',
-  componentUrl: './pages/login.html',
+  path: '/',
+  url: './index.html',
   on: {
     pageAfterIn: function(){
       $('#appversion').html("v"+appVer);
@@ -129,6 +144,130 @@ var routes = [
   on: {
     pageAfterIn: function(){
       console.log('closing');
+      $('#ul_closing_modal').html(parseInt(dailyModal).toLocaleString());
+
+      let dt = new Date();
+      let sales = {
+        act: 'penjualan',
+        tgl: `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`,
+        tglsd: `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`
+      }
+
+      app.request({
+        url: site+'/API/laporan/' +cpyProf.id_client+ '/',
+        method: 'POST',
+        data: JSON.stringify(sales),
+        success: function(json){
+          let datanya = '<li class="item-divider">Jenis Pembayaran</li>';
+          let tunai = 0, cc = 0, emoney = 0;
+          let result = JSON.parse(json);
+          for(var i = 0; i < result.length; i++){
+            switch (result[i].jenis_bayar){
+              case '1':
+                console.log(parseInt(result[i].total_jual));
+                tunai += (result[i].total_jual ? parseInt(result[i].total_jual) : 0);
+                break;
+              case '2':
+                console.log(result[i].total_jual);
+                cc += (result[i].total_jual ? parseInt(result[i].total_jual) : 0);
+                break;
+              case '3':
+                console.log(result[i].total_jual);
+                emoney += (result[i].total_jual ? parseInt(result[i].total_jual) : 0);
+                break;
+            }
+          }
+
+          datanya += `
+            <li>
+              <div class="item-content">
+                <div class="item-inner">
+                  <div class="item-title">Tunai</div>
+                  <div class="item-after">${tunai.toLocaleString()}</div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="item-content">
+                <div class="item-inner">
+                  <div class="item-title">Kartu Debit/Kredit</div>
+                  <div class="item-after">${cc.toLocaleString()}</div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="item-content">
+                <div class="item-inner">
+                  <div class="item-title">E-Money</div>
+                  <div class="item-after">${emoney.toLocaleString()}</div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="item-content">
+                <div class="item-inner">
+                  <div class="item-title">Total</div>
+                  <div class="item-after">${(tunai + cc + emoney).toLocaleString()}</div>
+                </div>
+              </div>
+            </li>
+          `;
+
+          $('#ul_closing_sales').html(datanya);
+          $('#ul_closing_total').html((parseInt(tunai) + parseInt(cc) + parseInt(emoney)).toLocaleString());
+
+          cl_tu = tunai;
+          cl_cc = cc;
+          cl_em = emoney;
+        }
+      })
+
+      let items = {
+        act: 'kategori',
+        tgl: `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`,
+        tglsd: `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`
+      };
+
+      app.request({
+        url: site+'/API/laporan/' +cpyProf.id_client+ '/',
+        method: 'POST',
+        data: JSON.stringify(items),
+        success: function(json){
+          let datanya = '<li class="item-divider">Kategori Item</li>';
+          let total = 0;
+          let result = JSON.parse(json);
+          for(var i = 0; i < result.length; i++){
+            cl_items.push(result[i]);
+            total += parseInt(result[i].total);
+            datanya += `
+              <li>
+                <div class="item-content">
+                  <div class="item-inner">
+                    <div class="item-title">${result[i].nama_kategori}</div>
+                    <div class="item-after">${parseInt(result[i].total).toLocaleString()}</div>
+                  </div>
+                </div>
+              </li>
+            `;
+          }
+
+          datanya += `
+            <li>
+              <div class="item-content">
+                <div class="item-inner">
+                  <div class="item-title">Total</div>
+                  <div class="item-after">${total.toLocaleString()}</div>
+                </div>
+              </div>
+            </li>
+          `;
+
+          $('#ul_closing_item').html(datanya);
+        }
+      })
+    }, 
+    pageAfterOut: function(){
+      cl_items = [];
     }
   }
 },

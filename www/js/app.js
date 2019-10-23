@@ -30,6 +30,9 @@ var moddedHeight = Math.floor(trueHeight / 100) * 100;
 var dailyModal = 0;
 var refreshMenu;
 
+let cl_tu, cl_cc, cl_em;
+let cl_items = [];
+
 Highcharts.setOptions({
   lang: {
     months: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
@@ -258,7 +261,7 @@ function onStoreSuccess(obj){
   console.log('Store Success');
   
   cpyProf = obj;
-  app.views.main.router.navigate('/');
+  app.views.main.router.navigate('/home/');
 
   NativeStorage.getItem('modal', onModalFound, onModalNotFound);
 
@@ -301,7 +304,7 @@ function onRetSuccess(obj){
       cpyProf.outlet = result[0].nama_outlet;
       cpyProf.cabang = result[0].nama_cabang;
       console.log('succ');
-
+      app.views.main.router.navigate('/home/');
       NativeStorage.getItem('modal', onModalFound, onModalNotFound);
 
 
@@ -343,7 +346,7 @@ function onRetSuccess(obj){
 function onRetFail(){
   console.log('fail');
 
-  app.views.main.router.navigate('/login/');
+  // app.views.main.router.navigate('/login/');
 
   // $('#bayarButton').attr('disabled', 'true').addClass('disabled');
   // $('#logoutRow').css('display', 'none');
@@ -352,7 +355,6 @@ function onRetFail(){
 }
 
 function onLogout(){
-  // NativeStorage.remove('modal', onRemModalSuccess, onRemModalFailed);
   NativeStorage.remove('akun', onRemSuccess, onRemFail);
 }
 
@@ -367,7 +369,9 @@ function onRemSuccess(){
   // emptyDB();
   // clearDB();
   // stopPing();
-  app.views.main.router.navigate('/login/');
+  // app.views.main.router.navigate('/login/');
+  clearTimeout(refreshMenu);
+  app.views.main.router.navigate('/');
 }
 
 function onRemFail(){
@@ -378,7 +382,7 @@ function onBackPressed(){
   var mainView = app.views.main;
   
   /*if(mainView.router.currentPageEl.f7Page.name == 'login' || mainView.router.currentPageEl.f7Page.name == 'register'){
-    mainView.router.navigate('/');
+    mainView.router.navigate('/home/');
   } else */if($('.link.back').length > 0){
     mainView.router.back();
   } else{
@@ -392,7 +396,8 @@ function onBackPressed(){
 
 function onSetModalSuccess(){
   var dt = new Date();
-  NativeStorage.setItem('tanggal', dt.getDate(), onSetTglSuccess, onSetTglFailed);
+
+  NativeStorage.setItem('stamp', dt.getDate(), onSetTglSuccess, onSetTglFailed);
   console.log('set modal done');
 }
 
@@ -442,7 +447,7 @@ function onRemModalFailed(){
   console.log("remove modal failed");
 }
 
-function onSetTglSuccess(){
+/*function onSetTglSuccess(){
   console.log("set tgl success");
 }
 
@@ -460,7 +465,7 @@ function onGetTglSuccess(tgl){
 
 function onGetTglFailed(){
   console.log("get tgl failed");
-}
+}*/
 
 // ========== PROSES STARTING UP ENDS HERE ==========
 
@@ -730,23 +735,86 @@ function bayar(){
         $('#ckartu').val(0);
         keranjang();
 
-        app.dialog.create({
-          title: 'Confirmation',
-          text: 'Print receipt?',
-          buttons: [{
-            text: 'No',
-            close: true
-          }, {
-            text: 'Yes',
-            onClick: function(){cetakReceipt(result.id);}
-          }, {
-            text: 'WhatsApp',
-            onClick: function(){cetakWhatsApp(result.id);}
-          }]
-        }).open();
+        dialogCetak(result.id);
       }
     })
   }
+}
+
+function closing(){
+  var dt = new Date();
+  var eol = '{br}{br}{br}{br}';
+  var dy = ('00'+dt.getDate()).slice(-2);
+  var hr = ('00'+dt.getHours()).slice(-2);
+  var mn = ('00'+dt.getMinutes()).slice(-2);
+  var stamp = 'Tanggal   : ' + dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
+
+  var header = '{br}{center}PENERIMAAN PENJUALAN KASIR{br}--------------------------------{br}{br}';
+  var subheader = '{left}Cashier Name : ' +cpyProf.client+ '{br}Print Date   : ' +dy+ '-' +(dt.getMonth() + 1)+ '-' +dt.getFullYear()+ ' ' +hr+ ':' +mn+ '{br}================================{br}';
+
+  let cl_modal = 'Modal Awal: ';
+  let cl_tot = 'Total Penjualan: ';
+  let cl_byr_tu = 'Tunai: ';
+  let cl_byr_cc = 'Kartu Debit/Kredit: ';
+  let cl_byr_em = 'E-Money: ';
+  let cl_list = '';
+  let cl_uang = 'Total Uang: ';
+  let cl_byr_tot = 'Total: ';
+  let cl_item_tot = 'Total: ';
+  let cl_item_nom = 0;
+
+  for(let i = 0; i < 32 - 'Modal Awal: '.length - parseInt(dailyModal).toLocaleString().length; i++){
+    cl_modal += ' ';
+  } cl_modal += parseInt(dailyModal).toLocaleString() + '{br}';
+
+  for(let i = 0; i < 32 - 'Total Penjualan: '.length - parseInt(cl_tu + cl_cc + cl_em).toLocaleString().length; i++){
+    cl_tot += ' ';
+  } cl_tot += parseInt(cl_tu + cl_cc + cl_em).toLocaleString() + '{br}';
+
+  for(let i = 0; i < 32 - 'Total Uang: '.length - (parseInt(cl_tu + cl_cc + cl_em) + parseInt(dailyModal)).toLocaleString().length; i++){
+    cl_uang += ' ';
+  } cl_uang += (parseInt(cl_tu + cl_cc + cl_em) + parseInt(dailyModal)).toLocaleString() + '{br}';
+
+  let sep1 = '{br}================================{br}{center}Jenis Pembayaran{br}================================{br}';
+
+  for(let i = 0; i < 32 - 'Tunai: '.length - parseInt(cl_tu).toLocaleString().length; i++){
+    cl_byr_tu += ' ';
+  } cl_byr_tu += parseInt(cl_tu).toLocaleString() + '{br}';
+
+  for(let i = 0; i < 32 - 'Kartu Debit/Kredit: '.length - parseInt(cl_cc).toLocaleString().length; i++){
+    cl_byr_cc += ' ';
+  } cl_byr_cc += parseInt(cl_cc).toLocaleString() + '{br}';
+
+  for(let i = 0; i < 32 - 'E-Money: '.length - parseInt(cl_em).toLocaleString().length; i++){
+    cl_byr_em += ' ';
+  } cl_byr_em += parseInt(cl_em).toLocaleString() + '{br}';
+
+  for(let i = 0; i < 32 - 'Total: '.length - (parseInt(cl_tu) + parseInt(cl_cc) + parseInt(cl_em)).toLocaleString().length; i++){
+    cl_byr_tot += ' ';
+  } cl_byr_tot += (parseInt(cl_tu) + parseInt(cl_cc) + parseInt(cl_em)).toLocaleString() + '{br}';
+
+  let sep2 = '{br}================================{br}{center}Kategori Item{br}================================{br}';
+  let cl_list_tot = 0;
+
+  for(let i = 0; i < cl_items.length; i++){
+    cl_list += cl_items[i].nama_kategori;
+    cl_item_nom += parseInt(cl_items[i].total);
+    for(let j = 0; j < 32 - cl_items[i].nama_kategori.length - parseInt(cl_items[i].total).toLocaleString().length; j++){
+      cl_list += ' ';
+    } cl_list += parseInt(cl_items[i].total).toLocaleString() + '{br}';
+  }
+
+  for(let i = 0; i < 32 - 'Total: '.length - parseInt(cl_item_nom).toLocaleString().length; i++){
+    cl_item_tot += ' ';
+  } cl_item_tot += parseInt(cl_item_nom).toLocaleString() + '{br}';
+
+  let q = header + subheader + cl_modal + cl_tot + cl_uang + sep1 + cl_byr_tu + cl_byr_cc + cl_byr_em + cl_byr_tot + sep2 + cl_list + cl_item_tot + eol;
+
+  connectToPrinter(q);
+  NativeStorage.remove('modal', onRemModalSuccess, onRemModalFailed);
+
+  // console.log(cl_list);
+  // console.log(header, subheader);
 }
 
 // ========== PROSES UTAMA ENDS HERE ==========
@@ -1418,6 +1486,23 @@ function hapusKategori(id, nama){
 
 
 // ========== PROSES UTILITY STARTS HERE ==========
+
+function dialogCetak(id){
+  app.dialog.create({
+    title: 'Confirmation',
+    text: 'Print receipt?',
+    buttons: [{
+      text: 'No',
+      close: true
+    }, {
+      text: 'Yes',
+      onClick: function(){cetakReceipt(id);}
+    }, {
+      text: 'WhatsApp',
+      onClick: function(){cetakWhatsApp(id);}
+    }]
+  }).open();
+}
   
 function cetakReceipt(id){
   $.ajax({
@@ -1709,6 +1794,13 @@ function cetakWhatsApp(id){
 
           dialog.close();
         }
+      },
+      {
+        text: 'Cancel',
+        onClick: function(dialog, e){
+          dialog.close();
+          dialogCetak(id);
+        }
       }]
     }).open();
     /*app.dialog.create({
@@ -1971,7 +2063,7 @@ function register(q){
         if(result.status == 1){
           app.dialog.alert('Email konfirmasi berisi link untuk aktivasi akun akan segera dikirim ke email anda. Harap lakukan aktivasi terlebih dahulu sebelum melakukan login.', 'Register', function(){
             $('#register_cred').trigger('reset');
-            app.views.main.router.navigate('/login/');
+            app.views.main.router.navigate('/');
           });
         }
       },
@@ -2004,7 +2096,7 @@ function updateProfil(){
     }).done(function(json){
       if(json){
         alert("Sukses update profil");
-        app.views.main.router.navigate('/');
+        app.views.main.router.navigate('/home/');
       }
     })
   } else {

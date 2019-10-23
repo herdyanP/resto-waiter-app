@@ -20,26 +20,42 @@
     <div class="page-content">
       <div class="card card-outline">
         <div class="card-header">
-          <strong>Hasil Closing</strong>
+          <strong>Hasil Penjualan</strong>
         </div>
 
         <div class="list no-hairlines no-hairlines-between">
-          <ul id="ul_closing">
+          <ul>
+            <li>
+              <div class="item-content">
+                <div class="item-inner">
+                  <div class="item-title">Modal Awal</div>
+                  <div class="item-after" id="ul_closing_modal"></div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="item-content">
+                <div class="item-inner">
+                  <div class="item-title">Total Penjualan</div>
+                  <div class="item-after" id="ul_closing_total"></div>
+                </div>
+              </div>
+            </li>
           </ul>
+
+          <br>
+
+          <ul id="ul_closing_sales"></ul>
+
+          <br>
+          
+          <ul id="ul_closing_item"></ul>
         </div>
 
         <div class="card-footer">
           <button class="button button-fill color-green" onclick="closing();">Cetak dan close penjualan</button>
         </div>
       </div>
-
-      <!-- <iframe src="" frameborder="0" id="page_unduh" style="display: none;"></iframe> -->
-
-      <div class="data-table" id="hasil_closing">
-        
-      </div>
-
-
     </div>
   </div>
 </template>

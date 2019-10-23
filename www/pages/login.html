@@ -1,125 +1,355 @@
-<template>
-  <div class="page" data-name="login">
-    <div id="login_page" class="page-content login-screen-content" style="background: #2196f3; height: 100%;">
-      <!-- <div class="login-screen-title" style="font-size: 28px">MediaPOS
-        <div class="mt-20"><img src="logo.png" width="150" height="150"></div>
-        <div style="font-size: 22px">Login Anggota</div>
-      </div> -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <!-- <meta name="theme-color" content="#2196f3"> -->
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:">
+  <link rel="stylesheet" href="css/framework7.css">
+  <link rel="stylesheet" href="css/app.css">
+  <!-- <link rel="apple-touch-icon" href="img/f7-icon-square.png"> -->
+  <!-- <link rel="icon" href="img/fav/android-icon-144x144.png"> -->
+</head>
 
-      <!-- <form id="login_cred" autocomplete="off">
-        <div class="list no-hairlines no-hairlines-between">
-          <ul>
-            <li class="item-content item-input">
-              <div class="item-inner">
-                <div class="item-title item-label">Username</div>
-                <div class="item-input-wrap">
-                  <input type="text" id="username" name="username" placeholder="Your username">
-                  <input type="text" id="userlogin" name="user" value="">
-                </div>
-              </div>
-            </li>
-            <li class="item-content item-input">
-              <div class="item-inner">
-                <div class="item-title item-label">Password</div>
-                <div class="item-input-wrap">
-                  <input type="password" id="pass" name="pass" placeholder="Your password">
-                  <input type="password" id="passlogin" name="pass" value="">
-                </div>
-              </div>
-            </li>
-            <li class="item-content">
-              <div class="item-inner">
-                <div class="item-title" style="width: 100%;">
-                  <a id="login_button" class="button button-outline button-round" href="#" onclick="onNewLogin(document.getElementById('login_cred'))">Sign In</a>
-                </div>
-              </div>
-            </li>
-            <li class="item-content">
-              <div class="item-inner">
-                <div class="item-title" style="width: 100%;" align="center">
-                  <div class="row">
-                    <a href="/lupapassword/" class="button button-small col"><b>Lupa Password</b></a>
-                    <a href="#" class="button button-small col"><b>Daftar Baru</b></a>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-      
-        <a href="#" onclick="onLogout()">LO</a>
-        <a href="#" onclick="onLogin()">LI</a>
-      
-        <div class="block-footer">
-          <p><a href="/register/">Belum punya akun? Daftar disini</a></p>
-          <p><a href="/lupapass/">Lupa Password</a></p>
-          <p>&copy; 2019 PT Media Nusa Mandiri</p>
-          <p id="appversion"></p>
-        </div>
-      </form> -->
+<body>
+  <div id="app">
 
-      <div id="login-title" style="position: absolute; left: 10vw;">
-        <img src="img/logo-Mediapos.png" style="width: 80vw;">
+    <div class="panel panel-left panel-cover">
+      <div class="block" style="background: #2196f3; color: white; margin: 0; padding: 20px; font-size: 20px">
+        <br><strong>MediaPOS</strong>
+        <br>POS Application
+      </div>
 
-        <div>
-          <form id="login_cred" name="login_cred">
-            <div class="list no-hairlines no-hairlines-between">
+      <div class="list no-hairlines no-hairlines-between no-chevron" style="margin: 0;">
+        <ul>
+          <li class="divider" style="margin-top: 0;"><strong>Manajemen Toko</strong></li>
+          <!-- <li>
+            <a href="#" class="item-link item-content panel-close" onclick="tampilFood();">
+              <div class="item-media">
+                <i class="f7-icons">reload_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Update Menu</div>
+              </div>
+            </a>
+          </li> -->
+          <li class="accordion-item for-admin">
+            <a href="#" class="item-link item-content">
+              <div class="item-media">
+                <i class="f7-icons">box</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Master</div>
+              </div>
+            </a>
+
+            <div class="accordion-item-content list inset no-chevron">
               <ul>
-                <li class="item-content item-input">
-                  <div class="item-inner">
-                    <div class="item-title item-label" style="font-size: 1.2em; line-height: normal; color: white; padding-bottom: 10px;">Username</div>
-                    <div class="item-input-wrap" style="background: white; border-radius: 30px; padding-left: 15px; margin-left: -7px;">
-                      <input type="text" onclick="this.select();" onfocus="reScreen();" onblur="returnScreen();" id="userlogin" name="user">
+                <!-- <li>
+                  <a href="#" class="item-content item-link panel-close" onclick="onConstruction();">
+                    <div class="item-media">
+                      <i class="f7-icons">box</i>
                     </div>
-                  </div>
+                    <div class="item-inner">
+                      <div class="item-title">Daftar Menu</div>
+                    </div>
+                  </a>
+                </li> -->
+                <li>
+                  <a href="/satuan/" class="item-content item-link panel-close">
+                    <div class="item-media">
+                      <i class="f7-icons">box</i>
+                    </div>
+                    <div class="item-inner">
+                      <div class="item-title">Satuan</div>
+                    </div>
+                  </a>
                 </li>
-                <li class="item-content item-input">
-                  <div class="item-inner">
-                    <div class="item-title item-label" style="font-size: 1.2em; line-height: normal; color: white; padding-bottom: 10px;">Password</div>
-                    <div class="item-input-wrap" style="background: white; border-radius: 30px; padding-left: 15px; margin-left: -7px;">
-                      <input type="password" onclick="this.select();" onfocus="reScreen();" onblur="returnScreen();" id="passlogin" name="pass">
+                <li>
+                  <a href="/kategori/" class="item-content item-link panel-close">
+                    <div class="item-media">
+                      <i class="f7-icons">box</i>
                     </div>
-                  </div>
+                    <div class="item-inner">
+                      <div class="item-title">Kategori</div>
+                    </div>
+                  </a>
                 </li>
-
-                <br>
-
-                <li class="item-content">
-                  <div class="item-inner">
-                    <div class="item-title" style="width: 100%;transform: scaleX(1.04);">
-                      <a id="login_button" class="button button-outline button-round" style="color: white; border: solid white 2px; background: #2196f3;" href="#" onclick="onNewLogin(document.getElementById('login_cred')); returnScreen();">Sign In</a>
+                <li>
+                  <a href="/tambah/" class="item-content item-link panel-close">
+                    <div class="item-media">
+                      <i class="f7-icons">box</i>
                     </div>
-                  </div>
+                    <div class="item-inner">
+                      <div class="item-title">Produk</div>
+                    </div>
+                  </a>
                 </li>
-
-                <br>
-
-                <li class="item-content">
-                  <div class="item-inner">
-                    <div class="item-title" style="width: 100%;" align="center">
-                      <a href="/register/" class="button button-small col" style="color: white;">
-                        <b>Belum punya akun? Daftar disini</b>
-                      </a>
+                <!-- <li>
+                  <a href="#" class="item-content item-link panel-close" onclick="onConstruction();">
+                    <div class="item-media">
+                      <i class="f7-icons">box</i>
                     </div>
-                  </div>
+                    <div class="item-inner">
+                      <div class="item-title">Combos</div>
+                    </div>
+                  </a>
+                </li> -->
+              </ul>
+            </div>
+          </li>
+
+          <li class="accordion-item for-admin">
+            <a href="#" class="item-link item-content">
+              <div class="item-media">
+                <i class="f7-icons">document_text</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Laporan</div>
+              </div>
+            </a>
+
+            <div class="accordion-item-content list inset no-chevron">
+              <ul>
+                <li>
+                  <a href="/penjualan/" class="item-content item-link panel-close">
+                    <div class="item-media">
+                      <i class="f7-icons">bars_chart</i>
+                    </div>
+                    <div class="item-inner">
+                      <div class="item-title">Penjualan</div>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <a href="/penjualan_item/" class="item-content item-link panel-close">
+                    <div class="item-media">
+                      <i class="f7-icons">bars_chart</i>
+                    </div>
+                    <div class="item-inner">
+                      <div class="item-title">Penjualan Per Item</div>
+                    </div>
+                  </a>
                 </li>
               </ul>
             </div>
+          </li>
 
-            <div class="block-footer">
-              <!-- <p style="color: white;"><a href="/register/">Belum punya akun? Daftar disini</a></p> -->
-              <!-- <p style="color: white;"><a href="/lupapass/">Lupa Password</a></p> -->
-              <p style="color: white;">&copy; 2019 PT Media Nusa Mandiri</p>
-              <p style="color: white;" id="appversion"></p>
+          <li>
+            <a href="/dashboard/" class="item-content item-link panel-close">
+              <div class="item-media">
+                <i class="f7-icons">pie_chart</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Dashboard</div>
+              </div>
+            </a>
+          </li>
+
+          <li>
+            <a href="/closing/" class="item-content item-link panel-close">
+              <div class="item-media">
+                <i class="f7-icons">document_text</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Closing</div>
+              </div>
+            </a>
+          </li>
+
+          <!-- <li>
+            <div class="item-content">
+              <div class="item-media">
+                <i class="f7-icons">box</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Master Barang</div>
+              </div>
             </div>
-          </form>
-        </div>
+            <ul>
+              <li>
+                <a href="#" class="item-content item-link panel-close" onclick="onConstruction();">
+                  <div class="item-media">
+                    <i class="f7-icons">add</i>
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title">Tambah Baru</div>
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </li> -->
+          <!-- <li>
+            <div class="item-content">
+              <div class="item-media">
+                <i class="f7-icons">document_text</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Laporan</div>
+              </div>
+            </div>
+            <ul>
+              <li>
+                <a href="/penjualan/" class="item-content item-link panel-close">
+                  <div class="item-media">
+                    <i class="f7-icons">bars_chart</i>
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title">Penjualan</div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="item-content item-link panel-close" onclick="onConstruction();">
+                  <div class="item-media">
+                    <i class="f7-icons">bars_chart</i>
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title">Pembelian</div>
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </li> -->
+          <!-- <li>
+            <a href="#" class="item-link item-content panel-close" onclick="onConstruction();">
+              <div class="item-media">
+                <i class="f7-icons">business</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Keuangan Toko</div>
+              </div>
+            </a>
+          </li> -->
+          <li class="divider">Manajemen Akun</li>
+          <!-- <li>
+            <a href="#" class="item-link item-content panel-close" onclick="cekUUID();">
+              <div class="item-media">
+                <i class="f7-icons">info_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title"></div>
+              </div>
+            </a>
+          </li> -->
+          <li>
+            <a href="/profil/" class="item-link item-content panel-close">
+              <div class="item-media">
+                <i class="f7-icons">person_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Profil</div>
+              </div>
+            </a>
+          </li>
+          <!-- <li id="loginRow">
+            <a href="/login/" class="item-link item-content panel-close">
+              <div class="item-media">
+                <i class="f7-icons">person_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Login</div>
+              </div>
+            </a>
+          </li> -->
+          <li id="logoutRow">
+            <a href="#" class="item-link item-content panel-close" onclick="onLogout();">
+              <div class="item-media">
+                <i class="f7-icons">person_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Logout</div>
+              </div>
+            </a>
+          </li>
 
+          
+          <!-- <li>
+            <a href="#" class="item-link item-content panel-close" onclick="debug();">
+              <div class="item-media">
+                <i class="f7-icons">info_round</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Debug</div>
+              </div>
+            </a>
+          </li> -->
+        </ul>
       </div>
 
-      <div style="position: absolute; bottom: 0; width: 80vw;">
-        <img src="img/food-beverages.png" style="width: 100vw;">
+    </div>
+
+    <div class="view view-main view-init ios-edges">
+      <div class="page" data-name="login">
+        <div id="login_page" class="page-content login-screen-content" style="background: #2196f3; height: 100%;">
+
+          <div id="login-title" style="position: absolute; left: 10vw;">
+            <img src="img/logo-Mediapos.png" style="width: 80vw;">
+
+            <div>
+              <form id="login_cred" name="login_cred">
+                <div class="list no-hairlines no-hairlines-between">
+                  <ul>
+                    <li class="item-content item-input">
+                      <div class="item-inner">
+                        <div class="item-title item-label" style="font-size: 1.2em; line-height: normal; color: white; padding-bottom: 10px;">Username</div>
+                        <div class="item-input-wrap" style="background: white; border-radius: 30px; padding-left: 15px; margin-left: -7px;">
+                          <input type="text" onclick="this.select();" onfocus="reScreen();" onblur="returnScreen();" id="userlogin" name="user">
+                        </div>
+                      </div>
+                    </li>
+                    <li class="item-content item-input">
+                      <div class="item-inner">
+                        <div class="item-title item-label" style="font-size: 1.2em; line-height: normal; color: white; padding-bottom: 10px;">Password</div>
+                        <div class="item-input-wrap" style="background: white; border-radius: 30px; padding-left: 15px; margin-left: -7px;">
+                          <input type="password" onclick="this.select();" onfocus="reScreen();" onblur="returnScreen();" id="passlogin" name="pass">
+                        </div>
+                      </div>
+                    </li>
+
+                    <br>
+
+                    <li class="item-content">
+                      <div class="item-inner">
+                        <div class="item-title" style="width: 100%;transform: scaleX(1.04);">
+                          <a id="login_button" class="button button-outline button-round" style="color: white; border: solid white 2px; background: #2196f3;" href="#" onclick="onNewLogin(document.getElementById('login_cred')); returnScreen();">Sign In</a>
+                        </div>
+                      </div>
+                    </li>
+
+                    <br>
+
+                    <li class="item-content">
+                      <div class="item-inner">
+                        <div class="item-title" style="width: 100%;" align="center">
+                          <a href="/register/" class="button button-small col" style="color: white;">
+                            <b>Belum punya akun? Daftar disini</b>
+                          </a>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="block-footer">
+                  <!-- <p style="color: white;"><a href="/register/">Belum punya akun? Daftar disini</a></p> -->
+                  <!-- <p style="color: white;"><a href="/lupapass/">Lupa Password</a></p> -->
+                  <p style="color: white;">&copy; 2019 PT Media Nusa Mandiri</p>
+                  <p style="color: white;" id="appversion"></p>
+                </div>
+              </form>
+            </div>
+
+          </div>
+
+          <div style="position: absolute; bottom: 0; width: 80vw;">
+            <img src="img/food-beverages.png" style="width: 100vw;">
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</template>
+</body>
+</html>

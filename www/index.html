@@ -282,282 +282,76 @@
     </div>
 
     <div class="view view-main view-init ios-edges">
-      <!-- <div class="page page-with-subnavbar"> -->
-      <div class="page">
-        <div class="navbar">
-          <div class="navbar-inner">
-            <div class="left">
-              <a href="#" class="link icon-only panel-open" data-panel="left">
-                <i class="f7-icons" id="icon_home">menu</i>
-              </a>
-            </div>
-            <div class="title" id="title_home">MediaPOS</div>
-            <div class="right">
-              <!-- <p id="currentUser" style="font-size: 14px; margin-right: 18px;"></p> -->
-              <a class="link icon-only searchbar-enable" data-searchbar=".searchbar"><i class="icon material-icons md-only">search</i></a>
-            </div>
-            <form class="searchbar searchbar-expandable">
-              <div class="searchbar-inner">
-                <div class="searchbar-input-wrap">
-                  <!-- <input type="search" placeholder="Search" onkeyup="searched(event, this.value)" /> -->
-                  <input type="search" placeholder="Search" onkeyup="searched(event, this.value)"/>
-                  <i class="searchbar-icon"></i>
-                  <span class="input-clear-button"></span>
-                </div>
-                <span class="searchbar-disable-button">Cancel</span>
-              </div>
-            </form>
-            <!-- <div class="subnavbar">
-              <div class="subnavbar-inner">
-                <div class="segmented main-group">
-                  <a href="#foods" class="button tab-link tab-link-active">Foods</a>
-                  <a href="#beverages" class="button tab-link">Beverages</a>
-                  <a href="#combos" class="button tab-link">Combos</a>
-                </div>
-              </div>
-            </div> -->
-          </div>
-        </div>
+      <div class="page" data-name="login">
+        <div id="login_page" class="page-content login-screen-content" style="background: #2196f3; height: 100%;">
 
-        <!-- <div class="toolbar tabbar tabbar-scrollable toolbar-top">
-          <div class="toolbar-inner">
-            <a href="#foods" class="tab-link tab-link-active">foods</a>
-            <a href="#beverages" class="tab-link">Beverages</a>
-            <a href="#combos" class="tab-link">Combos</a>
-          </div>
-        </div> -->
+          <div id="login-title" style="position: absolute; left: 10vw;">
+            <img src="img/logo-Mediapos.png" style="width: 80vw;">
 
-
-        <div class="page-content hide-navbar-on-scroll" style="overflow-y: scroll;">
-          <div class="card card-outline">
-            
-            <!-- TO BE ADDED START -->
-
-          <div class="list no-hairlines no-hairlines-between">
-            <ul>
-              <li class="item-content item-input">
-                <div class="item-inner">
-                  <div class="item-title item-label"></div>
-                  <div class="item-input-wrap input-dropdown-wrap">
-                    <select name="kategori" id="kategori" onchange="tampilMenu();">
-                      <option value="0">Semua menu</option>
-                      <option value="1">Makanan</option>
-                      <option value="2">Minuman</option>
-                      <option value="3">Lainnya</option>
-                    </select>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-            <div class="block">
-              <div class="grid-demo">
-                <div class="row" id="itemlist" style="overflow: scroll; height: 35vh; padding-top: 15px;">
-                  <!-- <div onclick="simpan('a', 1,'b','c')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">barang 1</p></div>
-                  <div class="col-33" style="height: 100px; visibility: hidden;"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div> -->
-                </div>
-              </div>
-            </div>
-            <!-- TO BE ADDED END -->
-
-            <!-- <div class="tabs">
-              <div class="tab tab-active" id="foods">
-                <form class="searchbar" id="foodSearch">
-                  <div class="searchbar-inner">
-                    <div class="searchbar-input-wrap">
-                      <input type="search" placeholder="Search" oninput="cariFood(this.value)">
-                      <i class="searchbar-icon"></i>
-                      <span class="input-clear-button"></span>
-                    </div>
-                    <span class="searchbar-disable-button">Cancel</span>
-                  </div>
-                </form>
-
-                <div class="block">
-                  <div class="grid-demo">
-                    <div class="row" id="foodlist" style="overflow: scroll; height: 35vh; padding-top: 15px;"></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="tab" id="beverages">
-                <form class="searchbar" id="bvrgSearch">
-                  <div class="searchbar-inner">
-                    <div class="searchbar-input-wrap">
-                      <input type="search" placeholder="Search" oninput="cariBvrg(this.value)">
-                      <i class="searchbar-icon"></i>
-                      <span class="input-clear-button"></span>
-                    </div>
-                    <span class="searchbar-disable-button">Cancel</span>
-                  </div>
-                </form>
-
-                <div class="block">
-                  <div class="grid-demo">
-                    <div class="row" id="bvrglist" style="overflow: scroll; height: 35vh; padding-top: 15px;"></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="tab" id="combos">
-                <form class="searchbar" id="comboSearch">
-                  <div class="searchbar-inner">
-                    <div class="searchbar-input-wrap">
-                      <input type="search" placeholder="Search" oninput="">
-                      <i class="searchbar-icon"></i>
-                      <span class="input-clear-button"></span>
-                    </div>
-                    <span class="searchbar-disable-button">Cancel</span>
-                  </div>
-                </form>
-
-                <div class="block">
-                  <div class="grid-demo">
-                    <div class="row" id="combolist" style="overflow: scroll; height: 35vh; padding-top: 15px;"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div> -->
-
-          <div class="card card-outline">
-            <div class="card-header">
-              <strong>Keranjang</strong>
-            </div>
-
-            <div class="block" style="max-height: 40vh; overflow: scroll;">
-              <div class="list no-hairlines" id="keranjang">
-              </div>
-            </div>
-          </div>
-
-          <div class="card card-outline">
-            <div class="card-header">
-              <strong>Detil Pembayaran</strong>
-            </div>
-
-            <div class="list no-hairlines no-hairlines-between">
-              <ul>
-                <li class="item-content item-input inline-label" style="display: block;">
-                  <div class="item-inner">
-                    <div class="item-title item-label" style="color: unset;">Diskon (Rp)</div>
-                    <div class="item-input-wrap">
-                      <input type="text" lang="id" id="disk_rp" value="0" onchange="hitungDiskon(this.value); commaNumber(this);" style="text-align: right;">
-                      <!-- <input type="text" lang="id" id="dsk_persen" value="0" onclick="this.select();" onchange="diskon(this.value); hitungKembalian(document.getElementById(bayar).value)" style="text-align: right;"> -->
-                    </div>
-                  </div>
-                </li>
-                <li class="item-content">
-                  <div class="item-inner">
-                    <div class="item-title" style="width: 100%;">
-                      <div class="row">
-                        <div class="col-70">Total</div>
-                        <div class="col-30" id="subtotal" style="text-align: right;">0</div>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li class="item-content item-input inline-label">
-                  <div class="item-inner">
-                    <div class="item-title item-label" style="color: unset;">Metode</div>
-                    <div class="item-input-wrap input-dropdown-wrap">
-                      <select id="metode" name="" onchange="metode(this.value)">
-                        <option value="1" selected>Cash</option>
-                        <option value="2">Credit/Debit Card</option>
-                        <option value="3">e-Wallet</option>
-                      </select>
-                    </div>
-                  </div>
-                </li>
-                <li class="item-content item-input inline-label bayar-tunai" style="display: block;">
-                  <div class="item-inner">
-                    <div class="item-title item-label" style="color: unset;">Terbayar</div>
-                    <div class="item-input-wrap">
-                      <input type="number" id="bayar" value="0" onchange="hitungKembalian(this.value); commaNumber(this);" onclick="changeType(this); this.select();" style="text-align: right;">
-                    </div>
-                  </div>
-                </li>
-                <li class="item-content bayar-tunai">
-                  <div class="item-inner">
-                    <div class="item-title" style="width: 100%;">
-                      <div class="row">
-                        <div class="col-70">Kembalian</div>
-                        <div class="col-30" id="kembalian" style="text-align: right;">0</div>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <div class="bayar-card" style="display: none;">
-                  <li class="item-content item-input inline-label">
-                    <div class="item-inner">
-                      <div class="item-title item-label" style="color: unset;">No. CC</div>
-                      <div class="item-input-wrap">
-                        <input type="text" id="nkartu" value="-" style="text-align: right;">
-                      </div>
-                    </div>
-                  </li>
-                  <li class="item-content item-input">
-                    <div class="item-inner item-cell">
-                      <div class="item-row">
-                        <div class="item-cell">
-                          <div class="item-title item-label" style="color: unset;">EXP</div>
-                          <div class="row">
-                            <div class="col">
-                              <div class="item-input-wrap">
-                                <input type="tel" maxlength="2" pattern="[0-9]{2}" id="ekartu" style="text-align: right;" placeholder="MM">
-                              </div>
-                            </div>
-                            &nbsp;/&nbsp;
-                            <div class="col">
-                              <div class="item-input-wrap">
-                                <input type="tel" maxlength="2" pattern="[0-9]{2}" id="ekartu2" style="text-align: right;" placeholder="YY">
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="item-cell">
-                          <div class="item-title item-label" style="color: unset;">CVV</div>
-                          <div class="item-input-wrap">
-                            <input type="tel" id="ckartu" maxlength="3" pattern="[0-9]{3}" style="text-align: right;">
-                          </div>
+            <div>
+              <form id="login_cred" name="login_cred">
+                <div class="list no-hairlines no-hairlines-between">
+                  <ul>
+                    <li class="item-content item-input">
+                      <div class="item-inner">
+                        <div class="item-title item-label" style="font-size: 1.2em; line-height: normal; color: white; padding-bottom: 10px;">Username</div>
+                        <div class="item-input-wrap" style="background: white; border-radius: 30px; padding-left: 15px; margin-left: -7px;">
+                          <input type="text" onclick="this.select();" onfocus="reScreen();" onblur="returnScreen();" id="userlogin" name="user">
                         </div>
                       </div>
-                    </div>
-                  </li>
-                </div>
-                <div class="bayar-ewallet" style="display: none;">
-                  <li class="item-content item-input inline-label">
-                    <div class="item-inner">
-                      <div class="item-title item-label" style="color: unset;">Platform</div>
-                      <div class="item-input-wrap input-dropdown-wrap">
-                        <select id="platform" name="platform" onchange="getElementById('idewallet').select();">
-                          <option value="1" selected>GO-PAY</option>
-                          <option value="2">OVO</option>
-                        </select>
+                    </li>
+                    <li class="item-content item-input">
+                      <div class="item-inner">
+                        <div class="item-title item-label" style="font-size: 1.2em; line-height: normal; color: white; padding-bottom: 10px;">Password</div>
+                        <div class="item-input-wrap" style="background: white; border-radius: 30px; padding-left: 15px; margin-left: -7px;">
+                          <input type="password" onclick="this.select();" onfocus="reScreen();" onblur="returnScreen();" id="passlogin" name="pass">
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                  <li class="item-content item-input inline-label">
-                    <div class="item-inner">
-                      <div class="item-title item-label" style="color: unset;">No. HP</div>
-                      <div class="item-input-wrap">
-                        <input type="tel" maxlength="12" pattern="[0-9]{10,11,12}" id="idewallet" value="">
+                    </li>
+
+                    <br>
+
+                    <li class="item-content">
+                      <div class="item-inner">
+                        <div class="item-title" style="width: 100%;transform: scaleX(1.04);">
+                          <a id="login_button" class="button button-outline button-round" style="color: white; border: solid white 2px; background: #2196f3;" href="#" onclick="onNewLogin(document.getElementById('login_cred')); returnScreen();">Sign In</a>
+                        </div>
                       </div>
-                    </div>
-                  </li>
+                    </li>
+
+                    <br>
+
+                    <li class="item-content">
+                      <div class="item-inner">
+                        <div class="item-title" style="width: 100%;" align="center">
+                          <a href="/register/" class="button button-small col" style="color: white;">
+                            <b>Belum punya akun? Daftar disini</b>
+                          </a>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
                 </div>
-              </ul>
+
+                <div class="block-footer">
+                  <!-- <p style="color: white;"><a href="/register/">Belum punya akun? Daftar disini</a></p> -->
+                  <!-- <p style="color: white;"><a href="/lupapass/">Lupa Password</a></p> -->
+                  <p style="color: white;">&copy; 2019 PT Media Nusa Mandiri</p>
+                  <p style="color: white;" id="appversion"></p>
+                </div>
+              </form>
             </div>
 
-            <div class="card-footer">
-              <button class="button button-fill color-green" id="bayarButton" onclick="bayar()">Bayar</button>
-            </div>
+          </div>
+
+          <div style="position: absolute; bottom: 0; width: 80vw;">
+            <img src="img/food-beverages.png" style="width: 100vw;">
           </div>
         </div>
       </div>
     </div>
   </div>
-
+  
   <script src="js/jquery-3.3.1.js"></script>
   <script src="js/framework7.min.js"></script>
   <script src="js/highcharts.js"></script>
@@ -565,6 +359,5 @@
   <script src="js/routes.js"></script>
   <script src="js/app.js"></script>
   <script type="text/javascript" src="cordova.js"></script>
-
 </body>
 </html>
