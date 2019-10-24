@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.medianusamandiri.mediapos" version="1.3.5" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.medianusamandiri.mediapos" version="1.3.6" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>MediaPOS</name>
     <description>
         Aplikasi POS
@@ -38,7 +38,7 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <plugin name="cordova-plugin-admobpro" spec="^2.49.0">
-        <variable name="ADMOB_APP_ID" value="ca-app-pub-8300135360648716/8651556341" />
+        <variable name="ADMOB_APP_ID" value="ca-app-pub-8300135360648716~5179943791" />
         <variable name="PLAY_SERVICES_VERSION" value="16.0.0" />
     </plugin>
     <plugin name="cordova-plugin-nativestorage" spec="~2.3.2" />

@@ -10,7 +10,7 @@
           </a>
         </div>
         <div class="title">
-          Tambah/Edit Produk
+          Master Pricelist
         </div>
       </div>
     </div>
@@ -20,7 +20,7 @@
         <input type="hidden" id="id_barang">
         <form id="barang_form" class="list no-hairlines no-hairlines-between">
           <ul>
-            <li class="item-content item-input ">
+            <!-- <li class="item-content item-input ">
               <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Kategori</div>
                 <div class="item-input-wrap input-dropdown-wrap">
@@ -29,32 +29,56 @@
                   </select>
                 </div>
               </div>
-            </li>
-            <li class="item-content item-input ">
+            </li> -->
+            <!-- <li class="item-content item-input ">
               <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Kode Produk</div>
                 <div class="item-input-wrap">
                   <input type="text" name="kode_barang" id="kode_barang">
                 </div>
               </div>
-            </li>
-            <li class="item-content item-input ">
+            </li> -->
+            <!-- <li class="item-content item-input ">
               <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Nama Produk</div>
                 <div class="item-input-wrap">
                   <input type="text" name="nama_barang" id="nama_barang">
                 </div>
               </div>
+            </li> -->
+            <li class="item-content item-input ">
+              <div class="item-inner">
+                <div class="item-title item-label" style="color: unset;">Cabang</div>
+                <div class="item-input-wrap input-dropdown-wrap">
+                  <select id="id_cabang" name="id_cabang" onchange="listOutlet();">
+                    <option value="0">-- Semua Cabang --</option>
+                  </select>
+                </div>
+              </div>
             </li>
-            <!-- <li class="item-content item-input ">
+            <li class="item-content item-input ">
+              <div class="item-inner">
+                <div class="item-title item-label" style="color: unset;">Outlet</div>
+                <div class="item-input-wrap input-dropdown-wrap">
+                  <select id="id_gudang" name="id_gudang">
+                    <option value="0">-- Semua Outlet --</option>
+                  </select>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input ">
               <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Harga per Satuan</div>
                 <div class="item-input-wrap">
                   <input type="number" name="harga" id="harga_addItem">
                 </div>
               </div>
-            </li> -->
-            <li class="item-content item-input ">
+            </li>
+
+            <input type="hidden" id="id_satuan" name="id_satuan">
+            <input type="hidden" name="harga_cetak" value="0">
+
+            <!-- <li class="item-content item-input ">
               <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Satuan</div>
                 <div class="item-input-wrap input-dropdown-wrap">
@@ -63,8 +87,8 @@
                   </select>
                 </div>
               </div>
-            </li>
-            <li class="item-content item-input" id="_status" style="display: none;">
+            </li> -->
+            <!-- <li class="item-content item-input" id="_status" style="display: none;">
               <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Status</div>
                 <div class="item-input-wrap input-dropdown-wrap">
@@ -74,15 +98,15 @@
                   </select>
                 </div>
               </div>
-            </li>
+            </li> -->
             <!-- <input type="hidden" name="act" id="act" value=""> -->
             <li class="item-content">
               <div class="item-inner">
                 <div class="item-title"  style="width: 100%;">
-                  <a class="button button-outline" id="button_addItem" style="display: block;" onclick="addBarang(document.getElementById('barang_form'));">Tambah</a>
+                  <!-- <a class="button button-outline" id="button_addItem" style="display: block;" onclick="addPricelist(document.getElementById('barang_form'));">Tambah</a> -->
                   <p class="row" id="buttons_editRemove" style="display: none;">
-                    <a class="col button button-outline" onclick="hideEditBarang(document.getElementById('barang_form'));">Batal</a>
-                    <a class="col button button-outline" onclick="editBarang(document.getElementById('barang_form'))">Update</a>
+                    <a class="col button button-outline" onclick="hideEditPricelist(document.getElementById('barang_form'));">Batal</a>
+                    <a class="col button button-outline" onclick="editPricelist(document.getElementById('barang_form'))">Update</a>
                   </p>
                 </div>
               </div>

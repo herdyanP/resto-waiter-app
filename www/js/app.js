@@ -44,8 +44,10 @@ Highcharts.setOptions({
 document.addEventListener('deviceready', function() {
   adid = {
     // banner: 'ca-app-pub-3940256099942544/6300978111', /*test ID*/
-    banner: 'ca-app-pub-8300135360648716/8651556341',  /*real ID*/
-    // interstitial: 'ca-app-pub-3940256099942544/1033173712'
+    // banner: 'ca-app-pub-8300135360648716/8651556341',  /*real ID*/
+    banner: 'ca-app-pub-8300135360648716/5241305930', /*ID medusa*/
+    interstitial: 'ca-app-pub-3940256099942544/1033173712' /*test ID*/
+    // interstitial: 'ca-app-pub-8300135360648716/5241305930' /*test ID*/
   }
 
   if(AdMob) {
@@ -60,10 +62,16 @@ document.addEventListener('deviceready', function() {
     });
   }
 
-  // AdMob.prepareInterstitial({
-  //   adId: adid.interstitial,
-  //   autoShow: true
-  // });
+  // if(AdMob) AdMob.prepareInterstitial( {adId: adid.interstitial, autoShow: false} );
+
+  AdMob.prepareInterstitial({
+    adId: adid.interstitial,
+    autoShow: false
+  }, function(){
+    console.log('interstitial ready');
+  }, function(){
+    console.log('interstitial not ready');
+  });
 
   // AdMob.showInterstitial();
 
@@ -175,7 +183,7 @@ function onNewLogin(q){
         temp.id_cabang = result[0].id_cabang;
         temp.id_client = result[0].id_client;
         temp.id_outlet = result[0].id_outlet;
-        temp.id_pegawai = result[0].id_pegawai;
+        temp.id_user = result[0].ID;
 
         console.log(temp);
 
@@ -328,8 +336,8 @@ function onRetSuccess(obj){
       }*/
 
       // setTimeout(function(){
-        tampilMenu();
-        keranjang();
+        // tampilMenu();
+        // keranjang();
       //   // sendPing();
       //   // tampilFood();
       //   // tampilBvrg();
@@ -395,9 +403,17 @@ function onBackPressed(){
 }
 
 function onSetModalSuccess(){
-  var dt = new Date();
+  let dt = new Date();
+  let yr = dt.getFullYear();
+  let mt = ('00'+(dt.getMonth() + 1)).slice(-2);
+  let dy = ('00'+dt.getDate()).slice(-2);
+  let hr = ('00'+dt.getHours()).slice(-2);
+  let mn = ('00'+dt.getMinutes()).slice(-2);
+  let sc = ('00'+dt.getSeconds()).slice(-2);
 
-  NativeStorage.setItem('stamp', dt.getDate(), onSetTglSuccess, onSetTglFailed);
+  let timestamp = `${yr}-${mt}-${dy} ${hr}:${mn}:${sc}`;
+
+  NativeStorage.setItem('stamp', timestamp, onSetStampDone, onSetStampFail);
   console.log('set modal done');
 }
 
@@ -419,7 +435,7 @@ function onModalNotFound(error){
           <li class="item-content item-input">
             <div class="item-inner">
               <div class="item-input-wrap">
-                <input type="text" name="modal" id="modal" oninput="comma(this)" style="text-align: right;" />
+                <input type="tel" pattern="[0-9]" name="modal" id="modal" oninput="comma(this)" style="text-align: right;" />
               </div>
             </div>
           </li>
@@ -447,25 +463,22 @@ function onRemModalFailed(){
   console.log("remove modal failed");
 }
 
-/*function onSetTglSuccess(){
-  console.log("set tgl success");
+function onSetStampDone(){
+  console.log('set timestamp success');
 }
 
-function onSetTglFailed(){
-  console.log("set tgl failed");
+function onSetStampFail(){
+  console.log('set timestamp failed');
 }
 
-function onGetTglSuccess(tgl){
-  console.log("get tgl success");
-  var dt = new Date();
-  if(tgl != dt.getDate()){
-    NativeStorage.remove('modal', onRemModalSuccess, onRemModalFailed);
-  }
+function onGetStampDone(stamp){
+  console.log('get timestamp success');
+  laporanClosing(stamp);
 }
 
-function onGetTglFailed(){
-  console.log("get tgl failed");
-}*/
+function onGetStampFail(){
+  console.log('get timestamp failed')
+}
 
 // ========== PROSES STARTING UP ENDS HERE ==========
 
@@ -603,23 +616,30 @@ function simpan(id, qty, harga, nama){
     'harga' : harga
   }
 
-  $.ajax({
-    url: site+'/API/cart/'+cpyProf.id_outlet+'/',
-    method: 'POST',
-    data: JSON.stringify(temp)
-  }).done(function(result){
+  if(harga == 0){
     app.toast.create({
-      text: "Sukses Tambah ke Keranjang",
+      text: "Harga masih 0, silahkan tambah harga dahulu di master pricelist",
       closeTimeout: 3000,
-      closeButton: true
+      closeButton: false
     }).open();
-  
-    keranjang();
+  } else {
+    $.ajax({
+      url: site+'/API/cart/'+cpyProf.id_outlet+'/',
+      method: 'POST',
+      data: JSON.stringify(temp)
+    }).done(function(result){
+      app.toast.create({
+        text: "Sukses Tambah ke Keranjang",
+        closeTimeout: 3000,
+        closeButton: true
+      }).open();
+    
+      keranjang();
 
-  }).fail(function(a,b,error){
-    alert(error);
-  })
-  
+    }).fail(function(a,b,error){
+      alert(error);
+    })
+  }  
 }
 
 function keranjang(){
@@ -810,9 +830,14 @@ function closing(){
 
   let q = header + subheader + cl_modal + cl_tot + cl_uang + sep1 + cl_byr_tu + cl_byr_cc + cl_byr_em + cl_byr_tot + sep2 + cl_list + cl_item_tot + eol;
 
-  connectToPrinter(q);
   NativeStorage.remove('modal', onRemModalSuccess, onRemModalFailed);
 
+  app.dialog.confirm('Closing berhasil, cetak hasil closing?', 'Konfirmasi', function(){
+    connectToPrinter(q);
+  });
+
+  app.views.main.router.navigate('/');
+  
   // console.log(cl_list);
   // console.log(header, subheader);
 }
@@ -1100,6 +1125,139 @@ function dashboardHarian(tahun, bulan){
   })
 }
 
+function laporanClosing(stamp){
+  let dt = new Date();
+  let yr = dt.getFullYear();
+  let mt = ('00'+(dt.getMonth() + 1)).slice(-2);
+  let dy = ('00'+dt.getDate()).slice(-2);
+  let hr = ('00'+dt.getHours()).slice(-2);
+  let mn = ('00'+dt.getMinutes()).slice(-2);
+  let sc = ('00'+dt.getSeconds()).slice(-2);
+
+  let c_stamp = `${yr}-${mt}-${dy} ${hr}:${mn}:${sc}`;
+
+  let sales = {
+    act: 'cl_penjualan',
+    tgl: stamp,
+    tglsd: c_stamp
+  }
+
+  $('#ul_closing_modal').html(parseInt(dailyModal).toLocaleString());
+
+  app.request({
+    url: site+'/API/laporan/' +cpyProf.id_client+ '/',
+    method: 'POST',
+    data: JSON.stringify(sales),
+    success: function(json){
+      let datanya = '<li class="item-divider">Jenis Pembayaran</li>';
+      let tunai = 0, cc = 0, emoney = 0;
+      let result = JSON.parse(json);
+      for(var i = 0; i < result.length; i++){
+        switch (result[i].jenis_bayar){
+          case '1':
+            console.log(parseInt(result[i].total_jual));
+            tunai += (result[i].total_jual ? parseInt(result[i].total_jual) : 0);
+            break;
+          case '2':
+            console.log(result[i].total_jual);
+            cc += (result[i].total_jual ? parseInt(result[i].total_jual) : 0);
+            break;
+          case '3':
+            console.log(result[i].total_jual);
+            emoney += (result[i].total_jual ? parseInt(result[i].total_jual) : 0);
+            break;
+        }
+      }
+
+      datanya += `
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title">Tunai</div>
+              <div class="item-after">${tunai.toLocaleString()}</div>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title">Kartu Debit/Kredit</div>
+              <div class="item-after">${cc.toLocaleString()}</div>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title">E-Money</div>
+              <div class="item-after">${emoney.toLocaleString()}</div>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title">Total</div>
+              <div class="item-after">${(tunai + cc + emoney).toLocaleString()}</div>
+            </div>
+          </div>
+        </li>
+      `;
+
+      $('#ul_closing_sales').html(datanya);
+      $('#ul_closing_total').html((parseInt(tunai) + parseInt(cc) + parseInt(emoney)).toLocaleString());
+
+      cl_tu = tunai;
+      cl_cc = cc;
+      cl_em = emoney;
+    }
+  })
+
+  let items = {
+    act: 'cl_kategori',
+    tgl: stamp,
+    tglsd: c_stamp
+  };
+
+  app.request({
+    url: site+'/API/laporan/' +cpyProf.id_client+ '/',
+    method: 'POST',
+    data: JSON.stringify(items),
+    success: function(json){
+      let datanya = '<li class="item-divider">Kategori Item</li>';
+      let total = 0;
+      let result = JSON.parse(json);
+      for(var i = 0; i < result.length; i++){
+        cl_items.push(result[i]);
+        total += parseInt(result[i].total);
+        datanya += `
+          <li>
+            <div class="item-content">
+              <div class="item-inner">
+                <div class="item-title">${result[i].nama_kategori}</div>
+                <div class="item-after">${parseInt(result[i].total).toLocaleString()}</div>
+              </div>
+            </div>
+          </li>
+        `;
+      }
+
+      datanya += `
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title">Total</div>
+              <div class="item-after">${total.toLocaleString()}</div>
+            </div>
+          </div>
+        </li>
+      `;
+
+      $('#ul_closing_item').html(datanya);
+    }
+  })
+}
+
 // ========== LAPORAN & DASHBOARD ENDS HERE ==========
 
 
@@ -1141,11 +1299,12 @@ function addBarang(q){
 function listBarang(){
   var data = '<ul>';
   $.ajax({
-    url: site+'/API/menu/'+cpyProf.id_outlet+'/',
+    url: site+'/API/pricelist/'+cpyProf.id_client+'/',
     method: 'GET',
   }).done(function(result){
       // var tempArr = [];
       // var temp = {};
+      // let result = JSON.parse(json);
       for(var i = 0; i < result.length; i++){
         if(result[i].id_barang == null || result[i].nama_barang == null) continue;
         var hrg = result[i].harga.split('-')[0];
@@ -1320,7 +1479,8 @@ function hideEditSatuan(q){
 function editSatuan(q){
   var id = $('#id_satuan').val();
   var temp = {
-    'act' : '2'
+    'act' : '2',
+    'id_client' : cpyProf.id_client
   };
 
   $.each($(q).serializeArray(), function(){
@@ -1333,13 +1493,14 @@ function editSatuan(q){
     data: JSON.stringify(temp)
   }).done(function(){
     app.toast.create({
-      text: "Sukses Edit Barang",
+      text: "Sukses Edit Satuan",
       closeTimeout: 3000,
       closeButton: true
     }).open();
 
-    $(q).trigger('reset');
+    // $(q).trigger('reset');
 
+    hideEditSatuan(q);
     listSatuan();
   })
 }
@@ -1436,7 +1597,8 @@ function hideEditKategori(q){
 function editKategori(q){
   var id = $('#id_kategori').val();
   var temp = {
-    'act' : '2'
+    'act' : '2',
+    'id_client' : cpyProf.id_client
   };
 
   $.each($(q).serializeArray(), function(){
@@ -1454,8 +1616,9 @@ function editKategori(q){
       closeButton: true
     }).open();
 
-    $(q).trigger('reset');
+    // $(q).trigger('reset');
 
+    hideEditKategori(q);
     listKategori();
   })
 }
@@ -1482,10 +1645,111 @@ function hapusKategori(id, nama){
     })
 }
 
+function editPricelist(q){
+  var id = $('#id_barang').val();
+  var dt = new Date();
+  let tglnow = `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`;
+
+  var temp = {
+    'id_barang' : id,
+    'id_client' : cpyProf.id_client,
+    'id_gudang' : cpyProf.id_outlet,
+    'tgl' : tglnow
+  };
+
+  $.each($(q).serializeArray(), function(){
+    temp[this.name] = this.value;
+  })
+
+  $.ajax({
+    url: site+'/API/pricelist/',
+    method: 'POST',
+    data: JSON.stringify(temp)
+  }).done(function(){
+    app.toast.create({
+      text: "Sukses Edit Pricelist",
+      closeTimeout: 3000,
+      closeButton: true
+    }).open();
+
+    hideEditPricelist(q);
+    listPricelist();
+  })
+}
+
+function listPricelist(){
+  var data = '<ul>';
+  $.ajax({
+    url: site+'/API/pricelist/'+cpyProf.id_client+'/',
+    method: 'GET',
+  }).done(function(result){
+      // var tempArr = [];
+      // var temp = {};
+      // let result = JSON.parse(json);
+      for(var i = 0; i < result.length; i++){
+        if(result[i].id_barang == null || result[i].nama_barang == null) continue;
+        var hrg = result[i].harga.split('-')[0];
+
+        data += `
+          <li class="item-content ">
+            <div class="item-inner">
+              <div class="item-title">`+result[i].nama_barang+`</div>
+              <div class="item-after">
+                <a href="#" style="margin: 2px;" onclick="showEditPricelist(`+result[i].id_barang+`,`+result[i].tipe+`,'`+result[i].kode_barang+`','`+result[i].nama_barang+`','`+hrg+`',`+result[i].id_satuan+`,`+result[i].status+`);"><i class="icon material-icons md-only">edit</i></a>
+              </div>
+            </div>
+          </li>`;
+      }
+
+      data += '</ul>';
+      $('#barang_list').html(data);
+  })
+}
+
+function showEditPricelist(id, tipe, kode, nama, harga, satuan, status){
+  document.getElementById('scrollable').scrollTop = 0;
+  // $('#button_addItem').css('display', 'none');
+  $('#buttons_editRemove').css('display', 'flex');
+  $('#_status').css('display', 'block');
+
+  $('#id_barang').val(id);
+  // $('#tipe_barang').val(tipe);
+  // $('#kode_barang').val(kode);
+  // $('#nama_barang').val(nama);
+  $('#harga_addItem').val(harga.split('-')[0]);
+  $('#id_satuan').val(satuan);
+  // $('#status_sel').val(status);
+}
+
+function hideEditPricelist(q){
+  // $('#button_addItem').css('display', 'block');
+  $('#buttons_editRemove').css('display', 'none');
+  $('#_status').css('display', 'none');
+
+  $(q).trigger('reset');
+}
+
 // ========== PROSES MASTER ENDS HERE ==========
 
 
 // ========== PROSES UTILITY STARTS HERE ==========
+
+function listOutlet(id){
+  app.request({
+    url: site+'/API/cabang/ol/'+cpyProf.id_client+'/',
+    method: 'GET',
+    success: function(json){
+      let isi = '<option value="0">-- Semua Outlet --</option>';
+      let result = JSON.parse(json);
+
+      for(let i = 0; i < result.length; i++){
+        isi += `<option value="${result[i].id_gudang}">${result[i].nama_gudang}</option>`
+      }
+
+      $('#id_gudang').html(isi);
+    }
+  })
+}
 
 function dialogCetak(id){
   app.dialog.create({
