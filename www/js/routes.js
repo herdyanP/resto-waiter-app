@@ -4,10 +4,42 @@ var routes = [
   componentUrl: './pages/home.html',
   on: {
     pageAfterIn: function(){
+      AdMob.showInterstitial();
       tampilMenu();
       keranjang();
 
       NativeStorage.getItem('modal', onModalFound, onModalNotFound);
+
+      var ac = app.autocomplete.create({
+        inputEl: '#idewallet',
+        openIn: 'dropdown',
+        preloader: true,
+        limit: 10,
+        source: function(query, render){
+          var autoc = this;
+          var results = [];
+          var nohp = $('#idewallet').val();
+          if(query.length === 0){
+            render(results);
+            return;
+          }
+
+          autoc.preloaderShow();
+          app.request({
+            url: site+"/API/cust/"+cpyProf.id_client+"/"+nohp+"/",
+            method: "GET",
+            success: function(json){
+              var result = JSON.parse(json);
+              for(var i = 0; i < result.length; i++){
+                if(result[i].no_hp.indexOf(query) >= 0) results.push(result[i].no_hp);
+              }
+
+              autoc.preloaderHide();
+              render(results);
+            }
+          });
+        }
+      });
 
       $.ajax({
         url: site+'/API/kategori/'+cpyProf.id_client+'/',
@@ -39,6 +71,11 @@ var routes = [
       // emptyDB();
 
       // onLogin();
+    },
+    pageAfterOut: function(){
+      clearTimeout(refreshMenu);
+      clearTimeout(refreshMenu);
+      clearTimeout(refreshMenu);
     }
   }
 },
@@ -122,7 +159,7 @@ var routes = [
       $('#appversion').html("v"+appVer);
     },
     pageAfterOut: function(){
-      AdMob.showInterstitial();
+      // AdMob.showInterstitial();
     }
   }
 },
@@ -232,6 +269,34 @@ var routes = [
           }
 
           $('#id_cabang').html(isi);
+        }
+      })
+    }
+  }
+},
+{
+  name: 'dtlpricel',
+  path: '/dtlpricel/:client/:barang',
+  componentUrl: './pages/detail_pricelist.html',
+  on: {
+    pageAfterIn: function(e, page){
+      let temp = {
+        tipe: 'pricelist',
+        id_client : page.route.params.client,
+        id_barang : page.route.params.barang
+      }
+
+      app.request({
+        url: site+'/API/history/',
+        method: 'POST',
+        data: JSON.stringify(temp),
+        success: function(json){
+          let result = JSON.parse(json);
+          let cabang = [];
+
+          for(let i = 0; i < result.length; i++){
+            console.log(result[i]);
+          }
         }
       })
     }

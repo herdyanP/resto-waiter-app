@@ -46,8 +46,8 @@ document.addEventListener('deviceready', function() {
     // banner: 'ca-app-pub-3940256099942544/6300978111', /*test ID*/
     // banner: 'ca-app-pub-8300135360648716/8651556341',  /*real ID*/
     banner: 'ca-app-pub-8300135360648716/5241305930', /*ID medusa*/
-    interstitial: 'ca-app-pub-3940256099942544/1033173712' /*test ID*/
-    // interstitial: 'ca-app-pub-8300135360648716/5241305930' /*test ID*/
+    // interstitial: 'ca-app-pub-3940256099942544/1033173712' /*test ID*/
+    interstitial: 'ca-app-pub-8300135360648716/4160878738' /*ID medusa*/
   }
 
   if(AdMob) {
@@ -73,7 +73,7 @@ document.addEventListener('deviceready', function() {
     console.log('interstitial not ready');
   });
 
-  // AdMob.showInterstitial();
+  AdMob.showInterstitial();
 
   screen.orientation.lock('portrait');
 
@@ -271,7 +271,7 @@ function onStoreSuccess(obj){
   cpyProf = obj;
   app.views.main.router.navigate('/home/');
 
-  NativeStorage.getItem('modal', onModalFound, onModalNotFound);
+  // NativeStorage.getItem('modal', onModalFound, onModalNotFound);
 
   // tampilMenu();
   
@@ -635,6 +635,7 @@ function simpan(id, qty, harga, nama){
       }).open();
     
       keranjang();
+      hitungDiskon();
 
     }).fail(function(a,b,error){
       alert(error);
@@ -734,6 +735,29 @@ function bayar(){
   if(kembali < 0){
     app.dialog.alert('Your change is less than 0. Please review the payment details.', 'Alert');
   } else {
+
+    if(jenis == '3'){
+      var nohp = $('#idewallet').val();
+      let ewallet = {
+        nohp: nohp,
+        id_client: cpyProf.id_client
+      }
+
+      app.request({
+        url: site+"/API/cust/",
+        method: "POST",
+        data: JSON.stringify(ewallet),
+        statusCode: {
+          200: function(){
+            console.log('returned OK');
+          },
+          201: function(){
+            console.log('created OK');
+          }
+        }
+      });
+    }
+
     $.ajax({
       url: site+'/API/penjualan/'+cpyProf.id_outlet+'/',
       method : 'POST',
@@ -1690,12 +1714,15 @@ function listPricelist(){
         if(result[i].id_barang == null || result[i].nama_barang == null) continue;
         var hrg = result[i].harga.split('-')[0];
 
+        // <a href="#" style="margin: 3px;" onclick="app.views.main.router.navigate({name: 'dtlpricel', params: {client: ${cpyProf.id_client}, barang: ${result[i].id_barang}}})"><i class="icon material-icons md-only">search</i></a>
+
         data += `
           <li class="item-content ">
             <div class="item-inner">
-              <div class="item-title">`+result[i].nama_barang+`</div>
+              <div class="item-title">${result[i].nama_barang} (${parseInt(result[i].harga.split('-')[0]).toLocaleString()})</div>
               <div class="item-after">
-                <a href="#" style="margin: 2px;" onclick="showEditPricelist(`+result[i].id_barang+`,`+result[i].tipe+`,'`+result[i].kode_barang+`','`+result[i].nama_barang+`','`+hrg+`',`+result[i].id_satuan+`,`+result[i].status+`);"><i class="icon material-icons md-only">edit</i></a>
+                
+                <a href="#" style="margin: 3px;" onclick="showEditPricelist(`+result[i].id_barang+`,`+result[i].tipe+`,'`+result[i].kode_barang+`','`+result[i].nama_barang+`','`+hrg+`',`+result[i].id_satuan+`,`+result[i].status+`);"><i class="icon material-icons md-only">edit</i></a>
               </div>
             </div>
           </li>`;
@@ -2187,7 +2214,8 @@ function hitungKembalian(val){
   }
 }
 
-function hitungDiskon(val){
+function hitungDiskon(){
+  let val = $('#disk_rp').val();
   if(val != ''){
     var tot = parseInt($('#subtotal').html().replace(/\D/g, ''));
     diskon = tot - parseInt(val) ;
@@ -2298,7 +2326,7 @@ function reScreen(){
 
 function returnScreen(){
   // console.log('a');
-  // $('#login_page').css('height', trueHeight);
+  $('#login_page').css('height', trueHeight);
 }
 
 // ========== PROSES UTILITY ENDS HERE ==========
