@@ -8,6 +8,21 @@ var routes = [
       tampilMenu();
       keranjang();
 
+      searchbar = app.searchbar.create({
+        el: '.searchbar',
+        on: {
+          enable: function(){
+            pauseFlag = 1;
+          },
+          disable: function(){
+            pauseFlag = 0;
+
+            tampilMenu();
+            keranjang();
+          }
+        }
+      })
+
       NativeStorage.getItem('modal', onModalFound, onModalNotFound);
 
       var ac = app.autocomplete.create({
@@ -76,6 +91,10 @@ var routes = [
       clearTimeout(refreshMenu);
       clearTimeout(refreshMenu);
       clearTimeout(refreshMenu);
+
+      clearTimeout(refreshKeranjang);
+      clearTimeout(refreshKeranjang);
+      clearTimeout(refreshKeranjang);
     }
   }
 },
@@ -298,6 +317,130 @@ var routes = [
             console.log(result[i]);
           }
         }
+      })
+    }
+  }
+},
+{
+  name: 'preview',
+  path: '/preview/:idpj/',
+  /*componentUrl: './pages/preview.html',*/
+  template: `
+    <div class="page">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <div class="title"></div>
+          <div class="right">
+            <a href="#" class="link icon-only" onclick="dialogShare({{$route.params.idpj}});">
+              <i class="material-icons">share</i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-content">
+        <div class="block" id="preview_rcpt"></div>
+        <button class="button button-fill color-green" id="bayarButton" onclick="selesai()">Selesai</button>
+      </div>
+    </div>
+  `,
+  on: {
+    pageAfterIn: function(e, page){
+      $.ajax({
+        url: site+'/API/penjualan/'+page.route.params.idpj+'/',
+        method: 'GET'
+      }).done(function(json){
+        var result = JSON.parse(json);
+        var dt = new Date();
+        // var tot = totalGrand;
+        // var totInt = tot.replace(/\D/g, '');
+        var kembali = parseInt(paid) - parseInt(totalGrand);
+        var jn = '';
+        switch($('#metode').val()){
+          case '1':
+            jn = 'Tunai';
+            break;
+          case '2':
+            jn = 'Kartu Debit/Kredit';
+            break;
+          case '3':
+            jn = ($('#platform').val() == 1 ? 'GO-PAY' : 'OVO');
+            break;
+        }
+
+        var kop = '';
+        var cab = '';
+
+        var dy = ('00'+dt.getDate()).slice(-2);
+        var hr = ('00'+dt.getHours()).slice(-2);
+        var mn = ('00'+dt.getMinutes()).slice(-2);
+        var stamp = 'Tanggal   : ' + dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
+
+        var sub = '<p>Sub-total';
+        var paid = '<p>Paid';
+        var via = '<p>Via: ';
+        var kbl = '<p>Change';
+        var list = '<p>';
+
+        for(var i = 0; i < (31 - cpyProf.outlet.length)/2; i++){
+          kop += ' ';
+        } kop += cpyProf.outlet + '{br}';
+
+        for(var i = 0; i < (24 - cpyProf.cabang.length)/2; i++){
+          cab += ' ';
+        } cab += 'Cabang ' + cpyProf.cabang + '{br}';
+
+        var header = '<p>Sales Receipt<br>--------------------------------</p>';
+        var subheader = '<p>No. Trans : ' +result[0].no_penjualan+ '<br>' +stamp+ '<br>Operator  : ' +(cpyProf.client ? cpyProf.client : cpyProf.nama)+ '<br>--------------------------------</p>';
+        var thanks = '<p style="text-align: center">Terima Kasih Atas <br>Kunjungan Anda <br><br><br><br><br></p>';
+        // var eol = '{br}{left}';
+
+
+        for(var i = 0; i < 32 - 'Sub-total'.length - parseInt(result[0].grantot_jual).toLocaleString('id-ID').length; i++){
+          sub += ' ';
+        } sub += parseInt(result[0].grantot_jual).toLocaleString('id-ID') + '</p>';
+
+        // for(var i = 0; i < 29-tot.length; i++){
+        //   crd += ' ';
+        // } crd += tot + ' \n';
+
+        for(var i = 0; i < 32 - 'Paid'.length - parseInt(result[0].bayar_tunai).toLocaleString('id-ID').length; i++){
+          paid += ' ';
+        } paid += parseInt(result[0].bayar_tunai).toLocaleString('id-ID') + '</p>';
+
+        for(var i = 0; i < 32 - 'Change'.length - parseInt(result[0].kembali_tunai).toLocaleString('id-ID').length; i++){
+          kbl += ' ';
+        } kbl += parseInt(result[0].kembali_tunai).toLocaleString('id-ID') + '</p>';
+
+        for(var i = 0; i < 32 - 'Via: '.length - jn.length; i++){
+          via += ' ';
+        } via += jn + '</p>';
+
+        for(var i = 0; i < result.length; i++){
+          var ws = '';
+          var q = parseInt(result[i].qty_jual).toLocaleString('id-ID');
+          var satuan = parseInt(result[i].harga_jual).toLocaleString('id-ID');
+          var jumlah = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString('id-ID');
+
+          // console.log('q: '+q.length+', satuan: '+satuan.length+', jumlah: '+jumlah.length);
+
+          var tlen = 26 - (satuan.length + jumlah.length + q.length);
+
+          for(var j = 0; j < tlen; j++){
+            ws += ' ';
+          }
+
+          list += result[i].nama_barang+'<br>  '+ q +' x '+ satuan + ws + jumlah +' <br>';
+        }
+
+        list += '--------------------------------<br></p>';
+
+        var q = header + subheader + list + sub + via + paid + kbl + '<br>' + thanks;
+        q.replace(/' '/g, '\u00a0');
+        // console.log(q);
+        // connectToPrinter(q);
+        $('#preview_rcpt').html(q);
+
       })
     }
   }
