@@ -547,6 +547,10 @@ user-select: auto !important;
   }
 }
 
+tr.tbl-bor {
+  border-bottom: 1px solid black;
+}
+
 /*@media (max-width: 720px)  {
   .variasi {
     font-size: 12px;

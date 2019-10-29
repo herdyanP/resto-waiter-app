@@ -343,7 +343,11 @@ var routes = [
 
       <div class="page-content">
         <div class="block" id="preview_rcpt"></div>
-        <button class="button button-fill color-green" id="bayarButton" onclick="selesai()">Selesai</button>
+      </div>
+      <div class="toolbar toolbar-bottom-md no-shadow color-green">
+        <div class="toolbar-inner">
+          <button class="button" id="bayarButton" onclick="selesai()">Selesai</button>
+        </div>
       </div>
     </div>
   `,
@@ -353,12 +357,80 @@ var routes = [
         url: site+'/API/penjualan/'+page.route.params.idpj+'/',
         method: 'GET'
       }).done(function(json){
-        var result = JSON.parse(json);
-        var dt = new Date();
-        // var tot = totalGrand;
-        // var totInt = tot.replace(/\D/g, '');
-        var kembali = parseInt(paid) - parseInt(totalGrand);
-        var jn = '';
+        let result = JSON.parse(json);        
+        // let kembali = parseInt(paid) - parseInt(totalGrand);
+
+        let tbl = `
+          <table style="width: 100%">
+            <tr>
+              <td style="width: 40%"></td>
+              <td style="width: 20%"></td>
+              <td style="width: 40%"></td>
+            </tr>
+        `;
+
+        let header = `
+          <tr>
+            <td colspan="3" style="text-align: center; border-bottom: solid black 2px; font-size: 30px;">Sales Receipt</td>
+          </tr>
+          <tr><td>&nbsp;</td></tr>
+        `;
+
+        let notrans = `
+          <tr>
+            <td>No. Trans</td>
+            <td colspan="2">: ${result[0].no_penjualan}</td>
+          </tr>
+        `;
+
+        let dt = new Date();
+        let dy = ('00'+dt.getDate()).slice(-2);
+        let hr = ('00'+dt.getHours()).slice(-2);
+        let mn = ('00'+dt.getMinutes()).slice(-2);
+        let stamp = dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
+        let tgl = `
+          <tr>
+            <td>Tanggal</td>
+            <td colspan="2">: ${stamp}</td>
+          </tr>
+        `;
+
+        let op = `
+          <tr>
+            <td>Operator</td>
+            <td colspan="2">: HerdyanP</td>
+          </tr>
+          <tr><td colspan="3" style="border-top: solid black 2px;">&nbsp;</td></tr>
+        `;
+
+        let list = '';
+        for(let i = 0; i < result.length; i++){
+          let qty = parseInt(result[i].qty_jual).toLocaleString('id-ID');
+          let hj = parseInt(result[i].harga_jual).toLocaleString('id-ID');
+          let jml = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString('id-ID');
+
+          list += `
+            <tr>
+              <td colspan="3">${result[i].nama_barang}</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 20px;">${qty} x ${hj}</td>
+              <td colspan="2" style="text-align: right;">${jml}</td>
+            </tr>
+          `;
+        }
+
+        list += `<tr><td colspan="3" style="border-top: solid black 2px;">&nbsp;</td></tr>`;
+
+        let stot = `
+          <tr>
+            <td>Subtotal</td>
+            <td>:</td>
+            <td style="text-align: right;">${parseInt(result[0].grantot_jual).toLocaleString()}</td>
+          </tr>
+        `;
+
+        let jn = '';
         switch($('#metode').val()){
           case '1':
             jn = 'Tunai';
@@ -370,80 +442,41 @@ var routes = [
             jn = ($('#platform').val() == 1 ? 'GO-PAY' : 'OVO');
             break;
         }
+        let via = `
+          <tr>
+            <td>Via</td>
+            <td>:</td>
+            <td style="text-align: right;">${jn}</td>
+          </tr>
+        `;
 
-        var kop = '';
-        var cab = '';
+        let paid = `
+          <tr>
+            <td>Paid</td>
+            <td>:</td>
+            <td style="text-align: right;">${parseInt(result[0].bayar_tunai).toLocaleString()}</td>
+          </tr>
+        `;
 
-        var dy = ('00'+dt.getDate()).slice(-2);
-        var hr = ('00'+dt.getHours()).slice(-2);
-        var mn = ('00'+dt.getMinutes()).slice(-2);
-        var stamp = 'Tanggal   : ' + dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
+        let chn = `
+          <tr>
+            <td>Change</td>
+            <td>:</td>
+            <td style="text-align: right;">${parseInt(result[0].kembali_tunai).toLocaleString()}</td>
+          </tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+        `;
 
-        var sub = '<p>Sub-total';
-        var paid = '<p>Paid';
-        var via = '<p>Via: ';
-        var kbl = '<p>Change';
-        var list = '<p>';
+        let thanks = `
+            <tr>
+              <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">Terima Kasih Atas Kunjungan Anda</td>
+            </tr>
+          </table>
+        `;
 
-        for(var i = 0; i < (31 - cpyProf.outlet.length)/2; i++){
-          kop += ' ';
-        } kop += cpyProf.outlet + '{br}';
-
-        for(var i = 0; i < (24 - cpyProf.cabang.length)/2; i++){
-          cab += ' ';
-        } cab += 'Cabang ' + cpyProf.cabang + '{br}';
-
-        var header = '<p>Sales Receipt<br>--------------------------------</p>';
-        var subheader = '<p>No. Trans : ' +result[0].no_penjualan+ '<br>' +stamp+ '<br>Operator  : ' +(cpyProf.client ? cpyProf.client : cpyProf.nama)+ '<br>--------------------------------</p>';
-        var thanks = '<p style="text-align: center">Terima Kasih Atas <br>Kunjungan Anda <br><br><br><br><br></p>';
-        // var eol = '{br}{left}';
-
-
-        for(var i = 0; i < 32 - 'Sub-total'.length - parseInt(result[0].grantot_jual).toLocaleString('id-ID').length; i++){
-          sub += ' ';
-        } sub += parseInt(result[0].grantot_jual).toLocaleString('id-ID') + '</p>';
-
-        // for(var i = 0; i < 29-tot.length; i++){
-        //   crd += ' ';
-        // } crd += tot + ' \n';
-
-        for(var i = 0; i < 32 - 'Paid'.length - parseInt(result[0].bayar_tunai).toLocaleString('id-ID').length; i++){
-          paid += ' ';
-        } paid += parseInt(result[0].bayar_tunai).toLocaleString('id-ID') + '</p>';
-
-        for(var i = 0; i < 32 - 'Change'.length - parseInt(result[0].kembali_tunai).toLocaleString('id-ID').length; i++){
-          kbl += ' ';
-        } kbl += parseInt(result[0].kembali_tunai).toLocaleString('id-ID') + '</p>';
-
-        for(var i = 0; i < 32 - 'Via: '.length - jn.length; i++){
-          via += ' ';
-        } via += jn + '</p>';
-
-        for(var i = 0; i < result.length; i++){
-          var ws = '';
-          var q = parseInt(result[i].qty_jual).toLocaleString('id-ID');
-          var satuan = parseInt(result[i].harga_jual).toLocaleString('id-ID');
-          var jumlah = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString('id-ID');
-
-          // console.log('q: '+q.length+', satuan: '+satuan.length+', jumlah: '+jumlah.length);
-
-          var tlen = 26 - (satuan.length + jumlah.length + q.length);
-
-          for(var j = 0; j < tlen; j++){
-            ws += ' ';
-          }
-
-          list += result[i].nama_barang+'<br>  '+ q +' x '+ satuan + ws + jumlah +' <br>';
-        }
-
-        list += '--------------------------------<br></p>';
-
-        var q = header + subheader + list + sub + via + paid + kbl + '<br>' + thanks;
-        q.replace(/' '/g, '\u00a0');
-        // console.log(q);
-        // connectToPrinter(q);
+        let q = tbl + header + tgl + notrans + op + list + stot + via + paid + chn + thanks;
         $('#preview_rcpt').html(q);
-
       })
     }
   }
