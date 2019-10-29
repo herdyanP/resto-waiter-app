@@ -331,6 +331,9 @@ var routes = [
         <div class="navbar-inner">
           <div class="title"></div>
           <div class="right">
+            <a href="#" class="link icon-only" onclick="cetakReceipt({{$route.params.idpj}});">
+              <i class="material-icons">print</i>
+            </a>
             <a href="#" class="link icon-only" onclick="dialogShare({{$route.params.idpj}});">
               <i class="material-icons">share</i>
             </a>

@@ -2293,20 +2293,98 @@ function returnScreen(){
 }
 
 function dialogShare(id){
-  app.dialog.create({
-    title: 'Pilihan',
-    text: 'Pilih Metode Receipt',
-    buttons: [{
-      text: 'Email',
-      onClick: function(){cetakEmail(id);}
-    }, {
-      text: 'Print',
-      onClick: function(){cetakReceipt(id);}
-    }, {
-      text: 'WhatsApp',
-      onClick: function(){cetakWhatsApp(id);}
-    }]
-  }).open();
+  $.ajax({
+    url: site+'/API/penjualan/'+id+'/',
+    method: 'GET'
+  }).done(function(json){
+    var result = JSON.parse(json);
+    var dt = new Date();
+    var tot = $('#subtotal').html();
+    var totInt = tot.replace(/\D/g, '');
+    var kembali = parseInt(paid) - parseInt(totInt);
+    var jn = '';
+    switch($('#metode').val()){
+      case '1':
+        jn = "Tunai\n";
+        break;
+      case '2':
+        jn = "Kartu Debit/Kredit\n";
+        break;
+      case '3':
+        jn = ($('#platform').val() == 1 ? 'GO-PAY\n' : 'OVO\n');
+        break;
+    }
+
+    var kop = '';
+    var cab = '';
+
+    var dy = ('00'+dt.getDate()).slice(-2);
+    var hr = ('00'+dt.getHours()).slice(-2);
+    var mn = ('00'+dt.getMinutes()).slice(-2);
+    var stamp = 'Tanggal   : ' + dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
+
+    var via = "Via"
+    var sub = 'Sub-total';
+    var paid = 'Paid';
+    // var byr = 'Via: ' + jn;
+    // var crd = 'CC';
+    var kbl = 'Change';
+    var list = '';
+
+    for(var i = 0; i < (31 - cpyProf.outlet.length)/2; i++){
+      kop += ' ';
+    } kop += cpyProf.outlet + '\n';
+
+    for(var i = 0; i < (24 - cpyProf.cabang.length)/2; i++){
+      cab += ' ';
+    } cab += 'Cabang ' + cpyProf.cabang + '\n';
+
+    var header = '```\n          Sales Receipt\n\n' + kop + cab + '--------------------------------\nNo. Trans : ' +result[0].no_penjualan+ '\n' +stamp+ '\nOperator  : '+(cpyProf.nama ? cpyProf.nama : cpyProf.client)+'\n--------------------------------\n';
+    var thanks = ' \n--------------------------------\n\n        Terima Kasih Atas\n         Kunjungan Anda\n';
+
+
+    for(var i = 0; i < 31 - 'Sub-total'.length - parseInt(result[0].grantot_jual).toLocaleString('id-ID').length; i++){
+      sub += ' ';
+    } sub += parseInt(result[0].grantot_jual).toLocaleString('id-ID') + ' \n';
+
+    // for(var i = 0; i < 29-tot.length; i++){
+    //   crd += ' ';
+    // } crd += tot + ' \n';
+
+    for(var i = 0; i < 31 - 'Paid'.length - parseInt(result[0].bayar_tunai).toLocaleString('id-ID').length; i++){
+      paid += ' ';
+    } paid += parseInt(result[0].bayar_tunai).toLocaleString('id-ID') + ' \n';
+
+    for(var i = 0; i < 31 - 'Change'.length - parseInt(result[0].kembali_tunai).toLocaleString('id-ID').length; i++){
+      kbl += ' ';
+    } kbl += parseInt(result[0].kembali_tunai).toLocaleString('id-ID');
+
+    for(var i = 0; i < 32 - 'Via'.length - jn.length; i++){
+      via += ' ';
+    } via += jn;
+
+    for(var i = 0; i < result.length; i++){
+      var ws = '';
+      var q = parseInt(result[i].qty_jual).toLocaleString('id-ID');
+      var satuan = parseInt(result[i].harga_jual).toLocaleString('id-ID');
+      var jumlah = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString('id-ID');
+
+      // console.log('q: '+q.length+', satuan: '+satuan.length+', jumlah: '+jumlah.length);
+
+      var tlen = 26 - (satuan.length + jumlah.length + q.length);
+
+      for(var j = 0; j < tlen; j++){
+        ws += ' ';
+      }
+
+      list += result[i].nama_barang+'\n  '+ q +' x '+ satuan + ws + jumlah +' \n';
+    }
+
+    list += '--------------------------------\n';
+
+    let res = header + list + sub + via + paid + kbl + thanks + '```';
+    window.plugins.socialsharing.share(res, 'Receipt Penjualan');
+  })
 }
 
 function cetakEmail(id){
