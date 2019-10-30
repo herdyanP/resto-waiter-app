@@ -4,6 +4,7 @@ var routes = [
   componentUrl: './pages/home.html',
   on: {
     pageAfterIn: function(){
+      pauseFlag = 0;
       AdMob.showInterstitial();
       tampilMenu();
       keranjang();

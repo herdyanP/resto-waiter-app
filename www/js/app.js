@@ -357,28 +357,17 @@ function onRetFail(){
 }
 
 function onLogout(){
-  NativeStorage.remove('akun', onRemSuccess, onRemFail);
+  // NativeStorage.remove('akun', onLogoutSuccess, onLogoutFail);
+  NativeStorage.clear(onLogoutSuccess, onLogoutFail);
 }
 
-function onRemSuccess(){
+function onLogoutSuccess(){
   console.log('rem succ');
-  // $('#bayarButton').attr('disabled', 'true').addClass('disabled');
-  // $('#currentUser').html('Operator: Guest');
-
-  // $('#logoutRow').css('display', 'none');
-  // $('#loginRow').css('display', 'block');
-
-  // emptyDB();
-  // clearDB();
-  // stopPing();
-  // app.views.main.router.navigate('/login/');
-  // clearTimeout(refreshMenu);
-  // clearTimeout(refreshKeranjang);
   pauseFlag = 1;
   app.views.main.router.navigate('/');
 }
 
-function onRemFail(){
+function onLogoutFail(){
   console.log('rem fail');
 }
 
@@ -407,7 +396,8 @@ function onSetModalSuccess(){
   let mn = ('00'+dt.getMinutes()).slice(-2);
   let sc = ('00'+dt.getSeconds()).slice(-2);
 
-  let timestamp = `${yr}-${mt}-${dy} ${hr}:${mn}:${sc}`;
+  // let timestamp = `${yr}-${mt}-${dy} ${hr}:${mn}:${sc}`;
+  let timestamp = `${yr}-${mt}-${dy}`;
 
   NativeStorage.setItem('stamp', timestamp, onSetStampDone, onSetStampFail);
   console.log('set modal done');
@@ -482,8 +472,25 @@ function onGetStampFail(){
 
 function tampilMenu(){
   var kat = $('#kategori').val();
-
   if(pauseFlag == 0){
+    $.ajax({
+      url: site+'/API/kategori/'+cpyProf.id_client+'/',
+      method: 'GET',
+    }).done(function(result){
+      var data = '<option value="0">Semua menu</option>';
+      for(var i = 0; i < result.length; i++){
+        if(result[i].id_kategori == null || result[i].nama_kategori == null) continue;
+
+        if(kat != 0 && kat == result[i].id_kategori){
+          data += `<option value="${result[i].id_kategori}" selected>${result[i].nama_kategori}</option>`;
+        } else {
+          data += `<option value="${result[i].id_kategori}">${result[i].nama_kategori}</option>`;
+        }
+      }
+
+      $('#kategori').html(data);
+    });
+
     $.ajax({
       url: site+'/API/menu2/'+cpyProf.id_outlet+'/'+kat+'/',
       method: 'GET'
@@ -628,7 +635,7 @@ function simpan(id, qty, harga, nama){
     }).open();
   } else {
     $.ajax({
-      url: site+'/API/cart/'+cpyProf.id_outlet+'/',
+      url: site+'/API/cart/'+cpyProf.id_user+'/',
       method: 'POST',
       data: JSON.stringify(temp)
     }).done(function(result){
@@ -654,7 +661,7 @@ function keranjang(){
 
   if(pauseFlag == 0){
     $.ajax({
-      url: site+'/API/cart/'+cpyProf.id_outlet+'/',
+      url: site+'/API/cart/'+cpyProf.id_user+'/',
       method: 'GET'
     }).done(function(result){
       var testp = result;
@@ -671,7 +678,7 @@ function keranjang(){
                     <div class="item-after"><a href="#" onclick="hapusKeranjang(`+testp[i].id_barang+`)"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>
                   </div>
                 </li>`;
-            // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString()+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
+            // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString('id-ID')+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
        
         jumlah += parseInt(testp[i].qty_tmp * testp[i].harga_tmp);  // no PPN 
       }
@@ -697,7 +704,7 @@ function keranjang(){
 
 function hapusKeranjang(id){
   var temp = {
-    id_login: cpyProf.id_outlet
+    id_login: cpyProf.id_user
   }
 
   $.ajax({
@@ -740,9 +747,10 @@ function bayar(){
     bayar : bayar,
     diskon : diskon,
     kembali : kembali,
-    id_login : cpyProf.id_outlet,
+    id_login : cpyProf.id_user,
     id_client : cpyProf.id_client,
     id_cabang : cpyProf.id_cabang,
+    id_outlet : cpyProf.id_outlet,
     jenis_bayar : jenis,
     nomor_kartu : nomor_kartu,
     tgl : tgltime
@@ -806,84 +814,38 @@ function bayar(){
 }
 
 function closing(){
-  var dt = new Date();
-  var eol = '{br}{br}{br}{br}';
-  var dy = ('00'+dt.getDate()).slice(-2);
-  var hr = ('00'+dt.getHours()).slice(-2);
-  var mn = ('00'+dt.getMinutes()).slice(-2);
-  var stamp = 'Tanggal   : ' + dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
+  let dt = new Date();
+  let yr = dt.getFullYear();
+  let mt = ('00'+(dt.getMonth() + 1)).slice(-2);
+  let dy = ('00'+dt.getDate()).slice(-2);
+  let hr = ('00'+dt.getHours()).slice(-2);
+  let mn = ('00'+dt.getMinutes()).slice(-2);
+  let sc = ('00'+dt.getSeconds()).slice(-2);
 
-  var header = '{br}{center}PENERIMAAN PENJUALAN KASIR{br}--------------------------------{br}{br}';
-  var subheader = '{left}Cashier Name : ' +cpyProf.client+ '{br}Print Date   : ' +dy+ '-' +(dt.getMonth() + 1)+ '-' +dt.getFullYear()+ ' ' +hr+ ':' +mn+ '{br}================================{br}';
-
-  let cl_modal = 'Modal Awal: ';
-  let cl_tot = 'Total Penjualan: ';
-  let cl_byr_tu = 'Tunai: ';
-  let cl_byr_cc = 'Kartu Debit/Kredit: ';
-  let cl_byr_em = 'E-Money: ';
-  let cl_list = '';
-  let cl_uang = 'Total Uang: ';
-  let cl_byr_tot = 'Total: ';
-  let cl_item_tot = 'Total: ';
-  let cl_item_nom = 0;
-
-  for(let i = 0; i < 32 - 'Modal Awal: '.length - parseInt(dailyModal).toLocaleString().length; i++){
-    cl_modal += ' ';
-  } cl_modal += parseInt(dailyModal).toLocaleString() + '{br}';
-
-  for(let i = 0; i < 32 - 'Total Penjualan: '.length - parseInt(cl_tu + cl_cc + cl_em).toLocaleString().length; i++){
-    cl_tot += ' ';
-  } cl_tot += parseInt(cl_tu + cl_cc + cl_em).toLocaleString() + '{br}';
-
-  for(let i = 0; i < 32 - 'Total Uang: '.length - (parseInt(cl_tu + cl_cc + cl_em) + parseInt(dailyModal)).toLocaleString().length; i++){
-    cl_uang += ' ';
-  } cl_uang += (parseInt(cl_tu + cl_cc + cl_em) + parseInt(dailyModal)).toLocaleString() + '{br}';
-
-  let sep1 = '{br}================================{br}{center}Jenis Pembayaran{br}================================{br}';
-
-  for(let i = 0; i < 32 - 'Tunai: '.length - parseInt(cl_tu).toLocaleString().length; i++){
-    cl_byr_tu += ' ';
-  } cl_byr_tu += parseInt(cl_tu).toLocaleString() + '{br}';
-
-  for(let i = 0; i < 32 - 'Kartu Debit/Kredit: '.length - parseInt(cl_cc).toLocaleString().length; i++){
-    cl_byr_cc += ' ';
-  } cl_byr_cc += parseInt(cl_cc).toLocaleString() + '{br}';
-
-  for(let i = 0; i < 32 - 'E-Money: '.length - parseInt(cl_em).toLocaleString().length; i++){
-    cl_byr_em += ' ';
-  } cl_byr_em += parseInt(cl_em).toLocaleString() + '{br}';
-
-  for(let i = 0; i < 32 - 'Total: '.length - (parseInt(cl_tu) + parseInt(cl_cc) + parseInt(cl_em)).toLocaleString().length; i++){
-    cl_byr_tot += ' ';
-  } cl_byr_tot += (parseInt(cl_tu) + parseInt(cl_cc) + parseInt(cl_em)).toLocaleString() + '{br}';
-
-  let sep2 = '{br}================================{br}{center}Kategori Item{br}================================{br}';
-  let cl_list_tot = 0;
-
-  for(let i = 0; i < cl_items.length; i++){
-    cl_list += cl_items[i].nama_kategori;
-    cl_item_nom += parseInt(cl_items[i].total);
-    for(let j = 0; j < 32 - cl_items[i].nama_kategori.length - parseInt(cl_items[i].total).toLocaleString().length; j++){
-      cl_list += ' ';
-    } cl_list += parseInt(cl_items[i].total).toLocaleString() + '{br}';
+  let timestamp = `${yr}-${mt}-${dy} ${hr}:${mn}:${sc}`;
+  let temp = {
+    id_client : cpyProf.id_client,
+    id_outlet : cpyProf.id_outlet,
+    id_user : cpyProf.id_user,
+    st_cash : $('#ul_closing_modal').html().replace(/\D/g, ''),
+    cl_cash : $('#ul_current_uang').val().replace(/\D/g, ''),
+    sales : $('#ul_closing_total').html().replace(/\D/g, ''),
+    tgl : timestamp
   }
 
-  for(let i = 0; i < 32 - 'Total: '.length - parseInt(cl_item_nom).toLocaleString().length; i++){
-    cl_item_tot += ' ';
-  } cl_item_tot += parseInt(cl_item_nom).toLocaleString() + '{br}';
-
-  let q = header + subheader + cl_modal + cl_tot + cl_uang + sep1 + cl_byr_tu + cl_byr_cc + cl_byr_em + cl_byr_tot + sep2 + cl_list + cl_item_tot + eol;
-
-  NativeStorage.remove('modal', onRemModalSuccess, onRemModalFailed);
-
-  app.dialog.confirm('Closing berhasil, cetak hasil closing?', 'Konfirmasi', function(){
-    connectToPrinter(q);
-  });
-
-  app.views.main.router.navigate('/');
-  
-  // console.log(cl_list);
-  // console.log(header, subheader);
+  $.ajax({
+    url: site+"/API/closing/",
+    method: "POST",
+    data: JSON.stringify(temp),
+    success: function(json){
+      app.dialog.confirm('Closing penjualan berhasil, cetak hasil closing?', 'Konfirmasi', function(){
+        cetakClosing();
+      }).open().once('dialogClosed', function(){
+        NativeStorage.remove('modal', onRemModalSuccess, onRemModalFailed);
+        app.views.main.router.navigate('/home/');
+      });
+    }
+  })
 }
 
 function selesai(){
@@ -1190,7 +1152,8 @@ function laporanClosing(stamp){
   let mn = ('00'+dt.getMinutes()).slice(-2);
   let sc = ('00'+dt.getSeconds()).slice(-2);
 
-  let c_stamp = `${yr}-${mt}-${dy} ${hr}:${mn}:${sc}`;
+  // let c_stamp = `${yr}-${mt}-${dy} ${hr}:${mn}:${sc}`;
+  let c_stamp = `${yr}-${mt}-${dy}`;
 
   let sales = {
     act: 'cl_penjualan',
@@ -1198,10 +1161,10 @@ function laporanClosing(stamp){
     tglsd: c_stamp
   }
 
-  $('#ul_closing_modal').html(parseInt(dailyModal).toLocaleString());
+  $('#ul_closing_modal').html(parseInt(dailyModal).toLocaleString('id-ID'));
 
   app.request({
-    url: site+'/API/laporan/' +cpyProf.id_client+ '/',
+    url: site+'/API/laporan/' +cpyProf.id_user+ '/',
     method: 'POST',
     data: JSON.stringify(sales),
     success: function(json){
@@ -1230,7 +1193,7 @@ function laporanClosing(stamp){
           <div class="item-content">
             <div class="item-inner">
               <div class="item-title">Tunai</div>
-              <div class="item-after">${tunai.toLocaleString()}</div>
+              <div class="item-after">${tunai.toLocaleString('id-ID')}</div>
             </div>
           </div>
         </li>
@@ -1238,7 +1201,7 @@ function laporanClosing(stamp){
           <div class="item-content">
             <div class="item-inner">
               <div class="item-title">Kartu Debit/Kredit</div>
-              <div class="item-after">${cc.toLocaleString()}</div>
+              <div class="item-after">${cc.toLocaleString('id-ID')}</div>
             </div>
           </div>
         </li>
@@ -1246,7 +1209,7 @@ function laporanClosing(stamp){
           <div class="item-content">
             <div class="item-inner">
               <div class="item-title">E-Money</div>
-              <div class="item-after">${emoney.toLocaleString()}</div>
+              <div class="item-after">${emoney.toLocaleString('id-ID')}</div>
             </div>
           </div>
         </li>
@@ -1254,18 +1217,20 @@ function laporanClosing(stamp){
           <div class="item-content">
             <div class="item-inner">
               <div class="item-title">Total</div>
-              <div class="item-after">${(tunai + cc + emoney).toLocaleString()}</div>
+              <div class="item-after">${(tunai + cc + emoney).toLocaleString('id-ID')}</div>
             </div>
           </div>
         </li>
       `;
 
       $('#ul_closing_sales').html(datanya);
-      $('#ul_closing_total').html((parseInt(tunai) + parseInt(cc) + parseInt(emoney)).toLocaleString());
+      $('#ul_closing_total').html((parseInt(tunai) + parseInt(cc) + parseInt(emoney)).toLocaleString('id-ID'));
 
       cl_tu = tunai;
       cl_cc = cc;
       cl_em = emoney;
+
+      $('#ul_current_uang').val((parseInt(tunai) + parseInt(cc) + parseInt(emoney) + parseInt(dailyModal)).toLocaleString('id-ID'));
     }
   })
 
@@ -1276,7 +1241,7 @@ function laporanClosing(stamp){
   };
 
   app.request({
-    url: site+'/API/laporan/' +cpyProf.id_client+ '/',
+    url: site+'/API/laporan/' +cpyProf.id_user+ '/',
     method: 'POST',
     data: JSON.stringify(items),
     success: function(json){
@@ -1291,7 +1256,7 @@ function laporanClosing(stamp){
             <div class="item-content">
               <div class="item-inner">
                 <div class="item-title">${result[i].nama_kategori}</div>
-                <div class="item-after">${parseInt(result[i].total).toLocaleString()}</div>
+                <div class="item-after">${parseInt(result[i].total).toLocaleString('id-ID')}</div>
               </div>
             </div>
           </li>
@@ -1303,7 +1268,7 @@ function laporanClosing(stamp){
           <div class="item-content">
             <div class="item-inner">
               <div class="item-title">Total</div>
-              <div class="item-after">${total.toLocaleString()}</div>
+              <div class="item-after">${total.toLocaleString('id-ID')}</div>
             </div>
           </div>
         </li>
@@ -1751,7 +1716,7 @@ function listPricelist(){
         data += `
           <li class="item-content ">
             <div class="item-inner">
-              <div class="item-title">${result[i].nama_barang} (${parseInt(result[i].harga.split('-')[0]).toLocaleString()})</div>
+              <div class="item-title">${result[i].nama_barang} (${parseInt(result[i].harga.split('-')[0]).toLocaleString('id-ID')})</div>
               <div class="item-after">
                 
                 <a href="#" style="margin: 3px;" onclick="showEditPricelist(`+result[i].id_barang+`,`+result[i].tipe+`,'`+result[i].kode_barang+`','`+result[i].nama_barang+`','`+hrg+`',`+result[i].id_satuan+`,`+result[i].status+`);"><i class="icon material-icons md-only">edit</i></a>
@@ -2275,10 +2240,12 @@ function metode(a){
 }
 
 function debug(){
-  console.log('debug');
-  app.views.main.router.navigate({
-    name: 'preview', 
-    params: {idpj: 12}
+  app.dialog.confirm('Closing penjualan berhasil, cetak hasil closing?', 'Konfirmasi', function(){
+    console.log('yes');
+  }, function(){
+    console.log('no');
+  }).open().once('dialogClosed', function(){
+    console.log('closed cok');
   });
 }
 
@@ -2383,12 +2350,97 @@ function dialogShare(id){
     list += '--------------------------------\n';
 
     let res = header + list + sub + via + paid + kbl + thanks + '```';
+    // let opts = [{
+    //   message: res,
+    //   subject: 'Receipt Penjualan Email',
+    //   appPackageName: 'com.google.android.gm'
+    // },{
+    //   message: res,
+    //   appPackageName: 'com.whatsapp'
+    // }]
+
+    // window.plugins.socialsharing.shareWithOptions(opts, function(){
+    //   console.log('share success');
+    // }, function(){
+    //   console.log('share failed');
+    // })
     window.plugins.socialsharing.share(res, 'Receipt Penjualan');
   })
 }
 
 function cetakEmail(id){
   alert('receipt akan dikirim via email');
+}
+
+function cetakClosing(){
+  var dt = new Date();
+  var eol = '{br}{br}{br}{br}';
+  var dy = ('00'+dt.getDate()).slice(-2);
+  var hr = ('00'+dt.getHours()).slice(-2);
+  var mn = ('00'+dt.getMinutes()).slice(-2);
+  var stamp = 'Tanggal   : ' + dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
+
+  var header = '{br}{center}PENERIMAAN PENJUALAN KASIR{br}--------------------------------{br}{br}';
+  var subheader = '{left}Cashier Name : ' +cpyProf.client+ '{br}Print Date   : ' +dy+ '-' +(dt.getMonth() + 1)+ '-' +dt.getFullYear()+ ' ' +hr+ ':' +mn+ '{br}================================{br}';
+
+  let cl_modal = 'Modal Awal: ';
+  let cl_tot = 'Total Penjualan: ';
+  let cl_byr_tu = 'Tunai: ';
+  let cl_byr_cc = 'Kartu Debit/Kredit: ';
+  let cl_byr_em = 'E-Money: ';
+  let cl_list = '';
+  let cl_uang = 'Total Uang: ';
+  let cl_byr_tot = 'Total: ';
+  let cl_item_tot = 'Total: ';
+  let cl_item_nom = 0;
+
+  for(let i = 0; i < 32 - 'Modal Awal: '.length - parseInt(dailyModal).toLocaleString('id-ID').length; i++){
+    cl_modal += ' ';
+  } cl_modal += parseInt(dailyModal).toLocaleString('id-ID') + '{br}';
+
+  for(let i = 0; i < 32 - 'Total Penjualan: '.length - parseInt(cl_tu + cl_cc + cl_em).toLocaleString('id-ID').length; i++){
+    cl_tot += ' ';
+  } cl_tot += parseInt(cl_tu + cl_cc + cl_em).toLocaleString('id-ID') + '{br}';
+
+  for(let i = 0; i < 32 - 'Total Uang: '.length - (parseInt(cl_tu + cl_cc + cl_em) + parseInt(dailyModal)).toLocaleString('id-ID').length; i++){
+    cl_uang += ' ';
+  } cl_uang += (parseInt($('#ul_current_uang').val().replace(/\D/g,'')) + parseInt(dailyModal)).toLocaleString('id-ID') + '{br}';
+
+  let sep1 = '{br}================================{br}{center}Jenis Pembayaran{br}================================{br}';
+
+  for(let i = 0; i < 32 - 'Tunai: '.length - parseInt(cl_tu).toLocaleString('id-ID').length; i++){
+    cl_byr_tu += ' ';
+  } cl_byr_tu += parseInt(cl_tu).toLocaleString('id-ID') + '{br}';
+
+  for(let i = 0; i < 32 - 'Kartu Debit/Kredit: '.length - parseInt(cl_cc).toLocaleString('id-ID').length; i++){
+    cl_byr_cc += ' ';
+  } cl_byr_cc += parseInt(cl_cc).toLocaleString('id-ID') + '{br}';
+
+  for(let i = 0; i < 32 - 'E-Money: '.length - parseInt(cl_em).toLocaleString('id-ID').length; i++){
+    cl_byr_em += ' ';
+  } cl_byr_em += parseInt(cl_em).toLocaleString('id-ID') + '{br}';
+
+  for(let i = 0; i < 32 - 'Total: '.length - (parseInt(cl_tu) + parseInt(cl_cc) + parseInt(cl_em)).toLocaleString('id-ID').length; i++){
+    cl_byr_tot += ' ';
+  } cl_byr_tot += (parseInt(cl_tu) + parseInt(cl_cc) + parseInt(cl_em)).toLocaleString('id-ID') + '{br}';
+
+  let sep2 = '{br}================================{br}{center}Kategori Item{br}================================{br}';
+  let cl_list_tot = 0;
+
+  for(let i = 0; i < cl_items.length; i++){
+    cl_list += cl_items[i].nama_kategori;
+    cl_item_nom += parseInt(cl_items[i].total);
+    for(let j = 0; j < 32 - cl_items[i].nama_kategori.length - parseInt(cl_items[i].total).toLocaleString('id-ID').length; j++){
+      cl_list += ' ';
+    } cl_list += parseInt(cl_items[i].total).toLocaleString('id-ID') + '{br}';
+  }
+
+  for(let i = 0; i < 32 - 'Total: '.length - parseInt(cl_item_nom).toLocaleString('id-ID').length; i++){
+    cl_item_tot += ' ';
+  } cl_item_tot += parseInt(cl_item_nom).toLocaleString('id-ID') + '{br}';
+
+  let q = header + subheader + cl_modal + cl_tot + cl_uang + sep1 + cl_byr_tu + cl_byr_cc + cl_byr_em + cl_byr_tot + sep2 + cl_list + cl_item_tot + eol;
+  connectToPrinter(q);
 }
 
 // ========== PROSES UTILITY ENDS HERE ==========
@@ -2507,19 +2559,19 @@ function resetPass(){
     } crd += tot + '{br}';
    
    
-    for(var i = 0; i < 27-temp.bayar.length-parseInt(temp.total-temp.disc_rp).toLocaleString().length; i++){
+    for(var i = 0; i < 27-temp.bayar.length-parseInt(temp.total-temp.disc_rp).toLocaleString('id-ID').length; i++){
       byr += ' ';
     } byr += parseInt(temp.total-temp.disc_rp).toLocaleString('id-ID') + '{br}';
 
-    for(var i = 0; i < 21-parseInt(temp.disc_rp).toLocaleString().length; i++){
+    for(var i = 0; i < 21-parseInt(temp.disc_rp).toLocaleString('id-ID').length; i++){
       disk += ' ';
     } disk += parseInt(temp.disc_rp).toLocaleString('id-ID') + '{br}';
 
-    for(var i = 0; i < 22-parseInt(temp.bt).toLocaleString().length; i++){
+    for(var i = 0; i < 22-parseInt(temp.bt).toLocaleString('id-ID').length; i++){
       uang += ' ';
     } uang += parseInt(temp.bt).toLocaleString('id-ID') + '{br}';
 
-    for(var i = 0; i < 25-parseInt(temp.kt).toLocaleString().length; i++){
+    for(var i = 0; i < 25-parseInt(temp.kt).toLocaleString('id-ID').length; i++){
       kbl += ' ';
     } kbl += parseInt(temp.kt).toLocaleString('id-ID');
   
@@ -2677,19 +2729,19 @@ function printBayar(q) {
     } crd += tot + '{br}';
    
    
-    for(var i = 0; i < 27-temp.bayar.length-parseInt(temp.total-temp.disc_rp).toLocaleString().length; i++){
+    for(var i = 0; i < 27-temp.bayar.length-parseInt(temp.total-temp.disc_rp).toLocaleString('id-ID').length; i++){
       byr += ' ';
     } byr += parseInt(temp.total-temp.disc_rp).toLocaleString('id-ID') + '{br}';
 
-    for(var i = 0; i < 21-parseInt(temp.disc_rp).toLocaleString().length; i++){
+    for(var i = 0; i < 21-parseInt(temp.disc_rp).toLocaleString('id-ID').length; i++){
       disk += ' ';
     } disk += parseInt(temp.disc_rp).toLocaleString('id-ID') + '{br}';
 
-    for(var i = 0; i < 22-parseInt(temp.bt).toLocaleString().length; i++){
+    for(var i = 0; i < 22-parseInt(temp.bt).toLocaleString('id-ID').length; i++){
       uang += ' ';
     } uang += parseInt(temp.bt).toLocaleString('id-ID') + '{br}';
 
-    for(var i = 0; i < 25-parseInt(temp.kt).toLocaleString().length; i++){
+    for(var i = 0; i < 25-parseInt(temp.kt).toLocaleString('id-ID').length; i++){
       kbl += ' ';
     } kbl += parseInt(temp.kt).toLocaleString('id-ID');
   
