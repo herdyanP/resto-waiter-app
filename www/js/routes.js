@@ -399,7 +399,7 @@ var routes = [
         let op = `
           <tr>
             <td>Operator</td>
-            <td colspan="2">: HerdyanP</td>
+            <td colspan="2">: ${cpyProf.nama}</td>
           </tr>
           <tr><td colspan="3" style="border-top: solid black 2px;">&nbsp;</td></tr>
         `;

@@ -52,4 +52,6 @@
     <plugin name="cordova-plugin-screen-orientation" spec="~3.0.2" />
     <plugin name="cordova-plugin-inappbrowser" spec="~3.1.0" />
     <plugin name="cordova-plugin-x-socialsharing" spec="~5.6.2" />
+    <plugin name="com.darktalker.cordova.screenshot" spec="~0.1.6" />
+    <plugin name="cordova-plugin-file" spec="~6.0.2" />
 </widget>

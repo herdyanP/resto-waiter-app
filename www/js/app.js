@@ -170,7 +170,7 @@ function onNewLogin(q){
         console.log(json);
         var result = JSON.parse(json);
 
-        temp.nama = result[0].nama_pegawai;
+        temp.nama = result[0].NAMA;
         temp.cabang = result[0].nama_cabang;
         temp.outlet = result[0].nama_outlet;
         temp.client = result[0].nama_client;
@@ -1174,16 +1174,16 @@ function laporanClosing(stamp){
       for(var i = 0; i < result.length; i++){
         switch (result[i].jenis_bayar){
           case '1':
-            console.log(parseInt(result[i].total_jual));
-            tunai += (result[i].total_jual ? parseInt(result[i].total_jual) : 0);
+            console.log(parseInt(result[i].grantot_jual));
+            tunai += (result[i].grantot_jual ? parseInt(result[i].grantot_jual) : 0);
             break;
           case '2':
-            console.log(result[i].total_jual);
-            cc += (result[i].total_jual ? parseInt(result[i].total_jual) : 0);
+            console.log(result[i].grantot_jual);
+            cc += (result[i].grantot_jual ? parseInt(result[i].grantot_jual) : 0);
             break;
           case '3':
-            console.log(result[i].total_jual);
-            emoney += (result[i].total_jual ? parseInt(result[i].total_jual) : 0);
+            console.log(result[i].grantot_jual);
+            emoney += (result[i].grantot_jual ? parseInt(result[i].grantot_jual) : 0);
             break;
         }
       }
@@ -2240,12 +2240,26 @@ function metode(a){
 }
 
 function debug(){
-  app.dialog.confirm('Closing penjualan berhasil, cetak hasil closing?', 'Konfirmasi', function(){
-    console.log('yes');
-  }, function(){
-    console.log('no');
-  }).open().once('dialogClosed', function(){
-    console.log('closed cok');
+  navigator.screenshot.save(function(error,res){
+    if(error){
+      console.error(error);
+    }else{
+      alert(`Screenshot saved at ${res.filePath}`);
+      // console.log(res);
+
+      // window.plugins.socialsharing.share(null, null, 'file://'+res.filePath);
+
+      // let socOptions = {
+      //   files : ['file://'+res.filePath]
+      // };
+
+      // window.plugins.socialsharing.shareWithOptions(socOptions, function(){
+      //   console.log('share success');
+      // }, function(){
+      //   console.log('share failed');
+      // });
+
+    }
   });
 }
 
