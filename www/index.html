@@ -17,7 +17,7 @@
   <div id="app">
 
     <div class="panel panel-left panel-cover">
-      <div class="block" style="background: #2196f3; color: white; margin: 0; padding: 20px; font-size: 20px">
+      <div class="block" id="panel_subTitle" style="background: #2196f3; color: white; margin: 0; padding: 20px; font-size: 20px">
         <br><strong>MediaPOS F&amp;B</strong>
         <br>POS Application
       </div>
@@ -286,7 +286,7 @@
           </li>
 
           
-          <li>
+          <!-- <li>
             <a href="#" class="item-link item-content panel-close" onclick="debug();">
               <div class="item-media">
                 <i class="f7-icons">info_round</i>
@@ -295,7 +295,7 @@
                 <div class="item-title">Debug</div>
               </div>
             </a>
-          </li>
+          </li> -->
         </ul>
       </div>
 
@@ -316,7 +316,7 @@
                       <div class="item-inner">
                         <div class="item-title item-label" style="font-size: 1.2em; line-height: normal; color: white; padding-bottom: 10px;">Username</div>
                         <div class="item-input-wrap" style="background: white; border-radius: 30px; padding-left: 15px; margin-left: -7px;">
-                          <input type="text" onclick="this.select();" id="userlogin" name="user">
+                          <input type="text" onclick="this.select(); this.scrollIntoView();" oninput="this.scrollIntoView();" id="userlogin" name="user">
                           <!-- <input type="text" onclick="this.select();" onfocus="reScreen();" onblur="returnScreen();" id="userlogin" name="user"> -->
                         </div>
                       </div>
@@ -325,7 +325,7 @@
                       <div class="item-inner">
                         <div class="item-title item-label" style="font-size: 1.2em; line-height: normal; color: white; padding-bottom: 10px;">Password</div>
                         <div class="item-input-wrap" style="background: white; border-radius: 30px; padding-left: 15px; margin-left: -7px;">
-                          <input type="password" onclick="this.select();" id="passlogin" name="pass">
+                          <input type="password" onclick="this.select(); this.scrollIntoView();" oninput="this.scrollIntoView();" id="passlogin" name="pass">
                           <!-- <input type="password" onclick="this.select();" onfocus="reScreen();" onblur="returnScreen();" id="passlogin" name="pass"> -->
                         </div>
                       </div>
@@ -346,7 +346,7 @@
                     <li class="item-content">
                       <div class="item-inner">
                         <div class="item-title" style="width: 100%;" align="center">
-                          <a href="/register/" class="button button-small col" style="color: white;">
+                          <a href="/register/" class="button button-small col" style="color: white; background: #2196f3;">
                             <b>Belum punya akun? Daftar disini</b>
                           </a>
                         </div>
@@ -358,15 +358,16 @@
                 <div class="block-footer">
                   <!-- <p style="color: white;"><a href="/register/">Belum punya akun? Daftar disini</a></p> -->
                   <!-- <p style="color: white;"><a href="/lupapass/">Lupa Password</a></p> -->
-                  <p style="color: white;">&copy; 2019 PT Media Nusa Mandiri</p>
-                  <p style="color: white;" id="appversion"></p>
+                  <p style="color: white; background: #2196f3; display: inline-block; padding: 0 10px;">&copy; 2019 PT Media Nusa Mandiri</p>
+                  <br>
+                  <p style="color: white; background: #2196f3; display: inline-block; padding: 0 10px;" id="appversion"></p>
                 </div>
               </form>
             </div>
 
           </div>
 
-          <div style="position: absolute; bottom: 0; width: 80vw;">
+          <div style="position: absolute; bottom: 0; z-index: -1;">
             <img src="img/food-beverages.png" style="width: 100vw;">
           </div>
         </div>

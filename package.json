@@ -43,11 +43,11 @@
             "cordova-plugin-whitelist": {},
             "cordova-plugin-screen-orientation": {},
             "cordova-plugin-inappbrowser": {},
+            "com.darktalker.cordova.screenshot": {},
+            "cordova-plugin-file": {},
             "cordova-plugin-x-socialsharing": {
                 "ANDROID_SUPPORT_V4_VERSION": "24.1.1+"
-            },
-            "com.darktalker.cordova.screenshot": {},
-            "cordova-plugin-file": {}
+            }
         },
         "platforms": [
             "android"

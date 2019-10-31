@@ -203,12 +203,24 @@ var routes = [
   path: '/closing/',
   componentUrl: './pages/closing.html',
   on: {
-    pageAfterIn: function(){
+    pageInit: function(){
       console.log('closing');
-      NativeStorage.getItem('stamp', onGetStampDone, onGetStampFail);
-    }, 
+      $.ajax({
+        url: site+"/API/closing/"+cpyProf.id_user+"/",
+        method: "GET",
+        success: function(result){
+          // let result = JSON.parse(json);
+          $('#id_closing').val(result[0].id_closing);
+          $('#ul_closing_modal').html(parseInt(result[0].starting_cash).toLocaleString('id-ID'));
+          $('#stamp_sv').val(result[0].openingcashdate);
+
+          NativeStorage.getItem('stamp', onGetStampDone, onGetStampFail);
+        }
+      })
+    },
     pageAfterOut: function(){
       cl_items = [];
+      $('#closing_button').css('display', 'none');
     }
   }
 },
@@ -427,35 +439,54 @@ var routes = [
           <tr>
             <td>Subtotal</td>
             <td>:</td>
-            <td style="text-align: right;">${parseInt(result[0].grantot_jual).toLocaleString()}</td>
+            <td style="text-align: right;">${parseInt(result[0].total_jual).toLocaleString('id-ID')}</td>
           </tr>
         `;
 
-        let jn = '';
+        let dsc = `
+          <tr>
+            <td>Diskon</td>
+            <td>:</td>
+            <td style="text-align: right;">${parseInt(result[0].disc_rp).toLocaleString('id-ID')}</td>
+          </tr>
+        `;
+
+        let grd = `
+          <tr>
+            <td>Grand Total</td>
+            <td>:</td>
+            <td style="text-align: right;">${parseInt(result[0].grantot_jual).toLocaleString('id-ID')}</td>
+          </tr>
+        `;
+
+        let jn = '', bayar = '';
         switch($('#metode').val()){
           case '1':
             jn = 'Tunai';
+            bayar = result[0].bayar_tunai;
             break;
           case '2':
             jn = 'Kartu Debit/Kredit';
+            bayar = result[0].bayar_card;
             break;
           case '3':
             jn = ($('#platform').val() == 1 ? 'GO-PAY' : 'OVO');
+            bayar = result[0].bayar_emoney;
             break;
         }
-        let via = `
+        /*let via = `
           <tr>
             <td>Via</td>
             <td>:</td>
             <td style="text-align: right;">${jn}</td>
           </tr>
-        `;
+        `;*/
 
         let paid = `
           <tr>
-            <td>Paid</td>
+            <td>${jn}</td>
             <td>:</td>
-            <td style="text-align: right;">${parseInt(result[0].bayar_tunai).toLocaleString()}</td>
+            <td style="text-align: right;">${parseInt(bayar).toLocaleString('id-ID')}</td>
           </tr>
         `;
 
@@ -463,7 +494,7 @@ var routes = [
           <tr>
             <td>Change</td>
             <td>:</td>
-            <td style="text-align: right;">${parseInt(result[0].kembali_tunai).toLocaleString()}</td>
+            <td style="text-align: right;">${parseInt(result[0].kembali_tunai).toLocaleString('id-ID')}</td>
           </tr>
           <tr><td>&nbsp;</td></tr>
           <tr><td>&nbsp;</td></tr>
@@ -476,7 +507,7 @@ var routes = [
           </table>
         `;
 
-        let q = tbl + header + tgl + notrans + op + list + stot + via + paid + chn + thanks;
+        let q = tbl + header + tgl + notrans + op + list + stot + dsc + grd + /*via +*/ paid + chn + thanks;
         $('#preview_rcpt').html(q);
       })
     }

@@ -24,6 +24,11 @@
         </div>
 
         <div class="list no-hairlines no-hairlines-between">
+          <input type="hidden" id="id_closing">
+          <input type="hidden" id="stamp_sv">
+          <input type="hidden" id="tx_count">
+          <input type="hidden" id="tx_first">
+          <input type="hidden" id="cl_discrp">
           <ul>
             <li>
               <div class="item-content">
@@ -49,6 +54,14 @@
                 </div>
               </div>
             </li>
+            <li class="item-content item-input inline-label">
+              <div class="item-inner">
+                <div class="item-title item-label" style="color: unset;">Lain-Lain</div>
+                <div class="item-input-wrap">
+                  <input type="tel" id="ul_uang_lain" value="0" onchange="commaNumber(this);" onclick="this.select();" style="text-align: right;">
+                </div>
+              </div>
+            </li>
           </ul>
 
           <br>
@@ -60,7 +73,7 @@
           <ul id="ul_closing_item"></ul>
         </div>
 
-        <div class="card-footer">
+        <div class="card-footer" id="closing_button" style="display: none;">
           <button class="button button-fill color-green" onclick="closing();">Cetak dan close penjualan</button>
         </div>
       </div>
