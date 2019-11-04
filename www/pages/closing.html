@@ -29,6 +29,8 @@
           <input type="hidden" id="tx_count">
           <input type="hidden" id="tx_first">
           <input type="hidden" id="cl_discrp">
+          <input type="hidden" id="cl_modal">
+          <input type="hidden" id="cl_sales">
           <ul>
             <li>
               <div class="item-content">
@@ -50,7 +52,7 @@
               <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Uang Saat Ini</div>
                 <div class="item-input-wrap">
-                  <input type="tel" id="ul_current_uang" value="0" onchange="commaNumber(this);" onclick="this.select();" style="text-align: right;">
+                  <input type="tel" id="ul_current_uang" value="0" onchange="commaNumber(this); hitungLain(this.value);" onclick="this.select();" style="text-align: right;">
                 </div>
               </div>
             </li>
@@ -58,7 +60,7 @@
               <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Lain-Lain</div>
                 <div class="item-input-wrap">
-                  <input type="tel" id="ul_uang_lain" value="0" onchange="commaNumber(this);" onclick="this.select();" style="text-align: right;">
+                  <input type="tel" id="ul_uang_lain" value="0" readonly disabled style="text-align: right;">
                 </div>
               </div>
             </li>

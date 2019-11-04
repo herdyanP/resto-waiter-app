@@ -212,6 +212,7 @@ var routes = [
           // let result = JSON.parse(json);
           $('#id_closing').val(result[0].id_closing);
           $('#ul_closing_modal').html(parseInt(result[0].starting_cash).toLocaleString('id-ID'));
+          $('#cl_modal').val(parseInt(result[0].starting_cash));
           $('#stamp_sv').val(result[0].openingcashdate);
 
           NativeStorage.getItem('stamp', onGetStampDone, onGetStampFail);

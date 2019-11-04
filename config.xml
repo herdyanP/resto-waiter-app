@@ -32,6 +32,11 @@
             <application android:allowBackup="false" />
             <application android:usesCleartextTraffic="true" />
         </edit-config>
+        <config-file parent="/manifest/application" target="AndroidManifest.xml">
+            <provider android:authorities="${applicationId}.sharing.provider" android:exported="false" android:grantUriPermissions="true" android:name="nl.xservices.plugins.FileProvider">
+                <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/sharing_paths" />
+            </provider>
+        </config-file>
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
