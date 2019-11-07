@@ -539,11 +539,19 @@ user-select: auto !important;
   #login-title{
     bottom: 20vh;
   }
+
+  #block-row-list{
+    max-height: 50vh;
+  }
 }
 
 @media (max-height: 720px){
   #login-title{
     bottom: 5vh;
+  }
+
+  #block-row-list{
+    max-height: 40vh;
   }
 }
 
@@ -551,6 +559,10 @@ user-select: auto !important;
   #login-title{
     /*bottom: 5vh;*/
     bottom: 0vh;
+  }
+
+  #block-row-list{
+    max-height: 30vh;
   }
 }
 

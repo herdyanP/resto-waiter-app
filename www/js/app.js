@@ -24,8 +24,8 @@ var cpyProf;
 var diskonAmt = 0; totalSub = 0; totalGrand = 0; kembalian = 0;
 var pingTimeout = 0;
 var appVer = 0;
-// var site = 'https://demo.medianusamandiri.com/lightpos';
-var site = 'https://mediapos.cloudmnm.com';
+var site = 'https://demo.medianusamandiri.com/lightpos';
+// var site = 'https://mediapos.cloudmnm.com';
 var trueHeight = window.innerHeight
 var moddedHeight = Math.floor(trueHeight / 100) * 100;
 var dailyModal = 0;
