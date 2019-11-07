@@ -34,7 +34,7 @@
               <div class="item-inner">
                 <div class="item-title item-label"></div>
                 <div class="item-input-wrap input-dropdown-wrap">
-                  <select name="kategori" id="kategori" onclick="pauseState();" onblur="pauseState();" onchange="tampilMenu();">
+                  <select name="kategori" id="kategori" onclick="enablePause();" onblur="disablePause();" onchange="tampilMenu(); disablePause();">
                     <option value="0">Semua menu</option>
                     <!-- <option value="1">Makanan</option>
                     <option value="2">Minuman</option>

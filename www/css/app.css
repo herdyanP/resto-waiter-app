@@ -535,13 +535,19 @@ user-select: auto !important;
   margin-left: -40vw;
 }
 
-@media (max-width: 720px){
+@media (max-height: 900px){
   #login-title{
-    bottom: 18vh;
+    bottom: 20vh;
   }
 }
 
-@media (max-width: 480px){
+@media (max-height: 720px){
+  #login-title{
+    bottom: 5vh;
+  }
+}
+
+@media (max-height: 480px){
   #login-title{
     /*bottom: 5vh;*/
     bottom: 0vh;

@@ -24,12 +24,14 @@ var cpyProf;
 var diskonAmt = 0; totalSub = 0; totalGrand = 0; kembalian = 0;
 var pingTimeout = 0;
 var appVer = 0;
-var site = 'https://demo.medianusamandiri.com/lightpos';
+// var site = 'https://demo.medianusamandiri.com/lightpos';
+var site = 'https://mediapos.cloudmnm.com';
 var trueHeight = window.innerHeight
 var moddedHeight = Math.floor(trueHeight / 100) * 100;
 var dailyModal = 0;
 var refreshMenu, refreshKeranjang;
 
+let existing = 0;
 let modalModal = app.dialog.create({
     title: 'Modal Awal',
     closeByBackdropClick: false,
@@ -131,19 +133,20 @@ document.addEventListener('deviceready', function() {
     }, function(){
       console.log('AdMob init failed!');
     });
+
+    AdMob.prepareInterstitial({
+      adId: adid.interstitial,
+      autoShow: false
+    }, function(){
+      console.log('interstitial ready');
+    }, function(){
+      console.log('interstitial not ready');
+    });
+
+    AdMob.showInterstitial();
   }
 
   // if(AdMob) AdMob.prepareInterstitial( {adId: adid.interstitial, autoShow: false} );
-
-  AdMob.prepareInterstitial({
-    adId: adid.interstitial,
-    autoShow: false
-  }, function(){
-    console.log('interstitial ready');
-  }, function(){
-    console.log('interstitial not ready');
-  });
-
 
   screen.orientation.lock('portrait');
 
@@ -160,7 +163,6 @@ document.addEventListener('deviceready', function() {
     window.localStorage.setItem("inctrx",1);
   }
 
-  AdMob.showInterstitial();
 
 
   onLogin();
@@ -366,6 +368,7 @@ function onRetSuccess(obj){
       cpyProf.alamat = result[0].alamat;
       console.log('succ');
       $('#panel_subTitle').append('<br>'+cpyProf.outlet);
+      pauseFlag = 1;
       app.views.main.router.navigate('/home/');
       NativeStorage.getItem('modal', onModalFound, onModalNotFound);
 
@@ -411,13 +414,14 @@ function onRetFail(){
 
 function onLogout(){
   $('#panel_subTitle').html('<br><strong>MediaPOS F&amp;B</strong><br>POS Application');
-  NativeStorage.remove('akun', onLogoutSuccess, onLogoutFail);
-  // NativeStorage.clear(onLogoutSuccess, onLogoutFail);
+  // NativeStorage.remove('akun', onLogoutSuccess, onLogoutFail);
+  NativeStorage.clear(onLogoutSuccess, onLogoutFail);
 }
 
 function onLogoutSuccess(){
   console.log('rem succ');
   pauseFlag = 1;
+  existing = 0;
   app.views.main.router.navigate('/', {
     clearPreviousHistory: true,
     history: false
@@ -463,16 +467,22 @@ function onSetModalSuccess(){
     tgl : timestamp_dtl
   };
 
-  app.request({
-    url: site+"/API/opening/",
-    method: "POST",
-    data: JSON.stringify(temp),
-    success: function(json){
-      console.log('uploaded starting cash');
-      $('#menu_penjualan').css('display', 'block');
-      $('#modal_awal').css('display', 'none');
-    }
-  })
+  console.log('existing b', existing);
+  if(existing == 0){
+    app.request({
+      url: site+"/API/opening/",
+      method: "POST",
+      data: JSON.stringify(temp),
+      success: function(json){
+        console.log('uploaded starting cash');
+      }
+    });
+  } else {
+    console.log('unclosed existing');
+  }
+
+  $('#menu_penjualan').css('display', 'block');
+  $('#modal_awal').css('display', 'none');
 
   NativeStorage.setItem('stamp', timestamp, onSetStampDone, onSetStampFail);
   console.log('set modal done');
@@ -490,6 +500,21 @@ function onModalNotFound(error){
   // modalModal.open();
   $('#menu_penjualan').css('display', 'none');
   $('#modal_awal').css('display', 'block');
+
+  $.ajax({
+    url: site+"/API/closing/"+cpyProf.id_user+"/",
+    method: "GET",
+    success: function(json){
+      console.log(json);
+      if(json[0].closed == 0){
+        existing = 1;
+        console.log('existing', existing);
+        // $('#modal').val(json[0].starting_cash);
+        simpanModal(json[0].starting_cash);
+      }
+      // console.log('uploaded starting cash');
+    }
+  });
 }
 
 function onRemModalSuccess(){
@@ -524,51 +549,51 @@ function onGetStampFail(){
 function tampilMenu(){
   // $('#kategori').trigger('blur');
   var kat = $('#kategori').val();
-    $.ajax({
-      url: site+'/API/kategori/'+cpyProf.id_client+'/',
-      method: 'GET',
-    }).done(function(result){
-      console.log('kategori');
-      var data = '<option value="0">Semua menu</option>';
-      for(var i = 0; i < result.length; i++){
-        if(result[i].id_kategori == null || result[i].nama_kategori == null) continue;
+  $.ajax({
+    url: site+'/API/kategori/'+cpyProf.id_client+'/',
+    method: 'GET',
+  }).done(function(result){
+    console.log('kategori');
+    var data = '<option value="0">Semua menu</option>';
+    for(var i = 0; i < result.length; i++){
+      if(result[i].id_kategori == null || result[i].nama_kategori == null) continue;
 
-        if(kat != 0 && kat == result[i].id_kategori){
-          data += `<option value="${result[i].id_kategori}" selected>${result[i].nama_kategori}</option>`;
-        } else {
-          data += `<option value="${result[i].id_kategori}">${result[i].nama_kategori}</option>`;
-        }
-      }
-
-      if(pauseFlag == 0) $('#kategori').html(data);
-    });
-
-    $.ajax({
-      url: site+'/API/menu2/'+cpyProf.id_outlet+'/'+kat+'/',
-      method: 'GET'
-    }).done(function(result){
-      // console.log(result);
-      console.log('menu');
-      var len, i;
-      /*if(result.length > 18) {
-        len = 18;
+      if(kat != 0 && kat == result[i].id_kategori){
+        data += `<option value="${result[i].id_kategori}" selected>${result[i].nama_kategori}</option>`;
       } else {
-        len = result.length;
-      }*/
-  
-      var datanya = '';
-      for (i = 0; i < result.length; i++){
-        datanya += `<div onclick="simpan(${result[i].id_barang}, 1, ${result[i].harga.split('-')[0]}, '${result[i].nama_barang}')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ${(screen.width < 400 ? 'font-size: 10px;' : '')}">${result[i].nama_barang}</p></div>`;
-        // datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ' +(screen.width < 400 ? 'font-size: 10px;' : '')+ '">' +result[i].nama_barang+ '</p></div>';
-        // datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: ' +(screen.width < 400 ? '40px' : '50px')+ '; height: ' +(screen.width < 400 ? '40px' : '50px')+ '; border: solid black 1px; border-radius: 20px;"><i style="font-size: ' +(screen.width < 400 ? '30px' : '40px')+ '; line-height: ' +(screen.width < 400 ? '40px' : '50px')+ '; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ' +(screen.width < 400 ? 'font-size: 10px;')+ '">'+result[i].nama_barang+'</p></div>';
+        data += `<option value="${result[i].id_kategori}">${result[i].nama_kategori}</option>`;
       }
-  
-      if(result.length % 3 != 0) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
-      if(pauseFlag == 0) $('#itemlist').html(datanya);
-      refreshMenu = setTimeout(tampilMenu, 5 * 1000);
-    }).fail(function(a,b,error){
-      console.log(error);
-    })
+    }
+
+    if(pauseFlag == 0) $('#kategori').html(data);
+  });
+
+  $.ajax({
+    url: site+'/API/menu2/'+cpyProf.id_outlet+'/'+kat+'/',
+    method: 'GET'
+  }).done(function(result){
+    // console.log(result);
+    console.log('menu');
+    var len, i;
+    /*if(result.length > 18) {
+      len = 18;
+    } else {
+      len = result.length;
+    }*/
+
+    var datanya = '';
+    for (i = 0; i < result.length; i++){
+      datanya += `<div onclick="simpan(${result[i].id_barang}, 1, ${result[i].harga.split('-')[0]}, '${result[i].nama_barang}')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ${(screen.width < 400 ? 'font-size: 10px;' : '')}">${result[i].nama_barang}</p></div>`;
+      // datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ' +(screen.width < 400 ? 'font-size: 10px;' : '')+ '">' +result[i].nama_barang+ '</p></div>';
+      // datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: ' +(screen.width < 400 ? '40px' : '50px')+ '; height: ' +(screen.width < 400 ? '40px' : '50px')+ '; border: solid black 1px; border-radius: 20px;"><i style="font-size: ' +(screen.width < 400 ? '30px' : '40px')+ '; line-height: ' +(screen.width < 400 ? '40px' : '50px')+ '; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ' +(screen.width < 400 ? 'font-size: 10px;')+ '">'+result[i].nama_barang+'</p></div>';
+    }
+
+    if(result.length % 3 != 0) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
+    if(pauseFlag == 0) $('#itemlist').html(datanya);
+    refreshMenu = setTimeout(tampilMenu, 5 * 1000);
+  }).fail(function(a,b,error){
+    console.log(error);
+  })
 }
 
 function ubahAmount(id, hrg){
@@ -743,12 +768,13 @@ function keranjang(){
       data += '</ul>';
       // totalGrand = totalSub;
   
+      // if(pauseFlag == 0) $('#keranjang').html(data);
       $('#keranjang').html(data);
       // $('#subtotal').html(totalSub.toLocaleString('id-ID'));
-      // $('#bayar').val(totalSub.toLocaleString('id-ID'));
+      $('#bayar').val(totalSub.toLocaleString('id-ID'));
   
       hitungDiskon();
-      refreshKeranjang = setTimeout(keranjang, 5 * 1000);
+      // refreshKeranjang = setTimeout(keranjang, 5 * 1000);
     }).fail(function(a,b,error){
       // alert(error);
       console.log(error);
@@ -1965,10 +1991,12 @@ function cetakReceipt(id){
       cab += ' ';
     } cab += 'Cabang ' + cpyProf.cabang + '{br}';
 
-    var header = '{br}{center}{h}MediaPOS{/h}{br}Sales Receipt{br}'+cpyProf.outlet+'{br}'+cpyProf.alamat+'{br}--------------------------------{br}';
+    var mp = '{br}Powered by MediaPOS';
+    var header = '{br}{center}'+cpyProf.outlet+'{br}'+cpyProf.alamat+'{br}Sales Receipt{br}--------------------------------{br}';
+    // var header = '{br}{center}{br}{h}Sales Receipt{/h}{br}'+cpyProf.outlet+'{br}'+cpyProf.alamat+'{br}--------------------------------{br}';
     var subheader = '{left}No. Trans : ' +result[0].no_penjualan+ '{br}' +stamp+ '{br}Operator  : ' +(cpyProf.client ? cpyProf.client : cpyProf.nama)+ '{br}--------------------------------{br}';
-    var thanks = '{br}{center}Terima Kasih Atas {br}Kunjungan Anda {br}{br}{br}{br}{br}';
-    var eol = '{br}{left}';
+    var thanks = '{br}{center}Terima Kasih {br}Atas Kunjungan Anda';
+    var eol = '{br}{br}{br}{br}{left}';
 
 
     for(var i = 0; i < 32 - 'Sub-total'.length - parseInt(result[0].total_jual).toLocaleString('id-ID').length; i++){
@@ -2020,7 +2048,7 @@ function cetakReceipt(id){
 
     list += '--------------------------------{br}{left}';
 
-    var q = header + subheader + list + sub + dsc + grd + /*via +*/ paid + kbl + '{br}' + thanks + eol;
+    var q = header + subheader + list + sub + dsc + grd + /*via +*/ paid + kbl + '{br}' + thanks + mp + eol;
     // console.log(q);
     connectToPrinter(q);
   })
@@ -2363,12 +2391,14 @@ function hitungKembalian(val){
 
 function hitungDiskon(){
   let val = $('#disk_rp').val().replace(/\D/g, '');
+  let bayar = $('#bayar').val().replace(/\D/g, '');
   if(val != ''){
     // var tot = parseInt($('#subtotal').html().replace(/\D/g, ''));
     // let tot = totalSub;
     totalGrand = totalSub - parseInt(val);
     $('#subtotal').html(totalGrand.toLocaleString('id-ID'));
-    $('#bayar').val(totalGrand.toLocaleString('id-ID'));
+    hitungKembalian(bayar);
+    // $('#bayar').val(totalGrand.toLocaleString('id-ID'));
   }
 }
 
@@ -2435,12 +2465,12 @@ function debug(){
 
 function reScreen(){
   // console.log('a');
-  $('#login_page').css('height', moddedHeight);
+  // $('#login_page').css('height', moddedHeight);
 }
 
 function returnScreen(){
   // console.log('a');
-  $('#login_page').css('height', trueHeight);
+  // $('#login_page').css('height', trueHeight);
 }
 
 function dialogShare(id){
@@ -2592,9 +2622,17 @@ function dialogShare(id){
 
     let header = `
       <tr>
-        <td colspan="3" style="text-align: center; border-bottom: solid black 2px; font-size: 30px;">Sales Receipt</td>
+        <td colspan="3" style="text-align: center;">Sales Receipt</td>
       </tr>
-      <tr><td>&nbsp;</td></tr>
+    `;
+
+    let dtloutlet = `
+      <tr>
+        <td colspan="3" style="text-align: center;">${cpyProf.outlet}</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">${cpyProf.alamat}</td>
+      </tr>
     `;
 
     let notrans = `
@@ -2621,7 +2659,7 @@ function dialogShare(id){
         <td>Operator</td>
         <td colspan="2">: ${cpyProf.nama}</td>
       </tr>
-      <tr><td colspan="3" style="border-top: solid black 2px;">&nbsp;</td></tr>
+      <tr><td colspan="3" style="border-top: solid black 2px;"></tr>
     `;
 
     let list = '';
@@ -2641,7 +2679,7 @@ function dialogShare(id){
       `;
     }
 
-    list += `<tr><td colspan="3" style="border-top: solid black 2px;">&nbsp;</td></tr>`;
+    list += `<tr><td colspan="3" style="border-bottom: solid black 2px;"></tr>`;
 
     let stot = `
       <tr>
@@ -2705,17 +2743,19 @@ function dialogShare(id){
         <td style="text-align: right;">${parseInt(result[0].kembali_tunai).toLocaleString('id-ID')}</td>
       </tr>
       <tr><td>&nbsp;</td></tr>
-      <tr><td>&nbsp;</td></tr>
     `;
 
     let thanks = `
         <tr>
-          <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">Terima Kasih Atas Kunjungan Anda</td>
+          <td colspan="3" style="text-align: center;">Terima Kasih Atas Kunjungan Anda</td>
+        </tr>
+        <tr>
+          <td colspan="3" style="text-align: center;">Powered by MediaPOS</td>
         </tr>
       </table>
     `;
 
-    let q = tbl + header + tgl + notrans + op + list + stot + dsc + grd + /*via +*/ paid + chn + thanks;
+    let q = tbl + header + dtloutlet + tgl + notrans + op + list + stot + dsc + grd + /*via +*/ paid + chn + thanks;
     let options = {
       documentSize: 'A4',
       type: 'base64'
@@ -2813,12 +2853,20 @@ function cetakClosing(){
   connectToPrinter(q);
 }
 
-function pauseState(){
+/*function pauseState(){
   if(pauseFlag == 1){
     pauseFlag = 0;
   } else {
     pauseFlag = 1;
   }
+}*/
+
+function enablePause(){
+  pauseFlag = 1;
+}
+
+function disablePause(){
+  pauseFlag = 0;
 }
 
 function simpanModal(uang){
@@ -2841,6 +2889,18 @@ function hitungLain(uang){
   $('#ul_uang_lain').val(Math.abs(cl_modal + cl_sales - cl_uang).toLocaleString('id-ID'));
 }
 
+function misc(){
+  $('#login-title').css('position', '');
+  $('#img-logo').css('margin', '5vh 0 0 10vw');
+  $('#backfood').css('display', 'none');
+}
+
+function unmisc(){
+  $('#login-title').css('position', 'absolute');
+  $('#img-logo').css('margin', '');
+  $('#backfood').css('display', 'block');
+}
+
 // ========== PROSES UTILITY ENDS HERE ==========
 
 
@@ -2850,6 +2910,7 @@ function hitungLain(uang){
 function register(q){
   $('#register_button').addClass('disabled');
   var temp = {
+    'act' : 'register',
     'device' : device.uuid
   };
 
@@ -2858,8 +2919,8 @@ function register(q){
   })
 
   $.ajax({
-    // url: site+'/API/daftar/',
-    url: 'https://bprbangli.cloudmnm.com/lightpos/getDaftar.php',
+    url: site+'/API/daftar/',
+    // url: 'https://bprbangli.cloudmnm.com/lightpos/getDaftar.php',
     method: 'POST',
     data: JSON.stringify(temp),
     statusCode: {
@@ -2908,8 +2969,35 @@ function updateProfil(){
   }
 }
 
-function resetPass(){
-  
+function resetPass(q){
+  let temp = {
+    act : 'lupa'
+  };
+
+  $.each($(q).serializeArray(), function(){
+    temp[this.name] = this.value;
+  })
+
+  $.ajax({
+    url: site+'/API/daftar/',
+    // url: 'https://bprbangli.cloudmnm.com/lightpos/getDaftar.php',
+    method: 'POST',
+    data: JSON.stringify(temp),
+    timeout: 30 * 1000
+  }).done(function(json){
+    app.toast.create({
+      text: json[0].status,
+      closeTimeout: 3000,
+      closeButton: true
+    }).open();
+  }).fail(function(jqXHR, textStatus, errorThrown){
+    console.log(jqXHR);
+    console.log(textStatus);
+    console.log(errorThrown);
+  }).always(function(xhr, textStatus){
+    // console.log(textStatus);
+    $('#register_button').removeClass('disabled');
+  }) 
 }
 
 // ========== ACCOUNT RELATED PROCESS ENDS HERE ==========

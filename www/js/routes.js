@@ -354,14 +354,14 @@ var routes = [
           </div>
         </div>
       </div>
-
-      <div class="page-content">
-        <div class="block" id="preview_rcpt"></div>
-      </div>
       <div class="toolbar toolbar-bottom-md no-shadow color-green">
         <div class="toolbar-inner">
           <button class="button" id="bayarButton" onclick="selesai()">Selesai</button>
         </div>
+      </div>
+
+      <div class="page-content">
+        <div class="block" id="preview_rcpt"></div>
       </div>
     </div>
   `,
@@ -385,9 +385,17 @@ var routes = [
 
         let header = `
           <tr>
-            <td colspan="3" style="text-align: center; border-bottom: solid black 2px; font-size: 30px;">Sales Receipt</td>
+            <td colspan="3" style="text-align: center;">Sales Receipt</td>
           </tr>
-          <tr><td>&nbsp;</td></tr>
+        `;
+
+        let dtloutlet = `
+          <tr>
+            <td colspan="3" style="text-align: center;">${cpyProf.outlet}</td>
+          </tr>
+          <tr>
+            <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">${cpyProf.alamat}</td>
+          </tr>
         `;
 
         let notrans = `
@@ -414,7 +422,7 @@ var routes = [
             <td>Operator</td>
             <td colspan="2">: ${cpyProf.nama}</td>
           </tr>
-          <tr><td colspan="3" style="border-top: solid black 2px;">&nbsp;</td></tr>
+          <tr><td colspan="3" style="border-top: solid black 2px;"></tr>
         `;
 
         let list = '';
@@ -434,7 +442,7 @@ var routes = [
           `;
         }
 
-        list += `<tr><td colspan="3" style="border-top: solid black 2px;">&nbsp;</td></tr>`;
+        list += `<tr><td colspan="3" style="border-bottom: solid black 2px;"></tr>`;
 
         let stot = `
           <tr>
@@ -498,17 +506,19 @@ var routes = [
             <td style="text-align: right;">${parseInt(result[0].kembali_tunai).toLocaleString('id-ID')}</td>
           </tr>
           <tr><td>&nbsp;</td></tr>
-          <tr><td>&nbsp;</td></tr>
         `;
 
         let thanks = `
             <tr>
-              <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">Terima Kasih Atas Kunjungan Anda</td>
+              <td colspan="3" style="text-align: center;">Terima Kasih Atas Kunjungan Anda</td>
+            </tr>
+            <tr>
+              <td colspan="3" style="text-align: center;">Powered by MediaPOS</td>
             </tr>
           </table>
         `;
 
-        let q = tbl + header + tgl + notrans + op + list + stot + dsc + grd + /*via +*/ paid + chn + thanks;
+        let q = tbl + header + dtloutlet + tgl + notrans + op + list + stot + dsc + grd + /*via +*/ paid + chn + thanks;
         $('#preview_rcpt').html(q);
       })
     }
