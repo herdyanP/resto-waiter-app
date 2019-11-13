@@ -24,41 +24,29 @@ var cpyProf;
 var diskonAmt = 0; totalSub = 0; totalGrand = 0; kembalian = 0;
 var pingTimeout = 0;
 var appVer = 0;
-// var site = 'https://demo.medianusamandiri.com/lightpos';
-var site = 'https://mediapos.cloudmnm.com';
+var site = 'https://demo.medianusamandiri.com/lightpos';
+// var site = 'https://mediapos.cloudmnm.com';
 var trueHeight = window.innerHeight
 var moddedHeight = Math.floor(trueHeight / 100) * 100;
 var dailyModal = 0;
 var refreshMenu, refreshKeranjang;
 
-var existing = 0;
-var modalModal = app.dialog.create({
+let existing = 0;
+let modalModal = app.dialog.create({
     title: 'Modal Awal',
     closeByBackdropClick: false,
-    // content: 
-    //   `<div class="list no-hairlines no-hairlines-between">
-    //     <ul>
-    //       <li class="item-content item-input">
-    //         <div class="item-inner">
-    //           <div class="item-input-wrap">
-    //             <input type="tel" pattern="[0-9]" name="modal" id="modal" oninput="comma(this)" style="text-align: right;" />
-    //           </div>
-    //         </div>
-    //       </li>
-    //     </ul>
-    //   </div>`,
     content: 
-      '<div class="list no-hairlines no-hairlines-between">\
-        <ul>\
-          <li class="item-content item-input">\
-            <div class="item-inner">\
-              <div class="item-input-wrap">\
-                <input type="tel" pattern="[0-9]" name="modal" id="modal" oninput="comma(this)" style="text-align: right;" />\
-              </div>\
-            </div>\
-          </li>\
-        </ul>\
-      </div>',
+      `<div class="list no-hairlines no-hairlines-between">
+        <ul>
+          <li class="item-content item-input">
+            <div class="item-inner">
+              <div class="item-input-wrap">
+                <input type="tel" pattern="[0-9]" name="modal" id="modal" oninput="comma(this)" style="text-align: right;" />
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>`,
     buttons: [
     {
       text: 'Dashboard',
@@ -112,10 +100,10 @@ var modalModal = app.dialog.create({
     }]
   });
 
-var pauseFlag = 0;
-var cl_tu, cl_cc, cl_em;
-var cl_items = [];
-var searchbar;
+let pauseFlag = 0;
+let cl_tu, cl_cc, cl_em;
+let cl_items = [];
+let searchbar;
 
 Highcharts.setOptions({
   lang: {
@@ -335,8 +323,7 @@ function onStoreSuccess(obj){
   console.log('Store Success');
   
   cpyProf = obj;
-  // $('#panel_subTitle').append('<br>'+cpyProf.outlet);
-  $('#panel_subTitle').html('<br><strong>MediaPOS '+(cpyProf.jenis == 1 ? "F&amp;B" : "Retail")+'</strong><br>POS Application<br>'+cpyProf.outlet);
+  $('#panel_subTitle').append('<br>'+cpyProf.outlet);
   app.views.main.router.navigate('/home/');
 
   // NativeStorage.getItem('modal', onModalFound, onModalNotFound);
@@ -382,7 +369,7 @@ function onRetSuccess(obj){
       cpyProf.alamat = result[0].alamat;
       cpyProf.jenis = result[0].jenis_outlet;
       console.log('succ');
-      $('#panel_subTitle').html('<br><strong>MediaPOS '+(cpyProf.jenis == 1 ? "F&amp;B" : "Retail")+'</strong><br>POS Application<br>'+cpyProf.outlet);
+      $('#panel_subTitle').append('<br>'+cpyProf.outlet);
       pauseFlag = 1;
       app.views.main.router.navigate('/home/');
       NativeStorage.getItem('modal', onModalFound, onModalNotFound);
@@ -434,8 +421,7 @@ function onRetFail(){
 }
 
 function onLogout(){
-  $('#panel_subTitle').html('<br><strong>MediaPOS</strong><br>POS Application');
-  $('#title_home').html('MediaPOS');
+  $('#panel_subTitle').html('<br><strong>MediaPOS F&amp;B</strong><br>POS Application');
   // NativeStorage.remove('akun', onLogoutSuccess, onLogoutFail);
   NativeStorage.clear(onLogoutSuccess, onLogoutFail);
 }
@@ -471,19 +457,17 @@ function onBackPressed(){
 }
 
 function onSetModalSuccess(){
-  var dt = new Date();
-  var yr = dt.getFullYear();
-  var mt = ('00'+(dt.getMonth() + 1)).slice(-2);
-  var dy = ('00'+dt.getDate()).slice(-2);
-  var hr = ('00'+dt.getHours()).slice(-2);
-  var mn = ('00'+dt.getMinutes()).slice(-2);
-  var sc = ('00'+dt.getSeconds()).slice(-2);
+  let dt = new Date();
+  let yr = dt.getFullYear();
+  let mt = ('00'+(dt.getMonth() + 1)).slice(-2);
+  let dy = ('00'+dt.getDate()).slice(-2);
+  let hr = ('00'+dt.getHours()).slice(-2);
+  let mn = ('00'+dt.getMinutes()).slice(-2);
+  let sc = ('00'+dt.getSeconds()).slice(-2);
 
-  // var timestamp_dtl = `${yr}-${mt}-${dy} ${hr}:${mn}:${sc}`;
-  // var timestamp = `${yr}-${mt}-${dy}`;
-  var timestamp_dtl = yr+'-'+mt+'-'+dy+' '+hr+':'+mn+':'+sc;
-  var timestamp = yr+'-'+mt+'-'+dy;
-  var temp = {
+  let timestamp_dtl = `${yr}-${mt}-${dy} ${hr}:${mn}:${sc}`;
+  let timestamp = `${yr}-${mt}-${dy}`;
+  let temp = {
     id_client : cpyProf.id_client,
     id_outlet : cpyProf.id_outlet,
     id_user : cpyProf.id_user,
@@ -502,11 +486,6 @@ function onSetModalSuccess(){
       }
     });
   } else {
-    app.toast.create({
-      text: "Penjualan yang belum close ditemukan. Menggunakan data tersebut.",
-      closeTimeout: 3000,
-      closeButton: false
-    }).open();
     console.log('unclosed existing');
   }
 
@@ -621,68 +600,59 @@ function onGetStampFail(){
 }*/
 
 function tampilMenu(){
-  try{
-    var kat = $('#kategori').val();
-    $.ajax({
-      url: site+'/API/kategori/'+cpyProf.id_client+'/',
-      method: 'GET',
-    }).done(function(result){
-      console.log('kategori');
-      var data = '<option value="0">Semua menu</option>';
-      for(var i = 0; i < result.length; i++){
-        if(result[i].id_kategori == null || result[i].nama_kategori == null) continue;
+  // $('#kategori').trigger('blur');
+  var kat = $('#kategori').val();
+  $.ajax({
+    url: site+'/API/kategori/'+cpyProf.id_client+'/',
+    method: 'GET',
+  }).done(function(result){
+    console.log('kategori');
+    var data = '<option value="0">Semua menu</option>';
+    for(var i = 0; i < result.length; i++){
+      if(result[i].id_kategori == null || result[i].nama_kategori == null) continue;
 
-        if(kat != 0 && kat == result[i].id_kategori){
-          // data += `<option value="${result[i].id_kategori}" selected>${result[i].nama_kategori}</option>`;
-          data += '<option value="'+result[i].id_kategori+'" selected>'+result[i].nama_kategori+'</option>';
-        } else {
-          // data += `<option value="${result[i].id_kategori}">${result[i].nama_kategori}</option>`;
-          data += '<option value="'+result[i].id_kategori+'">'+result[i].nama_kategori+'</option>';
-        }
+      if(kat != 0 && kat == result[i].id_kategori){
+        data += `<option value="${result[i].id_kategori}" selected>${result[i].nama_kategori}</option>`;
+      } else {
+        data += `<option value="${result[i].id_kategori}">${result[i].nama_kategori}</option>`;
       }
+    }
 
-      if(pauseFlag == 0) $('#kategori').html(data);
-    });
+    if(pauseFlag == 0) $('#kategori').html(data);
+  });
 
-    $.ajax({
-      url: site+'/API/menu2/'+cpyProf.id_outlet+'/'+kat+'/',
-      method: 'GET'
-    }).done(function(result){
-      // console.log(result);
-      console.log('menu');
-      var len, i;
+  $.ajax({
+    url: site+'/API/menu2/'+cpyProf.id_outlet+'/'+kat+'/',
+    method: 'GET'
+  }).done(function(result){
+    // console.log(result);
+    console.log('menu');
+    var len, i;
 
-      var datanya = '';
-      for (i = 0; i < result.length; i++){
-        if(cpyProf.jenis == 1){
-          // datanya += `<div onclick="simpan(${result[i].id_barang}, 1, ${result[i].harga.split('-')[0]}, '${result[i].nama_barang}')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ${(screen.width < 400 ? 'font-size: 10px;' : '')}">${result[i].nama_barang}</p></div>`;
-          datanya += '<div onclick="simpan('+result[i].id_barang+', 1, '+result[i].harga.split("-")[0]+', \''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); '+(screen.width < 400 ? "font-size: 10px;" : "")+'">'+result[i].nama_barang+'</p></div>';
-        } else {
-          datanya += '\
-                      <li class="item-content">\
-                        <div class="item-media" style="background: black; color: white; border-radius: 30px;">\
-                          <div style="width: 100%; text-align: center;">'+result[i].nama_barang[0]+'</div>\
-                        </div>\
-                        <div class="item-inner" onclick="simpan('+result[i].id_barang+', 1, '+result[i].harga.split("-")[0]+', \''+result[i].nama_barang+'\')">\
-                          <div class="item-title">'+result[i].nama_barang+'</div>\
-                          <div class="item-after">Rp '+parseInt(result[i].harga.split("-")[0]).toLocaleString("id-ID")+'</div>\
-                        </div>\
-                      </li>\
-                    ';
-        }
-        // datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ' +(screen.width < 400 ? 'font-size: 10px;' : '')+ '">' +result[i].nama_barang+ '</p></div>';
-        // datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: ' +(screen.width < 400 ? '40px' : '50px')+ '; height: ' +(screen.width < 400 ? '40px' : '50px')+ '; border: solid black 1px; border-radius: 20px;"><i style="font-size: ' +(screen.width < 400 ? '30px' : '40px')+ '; line-height: ' +(screen.width < 400 ? '40px' : '50px')+ '; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ' +(screen.width < 400 ? 'font-size: 10px;')+ '">'+result[i].nama_barang+'</p></div>';
+    var datanya = '';
+    for (i = 0; i < result.length; i++){
+      if(cpyProf.jenis == 1){
+        datanya += `<div onclick="simpan(${result[i].id_barang}, 1, ${result[i].harga.split('-')[0]}, '${result[i].nama_barang}')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ${(screen.width < 400 ? 'font-size: 10px;' : '')}">${result[i].nama_barang}</p></div>`;
+      } else {
+        datanya += `
+          <li class="item-content">
+            <div class="item-inner" onclick="simpan(${result[i].id_barang}, 1, ${result[i].harga.split('-')[0]}, '${result[i].nama_barang}')">
+              <div class="item-title">${result[i].nama_barang}</div>
+              <div class="item-after">Rp ${parseInt(result[i].harga.split('-')[0]).toLocaleString('id-ID')}</div>
+            </div>
+          </li>
+        `;
       }
+      // datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ' +(screen.width < 400 ? 'font-size: 10px;' : '')+ '">' +result[i].nama_barang+ '</p></div>';
+      // datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: ' +(screen.width < 400 ? '40px' : '50px')+ '; height: ' +(screen.width < 400 ? '40px' : '50px')+ '; border: solid black 1px; border-radius: 20px;"><i style="font-size: ' +(screen.width < 400 ? '30px' : '40px')+ '; line-height: ' +(screen.width < 400 ? '40px' : '50px')+ '; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ' +(screen.width < 400 ? 'font-size: 10px;')+ '">'+result[i].nama_barang+'</p></div>';
+    }
 
-      if(result.length % 3 != 0 && cpyProf.jenis == 1) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
-      if(pauseFlag == 0) $(cpyProf.jenis == 1 ? '#itemlist' : '#itemrow').html(datanya);
-      refreshMenu = setTimeout(tampilMenu, 5 * 1000);
-    }).fail(function(a,b,error){
-      console.log(error);
-    })
-  } catch(error){
+    if(result.length % 3 != 0) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
+    if(pauseFlag == 0) $(cpyProf.jenis == 1 ? '#itemlist' : '#itemrow').html(datanya);
+    refreshMenu = setTimeout(tampilMenu, 5 * 1000);
+  }).fail(function(a,b,error){
     console.log(error);
-  }
+  })
 }
 
 function ubahAmount(id, hrg){
@@ -690,7 +660,7 @@ function ubahAmount(id, hrg){
   app.dialog.create({
     title: 'Konfirmasi',
     closeByBackdropClick: true,
-    /*content: `
+    content: `
       <div class="list no-hairlines no-hairlines-between">
         <ul>
           <li class="item-content item-input">
@@ -701,19 +671,7 @@ function ubahAmount(id, hrg){
             </div>
           </li>
         </ul>
-      </div>`,*/
-    content: '\
-          <div class="list no-hairlines no-hairlines-between">\
-            <ul>\
-              <li class="item-content item-input">\
-                <div class="item-inner">\
-                  <div class="item-input-wrap">\
-                    <input type="number" name="edit_amt" id="edit_amt" oninput="comma(this)" style="text-align: right;" />\
-                  </div>\
-                </div>\
-              </li>\
-            </ul>\
-          </div>',
+      </div>`,
     buttons: [
     {
       text: 'Batal',
@@ -763,7 +721,7 @@ function cariItem(q){
     var step = 0;
     var c = 0;
 
-    var curr_kat = $('#kategori').val();
+    let curr_kat = $('#kategori').val();
 
     while(c < item){
       console.log(json[step+1].id_barang);
@@ -784,44 +742,14 @@ function cariItem(q){
     }
 
     for (i = 0; i < itemArray.length; i++){
-      if(cpyProf.jenis == 1){
-        // datanya += `<div onclick="simpan(${itemArray[i].id_barang}, 1, ${itemArray[i].harga.split('-')[0]}, '${itemArray[i].nama_barang}')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ${(screen.width < 400 ? 'font-size: 10px;' : '')}">${itemArray[i].nama_barang}</p></div>`;
-        datanya += '<div onclick="simpan('+itemArray[i].id_barang+', 1, '+itemArray[i].harga.split("-")[0]+', \''+itemArray[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); '+(screen.width < 400 ? "font-size: 10px;" : "")+'">'+itemArray[i].nama_barang+'</p></div>';
-      } else {
-        /*datanya += `
-          <li class="item-content">
-            <div class="item-inner" onclick="simpan(${itemArray[i].id_barang}, 1, ${itemArray[i].harga.split('-')[0]}, '${itemArray[i].nama_barang}')">
-              <div class="item-title">${itemArray[i].nama_barang}</div>
-              <div class="item-after">Rp ${parseInt(itemArray[i].harga.split('-')[0]).toLocaleString('id-ID')}</div>
-            </div>
-          </li>
-        `;*/
-        datanya += '\
-                  <li class="item-content">\
-                    <div class="item-inner" onclick="simpan('+itemArray[i].id_barang+', 1, '+itemArray[i].harga.split("-")[0]+', \''+itemArray[i].nama_barang+'\')">\
-                      <div class="item-title">'+itemArray[i].nama_barang+'</div>\
-                      <div class="item-after">Rp '+parseInt(itemArray[i].harga.split("-")[0]).toLocaleString('id-ID')+'</div>\
-                    </div>\
-                  </li>\
-                ';
-      }
-      // datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ' +(screen.width < 400 ? 'font-size: 10px;' : '')+ '">' +result[i].nama_barang+ '</p></div>';
-      // datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: ' +(screen.width < 400 ? '40px' : '50px')+ '; height: ' +(screen.width < 400 ? '40px' : '50px')+ '; border: solid black 1px; border-radius: 20px;"><i style="font-size: ' +(screen.width < 400 ? '30px' : '40px')+ '; line-height: ' +(screen.width < 400 ? '40px' : '50px')+ '; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ' +(screen.width < 400 ? 'font-size: 10px;')+ '">'+result[i].nama_barang+'</p></div>';
+
+      datanya += '<div onclick="simpan('+itemArray[i].id_barang+', 1,'+itemArray[i].harga.split('-')[0]+',\''+itemArray[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+itemArray[i].nama_barang+'</p></div>';
+
     }
 
-    if(itemArray.length % 3 != 0 && cpyProf.jenis == 1) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
-    $(cpyProf.jenis == 1 ? '#itemlist' : '#itemrow').html(datanya);
+    datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
 
-
-    // for (i = 0; i < itemArray.length; i++){
-
-    //   datanya += '<div onclick="simpan('+itemArray[i].id_barang+', 1,'+itemArray[i].harga.split('-')[0]+',\''+itemArray[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%);">'+itemArray[i].nama_barang+'</p></div>';
-
-    // }
-
-    // datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
-
-    // $('#itemlist').html(datanya);
+    $('#itemlist').html(datanya);
   }).fail(function(a,b,error){
     console.log(error);
   })
@@ -865,9 +793,9 @@ function simpan(id, qty, harga, nama){
 function keranjang(){
   var data = '<ul>';
   var jumlah = 0;
-  var disk_rp = $('#disk_rp').val();
+  let disk_rp = $('#disk_rp').val();
 
-  // if(pauseFlag == 0){
+  if(pauseFlag == 0){
     $.ajax({
       url: site+'/API/cart/'+cpyProf.id_user+'/',
       method: 'GET'
@@ -879,22 +807,14 @@ function keranjang(){
         // <div class="item-title" onclick="ubahAmount('+testp[i].id_tmp+');">\
         // <div class="item-after"><a href="#" onclick="pilihHapus('+testp[i].id_barang+','+testp[i].qty_tmp+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
       
-        // data += `<li class="item-content ">
-        //           <div class="item-inner">
-        //             <div class="item-title" onclick="ubahAmount(`+testp[i].id_barang+`,`+testp[i].harga_tmp+`);">`+testp[i].nama_barang+`
-        //               <div class="item-footer">`+testp[i].qty_tmp+` x `+testp[i].harga_tmp+`</div>
-        //             </div>
-        //             <div class="item-after"><a href="#" onclick="hapusKeranjang(`+testp[i].id_barang+`)"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>
-        //           </div>
-        //         </li>`;
-        data += '<li class="item-content ">\
-                          <div class="item-inner">\
-                            <div class="item-title" onclick="ubahAmount('+testp[i].id_barang+','+testp[i].harga_tmp+');">'+testp[i].nama_barang+'\
-                              <div class="item-footer">'+testp[i].qty_tmp+' x '+testp[i].harga_tmp+'</div>\
-                            </div>\
-                            <div class="item-after"><a href="#" onclick="hapusKeranjang('+testp[i].id_barang+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
-                          </div>\
-                        </li>';
+        data += `<li class="item-content ">
+                  <div class="item-inner">
+                    <div class="item-title" onclick="ubahAmount(`+testp[i].id_barang+`,`+testp[i].harga_tmp+`);">`+testp[i].nama_barang+`
+                      <div class="item-footer">`+testp[i].qty_tmp+` x `+testp[i].harga_tmp+`</div>
+                    </div>
+                    <div class="item-after"><a href="#" onclick="hapusKeranjang(`+testp[i].id_barang+`)"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>
+                  </div>
+                </li>`;
             // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString('id-ID')+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
        
         jumlah += parseInt(testp[i].qty_tmp * testp[i].harga_tmp);  // no PPN 
@@ -918,7 +838,7 @@ function keranjang(){
       // alert(error);
       console.log(error);
     })
-  // }
+  }
 }
 
 function hapusKeranjang(id){
@@ -954,7 +874,7 @@ function bayar(){
   var bayar = parseInt($('#bayar').val().replace(/\D/g, ''));
 
   var kembali = (+bayar) - (+subtotal);
-  var bayar_tunai = 0, bayar_card = 0, bayar_emoney = 0;
+  let bayar_tunai = 0, bayar_card = 0, bayar_emoney = 0;
   switch(jenis){
     case '1':
       bayar_tunai = bayar;
@@ -998,7 +918,7 @@ function bayar(){
 
     if(jenis == '3'){
       var nohp = $('#idewallet').val();
-      var ewalvar = {
+      let ewallet = {
         nohp: nohp,
         id_client: cpyProf.id_client
       }
@@ -1050,18 +970,17 @@ function bayar(){
 }
 
 function closing(){
-  var dt = new Date();
-  var yr = dt.getFullYear();
-  var mt = ('00'+(dt.getMonth() + 1)).slice(-2);
-  var dy = ('00'+dt.getDate()).slice(-2);
-  var hr = ('00'+dt.getHours()).slice(-2);
-  var mn = ('00'+dt.getMinutes()).slice(-2);
-  var sc = ('00'+dt.getSeconds()).slice(-2);
+  let dt = new Date();
+  let yr = dt.getFullYear();
+  let mt = ('00'+(dt.getMonth() + 1)).slice(-2);
+  let dy = ('00'+dt.getDate()).slice(-2);
+  let hr = ('00'+dt.getHours()).slice(-2);
+  let mn = ('00'+dt.getMinutes()).slice(-2);
+  let sc = ('00'+dt.getSeconds()).slice(-2);
 
-  // var timestamp = `${yr}-${mt}-${dy} ${hr}:${mn}:${sc}`;
-  var timestamp = yr+'-'+mt+'-'+dy+' '+hr+':'+mn+':'+sc;
-  var tx_last = parseInt($('#tx_first').val()) + (parseInt($('#tx_count').val()) - 1);
-  var temp = {
+  let timestamp = `${yr}-${mt}-${dy} ${hr}:${mn}:${sc}`;
+  let tx_last = parseInt($('#tx_first').val()) + (parseInt($('#tx_count').val()) - 1);
+  let temp = {
     // st_cash : $('#ul_closing_modal').html().replace(/\D/g, ''),
     // st_cash : $('#ul_closing_modal').html().replace(/\D/g, ''),
     tgl : timestamp,
@@ -1109,7 +1028,7 @@ function laporanPenjualan(){
   var b = document.getElementById('tgl_awal');
   var c = document.getElementById('tgl_akhir');
   var jenis;
-  /*var datanya = `
+  var datanya = `
     <table>
       <thead>
         <tr>
@@ -1120,19 +1039,7 @@ function laporanPenjualan(){
         </tr>
       </thead>
       <tbody>
-  `;*/
-  var datanya = '\
-      <table>\
-        <thead>\
-          <tr>\
-            <th class="label-cell">No. Penjualan</th>\
-            <th>Tanggal Penjualan</th>\
-            <th class="numeric-cell">Total Penjualan</th>\
-            <th>Jenis Pembayaran</th>\
-          </tr>\
-        </thead>\
-        <tbody>\
-    ';
+  `;
 
   var data = {
     'act' : 'penjualan',
@@ -1191,7 +1098,7 @@ function laporanPerItem(){
   var b = document.getElementById('tgl_awal');
   var c = document.getElementById('tgl_akhir');
 
-  /*var datanya = `
+  var datanya = `
     <table>
       <thead>
         <tr>
@@ -1201,18 +1108,7 @@ function laporanPerItem(){
         </tr>
       </thead>
       <tbody>
-  `;*/
-  var datanya = '\
-      <table>\
-        <thead>\
-          <tr>\
-            <th class="label-cell">Nama Barang</th>\
-            <th class="numeric-cell">Jumlah Terjual</th>\
-            <th class="numeric-cell">Total Penjualan</th>\
-          </tr>\
-        </thead>\
-        <tbody>\
-    ';
+  `;
 
   var data = {
     'act' : 'item',
@@ -1228,16 +1124,11 @@ function laporanPerItem(){
       if(json){
         var result = JSON.parse(json);
         for(var i = 0; i < result.length; i++){
-          /*datanya += `<tr>
+          datanya += `<tr>
                         <td class="label-cell">` +result[i].nama_barang+ `</td>
                         <td class="numeric-cell">` +result[i].jml+ `</td>
                         <td class="numeric-cell">` +parseInt(result[i].total).toLocaleString('id-ID')+ `</td>
-                      </tr>`;*/
-                      datanya += '<tr>\
-                                              <td class="label-cell">'+result[i].nama_barang+'</td>\
-                                              <td class="numeric-cell">'+result[i].jml+'</td>\
-                                              <td class="numeric-cell">'+parseInt(result[i].total).toLocaleString("id-ID")+'</td>\
-                                            </tr>';
+                      </tr>`;
         }
       } else {
         app.toast.create({text: 'Tidak ada data yang bisa ditampilkan', closeTimeout: 3000}).open();
@@ -1413,22 +1304,21 @@ function dashboardHarian(tahun, bulan){
 }
 
 function laporanClosing(stamp){
-  var dt = new Date();
-  var yr = dt.getFullYear();
-  var mt = ('00'+(dt.getMonth() + 1)).slice(-2);
-  var dy = ('00'+dt.getDate()).slice(-2);
-  var hr = ('00'+dt.getHours()).slice(-2);
-  var mn = ('00'+dt.getMinutes()).slice(-2);
-  var sc = ('00'+dt.getSeconds()).slice(-2);
+  let dt = new Date();
+  let yr = dt.getFullYear();
+  let mt = ('00'+(dt.getMonth() + 1)).slice(-2);
+  let dy = ('00'+dt.getDate()).slice(-2);
+  let hr = ('00'+dt.getHours()).slice(-2);
+  let mn = ('00'+dt.getMinutes()).slice(-2);
+  let sc = ('00'+dt.getSeconds()).slice(-2);
 
-  var discrp = 0;
+  let discrp = 0;
 
-  // var c_stamp = `${yr}-${mt}-${dy} ${hr}:${mn}:${sc}`;
-  var c_stamp = yr+'-'+mt+'-'+dy+' '+hr+':'+mn+':'+sc;
-  // var c_stamp = `${yr}-${mt}-${dy}`;
-  var stamp_sv = $('#stamp_sv').val();
+  let c_stamp = `${yr}-${mt}-${dy} ${hr}:${mn}:${sc}`;
+  // let c_stamp = `${yr}-${mt}-${dy}`;
+  let stamp_sv = $('#stamp_sv').val();
 
-  var sales = {
+  let sales = {
     act: 'cl_penjualan',
     tgl: stamp_sv
   }
@@ -1440,12 +1330,12 @@ function laporanClosing(stamp){
     method: 'POST',
     data: JSON.stringify(sales),
     success: function(result){
-      var datanya = '<li class="item-divider">Jenis Pembayaran</li>';
+      let datanya = '<li class="item-divider">Jenis Pembayaran</li>';
       if(result.length != 0){
         $('#closing_button').css('display', 'block');
-        // var datanya = '<li class="item-divider">Jenis Pembayaran</li>';
-        var tunai = 0, cc = 0, emoney = 0, c = 0;
-        // var result = JSON.parse(json);
+        // let datanya = '<li class="item-divider">Jenis Pembayaran</li>';
+        let tunai = 0, cc = 0, emoney = 0, c = 0;
+        // let result = JSON.parse(json);
         $('#tx_first').val(result[0].id_pj)
         for(var i = 0; i < result.length; i++){
           c++;
@@ -1469,7 +1359,7 @@ function laporanClosing(stamp){
         $('#cl_discrp').val(discrp);
         $('#tx_count').val(c);
   
-        /*datanya += `
+        datanya += `
           <li>
             <div class="item-content">
               <div class="item-inner">
@@ -1502,41 +1392,7 @@ function laporanClosing(stamp){
               </div>
             </div>
           </li>
-        `;*/
-        datanya += '\
-                  <li>\
-                    <div class="item-content">\
-                      <div class="item-inner">\
-                        <div class="item-title">Tunai</div>\
-                        <div class="item-after">'+tunai.toLocaleString("id-ID")+'</div>\
-                      </div>\
-                    </div>\
-                  </li>\
-                  <li>\
-                    <div class="item-content">\
-                      <div class="item-inner">\
-                        <div class="item-title">Kartu Debit/Kredit</div>\
-                        <div class="item-after">'+cc.toLocaleString("id-ID")+'</div>\
-                      </div>\
-                    </div>\
-                  </li>\
-                  <li>\
-                    <div class="item-content">\
-                      <div class="item-inner">\
-                        <div class="item-title">E-Money</div>\
-                        <div class="item-after">'+emoney.toLocaleString("id-ID")+'</div>\
-                      </div>\
-                    </div>\
-                  </li>\
-                  <li>\
-                    <div class="item-content">\
-                      <div class="item-inner">\
-                        <div class="item-title">Total</div>\
-                        <div class="item-after">'+(tunai + cc + emoney).toLocaleString("id-ID")+'</div>\
-                      </div>\
-                    </div>\
-                  </li>\
-                ';
+        `;
     
         $('#ul_closing_sales').html(datanya);
         $('#ul_closing_total').html((parseInt(tunai) + parseInt(cc) + parseInt(emoney)).toLocaleString('id-ID'));
@@ -1548,31 +1404,22 @@ function laporanClosing(stamp){
   
         $('#ul_current_uang').val((parseInt(tunai) + parseInt(cc) + parseInt(emoney) + parseInt(dailyModal)).toLocaleString('id-ID'));
       } else {
-        // datanya += `
-        //   <li>
-        //     <div class="item-content">
-        //       <div class="item-inner">
-        //         <div class="item-title"><strong>BELUM ADA TRANSAKSI</strong></div>
-        //       </div>
-        //     </div>
-        //   </li>
-        // `;
-        datanya += '\
-                  <li>\
-                    <div class="item-content">\
-                      <div class="item-inner">\
-                        <div class="item-title"><strong>BELUM ADA TRANSAKSI</strong></div>\
-                      </div>\
-                    </div>\
-                  </li>\
-                ';
+        datanya += `
+          <li>
+            <div class="item-content">
+              <div class="item-inner">
+                <div class="item-title"><strong>BELUM ADA TRANSAKSI</strong></div>
+              </div>
+            </div>
+          </li>
+        `;
 
         $('#ul_closing_sales').html(datanya);
         $('#ul_closing_total').html(0);
       }
     }
   }).then(function(){
-    var items = {
+    let items = {
       act: 'cl_kategori',
       tgl: stamp_sv,
       tglsd: c_stamp
@@ -1583,94 +1430,56 @@ function laporanClosing(stamp){
       method: 'POST',
       data: JSON.stringify(items),
       success: function(result){
-        var datanya = '<li class="item-divider">Kategori Item</li>';
+        let datanya = '<li class="item-divider">Kategori Item</li>';
 
         if(result.length != 0){
-          var total = 0;
-          // var result = JSON.parse(json);
+          let total = 0;
+          // let result = JSON.parse(json);
           for(var i = 0; i < result.length; i++){
             cl_items.push(result[i]);
             total += parseInt(result[i].total);
-            // datanya += `
-            //   <li>
-            //     <div class="item-content">
-            //       <div class="item-inner">
-            //         <div class="item-title">${result[i].nama_kategori}</div>
-            //         <div class="item-after">${parseInt(result[i].total).toLocaleString('id-ID')}</div>
-            //       </div>
-            //     </div>
-            //   </li>
-            // `;
-            datanya += '\
-                          <li>\
-                            <div class="item-content">\
-                              <div class="item-inner">\
-                                <div class="item-title">'+result[i].nama_kategori+'</div>\
-                                <div class="item-after">'+parseInt(result[i].total).toLocaleString("id-ID")+'</div>\
-                              </div>\
-                            </div>\
-                          </li>\
-                        ';
+            datanya += `
+              <li>
+                <div class="item-content">
+                  <div class="item-inner">
+                    <div class="item-title">${result[i].nama_kategori}</div>
+                    <div class="item-after">${parseInt(result[i].total).toLocaleString('id-ID')}</div>
+                  </div>
+                </div>
+              </li>
+            `;
           }
   
-          // datanya += `
-          //   <li>
-          //     <div class="item-content">
-          //       <div class="item-inner">
-          //         <div class="item-title">Diskon</div>
-          //         <div class="item-after">- ${discrp.toLocaleString('id-ID')}</div>
-          //       </div>
-          //     </div>
-          //   </li>
-          //   <li>
-          //     <div class="item-content">
-          //       <div class="item-inner">
-          //         <div class="item-title">Total</div>
-          //         <div class="item-after">${(total - discrp).toLocaleString('id-ID')}</div>
-          //       </div>
-          //     </div>
-          //   </li>
-          // `;
-
-          datanya += '\
-                      <li>\
-                        <div class="item-content">\
-                          <div class="item-inner">\
-                            <div class="item-title">Diskon</div>\
-                            <div class="item-after">- '+discrp.toLocaleString("id-ID")+'</div>\
-                          </div>\
-                        </div>\
-                      </li>\
-                      <li>\
-                        <div class="item-content">\
-                          <div class="item-inner">\
-                            <div class="item-title">Total</div>\
-                            <div class="item-after">'+(total - discrp).toLocaleString("id-ID")+'</div>\
-                          </div>\
-                        </div>\
-                      </li>\
-                    ';
+          datanya += `
+            <li>
+              <div class="item-content">
+                <div class="item-inner">
+                  <div class="item-title">Diskon</div>
+                  <div class="item-after">- ${discrp.toLocaleString('id-ID')}</div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="item-content">
+                <div class="item-inner">
+                  <div class="item-title">Total</div>
+                  <div class="item-after">${(total - discrp).toLocaleString('id-ID')}</div>
+                </div>
+              </div>
+            </li>
+          `;
   
           $('#ul_closing_item').html(datanya);
         } else {
-          // datanya += `
-          //   <li>
-          //     <div class="item-content">
-          //       <div class="item-inner">
-          //         <div class="item-title"><strong>BELUM ADA TRANSAKSI</strong></div>
-          //       </div>
-          //     </div>
-          //   </li>
-          // `;
-          datanya += '\
-                      <li>\
-                        <div class="item-content">\
-                          <div class="item-inner">\
-                            <div class="item-title"><strong>BELUM ADA TRANSAKSI</strong></div>\
-                          </div>\
-                        </div>\
-                      </li>\
-                    ';
+          datanya += `
+            <li>
+              <div class="item-content">
+                <div class="item-inner">
+                  <div class="item-title"><strong>BELUM ADA TRANSAKSI</strong></div>
+                </div>
+              </div>
+            </li>
+          `;
 
           $('#ul_closing_item').html(datanya);
         }
@@ -1725,31 +1534,21 @@ function listBarang(){
   }).done(function(result){
       // var tempArr = [];
       // var temp = {};
-      // var result = JSON.parse(json);
+      // let result = JSON.parse(json);
       for(var i = 0; i < result.length; i++){
         if(result[i].id_barang == null || result[i].nama_barang == null) continue;
         var hrg = result[i].harga.split('-')[0];
 
-        // data += `
-        //   <li class="item-content ">
-        //     <div class="item-inner">
-        //       <div class="item-title">`+result[i].nama_barang+`</div>
-        //       <div class="item-after">
-        //         <a href="#" style="margin: 2px;" onclick="showEditBarang(`+result[i].id_barang+`,`+result[i].tipe+`,'`+result[i].kode_barang+`','`+result[i].nama_barang+`','`+hrg+`',`+result[i].id_satuan+`,`+result[i].status+`);"><i class="icon material-icons md-only">edit</i></a>
-        //         <a href="#" style="margin: 2px;" onclick="hapusBarang(`+result[i].id_barang+`,'`+result[i].nama_barang+`')"><i class="icon material-icons md-only">close</i></a>
-        //       </div>
-        //     </div>
-        //   </li>`;
-        data += '\
-                  <li class="item-content ">\
-                    <div class="item-inner">\
-                      <div class="item-title">'+result[i].nama_barang+'</div>\
-                      <div class="item-after">\
-                        <a href="#" style="margin: 2px;" onclick="showEditBarang('+result[i].id_barang+','+result[i].tipe+',\''+result[i].kode_barang+'\',\''+result[i].nama_barang+'\',\''+hrg+'\','+result[i].id_satuan+','+result[i].status+');"><i class="icon material-icons md-only">edit</i></a>\
-                        <a href="#" style="margin: 2px;" onclick="hapusBarang('+result[i].id_barang+',\''+result[i].nama_barang+'\')"><i class="icon material-icons md-only">close</i></a>\
-                      </div>\
-                    </div>\
-                  </li>';
+        data += `
+          <li class="item-content ">
+            <div class="item-inner">
+              <div class="item-title">`+result[i].nama_barang+`</div>
+              <div class="item-after">
+                <a href="#" style="margin: 2px;" onclick="showEditBarang(`+result[i].id_barang+`,`+result[i].tipe+`,'`+result[i].kode_barang+`','`+result[i].nama_barang+`','`+hrg+`',`+result[i].id_satuan+`,`+result[i].status+`);"><i class="icon material-icons md-only">edit</i></a>
+                <a href="#" style="margin: 2px;" onclick="hapusBarang(`+result[i].id_barang+`,'`+result[i].nama_barang+`')"><i class="icon material-icons md-only">close</i></a>
+              </div>
+            </div>
+          </li>`;
       }
 
       data += '</ul>';
@@ -1867,7 +1666,7 @@ function addSatuan(q){
 
 function listSatuan(){
   var data = '<ul>';
-  /*$.ajax({
+  $.ajax({
     url: site+'/API/satuan/'+cpyProf.id_client+'/',
     method: 'GET',
   }).done(function(result){
@@ -1888,7 +1687,7 @@ function listSatuan(){
 
     data += '</ul>';
     $('#satuan_list').html(data);
-  })*/
+  })
 }
 
 function showEditSatuan(id, nama){
@@ -1985,7 +1784,7 @@ function addKategori(q){
 
 function listKategori(){
   var data = '<ul>';
-  /*$.ajax({
+  $.ajax({
     url: site+'/API/kategori/'+cpyProf.id_client+'/',
     method: 'GET',
   }).done(function(result){
@@ -2006,7 +1805,7 @@ function listKategori(){
 
     data += '</ul>';
     $('#kategori_list').html(data);
-  })*/
+  })
 }
 
 function showEditKategori(id, nama){
@@ -2079,7 +1878,7 @@ function hapusKategori(id, nama){
 function editPricelist(q){
   var id = $('#id_barang').val();
   var dt = new Date();
-  // var tglnow = `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`;
+  let tglnow = `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`;
 
   var temp = {
     'id_barang' : id,
@@ -2116,23 +1915,23 @@ function listPricelist(){
   }).done(function(result){
       // var tempArr = [];
       // var temp = {};
-      // var result = JSON.parse(json);
+      // let result = JSON.parse(json);
       for(var i = 0; i < result.length; i++){
         if(result[i].id_barang == null || result[i].nama_barang == null) continue;
         var hrg = result[i].harga.split('-')[0];
 
         // <a href="#" style="margin: 3px;" onclick="app.views.main.router.navigate({name: 'dtlpricel', params: {client: ${cpyProf.id_client}, barang: ${result[i].id_barang}}})"><i class="icon material-icons md-only">search</i></a>
 
-        // data += `
-        //   <li class="item-content ">
-        //     <div class="item-inner">
-        //       <div class="item-title">${result[i].nama_barang} (${parseInt(result[i].harga.split('-')[0]).toLocaleString('id-ID')})</div>
-        //       <div class="item-after">
+        data += `
+          <li class="item-content ">
+            <div class="item-inner">
+              <div class="item-title">${result[i].nama_barang} (${parseInt(result[i].harga.split('-')[0]).toLocaleString('id-ID')})</div>
+              <div class="item-after">
                 
-        //         <a href="#" style="margin: 3px;" onclick="showEditPricelist(`+result[i].id_barang+`,`+result[i].tipe+`,'`+result[i].kode_barang+`','`+result[i].nama_barang+`','`+hrg+`',`+result[i].id_satuan+`,`+result[i].status+`);"><i class="icon material-icons md-only">edit</i></a>
-        //       </div>
-        //     </div>
-        //   </li>`;
+                <a href="#" style="margin: 3px;" onclick="showEditPricelist(`+result[i].id_barang+`,`+result[i].tipe+`,'`+result[i].kode_barang+`','`+result[i].nama_barang+`','`+hrg+`',`+result[i].id_satuan+`,`+result[i].status+`);"><i class="icon material-icons md-only">edit</i></a>
+              </div>
+            </div>
+          </li>`;
       }
 
       data += '</ul>';
@@ -2173,11 +1972,11 @@ function listOutlet(id){
     url: site+'/API/cabang/ol/'+cpyProf.id_client+'/',
     method: 'GET',
     success: function(json){
-      var isi = '<option value="0">-- Semua outlet --</option>';
-      var result = JSON.parse(json);
+      let isi = '<option value="0">-- Semua Outlet --</option>';
+      let result = JSON.parse(json);
 
-      for(var i = 0; i < result.length; i++){
-        // isi += `<option value="${result[i].id_gudang}">${result[i].nama_gudang}</option>`
+      for(let i = 0; i < result.length; i++){
+        isi += `<option value="${result[i].id_gudang}">${result[i].nama_gudang}</option>`
       }
 
       $('#id_gudang').html(isi);
@@ -2263,12 +2062,12 @@ function cetakReceipt(id){
       sub += ' ';
     } sub += parseInt(result[0].total_jual).toLocaleString('id-ID') + '{br}';
 
-    var dsc = 'Diskon';
+    let dsc = 'Diskon';
     for(var i = 0; i < 32 - 'Diskon'.length - parseInt(result[0].disc_rp).toLocaleString('id-ID').length; i++){
       dsc += ' ';
     } dsc += parseInt(result[0].disc_rp).toLocaleString('id-ID') + '{br}';
 
-    var grd = 'Grand Total';
+    let grd = 'Grand Total';
     for(var i = 0; i < 32 - 'Grand Total'.length - parseInt(result[0].grantot_jual).toLocaleString('id-ID').length; i++){
       grd += ' ';
     } grd += parseInt(result[0].grantot_jual).toLocaleString('id-ID') + '{br}';
@@ -2383,7 +2182,7 @@ function cetakWhatsApp(id){
           });
         }
       },
-      /*content: 
+      content: 
         `<div class="block" style="height: 30vh;">
           <div class="list no-hairlines no-hairlines-between">
             <ul>
@@ -2396,7 +2195,7 @@ function cetakWhatsApp(id){
               </li>
             </ul>
           </div>
-        </div>`,*/
+        </div>`,
       buttons: [
       {
         text: 'Send',
@@ -2465,19 +2264,19 @@ function cetakWhatsApp(id){
             cab += ' ';
           } cab += 'Cabang ' + cpyProf.cabang + '\n';
 
-          // var header = '```\n          Sales Receipt\n\n' + kop + cab + '--------------------------------\nNo. Trans : ' +result[0].no_penjualan+ '\n' +stamp+ '\nOperator  : '+(cpyProf.nama ? cpyProf.nama : cpyProf.client)+'\n--------------------------------\n';
+          var header = '```\n          Sales Receipt\n\n' + kop + cab + '--------------------------------\nNo. Trans : ' +result[0].no_penjualan+ '\n' +stamp+ '\nOperator  : '+(cpyProf.nama ? cpyProf.nama : cpyProf.client)+'\n--------------------------------\n';
           var thanks = ' \n--------------------------------\n\n        Terima Kasih Atas\n         Kunjungan Anda\n';
 
           for(var i = 0; i < 31 - 'Sub-total'.length - parseInt(result[0].total_jual).toLocaleString('id-ID').length; i++){
             sub += ' ';
           } sub += parseInt(result[0].total_jual).toLocaleString('id-ID') + ' \n';
 
-          var dsc = 'Diskon';
+          let dsc = 'Diskon';
           for(var i = 0; i < 31 - 'Diskon'.length - parseInt(result[0].disc_rp).toLocaleString('id-ID').length; i++){
             dsc += ' ';
           } dsc += parseInt(result[0].disc_rp).toLocaleString('id-ID') + ' \n';
 
-          var grd = 'Grand Total';
+          let grd = 'Grand Total';
           for(var i = 0; i < 31 - 'Grand Total'.length - parseInt(result[0].grantot_jual).toLocaleString('id-ID').length; i++){
             grd += ' ';
           } grd += parseInt(result[0].grantot_jual).toLocaleString('id-ID') + ' \n';
@@ -2516,7 +2315,7 @@ function cetakWhatsApp(id){
           }
 
           list += '--------------------------------\n';
-          // window.location = 'https://wa.me/62' +nohp.substring(1)+ '?text='+encodeURI(header + list + sub + /*via +*/ paid + kbl + thanks + '```');
+          window.location = 'https://wa.me/62' +nohp.substring(1)+ '?text='+encodeURI(header + list + sub + /*via +*/ paid + kbl + thanks + '```');
 
           dialog.close();
         }
@@ -2650,11 +2449,11 @@ function hitungKembalian(val){
 }
 
 function hitungDiskon(){
-  var val = $('#disk_rp').val().replace(/\D/g, '');
-  var bayar = $('#bayar').val().replace(/\D/g, '');
+  let val = $('#disk_rp').val().replace(/\D/g, '');
+  let bayar = $('#bayar').val().replace(/\D/g, '');
   if(val != ''){
     // var tot = parseInt($('#subtotal').html().replace(/\D/g, ''));
-    // var tot = totalSub;
+    // let tot = totalSub;
     totalGrand = totalSub - parseInt(val);
     $('#subtotal').html(totalGrand.toLocaleString('id-ID'));
     hitungKembalian(bayar);
@@ -2687,7 +2486,7 @@ function debug(){
       window.plugins.socialsharing.share(null, null, 'file://'+res.filePath);
     }
   });
-  // var socOptions = {
+  // let socOptions = {
   //   files : ['file:///storage/emulated/0/Pictures/screenshot_1572428635396.png']
   // };
   // window.plugins.socialsharing.share(null, null, 'file:///storage/emulated/0/Pictures/screenshot_1572428635396.png');
@@ -2709,7 +2508,7 @@ function debug(){
 
       // window.plugins.socialsharing.share(null, null, 'file://'+res.filePath);
 
-      // var socOptions = {
+      // let socOptions = {
       //   files : ['file://'+res.filePath]
       // };
 
@@ -2801,12 +2600,12 @@ function dialogShare(id){
       sub += ' ';
     } sub += parseInt(result[0].total_jual).toLocaleString('id-ID') + ' \n';
 
-    var dsc = 'Diskon';
+    let dsc = 'Diskon';
     for(var i = 0; i < 31 - 'Diskon'.length - parseInt(result[0].disc_rp).toLocaleString('id-ID').length; i++){
       dsc += ' ';
     } dsc += parseInt(result[0].disc_rp).toLocaleString('id-ID') + ' \n';
 
-    var grd = 'Grand Total';
+    let grd = 'Grand Total';
     for(var i = 0; i < 31 - 'Grand Total'.length - parseInt(result[0].grantot_jual).toLocaleString('id-ID').length; i++){
       grd += ' ';
     } grd += parseInt(result[0].grantot_jual).toLocaleString('id-ID') + ' \n';
@@ -2846,8 +2645,8 @@ function dialogShare(id){
 
     list += '--------------------------------\n';
 
-    var res = header + list + sub + dsc + grd + paid + kbl + thanks + '```';
-    // var opts = [{
+    let res = header + list + sub + dsc + grd + paid + kbl + thanks + '```';
+    // let opts = [{
     //   message: res,
     //   subject: 'Receipt Penjualan Email',
     //   appPackageName: 'com.google.android.gm'
@@ -2868,179 +2667,104 @@ function dialogShare(id){
     url: site+'/API/penjualan/'+id+'/',
     method: 'GET'
   }).done(function(json){
-    var result = JSON.parse(json);        
-    // var kembali = parseInt(paid) - parseInt(totalGrand);
+    let result = JSON.parse(json);        
+    // let kembali = parseInt(paid) - parseInt(totalGrand);
 
-    // var tbl = `
-    //   <table style="width: 100%">
-    //     <tr>
-    //       <td style="width: 40%"></td>
-    //       <td style="width: 20%"></td>
-    //       <td style="width: 40%"></td>
-    //     </tr>
-    // `;
+    let tbl = `
+      <table style="width: 100%">
+        <tr>
+          <td style="width: 40%"></td>
+          <td style="width: 20%"></td>
+          <td style="width: 40%"></td>
+        </tr>
+    `;
 
-    var tbl = '\
-                  <table style="width: 100%">\
-                    <tr>\
-                      <td style="width: 40%"></td>\
-                      <td style="width: 20%"></td>\
-                      <td style="width: 40%"></td>\
-                    </tr>\
-                ';
+    let header = `
+      <tr>
+        <td colspan="3" style="text-align: center;">Sales Receipt</td>
+      </tr>
+    `;
 
-    // var header = `
-    //   <tr>
-    //     <td colspan="3" style="text-align: center;">Sales Receipt</td>
-    //   </tr>
-    // `;
+    let dtloutlet = `
+      <tr>
+        <td colspan="3" style="text-align: center;">${cpyProf.outlet}</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">${cpyProf.alamat}</td>
+      </tr>
+    `;
 
-    var header = '\
-                  <tr>\
-                    <td colspan="3" style="text-align: center;">Sales Receipt</td>\
-                  </tr>\
-                ';
+    let notrans = `
+      <tr>
+        <td>No. Trans</td>
+        <td colspan="2">: ${result[0].no_penjualan}</td>
+      </tr>
+    `;
 
-    // var dtloutlet = `
-    //   <tr>
-    //     <td colspan="3" style="text-align: center;">${cpyProf.outlet}</td>
-    //   </tr>
-    //   <tr>
-    //     <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">${cpyProf.alamat}</td>
-    //   </tr>
-    // `;
+    let dt = new Date();
+    let dy = ('00'+dt.getDate()).slice(-2);
+    let hr = ('00'+dt.getHours()).slice(-2);
+    let mn = ('00'+dt.getMinutes()).slice(-2);
+    let stamp = dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
+    let tgl = `
+      <tr>
+        <td>Tanggal</td>
+        <td colspan="2">: ${stamp}</td>
+      </tr>
+    `;
 
-    var dtloutlet = '\
-                  <tr>\
-                    <td colspan="3" style="text-align: center;">'+cpyProf.outlet+'</td>\
-                  </tr>\
-                  <tr>\
-                    <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">'+cpyProf.alamat+'</td>\
-                  </tr>\
-                ';
+    let op = `
+      <tr>
+        <td>Operator</td>
+        <td colspan="2">: ${cpyProf.nama}</td>
+      </tr>
+      <tr><td colspan="3" style="border-top: solid black 2px;"></tr>
+    `;
 
-    // var notrans = `
-    //   <tr>
-    //     <td>No. Trans</td>
-    //     <td colspan="2">: ${result[0].no_penjualan}</td>
-    //   </tr>
-    // `;
+    let list = '';
+    for(let i = 0; i < result.length; i++){
+      let qty = parseInt(result[i].qty_jual).toLocaleString('id-ID');
+      let hj = parseInt(result[i].harga_jual).toLocaleString('id-ID');
+      let jml = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString('id-ID');
 
-    var notrans = '\
-                  <tr>\
-                    <td>No. Trans</td>\
-                    <td colspan="2">: '+result[0].no_penjualan+'</td>\
-                  </tr>\
-                ';
-
-    var dt = new Date();
-    var dy = ('00'+dt.getDate()).slice(-2);
-    var hr = ('00'+dt.getHours()).slice(-2);
-    var mn = ('00'+dt.getMinutes()).slice(-2);
-    var stamp = dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
-    // var tgl = `
-    //   <tr>
-    //     <td>Tanggal</td>
-    //     <td colspan="2">: ${stamp}</td>
-    //   </tr>
-    // `;
-    var tgl = '\
-                  <tr>\
-                    <td>Tanggal</td>\
-                    <td colspan="2">: '+stamp+'</td>\
-                  </tr>\
-                ';
-
-    // var op = `
-    //   <tr>
-    //     <td>Operator</td>
-    //     <td colspan="2">: ${cpyProf.nama}</td>
-    //   </tr>
-    //   <tr><td colspan="3" style="border-top: solid black 2px;"></tr>
-    // `;
-    var op = '\
-                  <tr>\
-                    <td>Operator</td>\
-                    <td colspan="2">: '+cpyProf.nama+'</td>\
-                  </tr>\
-                  <tr><td colspan="3" style="border-top: solid black 2px;"></tr>\
-                ';
-
-    var list = '';
-    for(var i = 0; i < result.length; i++){
-      var qty = parseInt(result[i].qty_jual).toLocaleString('id-ID');
-      var hj = parseInt(result[i].harga_jual).toLocaleString('id-ID');
-      var jml = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString('id-ID');
-
-      // list += `
-      //   <tr>
-      //     <td colspan="3">${result[i].nama_barang}</td>
-      //   </tr>
-      //   <tr>
-      //     <td style="padding-left: 20px;">${qty} x ${hj}</td>
-      //     <td colspan="2" style="text-align: right;">${jml}</td>
-      //   </tr>
-      // `;
-      list += '\
-                      <tr>\
-                        <td colspan="3"'+result[i].nama_barang+'</td>\
-                      </tr>\
-                      <tr>\
-                        <td style="padding-left: 20px;">'+qty+' x '+hj+'</td>\
-                        <td colspan="2" style="text-align: right;">'+jml+'</td>\
-                      </tr>\
-                    ';
+      list += `
+        <tr>
+          <td colspan="3">${result[i].nama_barang}</td>
+        </tr>
+        <tr>
+          <td style="padding-left: 20px;">${qty} x ${hj}</td>
+          <td colspan="2" style="text-align: right;">${jml}</td>
+        </tr>
+      `;
     }
 
-    // list += `<tr><td colspan="3" style="border-bottom: solid black 2px;"></tr>`;
-    list += '<tr><td colspan="3" style="border-bottom: solid black 2px;"></tr>';
+    list += `<tr><td colspan="3" style="border-bottom: solid black 2px;"></tr>`;
 
-    // var stot = `
-    //   <tr>
-    //     <td>Subtotal</td>
-    //     <td>:</td>
-    //     <td style="text-align: right;">${parseInt(result[0].total_jual).toLocaleString('id-ID')}</td>
-    //   </tr>
-    // `;
-    var stot = '\
-                  <tr>\
-                    <td>Subtotal</td>\
-                    <td>:</td>\
-                    <td style="text-align: right;">'+parseInt(result[0].total_jual).toLocaleString('id-ID')+'</td>\
-                  </tr>\
-                ';
+    let stot = `
+      <tr>
+        <td>Subtotal</td>
+        <td>:</td>
+        <td style="text-align: right;">${parseInt(result[0].total_jual).toLocaleString('id-ID')}</td>
+      </tr>
+    `;
 
-    // var dsc = `
-    //   <tr>
-    //     <td>Diskon</td>
-    //     <td>:</td>
-    //     <td style="text-align: right;">${parseInt(result[0].disc_rp).toLocaleString('id-ID')}</td>
-    //   </tr>
-    // `;
-    var dsc = '\
-                  <tr>\
-                    <td>Diskon</td>\
-                    <td>:</td>\
-                    <td style="text-align: right;">'+parseInt(result[0].disc_rp).toLocaleString('id-ID')+'</td>\
-                  </tr>\
-                ';
+    let dsc = `
+      <tr>
+        <td>Diskon</td>
+        <td>:</td>
+        <td style="text-align: right;">${parseInt(result[0].disc_rp).toLocaleString('id-ID')}</td>
+      </tr>
+    `;
 
-    // var grd = `
-    //   <tr>
-    //     <td>Grand Total</td>
-    //     <td>:</td>
-    //     <td style="text-align: right;">${parseInt(result[0].grantot_jual).toLocaleString('id-ID')}</td>
-    //   </tr>
-    // `;
-    var grd = '\
-                  <tr>\
-                    <td>Grand Total</td>\
-                    <td>:</td>\
-                    <td style="text-align: right;">'+parseInt(result[0].grantot_jual).toLocaleString('id-ID')+'</td>\
-                  </tr>\
-                ';
+    let grd = `
+      <tr>
+        <td>Grand Total</td>
+        <td>:</td>
+        <td style="text-align: right;">${parseInt(result[0].grantot_jual).toLocaleString('id-ID')}</td>
+      </tr>
+    `;
 
-    var jn = '', bayar = '';
+    let jn = '', bayar = '';
     switch($('#metode').val()){
       case '1':
         jn = 'Tunai';
@@ -3055,7 +2779,7 @@ function dialogShare(id){
         bayar = result[0].bayar_emoney;
         break;
     }
-    /*var via = `
+    /*let via = `
       <tr>
         <td>Via</td>
         <td>:</td>
@@ -3063,59 +2787,35 @@ function dialogShare(id){
       </tr>
     `;*/
 
-    // var paid = `
-    //   <tr>
-    //     <td>${jn}</td>
-    //     <td>:</td>
-    //     <td style="text-align: right;">${parseInt(bayar).toLocaleString('id-ID')}</td>
-    //   </tr>
-    // `;
-    var paid = '\
-                  <tr>\
-                    <td>'+jn+'</td>\
-                    <td>:</td>\
-                    <td style="text-align: right;">'+parseInt(bayar).toLocaleString('id-ID')+'</td>\
-                  </tr>\
-                ';
+    let paid = `
+      <tr>
+        <td>${jn}</td>
+        <td>:</td>
+        <td style="text-align: right;">${parseInt(bayar).toLocaleString('id-ID')}</td>
+      </tr>
+    `;
 
-    // var chn = `
-    //   <tr>
-    //     <td>Change</td>
-    //     <td>:</td>
-    //     <td style="text-align: right;">${parseInt(result[0].kembali_tunai).toLocaleString('id-ID')}</td>
-    //   </tr>
-    //   <tr><td>&nbsp;</td></tr>
-    // `;
-    var chn = '\
-                  <tr>\
-                    <td>Change</td>\
-                    <td>:</td>\
-                    <td style="text-align: right;">'+parseInt(result[0].kembali_tunai).toLocaleString('id-ID')+'</td>\
-                  </tr>\
-                  <tr><td>&nbsp;</td></tr>\
-                ';
+    let chn = `
+      <tr>
+        <td>Change</td>
+        <td>:</td>
+        <td style="text-align: right;">${parseInt(result[0].kembali_tunai).toLocaleString('id-ID')}</td>
+      </tr>
+      <tr><td>&nbsp;</td></tr>
+    `;
 
-    // var thanks = `
-    //     <tr>
-    //       <td colspan="3" style="text-align: center;">Terima Kasih Atas Kunjungan Anda</td>
-    //     </tr>
-    //     <tr>
-    //       <td colspan="3" style="text-align: center;">Powered by MediaPOS</td>
-    //     </tr>
-    //   </table>
-    // `;
-    var thanks = '\
-                    <tr>\
-                      <td colspan="3" style="text-align: center;">Terima Kasih Atas Kunjungan Anda</td>\
-                    </tr>\
-                    <tr>\
-                      <td colspan="3" style="text-align: center;">Powered by MediaPOS</td>\
-                    </tr>\
-                  </table>\
-                ';
+    let thanks = `
+        <tr>
+          <td colspan="3" style="text-align: center;">Terima Kasih Atas Kunjungan Anda</td>
+        </tr>
+        <tr>
+          <td colspan="3" style="text-align: center;">Powered by MediaPOS</td>
+        </tr>
+      </table>
+    `;
 
-    var q = tbl + header + dtloutlet + tgl + notrans + op + list + stot + dsc + grd + /*via +*/ paid + chn + thanks;
-    var options = {
+    let q = tbl + header + dtloutlet + tgl + notrans + op + list + stot + dsc + grd + /*via +*/ paid + chn + thanks;
+    let options = {
       documentSize: 'A4',
       type: 'base64'
     }
@@ -3147,68 +2847,68 @@ function cetakClosing(){
   var header = '{br}{center}PENERIMAAN PENJUALAN KASIR{br}--------------------------------{br}{br}';
   var subheader = '{left}Cashier Name : ' +cpyProf.client+ '{br}Print Date   : ' +dy+ '-' +(dt.getMonth() + 1)+ '-' +dt.getFullYear()+ ' ' +hr+ ':' +mn+ '{br}================================{br}';
 
-  var cl_modal = 'Modal Awal: ';
-  var cl_tot = 'Total Penjualan: ';
-  var cl_byr_tu = 'Tunai: ';
-  var cl_byr_cc = 'Kartu Debit/Kredit: ';
-  var cl_byr_em = 'E-Money: ';
-  var cl_list = '';
-  var cl_uang = 'Total Uang: ';
-  var cl_byr_tot = 'Total: ';
-  var cl_item_tot = 'Total: ';
-  var cl_item_nom = 0
+  let cl_modal = 'Modal Awal: ';
+  let cl_tot = 'Total Penjualan: ';
+  let cl_byr_tu = 'Tunai: ';
+  let cl_byr_cc = 'Kartu Debit/Kredit: ';
+  let cl_byr_em = 'E-Money: ';
+  let cl_list = '';
+  let cl_uang = 'Total Uang: ';
+  let cl_byr_tot = 'Total: ';
+  let cl_item_tot = 'Total: ';
+  let cl_item_nom = 0
 
-  for(var i = 0; i < 32 - 'Modal Awal: '.length - parseInt(dailyModal).toLocaleString('id-ID').length; i++){
+  for(let i = 0; i < 32 - 'Modal Awal: '.length - parseInt(dailyModal).toLocaleString('id-ID').length; i++){
     cl_modal += ' ';
   } cl_modal += parseInt(dailyModal).toLocaleString('id-ID') + '{br}';
 
-  for(var i = 0; i < 32 - 'Total Penjualan: '.length - parseInt(cl_tu + cl_cc + cl_em).toLocaleString('id-ID').length; i++){
+  for(let i = 0; i < 32 - 'Total Penjualan: '.length - parseInt(cl_tu + cl_cc + cl_em).toLocaleString('id-ID').length; i++){
     cl_tot += ' ';
   } cl_tot += parseInt(cl_tu + cl_cc + cl_em).toLocaleString('id-ID') + '{br}';
 
-  for(var i = 0; i < 32 - 'Total Uang: '.length - (parseInt(cl_tu + cl_cc + cl_em) + parseInt(dailyModal)).toLocaleString('id-ID').length; i++){
+  for(let i = 0; i < 32 - 'Total Uang: '.length - (parseInt(cl_tu + cl_cc + cl_em) + parseInt(dailyModal)).toLocaleString('id-ID').length; i++){
     cl_uang += ' ';
   } cl_uang += parseInt($('#ul_current_uang').val().replace(/\D/g,'')).toLocaleString('id-ID') + '{br}';
 
-  var sep1 = '{br}================================{br}{center}Jenis Pembayaran{br}================================{br}';
+  let sep1 = '{br}================================{br}{center}Jenis Pembayaran{br}================================{br}';
 
-  for(var i = 0; i < 32 - 'Tunai: '.length - parseInt(cl_tu).toLocaleString('id-ID').length; i++){
+  for(let i = 0; i < 32 - 'Tunai: '.length - parseInt(cl_tu).toLocaleString('id-ID').length; i++){
     cl_byr_tu += ' ';
   } cl_byr_tu += parseInt(cl_tu).toLocaleString('id-ID') + '{br}';
 
-  for(var i = 0; i < 32 - 'Kartu Debit/Kredit: '.length - parseInt(cl_cc).toLocaleString('id-ID').length; i++){
+  for(let i = 0; i < 32 - 'Kartu Debit/Kredit: '.length - parseInt(cl_cc).toLocaleString('id-ID').length; i++){
     cl_byr_cc += ' ';
   } cl_byr_cc += parseInt(cl_cc).toLocaleString('id-ID') + '{br}';
 
-  for(var i = 0; i < 32 - 'E-Money: '.length - parseInt(cl_em).toLocaleString('id-ID').length; i++){
+  for(let i = 0; i < 32 - 'E-Money: '.length - parseInt(cl_em).toLocaleString('id-ID').length; i++){
     cl_byr_em += ' ';
   } cl_byr_em += parseInt(cl_em).toLocaleString('id-ID') + '{br}';
 
-  for(var i = 0; i < 32 - 'Total: '.length - (parseInt(cl_tu) + parseInt(cl_cc) + parseInt(cl_em)).toLocaleString('id-ID').length; i++){
+  for(let i = 0; i < 32 - 'Total: '.length - (parseInt(cl_tu) + parseInt(cl_cc) + parseInt(cl_em)).toLocaleString('id-ID').length; i++){
     cl_byr_tot += ' ';
   } cl_byr_tot += (parseInt(cl_tu) + parseInt(cl_cc) + parseInt(cl_em)).toLocaleString('id-ID') + '{br}';
 
-  var sep2 = '{br}================================{br}{center}Kategori Item{br}================================{br}';
-  var cl_list_tot = 0;
+  let sep2 = '{br}================================{br}{center}Kategori Item{br}================================{br}';
+  let cl_list_tot = 0;
 
-  for(var i = 0; i < cl_items.length; i++){
+  for(let i = 0; i < cl_items.length; i++){
     cl_list += cl_items[i].nama_kategori;
     cl_item_nom += parseInt(cl_items[i].total);
-    for(var j = 0; j < 32 - cl_items[i].nama_kategori.length - parseInt(cl_items[i].total).toLocaleString('id-ID').length; j++){
+    for(let j = 0; j < 32 - cl_items[i].nama_kategori.length - parseInt(cl_items[i].total).toLocaleString('id-ID').length; j++){
       cl_list += ' ';
     } cl_list += parseInt(cl_items[i].total).toLocaleString('id-ID') + '{br}';
   }
 
-  var cl_discrp = 'Diskon:'
-  for(var i = 0; i < 32 - 'Diskon: '.length - parseInt($('#cl_discrp').val()).toLocaleString('id-ID').length - 2; i++){
+  let cl_discrp = 'Diskon:'
+  for(let i = 0; i < 32 - 'Diskon: '.length - parseInt($('#cl_discrp').val()).toLocaleString('id-ID').length - 2; i++){
     cl_discrp += ' ';
   } cl_discrp += parseInt($('#cl_discrp').val()).toLocaleString('id-ID') + '{br}';
 
-  for(var i = 0; i < 32 - 'Total: '.length - parseInt(cl_item_nom).toLocaleString('id-ID').length; i++){
+  for(let i = 0; i < 32 - 'Total: '.length - parseInt(cl_item_nom).toLocaleString('id-ID').length; i++){
     cl_item_tot += ' ';
   } cl_item_tot += parseInt(cl_item_nom).toLocaleString('id-ID') + '{br}';
 
-  var q = header + subheader + cl_modal + cl_tot + cl_uang + sep1 + cl_byr_tu + cl_byr_cc + cl_byr_em + cl_byr_tot + sep2 + cl_list + cl_item_tot + eol;
+  let q = header + subheader + cl_modal + cl_tot + cl_uang + sep1 + cl_byr_tu + cl_byr_cc + cl_byr_em + cl_byr_tot + sep2 + cl_list + cl_item_tot + eol;
   connectToPrinter(q);
 }
 
@@ -3240,9 +2940,9 @@ function simpanModal(uang){
 }
 
 function hitungLain(uang){
-  var cl_uang = parseInt(uang.replace(/\D/g,''));
-  var cl_modal = parseInt($('#cl_modal').val().replace(/\D/g,''));
-  var cl_sales = parseInt($('#cl_sales').val().replace(/\D/g,''));
+  let cl_uang = parseInt(uang.replace(/\D/g,''));
+  let cl_modal = parseInt($('#cl_modal').val().replace(/\D/g,''));
+  let cl_sales = parseInt($('#cl_sales').val().replace(/\D/g,''));
 
   console.log(cl_uang, cl_modal, cl_sales);
   $('#ul_uang_lain').val(Math.abs(cl_modal + cl_sales - cl_uang).toLocaleString('id-ID'));
@@ -3278,8 +2978,8 @@ function register(q){
   })
 
   $.ajax({
-    url: site+'/API/daftar/',
-    // url: 'https://bprbangli.cloudmnm.com/lightpos/getDaftar.php',
+    // url: site+'/API/daftar/',
+    url: 'https://bprbangli.cloudmnm.com/lightpos/getDaftar.php',
     method: 'POST',
     data: JSON.stringify(temp),
     statusCode: {
@@ -3329,7 +3029,7 @@ function updateProfil(){
 }
 
 function resetPass(q){
-  var temp = {
+  let temp = {
     act : 'lupa'
   };
 
@@ -3338,8 +3038,8 @@ function resetPass(q){
   })
 
   $.ajax({
-    url: site+'/API/daftar/',
-    // url: 'https://bprbangli.cloudmnm.com/lightpos/getDaftar.php',
+    // url: site+'/API/daftar/',
+    url: 'https://bprbangli.cloudmnm.com/lightpos/getDaftar.php',
     method: 'POST',
     data: JSON.stringify(temp),
     timeout: 30 * 1000
@@ -3640,7 +3340,7 @@ function printBayar(q) {
 //   db.transaction(function(t){
 //     t.executeSql("DELETE FROM pj_dtl_tmp", [],
 //       function(){
-//         // console.log('devar this');
+//         // console.log('delet this');
 //         keranjang('a', 'b', 'c', 'd');
 //         // comboItems('a', 'b', 'c', 'd');
 //       }, function(error){

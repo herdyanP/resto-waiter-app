@@ -5,9 +5,18 @@ var routes = [
   on: {
     pageAfterIn: function(){
       pauseFlag = 0;
+
+      $('#title_home').html('MediaPOS '+(cpyProf.jenis == 1 ? "F&amp;B" : "Retail"));
+      
       AdMob.showInterstitial();
       tampilMenu();
       keranjang();
+
+      if(cpyProf.jenis == 1){
+        $('#block-grid').css('display', 'block');
+      } else if(cpyProf.jenis == 2){
+        $('#block-row').css('display', 'block');
+      }
 
       searchbar = app.searchbar.create({
         el: '.searchbar',
@@ -65,7 +74,8 @@ var routes = [
         for(var i = 0; i < result.length; i++){
           if(result[i].id_kategori == null || result[i].nama_kategori == null) continue;
 
-          data += `<option value="${result[i].id_kategori}">${result[i].nama_kategori}</option>`;
+          // data += `<option value="${result[i].id_kategori}">${result[i].nama_kategori}</option>`;
+          data += '<option value="'+result[i].id_kategori+'">'+result[i].nama_kategori+'</option>';
         }
 
         $('#kategori').html(data);
@@ -209,7 +219,7 @@ var routes = [
         url: site+"/API/closing/"+cpyProf.id_user+"/",
         method: "GET",
         success: function(result){
-          // let result = JSON.parse(json);
+          // var result = JSON.parse(json);
           $('#id_closing').val(result[0].id_closing);
           $('#ul_closing_modal').html(parseInt(result[0].starting_cash).toLocaleString('id-ID'));
           $('#cl_modal').val(parseInt(result[0].starting_cash));
@@ -295,10 +305,11 @@ var routes = [
         url: site+'/API/cabang/cb/'+cpyProf.id_client+'/',
         method: 'GET',
         success: function(json){
-          let isi = '<option value="0">-- Semua Cabang --</option>';
-          let result = JSON.parse(json);
-          for(let i = 0; i < result.length; i++){
-            isi += `<option value="${result[i].id_cabang}">${result[i].nama_cabang}</option>`;
+          var isi = '<option value="0">-- Semua Cabang --</option>';
+          var result = JSON.parse(json);
+          for(var i = 0; i < result.length; i++){
+            // isi += `<option value="${result[i].id_cabang}">${result[i].nama_cabang}</option>`;
+            isi += '<option value="'+result[i].id_cabang+'">'+result[i].nama_cabang+'</option>';
           }
 
           $('#id_cabang').html(isi);
@@ -313,7 +324,7 @@ var routes = [
   componentUrl: './pages/detail_pricelist.html',
   on: {
     pageAfterIn: function(e, page){
-      let temp = {
+      var temp = {
         tipe: 'pricelist',
         id_client : page.route.params.client,
         id_barang : page.route.params.barang
@@ -324,10 +335,10 @@ var routes = [
         method: 'POST',
         data: JSON.stringify(temp),
         success: function(json){
-          let result = JSON.parse(json);
-          let cabang = [];
+          var result = JSON.parse(json);
+          var cabang = [];
 
-          for(let i = 0; i < result.length; i++){
+          for(var i = 0; i < result.length; i++){
             console.log(result[i]);
           }
         }
@@ -339,7 +350,7 @@ var routes = [
   name: 'preview',
   path: '/preview/:idpj/',
   /*componentUrl: './pages/preview.html',*/
-  template: `
+  /*template: `
     <div class="page">
       <div class="navbar">
         <div class="navbar-inner">
@@ -364,111 +375,281 @@ var routes = [
         <div class="block" id="preview_rcpt"></div>
       </div>
     </div>
-  `,
+  `,*/
+  template: '\
+    <div class="page">\
+      <div class="navbar">\
+        <div class="navbar-inner">\
+          <div class="title"></div>\
+          <div class="right">\
+            <a href="#" class="link icon-only" onclick="cetakReceipt({{$route.params.idpj}});">\
+              <i class="material-icons">print</i>\
+            </a>\
+            <a href="#" class="link icon-only" onclick="dialogShare({{$route.params.idpj}});">\
+              <i class="material-icons">share</i>\
+            </a>\
+          </div>\
+        </div>\
+      </div>\
+      <div class="toolbar toolbar-bottom-md no-shadow color-green">\
+        <div class="toolbar-inner">\
+          <button class="button" id="bayarButton" onclick="selesai()">Selesai</button>\
+        </div>\
+      </div>\
+      \
+      <div class="page-content">\
+        <div class="block" id="preview_rcpt"></div>\
+      </div>\
+    </div>\
+  ',
   on: {
     pageAfterIn: function(e, page){
       $.ajax({
         url: site+'/API/penjualan/'+page.route.params.idpj+'/',
         method: 'GET'
       }).done(function(json){
-        let result = JSON.parse(json);        
-        // let kembali = parseInt(paid) - parseInt(totalGrand);
+        var result = JSON.parse(json);        
+        // var kembali = parseInt(paid) - parseInt(totalGrand);
 
-        let tbl = `
-          <table style="width: 100%">
-            <tr>
-              <td style="width: 40%"></td>
-              <td style="width: 20%"></td>
-              <td style="width: 40%"></td>
-            </tr>
-        `;
+        // var tbl = `
+        //   <table style="width: 100%">
+        //     <tr>
+        //       <td style="width: 40%"></td>
+        //       <td style="width: 20%"></td>
+        //       <td style="width: 40%"></td>
+        //     </tr>
+        // `;
 
-        let header = `
-          <tr>
-            <td colspan="3" style="text-align: center;">Sales Receipt</td>
-          </tr>
-        `;
+        // var header = `
+        //   <tr>
+        //     <td colspan="3" style="text-align: center;">Sales Receipt</td>
+        //   </tr>
+        // `;
 
-        let dtloutlet = `
-          <tr>
-            <td colspan="3" style="text-align: center;">${cpyProf.outlet}</td>
-          </tr>
-          <tr>
-            <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">${cpyProf.alamat}</td>
-          </tr>
-        `;
+        // var dtloutlet = `
+        //   <tr>
+        //     <td colspan="3" style="text-align: center;">${cpyProf.outlet}</td>
+        //   </tr>
+        //   <tr>
+        //     <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">${cpyProf.alamat}</td>
+        //   </tr>
+        // `;
 
-        let notrans = `
-          <tr>
-            <td>No. Trans</td>
-            <td colspan="2">: ${result[0].no_penjualan}</td>
-          </tr>
-        `;
+        // var notrans = `
+        //   <tr>
+        //     <td>No. Trans</td>
+        //     <td colspan="2">: ${result[0].no_penjualan}</td>
+        //   </tr>
+        // `;
 
-        let dt = new Date();
-        let dy = ('00'+dt.getDate()).slice(-2);
-        let hr = ('00'+dt.getHours()).slice(-2);
-        let mn = ('00'+dt.getMinutes()).slice(-2);
-        let stamp = dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
-        let tgl = `
-          <tr>
-            <td>Tanggal</td>
-            <td colspan="2">: ${stamp}</td>
-          </tr>
-        `;
+        // var dt = new Date();
+        // var dy = ('00'+dt.getDate()).slice(-2);
+        // var hr = ('00'+dt.getHours()).slice(-2);
+        // var mn = ('00'+dt.getMinutes()).slice(-2);
+        // var stamp = dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
+        // var tgl = `
+        //   <tr>
+        //     <td>Tanggal</td>
+        //     <td colspan="2">: ${stamp}</td>
+        //   </tr>
+        // `;
 
-        let op = `
-          <tr>
-            <td>Operator</td>
-            <td colspan="2">: ${cpyProf.nama}</td>
-          </tr>
-          <tr><td colspan="3" style="border-top: solid black 2px;"></tr>
-        `;
+        // var op = `
+        //   <tr>
+        //     <td>Operator</td>
+        //     <td colspan="2">: ${cpyProf.nama}</td>
+        //   </tr>
+        //   <tr><td colspan="3" style="border-top: solid black 2px;"></tr>
+        // `;
 
-        let list = '';
-        for(let i = 0; i < result.length; i++){
-          let qty = parseInt(result[i].qty_jual).toLocaleString('id-ID');
-          let hj = parseInt(result[i].harga_jual).toLocaleString('id-ID');
-          let jml = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString('id-ID');
+        // var list = '';
+        // for(var i = 0; i < result.length; i++){
+        //   var qty = parseInt(result[i].qty_jual).toLocaleString('id-ID');
+        //   var hj = parseInt(result[i].harga_jual).toLocaleString('id-ID');
+        //   var jml = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString('id-ID');
 
-          list += `
-            <tr>
-              <td colspan="3">${result[i].nama_barang}</td>
-            </tr>
-            <tr>
-              <td style="padding-left: 20px;">${qty} x ${hj}</td>
-              <td colspan="2" style="text-align: right;">${jml}</td>
-            </tr>
-          `;
+        //   list += `
+        //     <tr>
+        //       <td colspan="3">${result[i].nama_barang}</td>
+        //     </tr>
+        //     <tr>
+        //       <td style="padding-left: 20px;">${qty} x ${hj}</td>
+        //       <td colspan="2" style="text-align: right;">${jml}</td>
+        //     </tr>
+        //   `;
+        // }
+
+        // list += `<tr><td colspan="3" style="border-bottom: solid black 2px;"></tr>`;
+
+        // var stot = `
+        //   <tr>
+        //     <td>Subtotal</td>
+        //     <td>:</td>
+        //     <td style="text-align: right;">${parseInt(result[0].total_jual).toLocaleString('id-ID')}</td>
+        //   </tr>
+        // `;
+
+        // var dsc = `
+        //   <tr>
+        //     <td>Diskon</td>
+        //     <td>:</td>
+        //     <td style="text-align: right;">${parseInt(result[0].disc_rp).toLocaleString('id-ID')}</td>
+        //   </tr>
+        // `;
+
+        // var grd = `
+        //   <tr>
+        //     <td>Grand Total</td>
+        //     <td>:</td>
+        //     <td style="text-align: right;">${parseInt(result[0].grantot_jual).toLocaleString('id-ID')}</td>
+        //   </tr>
+        // `;
+
+        // var jn = '', bayar = '';
+        // switch($('#metode').val()){
+        //   case '1':
+        //     jn = 'Tunai';
+        //     bayar = result[0].bayar_tunai;
+        //     break;
+        //   case '2':
+        //     jn = 'Kartu Debit/Kredit';
+        //     bayar = result[0].bayar_card;
+        //     break;
+        //   case '3':
+        //     jn = ($('#platform').val() == 1 ? 'GO-PAY' : 'OVO');
+        //     bayar = result[0].bayar_emoney;
+        //     break;
+        // }
+        // /*var via = `
+        //   <tr>
+        //     <td>Via</td>
+        //     <td>:</td>
+        //     <td style="text-align: right;">${jn}</td>
+        //   </tr>
+        // `;*/
+
+        // var paid = `
+        //   <tr>
+        //     <td>${jn}</td>
+        //     <td>:</td>
+        //     <td style="text-align: right;">${parseInt(bayar).toLocaleString('id-ID')}</td>
+        //   </tr>
+        // `;
+
+        // var chn = `
+        //   <tr>
+        //     <td>Change</td>
+        //     <td>:</td>
+        //     <td style="text-align: right;">${parseInt(result[0].kembali_tunai).toLocaleString('id-ID')}</td>
+        //   </tr>
+        //   <tr><td>&nbsp;</td></tr>
+        // `;
+
+        // var thanks = `
+        //     <tr>
+        //       <td colspan="3" style="text-align: center;">Terima Kasih Atas Kunjungan Anda</td>
+        //     </tr>
+        //     <tr>
+        //       <td colspan="3" style="text-align: center;">Powered by MediaPOS</td>
+        //     </tr>
+        //   </table>
+        // `;
+
+        var tbl = '\
+                  <table style="width: 100%">\
+                    <tr>\
+                      <td style="width: 40%"></td>\
+                      <td style="width: 20%"></td>\
+                      <td style="width: 40%"></td>\
+                    </tr>\
+                ';
+
+        var header = '\
+                  <tr>\
+                    <td colspan="3" style="text-align: center;">Sales Receipt</td>\
+                  </tr>\
+                ';
+
+        var dtloutlet = '\
+                  <tr>\
+                    <td colspan="3" style="text-align: center;">'+cpyProf.outlet+'</td>\
+                  </tr>\
+                  <tr>\
+                    <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">'+cpyProf.alamat+'</td>\
+                  </tr>\
+                ';
+
+        var notrans = '\
+                  <tr>\
+                    <td>No. Trans</td>\
+                    <td colspan="2">: '+result[0].no_penjualan+'</td>\
+                  </tr>\
+                ';
+
+        var dt = new Date();
+        var dy = ('00'+dt.getDate()).slice(-2);
+        var hr = ('00'+dt.getHours()).slice(-2);
+        var mn = ('00'+dt.getMinutes()).slice(-2);
+        var stamp = dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
+        var tgl = '\
+                  <tr>\
+                    <td>Tanggal</td>\
+                    <td colspan="2">: '+stamp+'</td>\
+                  </tr>\
+                ';
+
+        var op = '\
+                  <tr>\
+                    <td>Operator</td>\
+                    <td colspan="2">: '+cpyProf.nama+'</td>\
+                  </tr>\
+                  <tr><td colspan="3" style="border-top: solid black 2px;"></tr>\
+                ';
+
+        var list = '';
+        for(var i = 0; i < result.length; i++){
+          var qty = parseInt(result[i].qty_jual).toLocaleString('id-ID');
+          var hj = parseInt(result[i].harga_jual).toLocaleString('id-ID');
+          var jml = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString('id-ID');
+
+          list += '\
+                      <tr>\
+                        <td colspan="3"'+result[i].nama_barang+'</td>\
+                      </tr>\
+                      <tr>\
+                        <td style="padding-left: 20px;">'+qty+' x '+hj+'</td>\
+                        <td colspan="2" style="text-align: right;">'+jml+'</td>\
+                      </tr>\
+                    ';
         }
 
-        list += `<tr><td colspan="3" style="border-bottom: solid black 2px;"></tr>`;
+        list += '<tr><td colspan="3" style="border-bottom: solid black 2px;"></tr>';
 
-        let stot = `
-          <tr>
-            <td>Subtotal</td>
-            <td>:</td>
-            <td style="text-align: right;">${parseInt(result[0].total_jual).toLocaleString('id-ID')}</td>
-          </tr>
-        `;
+        var stot = '\
+                  <tr>\
+                    <td>Subtotal</td>\
+                    <td>:</td>\
+                    <td style="text-align: right;">'+parseInt(result[0].total_jual).toLocaleString('id-ID')+'</td>\
+                  </tr>\
+                ';
 
-        let dsc = `
-          <tr>
-            <td>Diskon</td>
-            <td>:</td>
-            <td style="text-align: right;">${parseInt(result[0].disc_rp).toLocaleString('id-ID')}</td>
-          </tr>
-        `;
+        var dsc = '\
+                  <tr>\
+                    <td>Diskon</td>\
+                    <td>:</td>\
+                    <td style="text-align: right;">'+parseInt(result[0].disc_rp).toLocaleString('id-ID')+'</td>\
+                  </tr>\
+                ';
 
-        let grd = `
-          <tr>
-            <td>Grand Total</td>
-            <td>:</td>
-            <td style="text-align: right;">${parseInt(result[0].grantot_jual).toLocaleString('id-ID')}</td>
-          </tr>
-        `;
+        var grd = '\
+                  <tr>\
+                    <td>Grand Total</td>\
+                    <td>:</td>\
+                    <td style="text-align: right;">'+parseInt(result[0].grantot_jual).toLocaleString('id-ID')+'</td>\
+                  </tr>\
+                ';
 
-        let jn = '', bayar = '';
+        var jn = '', bayar = '';
         switch($('#metode').val()){
           case '1':
             jn = 'Tunai';
@@ -483,7 +664,7 @@ var routes = [
             bayar = result[0].bayar_emoney;
             break;
         }
-        /*let via = `
+        /*var via = `
           <tr>
             <td>Via</td>
             <td>:</td>
@@ -491,34 +672,34 @@ var routes = [
           </tr>
         `;*/
 
-        let paid = `
-          <tr>
-            <td>${jn}</td>
-            <td>:</td>
-            <td style="text-align: right;">${parseInt(bayar).toLocaleString('id-ID')}</td>
-          </tr>
-        `;
+        var paid = '\
+                  <tr>\
+                    <td>'+jn+'</td>\
+                    <td>:</td>\
+                    <td style="text-align: right;">'+parseInt(bayar).toLocaleString('id-ID')+'</td>\
+                  </tr>\
+                ';
 
-        let chn = `
-          <tr>
-            <td>Change</td>
-            <td>:</td>
-            <td style="text-align: right;">${parseInt(result[0].kembali_tunai).toLocaleString('id-ID')}</td>
-          </tr>
-          <tr><td>&nbsp;</td></tr>
-        `;
+        var chn = '\
+                  <tr>\
+                    <td>Change</td>\
+                    <td>:</td>\
+                    <td style="text-align: right;">'+parseInt(result[0].kembali_tunai).toLocaleString('id-ID')+'</td>\
+                  </tr>\
+                  <tr><td>&nbsp;</td></tr>\
+                ';
 
-        let thanks = `
-            <tr>
-              <td colspan="3" style="text-align: center;">Terima Kasih Atas Kunjungan Anda</td>
-            </tr>
-            <tr>
-              <td colspan="3" style="text-align: center;">Powered by MediaPOS</td>
-            </tr>
-          </table>
-        `;
+        var thanks = '\
+                    <tr>\
+                      <td colspan="3" style="text-align: center;">Terima Kasih Atas Kunjungan Anda</td>\
+                    </tr>\
+                    <tr>\
+                      <td colspan="3" style="text-align: center;">Powered by MediaPOS</td>\
+                    </tr>\
+                  </table>\
+                ';
 
-        let q = tbl + header + dtloutlet + tgl + notrans + op + list + stot + dsc + grd + /*via +*/ paid + chn + thanks;
+        var q = tbl + header + dtloutlet + tgl + notrans + op + list + stot + dsc + grd + /*via +*/ paid + chn + thanks;
         $('#preview_rcpt').html(q);
       })
     }
