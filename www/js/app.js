@@ -1006,7 +1006,7 @@ function bayar(){
       app.request({
         url: site+"/API/cust/",
         method: "POST",
-        data: JSON.stringify(ewallet),
+        data: JSON.stringify(ewalvar),
         statusCode: {
           200: function(){
             console.log('returned OK');
@@ -1143,7 +1143,8 @@ function laporanPenjualan(){
   // console.log(data);
 
   $.ajax({
-    url: site+'/API/laporan/' +cpyProf.id_client+ '/',
+    // url: site+'/API/laporan/' +cpyProf.id_client+ '/',
+    url: site+'/API/laporan/' +cpyProf.id_outlet+ '/',
     method: 'POST',
     data: JSON.stringify(data)
   }).done(function(result){
@@ -1184,7 +1185,8 @@ function unduhLaporan(){
 
   // $('#page_unduh').attr('src', site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client);
   // cordova.InAppBrowser.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client, '_blank', 'location=no');
-  window.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client, '_self');
+  // window.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_client, '_self');
+  window.open(site+'/cetak.php?page=lappenbar&a=' +tgl+ '&b=' +tglsd+ '&id=' +cpyProf.id_outlet, '_self');
 }
 
 function laporanPerItem(){
@@ -1221,7 +1223,8 @@ function laporanPerItem(){
   }
 
   app.request({
-    url: site+'/API/laporan/' +cpyProf.id_client+ '/',
+    // url: site+'/API/laporan/' +cpyProf.id_client+ '/',
+    url: site+'/API/laporan/' +cpyProf.id_outlet+ '/',
     method: 'POST',
     data: JSON.stringify(data),
     success: function(json){
@@ -1286,7 +1289,7 @@ function dashboardFavorit(){
   })
 
   app.request({
-    url: site+'/API/laporan/' +cpyProf.id_client+ '/',
+    url: site+'/API/laporan/' +cpyProf.id_outlet+ '/',
     method: 'POST',
     data: JSON.stringify(data),
     success: function(json){
@@ -1361,7 +1364,7 @@ function dashboardHarian(tahun, bulan){
   })
 
   app.request({
-    url: site+'/API/laporan/'+cpyProf.id_client+'/',
+    url: site+'/API/laporan/'+cpyProf.id_outlet+'/',
     method: "POST",
     data: JSON.stringify(data),
     success: function(json){
