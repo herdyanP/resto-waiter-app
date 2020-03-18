@@ -11,7 +11,9 @@ var routes = [
     name: 'home',
     on: {
       pageAfterIn: function (){
-        listMeja();
+        // listMeja();
+        listKategoriMeja();
+        // listReservasi();
       },
       pageAfterOut: function(){
         clearTimeout(refresh_meja);
@@ -120,7 +122,9 @@ var routes = [
       </div>
       <div class="toolbar toolbar-bottom-md no-shadow" style="height: 70px;">
         <div class="toolbar-inner">
-          <button class="button" onclick="cekPIN({{$route.params.idMeja}}, {{$route.params.idPJ}}, 'pesan')">Save Orders</button>
+          <button class="button" onclick="inputNama({{$route.params.idMeja}}, {{$route.params.idPJ}}, 'pesan')">Save Orders</button>
+          <!-- <button class="button" onclick="inputPax({{$route.params.idMeja}}, {{$route.params.idPJ}}, 'pesan')">Save Orders</button> -->
+          <!-- <button class="button" onclick="cekPIN({{$route.params.idMeja}}, {{$route.params.idPJ}}, 'pesan')">Save Orders</button> -->
         </div>
       </div>
     </div>`,
@@ -150,7 +154,7 @@ var routes = [
           </div>
           <div class="title">Orders for table #{{$route.params.idMeja}}</div>
           <div class="right">
-            <a class="link icon-only" onclick="toSplit();" style="margin: 0 10px 0 0;"><i class="icon material-icons md-only">call_split</i></a>
+            <!-- <a class="link icon-only" onclick="toSplit();" style="margin: 0 10px 0 0;"><i class="icon material-icons md-only">call_split</i></a> -->
             <a class="link icon-only" href="/menu/{{$route.params.idMeja}}/{{$route.params.idPJ}}/" style="margin: 0 10px 0 0;"><i class="icon material-icons md-only">add_shopping_cart</i></a>
           </div>
         </div>
@@ -249,10 +253,32 @@ var routes = [
         },
       }
   },
+  {
+    path: '/add_reservasi/',
+    componentUrl: './pages/reservasi.html',
+    on: {
+      pageInit: function(){
+        // emptyDB();
+        // allItems();
+        listAddReservasi();
+      },
+      pageAfterIn: function(){
+        // listBarang();
+        // console.log('afterin');
+      },
+      pageAfterOut: function(){
+        // tampilMenu();
+        // tampilFood();
+        // tampilBvrg();
+        // emptyDB();
+      }
+    }
+  },
 
   // Default route (404 page). MUST BE THE LAST
   {
     path: '(.*)',
     url: './pages/404.html',
   },
+  
 ];

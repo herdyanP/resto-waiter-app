@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget android-VersionCode="1" id="com.medianusamandiri.resto" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>MediaPOS Kasir App</name>
+    <name>MediaPOS Waiter App</name>
     <description>
         A sample Apache Cordova application that responds to the deviceready event.
     </description>

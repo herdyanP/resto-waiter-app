@@ -12,24 +12,24 @@
 
       <div class="toolbar tabbar tabbar-labels toolbar-bottom-md">
        <div class="toolbar-inner">
-         <a href="#tab-1" class="tab-link" onclick="dash()">
-           <i class="icon f7-icons ios-only">home</i>
-           <i class="icon icon-fill f7-icons ios-only">home_fill</i>
-           <i class="icon material-icons md-only">pie_chart</i>
-           <span class="tabbar-label">Dashboard</span>
-         </a>
-         <a href="#tab-2" class="tab-link tab-link-active">
-           <i class="icon f7-icons ios-only">restaurant</i>
-           <i class="icon icon-fill f7-icons ios-only">list_fill</i>
-           <i class="icon material-icons md-only">restaurant</i>
-           <span class="tabbar-label">Order</span>
-         </a>
-         <!-- <a href="#tab-3" class="tab-link">
-           <i class="icon f7-icons ios-only">more</i>
-           <i class="icon icon-fill f7-icons ios-only">more_fill</i>
-           <i class="icon material-icons md-only">settings</i>
-           <span class="tabbar-label">Profile</span>
-         </a> -->
+        <a href="#tab-1" class="tab-link" onclick="dash()">
+          <i class="icon f7-icons ios-only">home</i>
+          <i class="icon icon-fill f7-icons ios-only">home_fill</i>
+          <i class="icon material-icons md-only">pie_chart</i>
+          <span class="tabbar-label">Dashboard</span>
+        </a>
+        <a href="#tab-2" class="tab-link tab-link-active">
+          <i class="icon f7-icons ios-only">restaurant</i>
+          <i class="icon icon-fill f7-icons ios-only">list_fill</i>
+          <i class="icon material-icons md-only">restaurant</i>
+          <span class="tabbar-label">Order</span>
+        </a>
+        <a href="#tab-3" class="tab-link" onclick="listReservasi();">
+          <i class="icon f7-icons ios-only">clock</i>
+          <i class="icon icon-fill f7-icons ios-only">list_fill</i>
+          <i class="icon material-icons md-only">access_time</i>
+          <span class="tabbar-label">Reservations</span>
+        </a>
        </div>
      </div>
      <div class="tabs">
@@ -39,80 +39,40 @@
       </div>
       <div id="tab-2" class="page-content tab tab-active hide-toolbar-on-scroll" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden;">
         <div class="block">
-          <div class="row" id="mejaaktif" style=" overflow:scroll; max-height: calc( 90vh - 54px ); justify-content: normal; padding-bottom:"></div>
-          <!-- <div class="row" id="home_grid">
-            <div class="grid-demo">
-              
-            </div>
-            <div class="side-menu">
-              <div class="list no-hairlines-between" style="overflow:scroll;max-height: calc( 70vh - 50px );margin:1px;">
-                <ul id="menusamping">
-                  <li>
-                    <a class="item-content item-link" href="/pesanan/">
-                      <div class="item-media"><i class="icon material-icons md-only">local_dining</i></div>
-                      <div class="item-inner">
-                        <div class="item-title">Dine-in</div>
-                      </div>
-                    </a>
-                  </li>
-                  <li>
-                    <a class="item-content item-link" href="/pesanan-takeaway/">
-                      <div class="item-media"><i class="icon material-icons md-only">shopping_basket</i></div>
-                      <div class="item-inner">
-                        <div class="item-title">Take Away</div>
-                      </div>
-                    </a>
-                  </li>
-                  <li>
-                    <a class="item-content item-link" href="/pesanan-reorder/" onclick="reorder()">
-                      <div class="item-media"><i class="icon material-icons md-only">reorder</i></div>
-                      <div class="item-inner">
-                        <div class="item-title">New Order</div>
-                      </div>
-                    </a>
-                  </li>
-                  <li>
-                    <a class="item-content item-link" href="/payment/" onclick="pay(0)">
-                      <div class="item-media"><i class="icon material-icons md-only">payment</i></div>
-                      <div class="item-inner">
-                        <div class="item-title">Payment</div>
-                      </div>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div> -->
+          <div class="row" id="mejaaktif" style=" overflow:scroll; max-height: calc( 90vh - 54px ); justify-content: normal;"></div>
         </div>
       </div>
-      <!-- <div id="tab-3" class="page-content tab">
-       <div class="block">
-        <div class="row">
-          <div class="col-30">
-            <img src="img/index.png" alt="foto" style="display: block; margin:auto; height: 100px; width: 100px; border-radius: 50%;">
-          </div>
-          <div class="col-70">
-            <p>the quick brown fox</p>
-            <p>jumps over the lazy dog</p>
-          </div>
+      <div id="tab-3" class="page-content tab" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden;">
+        <div class="block">
+          <form id="barang_form" class="list no-hairlines no-hairlines-between">
+            <ul>
+              <li class="item-content item-input ">
+                <div class="item-inner">
+                  <div class="item-title item-label" style="color: unset;">Tanggal</div>
+                  <div class="item-input-wrap">
+                    <input type="date" id="tgl_reservasi" name="tgl_reservasi">
+                  </div>
+                </div>
+              </li>
+              <!-- <li class="item-content item-input ">
+                <div class="item-inner">
+                  <div class="item-title item-label" style="color: unset;">Harga per Satuan</div>
+                  <div class="item-input-wrap">
+                    <input type="number" name="harga" id="harga_addItem">
+                  </div>
+                </div>
+              </li> -->
+              <!-- <li class="item-content">
+                <div class="item-inner">
+                  <div class="item-title" style="width: 100%;">
+                    <a class="button button-outline" id="">Tambah</a>
+                  </div>
+                </div>
+              </li> -->
+            </ul>
+          </form> 
+          <div class="row" id="reservemeja" style=" overflow:scroll; max-height: calc( 90vh - 54px ); justify-content: normal;"></div>
         </div>
-         <a href="#" class="button button-raised" @click="showToastBottom">Toast on Bottom</a>
-         <hr>
-       </div>
-
-       <div class="block">
-        <div class="list">
-          <p>
-            <a class="button button-raised" href="#">Satu</a>
-          </p>
-          <p>
-            <a class="button button-raised" href="#">Dua</a>
-          </p>
-          <p>
-            <a class="button button-raised" href="#">Tiga</a>
-          </p>
-        </div>
-       </div>
-     </div> -->
+      </div>
    </div>
  </div>

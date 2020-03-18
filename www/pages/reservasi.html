@@ -1,0 +1,53 @@
+<template>
+  <div class="page">
+
+    <div class="navbar">
+      <div class="navbar-inner sliding">
+        <div class="left">
+          <a href="#" class="link back">
+            <i class="icon icon-back"></i>
+            <span class="ios-only">Back</span>
+          </a>
+        </div>
+        <div class="title">
+          Tambah Reservasi Meja
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content" id="scrollable">
+      <div class="block">
+        <input type="hidden" id="id_barang">
+        <div class="list no-hairlines no-hairlines-between">
+          <ul>
+            <li class="item-content item-input ">
+              <div class="item-inner">
+                <div class="item-title item-label" style="color: unset;">Tanggal Reservasi</div>
+                <div class="item-input-wrap">
+                  <input type="date" id="tgl_add_reservasi" name="tgl_add_reservasi" onchange="listAddReservasi(this.value);">
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>        
+      </div>
+
+      <div class="card card-outline">
+        <div class="card-header">
+          <strong>Meja Tersedia</strong>
+        </div>
+
+        <div class="block" style="max-height: 60vh; overflow: scroll;">
+          <form class="list no-hairlines" id="barang_list">
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbar toolbar-bottom-md no-shadow" style="height: 70px;">
+      <div class="toolbar-inner">
+        <button id="" class="button" onclick="simpanReservasi(document.getElementById('barang_list'));">Simpan</button>
+      </div>
+    </div>
+  </div>
+</template>

@@ -10,7 +10,7 @@ if (document.location.search.indexOf('theme=') >= 0) {
 
 // Init App
 var app = new Framework7({
-  id: 'io.framework7.testapp',
+  id: 'com.medianusamandiri.resto',
   root: '#app',
   init: false,
   theme: theme,
@@ -35,10 +35,256 @@ var split = 0;
 var splitItem = [];
 var toBeMerged = [];
 var mergeItem = [];
-var addr = "http://dev.cloudmnm.com/resto/";
+// var addr = "http://dev.cloudmnm.com/resto/";
+var addr = "http://192.168.3.16/";
 var currMeja = 0;
 var currentWaitress = '';
 var refresh_meja = '';
+var daftarmejalokal = [
+  {
+      "KODE": "01",
+      "NAMA": "01 A",
+      "ST_MEJA": "0",
+      "id_pj": "184",
+      "tgl_penjualan": "2020-03-17",
+      "ST": "1",
+      "ID_KATEGORY" : "1"
+  },
+  {
+      "KODE": "02",
+      "NAMA": "01 B",
+      "ST_MEJA": "0",
+      "id_pj": "170",
+      "tgl_penjualan": "2020-03-10",
+      "ST": "1",
+      "ID_KATEGORY" : "1"
+  },
+  {
+      "KODE": "03",
+      "NAMA": "02 A",
+      "ST_MEJA": "0",
+      "id_pj": "171",
+      "tgl_penjualan": "2020-03-10",
+      "ST": "1",
+      "ID_KATEGORY" : "1"
+  },
+  {
+      "KODE": "04",
+      "NAMA": "02 B",
+      "ST_MEJA": "0",
+      "id_pj": "177",
+      "tgl_penjualan": "2020-03-13",
+      "ST": "1",
+      "ID_KATEGORY" : "1"
+  },
+  {
+      "KODE": "05",
+      "NAMA": "03 A",
+      "ST_MEJA": "0",
+      "id_pj": "175",
+      "tgl_penjualan": "2020-03-13",
+      "ST": "1",
+      "ID_KATEGORY" : "1"
+  },
+  {
+      "KODE": "06",
+      "NAMA": "03 B",
+      "ST_MEJA": "0",
+      "id_pj": "176",
+      "tgl_penjualan": "2020-03-13",
+      "ST": "1",
+      "ID_KATEGORY" : "1"
+  },
+  {
+      "KODE": "07",
+      "NAMA": "04 A",
+      "ST_MEJA": "0",
+      "id_pj": "183",
+      "tgl_penjualan": "2020-03-17",
+      "ST": "1",
+      "ID_KATEGORY" : "1"
+  },
+  {
+      "KODE": "08",
+      "NAMA": "04 B",
+      "ST_MEJA": "0",
+      "id_pj": "180",
+      "tgl_penjualan": "2020-03-16",
+      "ST": "1",
+      "ID_KATEGORY" : "1"
+  },
+  {
+      "KODE": "09",
+      "NAMA": "05 A",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "1"
+  },
+  {
+      "KODE": "10",
+      "NAMA": "05 B",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "1"
+  },
+  {
+      "KODE": "11",
+      "NAMA": "06",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "2"
+  },
+  {
+      "KODE": "12",
+      "NAMA": "07",
+      "ST_MEJA": "0",
+      "id_pj": "155",
+      "tgl_penjualan": "2019-10-17",
+      "ST": "2",
+      "ID_KATEGORY" : "2"
+  },
+  {
+      "KODE": "13",
+      "NAMA": "08",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "2"
+  },
+  {
+      "KODE": "14",
+      "NAMA": "09",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "2"
+  },
+  {
+      "KODE": "15",
+      "NAMA": "10",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "2"
+  },
+  {
+      "KODE": "16",
+      "NAMA": "11",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "2"
+  },
+  {
+      "KODE": "17",
+      "NAMA": "G1",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "3"
+  },
+  {
+      "KODE": "18",
+      "NAMA": "G2",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "3"
+  },
+  {
+      "KODE": "19",
+      "NAMA": "G3",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "3"
+  },
+  {
+      "KODE": "20",
+      "NAMA": "G4",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "3"
+  },
+  {
+      "KODE": "21",
+      "NAMA": "G5",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "3"
+  },
+  {
+      "KODE": "22",
+      "NAMA": "G6",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "3"
+  },
+  {
+      "KODE": "23",
+      "NAMA": "POOL 1",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "4"
+  },
+  {
+      "KODE": "24",
+      "NAMA": "POOL 2",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "4"
+  },
+  {
+      "KODE": "25",
+      "NAMA": "POOL 3",
+      "ST_MEJA": "0",
+      "id_pj": null,
+      "tgl_penjualan": null,
+      "ST": "2",
+      "ID_KATEGORY" : "4"
+  },
+  {
+      "KODE": "26",
+      "NAMA": "TAKEAWAY 1",
+      "ST_MEJA": "0",
+      "id_pj": "181",
+      "tgl_penjualan": "2020-03-17",
+      "ST": "1",
+      "ID_KATEGORY" : "5"
+  },
+  {
+      "KODE": "27",
+      "NAMA": "TAKEAWAY 2",
+      "ST_MEJA": "0",
+      "id_pj": "110",
+      "tgl_penjualan": "2019-09-03",
+      "ST": "2",
+      "ID_KATEGORY" : "5"
+  }
+]
 /*var pinBox = app.dialog.create({
     title: 'Employee PIN',
     closeByBackdropClick: false,
@@ -189,7 +435,148 @@ function newLogin(){
   // console.log(loginform);
 }
 
-function listMeja(){
+function listKategoriMeja(){
+  clearTimeout(refresh_meja);
+
+  // mulai kategori meja lokal
+  var datanya = "";
+  var result = [
+    {
+      id_m_kategory : 1,
+      nama_m_kategory : "Ruang Utama"
+    },
+    {
+      id_m_kategory : 2,
+      nama_m_kategory : "Ruang Kedua"
+    },
+    {
+      id_m_kategory : 3,
+      nama_m_kategory : "Gudang Pojok"
+    },
+    {
+      id_m_kategory : 4,
+      nama_m_kategory : "Pool"
+    },
+    {
+      id_m_kategory : 5,
+      nama_m_kategory : "Takeaway"
+    }
+  ]
+
+  for (i = 0; i < result.length; i++){
+    // datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
+    // datanya+="<button onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+    // datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+    // datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+    datanya+="<button onclick=\"listMeja('"+result[i].id_m_kategory+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_m_kategory.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+  }
+  // selesai kategori meja lokal
+
+  datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
+  $('#mejaaktif').html(datanya);
+
+  // app.request({
+  //   url: addr+"API/katmeja/",
+  //   method: "GET",
+  //   success: function(json){
+  //     if(json){
+  //       var result = JSON.parse(json);
+  //       var datanya = '';
+  //       var len = (result.length < 24 ? result.length : 24);
+
+  //       for (i = 0; i < len; i++){
+  //         // datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
+  //         // datanya+="<button onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+  //         // datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+  //         // datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+  //         datanya+="<button onclick=\"listMeja('"+result[i].id_m_kategory+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_m_kategory.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+  //       }
+
+  //       datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
+  //       $('#mejaaktif').html(datanya);
+  //     }
+  //   }
+  // })
+}
+
+function listMeja(kat = 0){
+  var content = '';
+  var st_meja = '';
+  var img = '';
+  nomormeja = 0;
+
+  // meja lokal start
+  content += '<div class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="listKategoriMeja();"><div><img src="img/back_arro_100.png" alt="img-meja-back" style="display: table; margin: 0 auto;"><p class="table-name">Back</p></div></div>';
+  for(var i = 0; i < daftarmejalokal.length; i++){
+    // console.log(daftarmejalokal[i].NAMA);
+    if(daftarmejalokal[i].ST == '0' || daftarmejalokal[i].ST == '1'){
+      st_meja = "(In use)";
+      img = (window.innerWidth < 480) ? 'img/'+daftarmejalokal[i].KODE+'.png' : 'img/'+daftarmejalokal[i].KODE+'-150.png';
+    } else {
+      st_meja = "(Available)";
+      img = (window.innerWidth < 480) ? 'img/'+daftarmejalokal[i].KODE+'-Hijau.png' : 'img/'+daftarmejalokal[i].KODE+'-Biru-150.png';
+    }
+    // content += '<div id="meja'+daftarmejalokal[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+daftarmejalokal[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
+    // content += '<div id="meja'+daftarmejalokal[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+daftarmejalokal[i].KODE+','+(daftarmejalokal[i].ST == '1' ? daftarmejalokal[i].id_pj : 0)+')">Table '+daftarmejalokal[i].NAMA+'<br />'+st_meja+'</div>';
+    // content += '<div id="meja'+daftarmejalokal[i].KODE+'" class="col-50 tablet-50 floated" style="height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); margin: 5px" onclick="lihatmeja('+daftarmejalokal[i].KODE+','+(daftarmejalokal[i].ST == '1' ? daftarmejalokal[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+daftarmejalokal[i].KODE+'" style="transform: translateY(15px) scale(1.2);"><p style="transform: translateY(5px);">Table '+daftarmejalokal[i].NAMA+'</p></div>';
+    if(daftarmejalokal[i].ID_KATEGORY == kat) content += '<div id="meja'+daftarmejalokal[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+daftarmejalokal[i].KODE+','+(daftarmejalokal[i].ST == '1' ? daftarmejalokal[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+daftarmejalokal[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(daftarmejalokal[i].NAMA.match(/^\d/) ? "Table #"+daftarmejalokal[i].NAMA : daftarmejalokal[i].NAMA)+'</p></div></div>';
+  }
+
+  $('#mejaaktif').html(content);
+  // meja lokal end
+
+  // app.request({
+  //   url: addr+"API/meja/",
+  //   method: "GET",
+  //   success: function(json){
+  //     // console.lengthog(result);
+  //     var result = JSON.parse(json);
+  //     content += '<div class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="listKategoriMeja();"><div><img src="img/back_arro_100.png" alt="img-meja-back" style="display: table; margin: 0 auto;"><p class="table-name">Back</p></div></div>';
+  //     for(var i = 0; i < result.length; i++){
+  //       // console.log(result[i].NAMA);
+  //       if(result[i].ST == '0' || result[i].ST == '1'){
+  //         st_meja = "(In use)";
+  //         img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'.png' : 'img/'+result[i].KODE+'-150.png';
+  //       } else {
+  //         st_meja = "(Available)";
+  //         img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'-Hijau.png' : 'img/'+result[i].KODE+'-Biru-150.png';
+  //       }
+  //       // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
+  //       // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
+  //       // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-50 floated" style="height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="transform: translateY(15px) scale(1.2);"><p style="transform: translateY(5px);">Table '+result[i].NAMA+'</p></div>';
+  //       content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></div></div>';
+  //     }
+
+  //     $('#mejaaktif').html(content);
+
+  //     refresh_meja = setTimeout(function(){
+  //       listMeja(kat);
+  //     }, 10 * 1000);
+  //   }
+  // })
+}
+
+function lihatmeja(meja, pj){
+  // app.views.main.router.navigate({
+  //   name: 'menu',
+  //   params: {idMeja : meja, idPJ : pj}
+  // });
+  if(pj > 0){
+    app.views.main.router.navigate({
+      name: 'pesanan',
+      params: {idMeja : meja, idPJ : pj}
+    });
+    // alert('1');
+  } else {
+    app.views.main.router.navigate({
+      name: 'menu',
+      params: {idMeja : meja, idPJ : 0}
+    });
+    // alert('0');
+  }
+}
+
+function listReservasi(tgl = 0){
   var content = '';
   var st_meja = '';
   var img = '';
@@ -215,30 +602,68 @@ function listMeja(){
         content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></div></div>';
       }
 
-      $('#mejaaktif').html(content);
-      refresh_meja = setTimeout(listMeja, 10 * 1000);
+      $('#reservemeja').html(content);
+      // refresh_meja = setTimeout(listMeja, 10 * 1000);
     }
   })
 }
 
-function lihatmeja(meja, pj){
-  // app.views.main.router.navigate({
-  //   name: 'menu',
-  //   params: {idMeja : meja, idPJ : pj}
-  // });
-  if(pj > 0){
-    app.views.main.router.navigate({
-      name: 'pesanan',
-      params: {idMeja : meja, idPJ : pj}
-    });
-    // alert('1');
-  } else {
-    app.views.main.router.navigate({
-      name: 'menu',
-      params: {idMeja : meja, idPJ : 0}
-    });
-    // alert('0');
-  }
+function listAddReservasi(){
+  var data = '<ul>';
+  var content = '';
+  var st_meja = '';
+  var img = '';
+  nomormeja = 0;
+  app.request({
+    url: addr+"API/meja/",
+    method: "GET",
+    success: function(json){
+      // console.lengthog(result);
+      var result = JSON.parse(json);
+      for(var i = 0; i < result.length; i++){
+        data += '\
+                  <li class="item-content ">\
+                    <input type="checkbox" name="reserved[]" value="'+result[i].KODE+'">\
+                    <div class="item-inner">\
+                      <div class="item-title">'+result[i].NAMA+'</div>\
+                    </div>\
+                  </li>';
+
+        // console.log(result[i].NAMA);
+        // if(result[i].ST == '0' || result[i].ST == '1'){
+        //   st_meja = "(In use)";
+        //   img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'.png' : 'img/'+result[i].KODE+'-150.png';
+        // } else {
+        //   st_meja = "(Available)";
+        //   img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'-Hijau.png' : 'img/'+result[i].KODE+'-Biru-150.png';
+        // }
+        // // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
+        // // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
+        // // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-50 floated" style="height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="transform: translateY(15px) scale(1.2);"><p style="transform: translateY(5px);">Table '+result[i].NAMA+'</p></div>';
+        // content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></div></div>';
+      }
+
+      // $('#mejaaktif').html(content);
+      // refresh_meja = setTimeout(listMeja, 10 * 1000);
+      data += '</ul>';
+      $('#barang_list').html(data);
+    }
+  });
+}
+
+function simpanReservasi(q){
+  var selected = [];
+  var mejarsv = "";
+  var tglrsv = jQuery('#tgl_add_reservasi').val();
+
+  jQuery.each(jQuery(q).serializeArray(), function(index, v){
+    selected.push(v.value);
+    mejarsv += (index == 0 ? v.value : ', '+v.value);
+  });
+
+  alert("Reservasi tersimpan untuk meja " +mejarsv+ " tanggal " +tglrsv);
+  console.log(selected);
+  
 }
 
 function listKategori(meja){
@@ -480,7 +905,7 @@ function clearCart(meja){
   })
 }
 
-function cekPIN(meja, id, tipe){
+function cekPIN(meja, id, tipe, atasnama, pax){
   app.dialog.create({
     title: 'Employee PIN',
     closeByBackdropClick: true,
@@ -515,7 +940,7 @@ function cekPIN(meja, id, tipe){
                 var result = JSON.parse(json);
                 if(tipe == 'pesan'){
                   // alert('pesan');
-                  simpanPesanan(meja, id, result[0].id_waitress);
+                  simpanPesanan(meja, id, result[0].id_waitress, atasnama, pax);
                 } else if(tipe == 'split'){
                   splitBill(id, meja, result[0].id_waitress);
                   // alert('split');
@@ -532,7 +957,65 @@ function cekPIN(meja, id, tipe){
   }).open()
 }
 
-function simpanPesanan(nMeja, id, waitress){
+function inputNama(meja, id, tipe){
+  app.dialog.create({
+    title: 'Nama',
+    closeByBackdropClick: true,
+    content: `<div class="list no-hairlines no-hairlines-between box-appear">
+                <ul style="height: 100%;">
+                  <li class="item-content item-input" style="height: inherit;">
+                    <div class="item-inner" style="height: inherit;">
+                      <div class="item-input-wrap" style="height: inherit;">
+                        <input class="input-box" type="text" onClick="this.select();" name="atasnama" id="atasnama" style="text-align: center; height: inherit;" />
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>`,
+    buttons: [
+    {
+      text: 'Confirm',
+      onClick: function(dialog, e){
+        var atasnama = $('#atasnama').val();
+
+        if(atasnama){
+          cekPIN(meja, id, tipe, atasnama);
+        }
+      }
+    }]
+  }).open()
+}
+
+function inputPax(meja, id, tipe, atasnama){
+  app.dialog.create({
+    title: 'Jumlah Pax',
+    closeByBackdropClick: true,
+    content: `<div class="list no-hairlines no-hairlines-between box-appear">
+                <ul style="height: 100%;">
+                  <li class="item-content item-input" style="height: inherit;">
+                    <div class="item-inner" style="height: inherit;">
+                      <div class="item-input-wrap" style="height: inherit;">
+                        <input class="input-box" type="number" onClick="this.select();" name="pax" id="pax" style="text-align: center; height: inherit;" />
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>`,
+    buttons: [
+    {
+      text: 'Confirm',
+      onClick: function(dialog, e){
+        var pax = $('#pax').val();
+
+        if(pax){
+          cekPIN(meja, id, tipe, atasnama, pax);
+        }
+      }
+    }]
+  }).open()
+}
+
+function simpanPesanan(nMeja, id, waitress, atasnama, pax){
   var sub = parseInt($('#subTotal').val());
   var grand = parseInt($('#grandTotal').val());
   var gudang = window.localStorage.getItem("gudang");
@@ -553,7 +1036,10 @@ function simpanPesanan(nMeja, id, waitress){
     data: JSON.stringify(temp),
     success: function(json){
       if(json){
-        cetakBillDapur(nMeja, id);
+        app.dialog.confirm('Cetak Bill?', 'Konfirmasi', function(){
+          cetakBillDapur(nMeja, id);
+        });
+
         app.views.main.router.navigate('/home/')
       }
     },
@@ -573,7 +1059,8 @@ function lihatPesanan(meja, pj){
     success: function(json){
       var result = JSON.parse(json);
       for(i = 0; i < result.length; i++){
-        if(old != result[i].no_penjualan) data += '<li class="list-group-title" style="font-size: 1.2em; height: 65px; padding-top: 10px;">'+result[i].no_penjualan+'<a class="link icon-only" onclick="cetakBillPisah('+meja+','+result[i].id_pj+')" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">print</i></a><span style="float: right;"><a class="link icon-only" onclick="app.views.main.router.navigate({name: \'merge\',params: {idMeja : '+meja+', idPJ : '+result[i].id_pj+'}});" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">call_merge</i></a></span></li>'
+        // if(old != result[i].no_penjualan) data += '<li class="list-group-title" style="font-size: 1.2em; height: 65px; padding-top: 10px;">'+result[i].no_penjualan+'<a class="link icon-only" onclick="cetakBillPisah('+meja+','+result[i].id_pj+')" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">print</i></a><span style="float: right;"><a class="link icon-only" onclick="app.views.main.router.navigate({name: \'merge\',params: {idMeja : '+meja+', idPJ : '+result[i].id_pj+'}});" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">call_merge</i></a></span></li>'
+        if(old != result[i].no_penjualan) data += '<li class="list-group-title" style="font-size: 1.2em; height: 65px; padding-top: 10px;">'+result[i].no_penjualan+'<a class="link icon-only" onclick="cetakBillPisah('+meja+','+result[i].id_pj+')" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">print</i></a></li>'
         jumlah += parseInt(result[i].harga_jual * result[i].qty_jual);
         data += ` <li class="item-content ">
                     <div class="item-inner">
@@ -1260,7 +1747,8 @@ function test(){
                transaction.executeSql(executeQuery, [nomorx,nomorx,tgl,st,'1',tgltime,nomormeja,'1','1',c1]
                 , function(tx, result) {
                  orderdtl(result.insertId);
-                 listMeja();
+                //  listMeja();
+                listKategoriMeja();
 
                  alert(nomor);
                },
@@ -1488,7 +1976,8 @@ function testEmpty(){
   // nomormeja = 0;
   // toBeMerged = [];
   // splitItem = [];
-  listMeja();
+  listKategoriMeja();
+  // listMeja();
   // db.transaction(function(t){
   //   t.executeSql("DELETE FROM pj_dtl_tmp")
   // })
@@ -1672,7 +2161,8 @@ function payDone(){
               t.executeSql('UPDATE pj SET jenis_bayar = ?, ppn = ?, total_jual = ?, grantot_jual = ?, bayar_tunai = ?, kembali_tunai = ?, st = 0 WHERE no_meja = ? AND st = 1', [a.jenis_bayar, ppn, total, grantot, tunai, kembali, meja],
                 function(){
                   alert('success');
-                  listMeja();
+                  // listMeja();
+                  listKategoriMeja();
                   app.views.main.router.back();
 
                   testEmpty();
@@ -1683,6 +2173,7 @@ function payDone(){
                 t.executeSql('UPDATE pj SET st = 0 WHERE no_meja = ? AND st = 1', [meja],
                   function(){
                     listMeja();
+                    listKategoriMeja();
                   });
               })
             }
@@ -1694,6 +2185,7 @@ function payDone(){
           function(){
             alert('success');
             listMeja();
+            listKategoriMeja();
             split = 0;
             app.views.main.router.back();
 
