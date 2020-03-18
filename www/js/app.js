@@ -506,54 +506,54 @@ function listMeja(kat = 0){
   nomormeja = 0;
 
   // meja lokal start
-  content += '<div class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="listKategoriMeja();"><div><img src="img/back_arro_100.png" alt="img-meja-back" style="display: table; margin: 0 auto;"><p class="table-name">Back</p></div></div>';
-  for(var i = 0; i < daftarmejalokal.length; i++){
-    // console.log(daftarmejalokal[i].NAMA);
-    if(daftarmejalokal[i].ST == '0' || daftarmejalokal[i].ST == '1'){
-      st_meja = "(In use)";
-      img = (window.innerWidth < 480) ? 'img/'+daftarmejalokal[i].KODE+'.png' : 'img/'+daftarmejalokal[i].KODE+'-150.png';
-    } else {
-      st_meja = "(Available)";
-      img = (window.innerWidth < 480) ? 'img/'+daftarmejalokal[i].KODE+'-Hijau.png' : 'img/'+daftarmejalokal[i].KODE+'-Biru-150.png';
-    }
-    // content += '<div id="meja'+daftarmejalokal[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+daftarmejalokal[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
-    // content += '<div id="meja'+daftarmejalokal[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+daftarmejalokal[i].KODE+','+(daftarmejalokal[i].ST == '1' ? daftarmejalokal[i].id_pj : 0)+')">Table '+daftarmejalokal[i].NAMA+'<br />'+st_meja+'</div>';
-    // content += '<div id="meja'+daftarmejalokal[i].KODE+'" class="col-50 tablet-50 floated" style="height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); margin: 5px" onclick="lihatmeja('+daftarmejalokal[i].KODE+','+(daftarmejalokal[i].ST == '1' ? daftarmejalokal[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+daftarmejalokal[i].KODE+'" style="transform: translateY(15px) scale(1.2);"><p style="transform: translateY(5px);">Table '+daftarmejalokal[i].NAMA+'</p></div>';
-    if(daftarmejalokal[i].ID_KATEGORY == kat) content += '<div id="meja'+daftarmejalokal[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+daftarmejalokal[i].KODE+','+(daftarmejalokal[i].ST == '1' ? daftarmejalokal[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+daftarmejalokal[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(daftarmejalokal[i].NAMA.match(/^\d/) ? "Table #"+daftarmejalokal[i].NAMA : daftarmejalokal[i].NAMA)+'</p></div></div>';
-  }
+  // content += '<div class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="listKategoriMeja();"><div><img src="img/back_arro_100.png" alt="img-meja-back" style="display: table; margin: 0 auto;"><p class="table-name">Back</p></div></div>';
+  // for(var i = 0; i < daftarmejalokal.length; i++){
+  //   // console.log(daftarmejalokal[i].NAMA);
+  //   if(daftarmejalokal[i].ST == '0' || daftarmejalokal[i].ST == '1'){
+  //     st_meja = "(In use)";
+  //     img = (window.innerWidth < 480) ? 'img/'+daftarmejalokal[i].KODE+'.png' : 'img/'+daftarmejalokal[i].KODE+'-150.png';
+  //   } else {
+  //     st_meja = "(Available)";
+  //     img = (window.innerWidth < 480) ? 'img/'+daftarmejalokal[i].KODE+'-Hijau.png' : 'img/'+daftarmejalokal[i].KODE+'-Biru-150.png';
+  //   }
+  //   // content += '<div id="meja'+daftarmejalokal[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+daftarmejalokal[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
+  //   // content += '<div id="meja'+daftarmejalokal[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+daftarmejalokal[i].KODE+','+(daftarmejalokal[i].ST == '1' ? daftarmejalokal[i].id_pj : 0)+')">Table '+daftarmejalokal[i].NAMA+'<br />'+st_meja+'</div>';
+  //   // content += '<div id="meja'+daftarmejalokal[i].KODE+'" class="col-50 tablet-50 floated" style="height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); margin: 5px" onclick="lihatmeja('+daftarmejalokal[i].KODE+','+(daftarmejalokal[i].ST == '1' ? daftarmejalokal[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+daftarmejalokal[i].KODE+'" style="transform: translateY(15px) scale(1.2);"><p style="transform: translateY(5px);">Table '+daftarmejalokal[i].NAMA+'</p></div>';
+  //   if(daftarmejalokal[i].ID_KATEGORY == kat) content += '<div id="meja'+daftarmejalokal[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+daftarmejalokal[i].KODE+','+(daftarmejalokal[i].ST == '1' ? daftarmejalokal[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+daftarmejalokal[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(daftarmejalokal[i].NAMA.match(/^\d/) ? "Table #"+daftarmejalokal[i].NAMA : daftarmejalokal[i].NAMA)+'</p></div></div>';
+  // }
 
-  $('#mejaaktif').html(content);
+  // $('#mejaaktif').html(content);
   // meja lokal end
 
-  // app.request({
-  //   url: addr+"API/meja/",
-  //   method: "GET",
-  //   success: function(json){
-  //     // console.lengthog(result);
-  //     var result = JSON.parse(json);
-  //     content += '<div class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="listKategoriMeja();"><div><img src="img/back_arro_100.png" alt="img-meja-back" style="display: table; margin: 0 auto;"><p class="table-name">Back</p></div></div>';
-  //     for(var i = 0; i < result.length; i++){
-  //       // console.log(result[i].NAMA);
-  //       if(result[i].ST == '0' || result[i].ST == '1'){
-  //         st_meja = "(In use)";
-  //         img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'.png' : 'img/'+result[i].KODE+'-150.png';
-  //       } else {
-  //         st_meja = "(Available)";
-  //         img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'-Hijau.png' : 'img/'+result[i].KODE+'-Biru-150.png';
-  //       }
-  //       // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
-  //       // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
-  //       // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-50 floated" style="height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="transform: translateY(15px) scale(1.2);"><p style="transform: translateY(5px);">Table '+result[i].NAMA+'</p></div>';
-  //       content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></div></div>';
-  //     }
+  app.request({
+    url: addr+"API/meja/",
+    method: "GET",
+    success: function(json){
+      // console.lengthog(result);
+      var result = JSON.parse(json);
+      // content += '<div class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="listKategoriMeja();"><div><img src="img/back_arro_100.png" alt="img-meja-back" style="display: table; margin: 0 auto;"><p class="table-name">Back</p></div></div>';
+      for(var i = 0; i < result.length; i++){
+        // console.log(result[i].NAMA);
+        if(result[i].ST == '0' || result[i].ST == '1'){
+          st_meja = "(In use)";
+          img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'.png' : 'img/'+result[i].KODE+'-150.png';
+        } else {
+          st_meja = "(Available)";
+          img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'-Hijau.png' : 'img/'+result[i].KODE+'-Biru-150.png';
+        }
+        // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
+        // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
+        // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-50 floated" style="height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="transform: translateY(15px) scale(1.2);"><p style="transform: translateY(5px);">Table '+result[i].NAMA+'</p></div>';
+        content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></div></div>';
+      }
 
-  //     $('#mejaaktif').html(content);
+      $('#mejaaktif').html(content);
 
-  //     refresh_meja = setTimeout(function(){
-  //       listMeja(kat);
-  //     }, 10 * 1000);
-  //   }
-  // })
+      refresh_meja = setTimeout(function(){
+        listMeja(kat);
+      }, 10 * 1000);
+    }
+  })
 }
 
 function lihatmeja(meja, pj){
@@ -1747,8 +1747,8 @@ function test(){
                transaction.executeSql(executeQuery, [nomorx,nomorx,tgl,st,'1',tgltime,nomormeja,'1','1',c1]
                 , function(tx, result) {
                  orderdtl(result.insertId);
-                //  listMeja();
-                listKategoriMeja();
+                 listMeja();
+                // listKategoriMeja();
 
                  alert(nomor);
                },
@@ -1976,8 +1976,8 @@ function testEmpty(){
   // nomormeja = 0;
   // toBeMerged = [];
   // splitItem = [];
-  listKategoriMeja();
-  // listMeja();
+  // listKategoriMeja();
+  listMeja();
   // db.transaction(function(t){
   //   t.executeSql("DELETE FROM pj_dtl_tmp")
   // })
@@ -2161,8 +2161,8 @@ function payDone(){
               t.executeSql('UPDATE pj SET jenis_bayar = ?, ppn = ?, total_jual = ?, grantot_jual = ?, bayar_tunai = ?, kembali_tunai = ?, st = 0 WHERE no_meja = ? AND st = 1', [a.jenis_bayar, ppn, total, grantot, tunai, kembali, meja],
                 function(){
                   alert('success');
-                  // listMeja();
-                  listKategoriMeja();
+                  listMeja();
+                  // listKategoriMeja();
                   app.views.main.router.back();
 
                   testEmpty();
@@ -2173,7 +2173,7 @@ function payDone(){
                 t.executeSql('UPDATE pj SET st = 0 WHERE no_meja = ? AND st = 1', [meja],
                   function(){
                     listMeja();
-                    listKategoriMeja();
+                    // listKategoriMeja();
                   });
               })
             }
@@ -2185,7 +2185,7 @@ function payDone(){
           function(){
             alert('success');
             listMeja();
-            listKategoriMeja();
+            // listKategoriMeja();
             split = 0;
             app.views.main.router.back();
 

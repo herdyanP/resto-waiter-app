@@ -11,8 +11,8 @@ var routes = [
     name: 'home',
     on: {
       pageAfterIn: function (){
-        // listMeja();
-        listKategoriMeja();
+        listMeja();
+        // listKategoriMeja();
         // listReservasi();
       },
       pageAfterOut: function(){
