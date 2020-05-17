@@ -11,8 +11,10 @@ var routes = [
     name: 'home',
     on: {
       pageAfterIn: function (){
-        listMeja();
-        // listKategoriMeja();
+        // listMeja();
+        listKategoriMeja();
+        var user = window.localStorage.getItem("pegawai");
+        $('#logged_user').html(user);
         // listReservasi();
       },
       pageAfterOut: function(){
@@ -93,6 +95,7 @@ var routes = [
         pageInit: function (e, page) {
           // do something when page initialized
           listKategori(page.route.params.idMeja);
+          if(page.route.params.idPJ == 0) inputPax();
         },
       }
   },
@@ -122,9 +125,9 @@ var routes = [
       </div>
       <div class="toolbar toolbar-bottom-md no-shadow" style="height: 70px;">
         <div class="toolbar-inner">
-          <button class="button" onclick="inputNama({{$route.params.idMeja}}, {{$route.params.idPJ}}, 'pesan')">Save Orders</button>
+          <!-- <button class="button" onclick="inputNama({{$route.params.idMeja}}, {{$route.params.idPJ}}, 'pesan')">Save Orders</button> -->
           <!-- <button class="button" onclick="inputPax({{$route.params.idMeja}}, {{$route.params.idPJ}}, 'pesan')">Save Orders</button> -->
-          <!-- <button class="button" onclick="cekPIN({{$route.params.idMeja}}, {{$route.params.idPJ}}, 'pesan')">Save Orders</button> -->
+          <button class="button" onclick="cekPIN({{$route.params.idMeja}}, {{$route.params.idPJ}}, 'pesan')">Save Orders</button>
         </div>
       </div>
     </div>`,
@@ -135,7 +138,7 @@ var routes = [
         },
         pageInit: function (e, page) {
           // do something when page initialized          
-          lihatKeranjang(page.route.params.idMeja);
+          lihatKeranjang(page.route.params.idMeja, page.route.params.idPJ);
         },
       }
   },
@@ -155,6 +158,7 @@ var routes = [
           <div class="title">Orders for table #{{$route.params.idMeja}}</div>
           <div class="right">
             <!-- <a class="link icon-only" onclick="toSplit();" style="margin: 0 10px 0 0;"><i class="icon material-icons md-only">call_split</i></a> -->
+            <a class="link icon-only" onclick="cetakUlang({{$route.params.idPJ}}, '');" style="margin: 0 10px 0 0;"><i class="icon material-icons md-only">print</i></a>
             <a class="link icon-only" href="/menu/{{$route.params.idMeja}}/{{$route.params.idPJ}}/" style="margin: 0 10px 0 0;"><i class="icon material-icons md-only">add_shopping_cart</i></a>
           </div>
         </div>
@@ -260,7 +264,30 @@ var routes = [
       pageInit: function(){
         // emptyDB();
         // allItems();
-        listAddReservasi();
+        listReservasi();
+      },
+      pageAfterIn: function(){
+        // listBarang();
+        // console.log('afterin');
+      },
+      pageAfterOut: function(){
+        // tampilMenu();
+        // tampilFood();
+        // tampilBvrg();
+        // emptyDB();
+      }
+    }
+  },
+  {
+    path: '/print/',
+    componentUrl: './pages/print.html',
+    on: {
+      pageInit: function(){
+        // emptyDB();
+        // allItems();
+        listTx();
+        var d = new Date();
+        $('#print_header').html("<strong>Available Transaction ("+d.getFullYear()+"/"+("0" + (d.getMonth()+1)).slice(-2)+"/"+("0" + d.getDate()).slice(-2)+")</strong>");
       },
       pageAfterIn: function(){
         // listBarang();

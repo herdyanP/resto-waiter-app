@@ -49,13 +49,23 @@
         <ul>
           <!-- <li class="divider" style="margin-top: 0;"><strong>Store Management</strong></li> -->
           <li>
-            <a href="/add_reservasi/" class="item-link item-content panel-close">
+            <a href="/print/" class="item-link item-content panel-close">
               <div class="item-media">
                 <!-- <i class="f7-icons">plus</i> -->
+                <i class="icon material-icons md-only">print</i>
+              </div>
+              <div class="item-inner">
+                <div class="item-title">Reprint Receipt</div>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="/add_reservasi/" class="item-link item-content panel-close">
+              <div class="item-media">
                 <i class="icon material-icons md-only">access_time</i>
               </div>
               <div class="item-inner">
-                <div class="item-title">Tambah Reservasi</div>
+                <div class="item-title">Check-In</div>
               </div>
             </a>
           </li>
@@ -124,19 +134,19 @@
               <form id="login_form" name="login_form">
                 <div class="list no-hairlines no-hairlines-between">
                   <ul>
-                    <li class="item-content item-input">
+                    <!-- <li class="item-content item-input">
                       <div class="item-inner">
-                        <div class="item-title item-label" style="font-size: 1.2em; line-height: normal; color: white; padding-bottom: 10px;">Username</div>
+                        <div class="item-title item-label" style="font-size: 1.2em; line-height: normal; color: white; padding-bottom: 10px;">PIN</div>
                         <div class="item-input-wrap" style="background: white; border-radius: 30px; padding-left: 15px; margin-left: -7px;">
                           <input type="text" onclick="this.select();" id="username" name="username" placeholder="Type your username here" value="admin">
                         </div>
                       </div>
-                    </li>
+                    </li> -->
                     <li class="item-content item-input">
                       <div class="item-inner">
-                        <div class="item-title item-label" style="font-size: 1.2em; line-height: normal; color: white; padding-bottom: 10px;">Password</div>
+                        <div class="item-title item-label" style="font-size: 1.2em; line-height: normal; color: white; padding-bottom: 10px;">PIN</div>
                         <div class="item-input-wrap" style="background: white; border-radius: 30px; padding-left: 15px; margin-left: -7px;">
-                          <input type="password" onclick="this.select();" id="pwd" name="pwd" placeholder="Type your password here" onkeydown="" value="admin">
+                          <input type="password" onclick="this.select();" id="pwd" name="pwd" placeholder="Type your PIN here" onkeydown="" value="">
                         </div>
                       </div>
                     </li>

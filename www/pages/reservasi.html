@@ -10,7 +10,7 @@
           </a>
         </div>
         <div class="title">
-          Tambah Reservasi Meja
+          Reservation Check-In
         </div>
       </div>
     </div>
@@ -22,9 +22,24 @@
           <ul>
             <li class="item-content item-input ">
               <div class="item-inner">
-                <div class="item-title item-label" style="color: unset;">Tanggal Reservasi</div>
+                <div class="item-title item-label" style="color: unset;">Booking Name</div>
                 <div class="item-input-wrap">
-                  <input type="date" id="tgl_add_reservasi" name="tgl_add_reservasi" onchange="listAddReservasi(this.value);">
+                  <input type="text" name="namabook" id="namabook">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input ">
+              <div class="item-inner">
+                <div class="item-title item-label" style="color: unset;">Date</div>
+                <div class="item-input-wrap">
+                  <input type="date" id="tglbook" name="tglbook">
+                </div>
+              </div>
+            </li>
+            <li class="item-content">
+              <div class="item-inner">
+                <div class="item-title"  style="width: 100%;">
+                  <a class="button button-outline" id="button_check_rsv" style="display: block;" onclick="cariReservasi(namabook.value, tglbook.value)">Check</a>
                 </div>
               </div>
             </li>
@@ -34,19 +49,12 @@
 
       <div class="card card-outline">
         <div class="card-header">
-          <strong>Meja Tersedia</strong>
+          <strong>Reservations</strong>
         </div>
 
         <div class="block" style="max-height: 60vh; overflow: scroll;">
-          <form class="list no-hairlines" id="barang_list">
-          </form>
+          <div class="data-table" id="reservations"></div>
         </div>
-      </div>
-    </div>
-
-    <div class="toolbar toolbar-bottom-md no-shadow" style="height: 70px;">
-      <div class="toolbar-inner">
-        <button id="" class="button" onclick="simpanReservasi(document.getElementById('barang_list'));">Simpan</button>
       </div>
     </div>
   </div>

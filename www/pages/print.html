@@ -1,0 +1,31 @@
+<template>
+  <div class="page">
+
+    <div class="navbar">
+      <div class="navbar-inner sliding">
+        <div class="left">
+          <a href="#" class="link back">
+            <i class="icon icon-back"></i>
+            <span class="ios-only">Back</span>
+          </a>
+        </div>
+        <div class="title">
+          Print Receipt
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content" id="scrollable">
+      <div class="card card-outline">
+        <div class="card-header" id="print_header">
+          <strong>Available Transaction</strong>
+        </div>
+
+        <!-- <div class="block" style="max-height: 80vh; overflow: scroll;"> -->
+          <ul class="list no-hairlines" id="tx_list" style="padding: 0 10px;">
+          </ul>
+        <!-- </div> -->
+      </div>
+    </div>
+  </div>
+</template>

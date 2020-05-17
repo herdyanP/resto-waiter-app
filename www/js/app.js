@@ -35,256 +35,13 @@ var split = 0;
 var splitItem = [];
 var toBeMerged = [];
 var mergeItem = [];
-// var addr = "http://dev.cloudmnm.com/resto/";
-var addr = "http://192.168.3.16/resto/";
+var addr = "http://dev.cloudmnm.com/resto/";
+// var addr = "http://192.168.3.16/resto/";
 var currMeja = 0;
 var currentWaitress = '';
 var refresh_meja = '';
-var daftarmejalokal = [
-  {
-      "KODE": "01",
-      "NAMA": "01 A",
-      "ST_MEJA": "0",
-      "id_pj": "184",
-      "tgl_penjualan": "2020-03-17",
-      "ST": "1",
-      "ID_KATEGORY" : "1"
-  },
-  {
-      "KODE": "02",
-      "NAMA": "01 B",
-      "ST_MEJA": "0",
-      "id_pj": "170",
-      "tgl_penjualan": "2020-03-10",
-      "ST": "1",
-      "ID_KATEGORY" : "1"
-  },
-  {
-      "KODE": "03",
-      "NAMA": "02 A",
-      "ST_MEJA": "0",
-      "id_pj": "171",
-      "tgl_penjualan": "2020-03-10",
-      "ST": "1",
-      "ID_KATEGORY" : "1"
-  },
-  {
-      "KODE": "04",
-      "NAMA": "02 B",
-      "ST_MEJA": "0",
-      "id_pj": "177",
-      "tgl_penjualan": "2020-03-13",
-      "ST": "1",
-      "ID_KATEGORY" : "1"
-  },
-  {
-      "KODE": "05",
-      "NAMA": "03 A",
-      "ST_MEJA": "0",
-      "id_pj": "175",
-      "tgl_penjualan": "2020-03-13",
-      "ST": "1",
-      "ID_KATEGORY" : "1"
-  },
-  {
-      "KODE": "06",
-      "NAMA": "03 B",
-      "ST_MEJA": "0",
-      "id_pj": "176",
-      "tgl_penjualan": "2020-03-13",
-      "ST": "1",
-      "ID_KATEGORY" : "1"
-  },
-  {
-      "KODE": "07",
-      "NAMA": "04 A",
-      "ST_MEJA": "0",
-      "id_pj": "183",
-      "tgl_penjualan": "2020-03-17",
-      "ST": "1",
-      "ID_KATEGORY" : "1"
-  },
-  {
-      "KODE": "08",
-      "NAMA": "04 B",
-      "ST_MEJA": "0",
-      "id_pj": "180",
-      "tgl_penjualan": "2020-03-16",
-      "ST": "1",
-      "ID_KATEGORY" : "1"
-  },
-  {
-      "KODE": "09",
-      "NAMA": "05 A",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "1"
-  },
-  {
-      "KODE": "10",
-      "NAMA": "05 B",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "1"
-  },
-  {
-      "KODE": "11",
-      "NAMA": "06",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "2"
-  },
-  {
-      "KODE": "12",
-      "NAMA": "07",
-      "ST_MEJA": "0",
-      "id_pj": "155",
-      "tgl_penjualan": "2019-10-17",
-      "ST": "2",
-      "ID_KATEGORY" : "2"
-  },
-  {
-      "KODE": "13",
-      "NAMA": "08",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "2"
-  },
-  {
-      "KODE": "14",
-      "NAMA": "09",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "2"
-  },
-  {
-      "KODE": "15",
-      "NAMA": "10",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "2"
-  },
-  {
-      "KODE": "16",
-      "NAMA": "11",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "2"
-  },
-  {
-      "KODE": "17",
-      "NAMA": "G1",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "3"
-  },
-  {
-      "KODE": "18",
-      "NAMA": "G2",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "3"
-  },
-  {
-      "KODE": "19",
-      "NAMA": "G3",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "3"
-  },
-  {
-      "KODE": "20",
-      "NAMA": "G4",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "3"
-  },
-  {
-      "KODE": "21",
-      "NAMA": "G5",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "3"
-  },
-  {
-      "KODE": "22",
-      "NAMA": "G6",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "3"
-  },
-  {
-      "KODE": "23",
-      "NAMA": "POOL 1",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "4"
-  },
-  {
-      "KODE": "24",
-      "NAMA": "POOL 2",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "4"
-  },
-  {
-      "KODE": "25",
-      "NAMA": "POOL 3",
-      "ST_MEJA": "0",
-      "id_pj": null,
-      "tgl_penjualan": null,
-      "ST": "2",
-      "ID_KATEGORY" : "4"
-  },
-  {
-      "KODE": "26",
-      "NAMA": "TAKEAWAY 1",
-      "ST_MEJA": "0",
-      "id_pj": "181",
-      "tgl_penjualan": "2020-03-17",
-      "ST": "1",
-      "ID_KATEGORY" : "5"
-  },
-  {
-      "KODE": "27",
-      "NAMA": "TAKEAWAY 2",
-      "ST_MEJA": "0",
-      "id_pj": "110",
-      "tgl_penjualan": "2019-09-03",
-      "ST": "2",
-      "ID_KATEGORY" : "5"
-  }
-]
+var paxorder = 0;
+var namaorder = '';
 /*var pinBox = app.dialog.create({
     title: 'Employee PIN',
     closeByBackdropClick: false,
@@ -370,7 +127,7 @@ document.addEventListener('deviceready', function() {
 function onBackPressed(){
   var mv = app.views.main;
   if(mv.router.currentPageEl.f7Page.name == 'home'){
-    app.dialog.confirm('Keluar aplikasi?', 'Konfirmasi', function(){navigator.app.exitApp();}, function(){return;})
+    app.dialog.confirm('Close app?', 'Confirmation', function(){navigator.app.exitApp();}, function(){return;})
   }else{
     testEmpty();
     mv.router.back();
@@ -420,14 +177,16 @@ function newLogin(){
     success: function(json){
       if(json){
         var result = JSON.parse(json);
+
         window.localStorage.setItem("gudang", result[0].ID_GUDANG);
-        window.localStorage.setItem("cabang", result[0].id_cabang);
-        window.localStorage.setItem("pegawai", result[0].nama_pegawai);
-        window.localStorage.setItem("id_peg", result[0].id_pegawai);
+        window.localStorage.setItem("pegawai", result[0].USERNAME);
+        window.localStorage.setItem("id_peg", result[0].ID);
+
+        // console.log(json);
 
         app.views.main.router.navigate('/home/');
       } else {
-        app.toast.create({text: 'Wrong Username / Password', closeButton: true, destroyOnClose: true}).open();
+        app.toast.create({text: 'PIN Not Found', closeButton: true, destroyOnClose: true}).open();
       }
     }
   })
@@ -437,66 +196,28 @@ function newLogin(){
 
 function listKategoriMeja(){
   clearTimeout(refresh_meja);
+  app.request({
+    url: addr+"API/katmeja/",
+    method: "GET",
+    success: function(json){
+      if(json){
+        var result = JSON.parse(json);
+        var datanya = '';
+        var len = (result.length < 24 ? result.length : 24);
 
-  // mulai kategori meja lokal
-  var datanya = "";
-  var result = [
-    {
-      id_m_kategory : 1,
-      nama_m_kategory : "Ruang Utama"
-    },
-    {
-      id_m_kategory : 2,
-      nama_m_kategory : "Ruang Kedua"
-    },
-    {
-      id_m_kategory : 3,
-      nama_m_kategory : "Gudang Pojok"
-    },
-    {
-      id_m_kategory : 4,
-      nama_m_kategory : "Pool"
-    },
-    {
-      id_m_kategory : 5,
-      nama_m_kategory : "Takeaway"
+        for (i = 0; i < len; i++){
+          // datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
+          // datanya+="<button onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+          // datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+          // datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+          datanya+="<button onclick=\"listMeja('"+result[i].id_m_kategory+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_m_kategory.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+        }
+
+        datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
+        $('#mejaaktif').html(datanya);
+      }
     }
-  ]
-
-  for (i = 0; i < result.length; i++){
-    // datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
-    // datanya+="<button onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
-    // datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
-    // datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
-    datanya+="<button onclick=\"listMeja('"+result[i].id_m_kategory+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_m_kategory.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
-  }
-  // selesai kategori meja lokal
-
-  datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
-  $('#mejaaktif').html(datanya);
-
-  // app.request({
-  //   url: addr+"API/katmeja/",
-  //   method: "GET",
-  //   success: function(json){
-  //     if(json){
-  //       var result = JSON.parse(json);
-  //       var datanya = '';
-  //       var len = (result.length < 24 ? result.length : 24);
-
-  //       for (i = 0; i < len; i++){
-  //         // datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
-  //         // datanya+="<button onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
-  //         // datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
-  //         // datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
-  //         datanya+="<button onclick=\"listMeja('"+result[i].id_m_kategory+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_m_kategory.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
-  //       }
-
-  //       datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
-  //       $('#mejaaktif').html(datanya);
-  //     }
-  //   }
-  // })
+  })
 }
 
 function listMeja(kat = 0){
@@ -525,26 +246,95 @@ function listMeja(kat = 0){
   // $('#mejaaktif').html(content);
   // meja lokal end
 
+  // app.request({
+  //   url: addr+"API/meja/" +kat+ "/",
+  //   method: "GET",
+  //   success: function(json){
+  //     var result = JSON.parse(json);
+  //     console.log(result);
+  //     content += '<div class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="listKategoriMeja();"><div><img src="img/back_arro_100.png" alt="img-meja-back" style="display: table; margin: 0 auto;"><p class="table-name">Back</p></div></div>';
+  //     for(var i = 0; i < result.length; i++){
+  //       // console.log(result[i].NAMA);
+  //       if(result[i].ST == '0' || result[i].ST == '1'){
+  //         st_meja = "(In use)";
+  //         img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'.png' : 'img/'+result[i].KODE+'-150.png';
+  //       } else {
+  //         st_meja = "(Available)";
+  //         img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'-Hijau.png' : 'img/'+result[i].KODE+'-Biru-150.png';
+  //       }
+  //       // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
+  //       // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
+  //       // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-50 floated" style="height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="transform: translateY(15px) scale(1.2);"><p style="transform: translateY(5px);">Table '+result[i].NAMA+'</p></div>';
+
+  //       if(result[i].hold > 0){
+  //         content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="onHold();"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></div></div>';
+  //       } else {
+  //         content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></div></div>';
+  //       }
+  //     }
+
+  //     $('#mejaaktif').html(content);
+
+  //     refresh_meja = setTimeout(function(){
+  //       listMeja(kat);
+  //     }, 10 * 1000);
+  //   }
+  // })
+
   app.request({
-    url: addr+"API/meja/",
+    url: addr+"API/meja/" +kat+ "/",
     method: "GET",
     success: function(json){
-      // console.lengthog(result);
       var result = JSON.parse(json);
-      // content += '<div class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="listKategoriMeja();"><div><img src="img/back_arro_100.png" alt="img-meja-back" style="display: table; margin: 0 auto;"><p class="table-name">Back</p></div></div>';
+      var font = '';
+      // console.log(result);
+      // content += '<div class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="listKategoriMeja();">\
+      //               <div>\
+      //               <button onclick="listKategoriMeja() class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;"><p style="'+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+'">"BACK"</p></button>\
+      //                 <p class="table-name">Back</p>\
+      //               </div>\
+      //             </div>';
+
+      content += '<div onclick="listKategoriMeja()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 50%;"><p style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+(window.innerWidth > 480 ? "font-size: 8rem;" : "font-size: 6rem;")+'">&larr;</p></div>';
+
+                  
       for(var i = 0; i < result.length; i++){
         // console.log(result[i].NAMA);
-        if(result[i].ST == '0' || result[i].ST == '1'){
-          st_meja = "(In use)";
-          img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'.png' : 'img/'+result[i].KODE+'-150.png';
-        } else {
-          st_meja = "(Available)";
-          img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'-Hijau.png' : 'img/'+result[i].KODE+'-Biru-150.png';
-        }
+        // if(result[i].ST == '0' || result[i].ST == '1'){
+        //   st_meja = "(In use)";
+        //   img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'.png' : 'img/'+result[i].KODE+'-150.png';
+        // } else {
+        //   st_meja = "(Available)";
+        //   img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'-Hijau.png' : 'img/'+result[i].KODE+'-Biru-150.png';
+        // }
         // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
         // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
         // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-50 floated" style="height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="transform: translateY(15px) scale(1.2);"><p style="transform: translateY(5px);">Table '+result[i].NAMA+'</p></div>';
-        content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></div></div>';
+
+        // if(window.innerWidth > 480){
+        // }
+
+        if(result[i].NAMA.length > 5){
+          font = "font-size: 1.2rem;";
+        } else {
+          font = "font-size: 2.4rem;";
+        }
+
+        if(result[i].hold > 0){
+          // content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="onHold();"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></div></div>';
+          // content += '<button onclick="listKategoriMeja() class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffcc00; color: white; border-radius: 50%;"><p class="table-name" style="'+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+'">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></button>';
+          // content += '<button onclick="onHold()" class="" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffcc00; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+(window.innerWidth > 480 ? "font-size: 2.4rem;" : "font-size: 1.2rem;")+'">'+result[i].NAMA+'</p></button>';
+          content += '<div onclick="onHold()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffcc00; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+        } else if(result[i].ST == '0' || result[i].ST == '1') {
+          // content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></div></div>';
+          // content += '<button onclick="lihatmeja('+result[i].KODE+', 0)" class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #f44336; color: white; border-radius: 50%;"><p class="table-name" style="'+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+'">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></button>';
+          // content += '<button onclick="lihatmeja(\''+result[i].KODE+'\', '+result[i].id_pj+')" class="" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #f44336; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+(window.innerWidth > 480 ? "font-size: 2.4rem;" : "font-size: 1.2rem;")+'">'+result[i].NAMA+'</p></button>';
+          content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', '+result[i].id_pj+')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #f44336; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+        } else {
+          // content += '<button onclick="lihatmeja('+result[i].KODE+','+result[i].id_pj+')" class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #4caf50; color: white; border-radius: 50%;"><p class="table-name" style="'+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+'">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></button>';
+          // content += '<button onclick="lihatmeja(\''+result[i].KODE+'\', 0)" class="" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #4caf50; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+(window.innerWidth > 480 ? "font-size: 2.4rem;" : "font-size: 1.2rem;")+'">'+result[i].NAMA+'</p></button>';
+          content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', 0)" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #4caf50; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+        }
       }
 
       $('#mejaaktif').html(content);
@@ -576,94 +366,111 @@ function lihatmeja(meja, pj){
   }
 }
 
-function listReservasi(tgl = 0){
-  var content = '';
-  var st_meja = '';
-  var img = '';
-  nomormeja = 0;
+function listReservasi(){
+  var tabel = '';
   app.request({
-    url: addr+"API/meja/",
+    url: addr+"API/reservasi/",
     method: "GET",
     success: function(json){
-      // console.lengthog(result);
       var result = JSON.parse(json);
+      tabel = '<table>\
+                <thead>\
+                  <tr>\
+                    <th class="label-cell"><b>Customer Name</b></th>\
+                    <th><b>Telp</b></th>\
+                    <th><b>Table Name</b></th>\
+                    <th><b>Pax Amount</b></th>\
+                    <th><b>Booking Date</b></th>\
+                    <th><b>Booking Time</b></th>\
+                    <th></th>\
+                  </tr>\
+                </thead>\
+                <tbody>';
+
       for(var i = 0; i < result.length; i++){
-        // console.log(result[i].NAMA);
-        if(result[i].ST == '0' || result[i].ST == '1'){
-          st_meja = "(In use)";
-          img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'.png' : 'img/'+result[i].KODE+'-150.png';
-        } else {
-          st_meja = "(Available)";
-          img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'-Hijau.png' : 'img/'+result[i].KODE+'-Biru-150.png';
-        }
-        // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
-        // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
-        // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-50 floated" style="height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="transform: translateY(15px) scale(1.2);"><p style="transform: translateY(5px);">Table '+result[i].NAMA+'</p></div>';
-        content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></div></div>';
+        tabel += '<tr>\
+                  <td class="label-cell"><b>'+result[i].namabook+'</b></td>\
+                  <td><b>'+result[i].telpbook+'</b></td>\
+                  <td><b>'+result[i].meja+'</b></th>\
+                  <td><b>'+result[i].pax+'</b></td>\
+                  <td><b>'+result[i].tglbook+'</b></td>\
+                  <td><b>'+result[i].jambook+'</b></td>\
+                  <td ><a onclick="checkIn('+result[i].idbook+')">Proses</a></td>\
+                </tr>';
       }
 
-      $('#reservemeja').html(content);
-      // refresh_meja = setTimeout(listMeja, 10 * 1000);
+      tabel += "</table>";
+      $('#reservations').html(tabel);
     }
   })
 }
 
-function listAddReservasi(){
-  var data = '<ul>';
-  var content = '';
-  var st_meja = '';
-  var img = '';
-  nomormeja = 0;
-  app.request({
-    url: addr+"API/meja/",
-    method: "GET",
-    success: function(json){
-      // console.lengthog(result);
-      var result = JSON.parse(json);
-      for(var i = 0; i < result.length; i++){
-        data += '\
-                  <li class="item-content ">\
-                    <input type="checkbox" name="reserved[]" value="'+result[i].KODE+'">\
-                    <div class="item-inner">\
-                      <div class="item-title">'+result[i].NAMA+'</div>\
-                    </div>\
-                  </li>';
+function cariReservasi(namabook, tglbook){
+  if(namabook && tglbook){
 
-        // console.log(result[i].NAMA);
-        // if(result[i].ST == '0' || result[i].ST == '1'){
-        //   st_meja = "(In use)";
-        //   img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'.png' : 'img/'+result[i].KODE+'-150.png';
-        // } else {
-        //   st_meja = "(Available)";
-        //   img = (window.innerWidth < 480) ? 'img/'+result[i].KODE+'-Hijau.png' : 'img/'+result[i].KODE+'-Biru-150.png';
-        // }
-        // // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="checkMeja(this)">Table '+result[i].NAMA+'<br />'+st_meja+'</div>'; <img src="img/01 Hijau.png" alt="img-meja-01" style="transform: translateY(20px);">
-        // // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-25 floated" style="height: 150px; width: 150px; margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')">Table '+result[i].NAMA+'<br />'+st_meja+'</div>';
-        // // content += '<div id="meja'+result[i].KODE+'" class="col-50 tablet-50 floated" style="height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); margin: 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="transform: translateY(15px) scale(1.2);"><p style="transform: translateY(5px);">Table '+result[i].NAMA+'</p></div>';
-        // content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></div></div>';
+    var tabel = '';
+    var temp = {
+      namabook : namabook, 
+      tglbook : tglbook,
+      tipe : "cari"
+    };
+  
+    app.request({
+      url: addr+"API/reservasi/",
+      method: "POST",
+      data: JSON.stringify(temp),
+      success: function(json){
+        var result = JSON.parse(json);
+        tabel = '<table>\
+                  <thead>\
+                    <tr>\
+                      <th class="label-cell"><b>Customer Name</b></th>\
+                      <th><b>Telp</b></th>\
+                      <th><b>Table Name</b></th>\
+                      <th><b>Pax Amount</b></th>\
+                      <th><b>Booking Date</b></th>\
+                      <th><b>Booking Time</b></th>\
+                      <th></th>\
+                    </tr>\
+                  </thead>\
+                  <tbody>';
+  
+        for(var i = 0; i < result.length; i++){
+          tabel += '<tr>\
+                    <td class="label-cell"><b>'+result[i].namabook+'</b></td>\
+                    <td><b>'+result[i].telpbook+'</b></td>\
+                    <td><b>'+result[i].meja+'</b></th>\
+                    <td><b>'+result[i].pax+'</b></td>\
+                    <td><b>'+result[i].tglbook+'</b></td>\
+                    <td><b>'+result[i].jambook+'</b></td>\
+                    <td ><a onclick="checkIn('+result[i].idbook+')">Proses</a></td>\
+                  </tr>';
+        }
+  
+        tabel += "</table>";
+        $('#reservations').html(tabel);
       }
-
-      // $('#mejaaktif').html(content);
-      // refresh_meja = setTimeout(listMeja, 10 * 1000);
-      data += '</ul>';
-      $('#barang_list').html(data);
-    }
-  });
+    })
+  } else {
+    alert('Empty fields');
+  }
 }
 
-function simpanReservasi(q){
-  var selected = [];
-  var mejarsv = "";
-  var tglrsv = jQuery('#tgl_add_reservasi').val();
+function checkIn(idbook){
+  var temp = {
+    idbook : idbook,
+    tipe : "simpan"
+  };
 
-  jQuery.each(jQuery(q).serializeArray(), function(index, v){
-    selected.push(v.value);
-    mejarsv += (index == 0 ? v.value : ', '+v.value);
-  });
-
-  alert("Reservasi tersimpan untuk meja " +mejarsv+ " tanggal " +tglrsv);
-  console.log(selected);
-  
+  app.request({
+    url: addr+"API/reservasi/",
+    method: "POST",
+    data: JSON.stringify(temp),
+    success: function(json){
+      console.log(json);
+      listReservasi();
+    }
+  })
 }
 
 function listKategori(meja){
@@ -687,10 +494,11 @@ function listKategori(meja){
 
 function tampil(meja, kat){
   var id_gudang = window.localStorage.getItem('gudang');
-  var id_cabang = window.localStorage.getItem('cabang');
+  // var id_cabang = window.localStorage.getItem('cabang');
 
   app.request({
-    url: addr+"API/barang/"+id_cabang+"/"+id_gudang+"/"+kat+"/",
+    // url: addr+"API/barang/"+id_cabang+"/"+id_gudang+"/"+kat+"/",
+    url: addr+"API/barang/"+id_gudang+"/"+kat+"/",
     method: "GET",
     success: function(json){
       if(json){
@@ -713,7 +521,7 @@ function tampil(meja, kat){
 }
 
 function cariItem(e, q, meja){
-  var cabang = window.localStorage.getItem('cabang');
+  // var cabang = window.localStorage.getItem('cabang');
   var gudang = window.localStorage.getItem('gudang');
   var temp = {
     query : q
@@ -721,7 +529,8 @@ function cariItem(e, q, meja){
 
   if ( (window.event ? event.keyCode : e.which) == 13) {
     app.request({
-      url: addr+"API/barang/"+cabang+"/"+gudang+"/",
+      // url: addr+"API/barang/"+cabang+"/"+gudang+"/",
+      url: addr+"API/barang/"+gudang+"/",
       method: "POST",
       data: JSON.stringify(temp),
       success: function(json){
@@ -740,7 +549,35 @@ function cariItem(e, q, meja){
   }
 }
 
-function addQty(meja, id, amt, harga, nama){
+function editQty(meja, id, amt, harga, nama, idpj){
+  app.dialog.create({
+    title: 'New amt for '+nama+':',
+    closeByBackdropClick: true,
+    content: `<div class="list no-hairlines no-hairlines-between box-appear">
+                <ul style="height: 100%;">
+                  <li class="item-content item-input" style="height: inherit;">
+                    <div class="item-inner" style="height: inherit;">
+                      <div class="item-input-wrap" style="height: inherit;">
+                        <input class="input-box" type="number" onClick="this.select();" name="editAmt" id="editAmt" value="`+amt+`" style="text-align: center; height: inherit;" />
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>`,
+    buttons: [
+    {
+      text: 'Confirm',
+      onClick: function(dialog, e){
+        var amt_to_add = $('#editAmt').val();
+        if(amt_to_add > 0){
+          edit(meja, id, amt_to_add, harga, nama, idpj);
+        }
+      }
+    }]
+  }).open();
+}
+
+function addQty(meja, id, amt, harga, nama, idpj){
   app.dialog.create({
     title: 'Amt of '+nama+' to add:',
     closeByBackdropClick: true,
@@ -760,13 +597,39 @@ function addQty(meja, id, amt, harga, nama){
       text: 'Confirm',
       onClick: function(dialog, e){
         var amt_to_add = $('#addAmt').val();
-        simpan(meja, id, amt_to_add, harga, nama)
+        simpan(meja, id, amt_to_add, harga, nama, idpj)
       }
     }]
   }).open();
 }
 
-function simpan(meja, id, qty, harga, nama){
+function edit(meja, id, qty, harga, nama, idpj){
+  var idp = window.localStorage.getItem("id_peg");
+  var temp = {
+    id_barang : id,
+    harga : harga,
+    qty : qty,
+    user_id : idp,
+    act : "update"
+  }
+
+  app.request({
+    url: addr+"API/cart/"+meja+"/",
+    method: "POST",
+    data: JSON.stringify(temp),
+    success: function(){
+      lihatKeranjang(meja, idpj);
+      app.toast.create({
+        text: 'Amount updated', 
+        closeButton: true, 
+        destroyOnClose: true, 
+        closeTimeout: 1000
+      }).open();
+    }
+  })
+}
+
+function simpan(meja, id, qty, harga, nama, idpj){
   var idp = window.localStorage.getItem("id_peg");
   var temp = {
     id_barang : id,
@@ -781,7 +644,7 @@ function simpan(meja, id, qty, harga, nama){
     method: "POST",
     data: JSON.stringify(temp),
     success: function(){
-      lihatKeranjang(meja);
+      lihatKeranjang(meja, idpj);
       app.toast.create({
         text: 'Added to cart', 
         closeButton: true, 
@@ -792,7 +655,7 @@ function simpan(meja, id, qty, harga, nama){
   })
 }
 
-function lihatKeranjang(meja){
+function lihatKeranjang(meja, idpj){
   var data = "";
   var jumlah = 0;
   app.request({
@@ -800,6 +663,16 @@ function lihatKeranjang(meja){
     method: "GET",
     success: function(json){
       var result = JSON.parse(json);
+
+      console.log(idpj);
+
+      if(idpj == 0){
+        data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table #'+meja+' | '+namaorder+' / '+paxorder+' Pax<a class="link icon-only" onclick="editPax('+meja+', '+idpj+');" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">edit</i></a></li>';
+      } else {
+        data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table #'+meja+' | '+namaorder+' / '+paxorder+' Pax</li>';
+      }
+
+
       for(var i = 0; i < result.length; i++){
         jumlah += parseInt(result[i].harga_tmp) * parseInt(result[i].qty_tmp);
         data += ` <li class="item-content ">
@@ -808,9 +681,10 @@ function lihatKeranjang(meja){
                         <div class="item-footer">`+(result[i].catatan ? result[i].catatan : '')+`</div>
                       </div>
                       <div class="item-after">
-                        <a href="#" onclick="addQty(`+meja+`, `+result[i].id_barang+`, 1, `+result[i].harga_tmp+`, '`+result[i].nama_barang+`')" style="margin: 0px 5px;"><i class="icon f7-icons">add</i></a>
-                        <a href="#" onclick="addCatatan(`+result[i].id_tmp+`,`+meja+`)" style="margin: 0px 5px;"><i class="icon material-icons md-only">edit</i></a>
-                        <a href="#" onclick="hapusItem(`+result[i].id_tmp+`,`+meja+`)" style="margin: 0px 5px;"><i class="icon material-icons md-only">remove_shopping_cart</i></a>
+                        <!-- <a href="#" onclick="addQty(`+meja+`, `+result[i].id_barang+`, 1, `+result[i].harga_tmp+`, '`+result[i].nama_barang+`')" style="margin: 0px 5px;"><i class="icon f7-icons">add</i></a> -->
+                        <a href="#" onclick="editQty(`+meja+`, `+result[i].id_barang+`, 1, `+result[i].harga_tmp+`, '`+result[i].nama_barang+`', '`+idpj+`')" style="margin: 0px 5px;"><i class="icon f7-icons">add</i></a>
+                        <a href="#" onclick="addCatatan(`+result[i].id_tmp+`,`+meja+`, '`+idpj+`')" style="margin: 0px 5px;"><i class="icon material-icons md-only">edit</i></a>
+                        <a href="#" onclick="hapusItem(`+result[i].id_tmp+`,`+meja+`, '`+idpj+`')" style="margin: 0px 5px;"><i class="icon material-icons md-only">remove_shopping_cart</i></a>
                       </div>
                     </div>
                   </li>`;
@@ -824,7 +698,7 @@ function lihatKeranjang(meja){
   })
 }
 
-function addCatatan(idtmp, meja){
+function addCatatan(idtmp, meja, idpj){
   app.dialog.prompt('Notes:', 'Title', 
     function(catt){
       var temp = {
@@ -854,7 +728,7 @@ function addCatatan(idtmp, meja){
             }).open();
           }
 
-          lihatKeranjang(meja);
+          lihatKeranjang(meja, idpj);
         }
       })
 
@@ -865,7 +739,7 @@ function addCatatan(idtmp, meja){
     });
 }
 
-function hapusItem(idtmp, meja){
+function hapusItem(idtmp, meja, idpj){
   var temp = {
     act : "delete",
     id_tmp : idtmp,
@@ -892,7 +766,7 @@ function hapusItem(idtmp, meja){
         }).open();
       }
 
-      lihatKeranjang(meja);
+      lihatKeranjang(meja, idpj);
     }
   })
 }
@@ -906,7 +780,19 @@ function clearCart(meja){
 }
 
 function cekPIN(meja, id, tipe, atasnama, pax){
-  app.dialog.create({
+  var idpeg = window.localStorage.getItem("id_peg");
+  atasnama = namaorder;
+  pax = paxorder;
+  if(tipe == 'pesan'){
+    // alert('pesan');
+    simpanPesanan(meja, id, idpeg, atasnama, pax);
+  } else if(tipe == 'split'){
+    splitBill(id, meja, idpeg);
+    // alert('split');
+  }
+
+
+  /* app.dialog.create({
     title: 'Employee PIN',
     closeByBackdropClick: true,
     content: `<div class="list no-hairlines no-hairlines-between box-appear">
@@ -940,9 +826,9 @@ function cekPIN(meja, id, tipe, atasnama, pax){
                 var result = JSON.parse(json);
                 if(tipe == 'pesan'){
                   // alert('pesan');
-                  simpanPesanan(meja, id, result[0].id_waitress, atasnama, pax);
+                  simpanPesanan(meja, id, result[0].ID, atasnama, pax);
                 } else if(tipe == 'split'){
-                  splitBill(id, meja, result[0].id_waitress);
+                  splitBill(id, meja, result[0].ID);
                   // alert('split');
                 }
                 dialog.close();
@@ -954,14 +840,15 @@ function cekPIN(meja, id, tipe, atasnama, pax){
         }
       }
     }]
-  }).open()
+  }).open(); */
 }
 
-function inputNama(meja, id, tipe){
+// function inputNama(meja, id, tipe){
+function inputNama(){
   app.dialog.create({
-    title: 'Nama',
+    title: 'Customer Name',
     closeByBackdropClick: true,
-    content: `<div class="list no-hairlines no-hairlines-between box-appear">
+    content: `<div class="list no-hairlines no-hairlines-between box-appearm">
                 <ul style="height: 100%;">
                   <li class="item-content item-input" style="height: inherit;">
                     <div class="item-inner" style="height: inherit;">
@@ -979,16 +866,32 @@ function inputNama(meja, id, tipe){
         var atasnama = $('#atasnama').val();
 
         if(atasnama){
-          cekPIN(meja, id, tipe, atasnama);
+          namaorder = atasnama;
+          // cekPIN(meja, id, tipe, atasnama);
         }
       }
-    }]
+    }],
+    on: {
+      closed: function(dialog, e){
+        var atasnama = $('#atasnama').val();
+
+        if(atasnama == '' || atasnama == '0'){
+          app.views.main.router.back()
+          // listKategoriMeja();
+          // alert('salah');
+          // paxorder = pax;
+          // cekPIN(meja, id, tipe, atasnama, pax);
+          // inputNama()
+        }
+      }
+    }
   }).open()
 }
 
-function inputPax(meja, id, tipe, atasnama){
+// function inputPax(meja, id, tipe, atasnama){
+function inputPax(){
   app.dialog.create({
-    title: 'Jumlah Pax',
+    title: 'Pax Amt.',
     closeByBackdropClick: true,
     content: `<div class="list no-hairlines no-hairlines-between box-appear">
                 <ul style="height: 100%;">
@@ -1008,7 +911,83 @@ function inputPax(meja, id, tipe, atasnama){
         var pax = $('#pax').val();
 
         if(pax){
-          cekPIN(meja, id, tipe, atasnama, pax);
+          paxorder = pax;
+          // cekPIN(meja, id, tipe, atasnama, pax);
+          inputNama()
+        }
+      }
+    }],
+    on: {
+      closed: function(dialog, e){
+        var pax = $('#pax').val();
+
+        if(pax == '' || pax == '0'){
+          app.views.main.router.back()
+          // listKategoriMeja();
+          // alert('salah');
+          // paxorder = pax;
+          // cekPIN(meja, id, tipe, atasnama, pax);
+          // inputNama()
+        }
+      }
+    }
+  }).open()
+}
+
+function editPax(meja, idpj){
+  app.dialog.create({
+    title: 'Edit Pax Amt.',
+    closeByBackdropClick: true,
+    content: `<div class="list no-hairlines no-hairlines-between box-appear">
+                <ul style="height: 100%;">
+                  <li class="item-content item-input" style="height: inherit;">
+                    <div class="item-inner" style="height: inherit;">
+                      <div class="item-input-wrap" style="height: inherit;">
+                        <input class="input-box" type="number" onClick="this.select();" name="pax" id="pax" style="text-align: center; height: inherit;" value="${paxorder}"/>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>`,
+    buttons: [
+    {
+      text: 'Confirm',
+      onClick: function(dialog, e){
+        var pax = $('#pax').val();
+
+        if(pax){
+          paxorder = pax;
+          editNama(meja, idpj);
+        }
+      }
+    }]
+  }).open()
+}
+
+function editNama(meja, idpj){
+  app.dialog.create({
+    title: 'Edit Cust. Name',
+    closeByBackdropClick: true,
+    content: `<div class="list no-hairlines no-hairlines-between box-appear">
+                <ul style="height: 100%;">
+                  <li class="item-content item-input" style="height: inherit;">
+                    <div class="item-inner" style="height: inherit;">
+                      <div class="item-input-wrap" style="height: inherit;">
+                      <input class="input-box" type="text" onClick="this.select();" name="atasnama" id="atasnama" style="text-align: center; height: inherit;" value="${namaorder}"/>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>`,
+    buttons: [
+    {
+      text: 'Confirm',
+      onClick: function(dialog, e){
+        var atasnama = $('#atasnama').val();
+
+        if(atasnama){
+          namaorder = atasnama;
+          lihatKeranjang(meja, idpj);
         }
       }
     }]
@@ -1027,8 +1006,12 @@ function simpanPesanan(nMeja, id, waitress, atasnama, pax){
     subtotal : sub,
     grantotal : sub,
     idpeg : idp,
-    waitress : waitress
+    waitress : waitress,
+    nama_cust : atasnama,
+    pax : pax
   }
+
+  console.log(temp);
 
   app.request({
     url: addr+"API/penjualan/"+gudang+"/",
@@ -1036,11 +1019,15 @@ function simpanPesanan(nMeja, id, waitress, atasnama, pax){
     data: JSON.stringify(temp),
     success: function(json){
       if(json){
-        app.dialog.confirm('Cetak Bill?', 'Konfirmasi', function(){
+        app.dialog.confirm('Print Bill?', 'Confirmation', function(){
+          // cetakBillWaiter(nMeja);
           cetakBillDapur(nMeja, id);
+          // app.views.main.router.navigate('/');
+        }, function(){
+          app.views.main.router.navigate('/');
         });
 
-        app.views.main.router.navigate('/home/')
+        // app.views.main.router.navigate('/home/');
       }
     },
     error: function(xhr, status){
@@ -1057,24 +1044,32 @@ function lihatPesanan(meja, pj){
     url: addr+"API/bill/"+meja+"/",
     method: "GET",
     success: function(json){
+      // console.log(json);
       var result = JSON.parse(json);
-      for(i = 0; i < result.length; i++){
-        // if(old != result[i].no_penjualan) data += '<li class="list-group-title" style="font-size: 1.2em; height: 65px; padding-top: 10px;">'+result[i].no_penjualan+'<a class="link icon-only" onclick="cetakBillPisah('+meja+','+result[i].id_pj+')" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">print</i></a><span style="float: right;"><a class="link icon-only" onclick="app.views.main.router.navigate({name: \'merge\',params: {idMeja : '+meja+', idPJ : '+result[i].id_pj+'}});" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">call_merge</i></a></span></li>'
-        if(old != result[i].no_penjualan) data += '<li class="list-group-title" style="font-size: 1.2em; height: 65px; padding-top: 10px;">'+result[i].no_penjualan+'<a class="link icon-only" onclick="cetakBillPisah('+meja+','+result[i].id_pj+')" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">print</i></a></li>'
-        jumlah += parseInt(result[i].harga_jual * result[i].qty_jual);
-        data += ` <li class="item-content ">
-                    <div class="item-inner">
-                      <div class="item-title" >`+result[i].nama_barang+`
-                        <div class="item-footer">`+result[i].qty_jual+` x `+result[i].harga_jual+`</div>
+
+      if(result.length){
+        console.log(result);
+        namaorder = result[0].nama_cust ? result[0].nama_cust : '-';
+        paxorder = result[0].pax ? result[0].pax : '0';
+  
+        for(i = 0; i < result.length; i++){
+          // if(old != result[i].no_penjualan) data += '<li class="list-group-title" style="font-size: 1.2em; height: 65px; padding-top: 10px;">'+result[i].no_penjualan+'<a class="link icon-only" onclick="cetakBillPisah('+meja+','+result[i].id_pj+')" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">print</i></a><span style="float: right;"><a class="link icon-only" onclick="app.views.main.router.navigate({name: \'merge\',params: {idMeja : '+meja+', idPJ : '+result[i].id_pj+'}});" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">call_merge</i></a></span></li>'
+          if(old != result[i].no_penjualan) data += '<li class="list-group-title" style="font-size: 1.2em; height: 65px; padding-top: 10px;">'+result[i].no_penjualan+'<a class="link icon-only" onclick="cetakBillPisah('+meja+','+result[i].id_pj+')" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">print</i></a></li>';
+          jumlah += parseInt(result[i].harga_jual * result[i].qty_jual);
+          data += ` <li class="item-content ">
+                      <div class="item-inner">
+                        <div class="item-title" >`+result[i].nama_barang+`
+                          <div class="item-footer">`+result[i].qty_jual+` x `+result[i].harga_jual+`</div>
+                        </div>
+                        <div class="item-after">`+parseInt(result[i].qty_jual * result[i].harga_jual).toLocaleString()+`
+                          <input type="checkbox" id="c-`+result[i].id_dtl_jual+`" class="to-split hidden" style="margin: 0 10px;" onchange="splitQty(this, `+result[i].id_dtl_jual+`, `+result[i].qty_jual+`)"/>
+                          <input type="hidden" id="item-`+result[i].id_dtl_jual+`" value="`+result[i].qty_jual+`"/>
+                          <!-- <a class="link icon-only" onClick="delItem(`+meja+`, `+pj+`, `+result[i].id_dtl_jual+`)" style="margin-left: 10px; transform: translateY(-3px);"><i class="icon f7-icons md-only">trash</i></a> -->
+                        </div>
                       </div>
-                      <div class="item-after">`+parseInt(result[i].qty_jual * result[i].harga_jual).toLocaleString()+`
-                        <input type="checkbox" id="c-`+result[i].id_dtl_jual+`" class="to-split hidden" style="margin: 0 10px;" onchange="splitQty(this, `+result[i].id_dtl_jual+`, `+result[i].qty_jual+`)"/>
-                        <input type="hidden" id="item-`+result[i].id_dtl_jual+`" value="`+result[i].qty_jual+`"/>
-                        <a class="link icon-only" onClick="delItem(`+meja+`, `+pj+`, `+result[i].id_dtl_jual+`)" style="margin-left: 10px; transform: translateY(-3px);"><i class="icon f7-icons md-only">trash</i></a>
-                      </div>
-                    </div>
-                  </li>`;
-        old = result[i].no_penjualan;
+                    </li>`;
+          old = result[i].no_penjualan;
+        }
       }
 
       $('#orders').html(data);
@@ -1110,16 +1105,22 @@ function cetakBillWaiter(meja){
       var list = '';
       var header = '{br}{center}{h}MediaPOS{/h}{br}Pre-bill{br}--------------------------------{br}';
       var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
+      var len = result.length;
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
+      // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
       var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
       var subtotal = 'Subtotal';
+      var ppn = 'PB1 10%';
+      var footer = '';
+      var charge = 'SVC';
+      var grand = 'Total';
 
       for(i = 0; i < result.length; i++){
         var ws = '';
         var price_satuan = parseInt(result[i].harga_jual).toLocaleString();
         var price_bulk = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString();
     
-        for(var j = 0; j < 24 - price_satuan.length - price_bulk.length; j++){
+        for(var j = 0; j < 27 - price_satuan.length - price_bulk.length; j++){
           ws += ' ';
         }
     
@@ -1132,8 +1133,23 @@ function cetakBillWaiter(meja){
         subtotal += ' ';
       } subtotal += jumlah.toLocaleString() + '{br}';
 
+      var pb1 = jumlah * 0.1;
+      for(var i = 0; i < 25 - pb1.toLocaleString().length; i++){
+        ppn += ' ';
+      } ppn += pb1.toLocaleString() + '{br}';
+
+      for(var i = 0; i < 27; i++){
+        charge += ' ';
+      } charge += '- {br}' ;
+
+      var gtot = jumlah + pb1;
+      for(var i = 0; i < 27 - gtot.toLocaleString().length; i++){
+        grand += ' ';
+      } grand += gtot.toLocaleString() + '{br}';
+
       list += '--------------------------------{br}{left}';
-      bill = header + subheader + list + subtotal;
+      footer = '{br}{center}DO NOT PAY';
+      bill = header + subheader + list + subtotal + ppn + charge + grand + footer;
 
       console.log(bill);
       connectToPrinter(bill);
@@ -1155,6 +1171,7 @@ function cetakBillPisah(meja, idpj){
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
       var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}--------------------------------{br}';
       var subtotal = 'Subtotal';
+      var footer = '';
 
       for(i = 0; i < result.length; i++){
         var ws = '';
@@ -1175,7 +1192,8 @@ function cetakBillPisah(meja, idpj){
       } subtotal += jumlah.toLocaleString() + '{br}';
 
       list += '--------------------------------{br}{left}';
-      bill = header + subheader + list + subtotal;
+      footer == '{br}{center}DO NOT PAY';
+      bill = header + subheader + list + subtotal + footer;
 
       console.log(bill);
       connectToPrinter(bill);
@@ -1189,11 +1207,15 @@ function cetakBillDapur(meja, id){
     method: "GET",
     success: function(json){
       var result = JSON.parse(json);
+      console.log(result);
+
       var bill = '';
       var list = '';
       var header = '{br}{center}{h}MediaPOS{/h}{br}Table Checker Receipt{br}--------------------------------{br}';
       var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
+      var len = result.length;
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
+      // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
       var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
 
       for(var i = 0; i < result.length; i++){
@@ -1383,7 +1405,7 @@ function dash(){
         plotShadow: false
     },
     title: {
-        text: '10 Besar Penjualan'
+        text: 'Top 10 Sales'
     },
     tooltip: {
       pointFormat: '{series.name}: <b>{point.y}</b>'
@@ -1400,7 +1422,7 @@ function dash(){
     },
     series: [{
         type: 'pie',
-        name: 'Jumlah'
+        name: 'Amount'
     }]
   })
 
@@ -1436,7 +1458,7 @@ function dash(){
       plotShadow: false
     },
     title: {
-      text: '10 Besar Waitress'
+      text: 'Top 10 Waitress'
     },
     tooltip: {
       pointFormat: '{series.name}: <b>{point.y}</b>'
@@ -1556,6 +1578,137 @@ function tampilReport(type, id){
 
       report.xAxis[0].setCategories(catArr);
       report.redraw();
+    }
+  })
+}
+
+function hitungTotal(){
+  diskon = totalbel * (discprs.Text / 100);
+  svc = ((totalbel - diskon) * (9.8 / 100));
+  subtotal = totalbel - diskon + svc;
+  ppn = subtotal * (10 / 100);
+  grandt = subtotal + ppn;
+}
+
+function cetakUlang(idpj, tipe){
+  var temp = {
+    id_pj : idpj,
+    tipe : tipe
+  };
+
+  app.request({
+    url: addr+"API/ulang/",
+    method: "POST",
+    data: JSON.stringify(temp),
+    success: function(json){
+      var result = JSON.parse(json);
+      var bill = '';
+      var list = '';
+      var header = '{br}{center}{h}MediaPOS{/h}{br}Table Checker Receipt{br}--------------------------------{br}';
+      var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
+      var time = result[0].stamp_date.split(' ')[1];
+      var len = result.length;
+      // var dt = new Date();
+      // var ts = dt.getHours()+ ':' +dt.getMinutes()+ ':' +dt.getSeconds();
+
+      var d=new Date();
+      var tgltime=d.getFullYear()+"/"+(d.getMonth()+1)+"/"+("0" + d.getDate()).slice(-2)+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+      // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
+      // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TIME    : '+time+'{br}TABLE   : '+result[0].meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TIME    : '+time+'{br}TABLE   : '+result[0].meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
+
+      for(var i = 0; i < result.length; i++){
+        var ws = '';
+        for(var j = 0; j < 29 - (result[i].nama_barang.length + result[i].qty_jual.length); j++){
+          ws += ' ';
+        }
+    
+        list += '{left}' + result[i].nama_barang + ws + 'x ' + result[i].qty_jual + (result[i].catatan ? '{br}   NOTE : ' +  result[i].catatan : '') + '{br}';
+      }
+
+      list += '--------------------------------{br}{left}';
+      list += '{br}{center}THIS IS REPRINTED RECEIPT{br}'+tgltime;
+      bill = header + subheader + list;
+
+      console.log(bill);
+      // connectToPrinter(bill);
+    }
+  })
+
+  // app.request({
+  //   url: addr+"API/ulang/",
+  //   method: "POST",
+  //   data: JSON.stringify(temp),
+  //   success: function(json){
+  //     var result = JSON.parse(json);
+  //     var bill = '';
+  //     var list = '';
+  //     var header = '{br}{center}{h}MediaPOS{/h}{br}{br}--------------------------------{br}';
+  //     var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
+  //     // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
+  //     var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
+  //     var subtotal = 'Subtotal';
+  //     var footer = '';
+
+  //     for(i = 0; i < result.length; i++){
+  //       var ws = '';
+  //       var price_satuan = parseInt(result[i].harga_jual).toLocaleString();
+  //       var price_bulk = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString();
+    
+  //       for(var j = 0; j < 24 - price_satuan.length - price_bulk.length; j++){
+  //         ws += ' ';
+  //       }
+    
+  //       list += '{left}'+result[i].nama_barang+'{br}  '+result[i].qty_jual+' x '+parseInt(result[i].harga_jual)+ws+(parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString()+'{br}';
+  //       jumlah += parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual);
+  //       // console.log(jumlah);
+  //     }
+
+  //     for(var i = 0; i < 24 - jumlah.toLocaleString().length; i++){
+  //       subtotal += ' ';
+  //     } subtotal += jumlah.toLocaleString() + '{br}';
+
+  //     list += '--------------------------------{br}{left}';
+  //     footer = '{br}{center}THIS IS REPRINTED RECEIPT';
+  //     bill = header + subheader + list + subtotal + footer;
+
+  //     console.log(bill);
+  //     // connectToPrinter(bill);
+  //   }
+  // })
+}
+
+function onHold(){
+  app.toast.create({
+    text: 'Transaction ongoing, please wait', 
+    closeButton: true, 
+    destroyOnClose: true, 
+    closeTimeout: 3000
+  }).open();
+}
+
+function listTx(){
+  var id = window.localStorage.getItem("id_peg");
+  var isinya  = "";
+  app.request({
+    url: addr + "API/today/" +id+ "/",
+    method: "GET",
+    success: function(json){
+      var result = JSON.parse(json);
+      // $("#tx_list").html(result);
+      for(var i = 0; i < result.length; i++){
+        isinya += '<li class="item-content">\
+                      <div class="item-inner">\
+                          <div class="item-title">Table '+result[i].NAMA+', Cust: '+(result[i].nama_cust ? result[i].nama_cust : '')+'</div>\
+                          <div class="item-after">\
+                            <a href="#" style="margin: 2px;" onclick="cetakUlang('+result[i].id_pj+');"><i class="icon material-icons md-only">print</i></a>\
+                          </div>\
+                      </div>\
+                  </li>';
+      }
+
+      $("#tx_list").html(isinya);
+      // console.log(result);
     }
   })
 }
@@ -1725,11 +1878,11 @@ function test(){
       nomormeja = -1;
       c1 = 0;
     }else if(nomormeja==0){
-      alert('Harap memilih meja dahulu!');
+      alert('Please choose available table first!');
       return;
     }
 
-    app.dialog.prompt('PIN:', 'Konfirmasi', 
+    app.dialog.prompt('PIN:', 'Confirmation', 
     function(nomor){
       if(nomor != '1234'){
         app.toast.create({text: 'PIN not recognized', closeButton: true, destroyOnClose: true, closeTimeout: 3000}).open();
@@ -1747,7 +1900,7 @@ function test(){
                transaction.executeSql(executeQuery, [nomorx,nomorx,tgl,st,'1',tgltime,nomormeja,'1','1',c1]
                 , function(tx, result) {
                  orderdtl(result.insertId);
-                 listMeja();
+                //  listMeja();
                 // listKategoriMeja();
 
                  alert(nomor);
@@ -1906,7 +2059,7 @@ function test(){
       })
   })
 
-  app.dialog.prompt('Nomor meja:', 'Konfirmasi', 
+  app.dialog.prompt('Nomor meja:', '', 
     function(nomor){
       if(arr.includes(parseInt(nomor))){
         app.toast.create({text: 'Selected table currently in use, please choose another', closeButton: true, destroyOnClose: true}).open();
@@ -1940,7 +2093,7 @@ function dtlMeja(){
       db.transaction(function(tx){
         tx.executeSql('SELECT a.id_barang, b.no_meja, c.nama_barang, qty_jual, ready FROM pj_dtl a JOIN pj b ON a.id_pj = b.id_pj JOIN m_barang c ON a.id_barang = c.id_barang WHERE b.no_meja = ? AND b.st = 1', [nomor], 
           function(tx, result){
-            var content = '<div class="list no-hairlines-between"><ul><li class="item-divider"><strong>Meja #' +result.rows.item(0).no_meja+'</strong></li>';
+            var content = '<div class="list no-hairlines-between"><ul><li class="item-divider"><strong>Table #' +result.rows.item(0).no_meja+'</strong></li>';
             for(var i = 0; i < result.rows.length; i++){
               var curr = parseInt(result.rows.item(i).qty_jual) - parseInt(result.rows.item(i).ready);
               if(curr > 0){
@@ -1977,7 +2130,7 @@ function testEmpty(){
   // toBeMerged = [];
   // splitItem = [];
   // listKategoriMeja();
-  listMeja();
+  // listMeja();
   // db.transaction(function(t){
   //   t.executeSql("DELETE FROM pj_dtl_tmp")
   // })
@@ -2161,7 +2314,7 @@ function payDone(){
               t.executeSql('UPDATE pj SET jenis_bayar = ?, ppn = ?, total_jual = ?, grantot_jual = ?, bayar_tunai = ?, kembali_tunai = ?, st = 0 WHERE no_meja = ? AND st = 1', [a.jenis_bayar, ppn, total, grantot, tunai, kembali, meja],
                 function(){
                   alert('success');
-                  listMeja();
+                  // listMeja();
                   // listKategoriMeja();
                   app.views.main.router.back();
 
@@ -2172,7 +2325,7 @@ function payDone(){
               db.transaction(function(t){
                 t.executeSql('UPDATE pj SET st = 0 WHERE no_meja = ? AND st = 1', [meja],
                   function(){
-                    listMeja();
+                    // listMeja();
                     // listKategoriMeja();
                   });
               })
@@ -2255,7 +2408,7 @@ function testClick(e){
     splitItem.splice(index, 1);
     $(e).removeClass('select-split');
   }else {
-    app.dialog.prompt('Jumlah split:', 'Konfirmasi', function(jumlah){
+    app.dialog.prompt('Split Amt:', 'Confirmation', function(jumlah){
       $(e).addClass('select-split');
       console.log(jumlah);
       if(parseInt(jumlah) > parseInt(t) || jumlah == '') {
@@ -2280,12 +2433,12 @@ function testClick(e){
     //     'jumlah' : jumlah
     //   }
     //   console.log(a);
-    // }, 'Konfirmasi', ['Ok', 'Cancel'], t);
+    // }, '', ['Ok', 'Cancel'], t);
   }
 }
 
 /*function splitBill(){
-  app.dialog.confirm('Split Bill?', 'Konfirmasi', function(){
+  app.dialog.confirm('Split Bill?', '', function(){
     split = 1;
     var arr = [];
     var nomorx=nomor();
@@ -2361,7 +2514,7 @@ function testSplit(a, jmlBarang, idBarang, newId, oldId){
 }
 
 // function mergeBill(){
-//   app.dialog.confirm('Merge Bill?', 'Konfirmasi', function(){
+//   app.dialog.confirm('Merge Bill?', '', function(){
 //     var first = toBeMerged.shift().slice(4);
 //     var arr = [];
 
