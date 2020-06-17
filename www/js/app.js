@@ -325,12 +325,19 @@ function listMeja(kat = 0){
           // content += '<button onclick="listKategoriMeja() class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffcc00; color: white; border-radius: 50%;"><p class="table-name" style="'+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+'">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></button>';
           // content += '<button onclick="onHold()" class="" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffcc00; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+(window.innerWidth > 480 ? "font-size: 2.4rem;" : "font-size: 1.2rem;")+'">'+result[i].NAMA+'</p></button>';
           content += '<div onclick="onHold()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffcc00; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+        } else if(result[i].ST == '3'){
+          // content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="onHold();"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></div></div>';
+          // content += '<button onclick="listKategoriMeja() class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffcc00; color: white; border-radius: 50%;"><p class="table-name" style="'+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+'">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></button>';
+          // content += '<button onclick="onHold()" class="" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffcc00; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+(window.innerWidth > 480 ? "font-size: 2.4rem;" : "font-size: 1.2rem;")+'">'+result[i].NAMA+'</p></button>';
+          content += '<div onclick="onPrepare()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
         } else if(result[i].ST == '0' || result[i].ST == '1') {
           // content += '<div id="meja'+result[i].KODE+'" class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="lihatmeja('+result[i].KODE+','+(result[i].ST == '1' ? result[i].id_pj : 0)+')"><div><img src="'+img+'" alt="img-meja-'+result[i].KODE+'" style="display: table; margin: 0 auto;"><p class="table-name">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></div></div>';
           // content += '<button onclick="lihatmeja('+result[i].KODE+', 0)" class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #f44336; color: white; border-radius: 50%;"><p class="table-name" style="'+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+'">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></button>';
           // content += '<button onclick="lihatmeja(\''+result[i].KODE+'\', '+result[i].id_pj+')" class="" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #f44336; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+(window.innerWidth > 480 ? "font-size: 2.4rem;" : "font-size: 1.2rem;")+'">'+result[i].NAMA+'</p></button>';
           content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', '+result[i].id_pj+')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #f44336; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
-        } else {
+        } /* else if(reservasi) {
+          content += '<div onclick="onReserved()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffebcd; color: saddlebrown; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+        } */ else {
           // content += '<button onclick="lihatmeja('+result[i].KODE+','+result[i].id_pj+')" class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #4caf50; color: white; border-radius: 50%;"><p class="table-name" style="'+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+'">'+(result[i].NAMA.match(/^\d/) ? "Table #"+result[i].NAMA : result[i].NAMA)+'</p></button>';
           // content += '<button onclick="lihatmeja(\''+result[i].KODE+'\', 0)" class="" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #4caf50; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+(window.innerWidth > 480 ? "font-size: 2.4rem;" : "font-size: 1.2rem;")+'">'+result[i].NAMA+'</p></button>';
           content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', 0)" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #4caf50; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
@@ -1112,8 +1119,11 @@ function cetakBillWaiter(meja){
       var subtotal = 'Subtotal';
       var ppn = 'PB1 10%';
       var footer = '';
-      var charge = 'SVC';
+      var charge = 'SVC 9.8%';
       var grand = 'Total';
+      var svc = 0;
+
+      console.log('kategori: ' +result[0].kat);
 
       for(i = 0; i < result.length; i++){
         var ws = '';
@@ -1133,26 +1143,34 @@ function cetakBillWaiter(meja){
         subtotal += ' ';
       } subtotal += jumlah.toLocaleString() + '{br}';
 
-      var pb1 = jumlah * 0.1;
+      if(result[0].kat != '5'){
+        svc = Math.round(jumlah * 0.098);
+        for(var i = 0; i < 24 - svc.toLocaleString().length; i++){
+          charge += ' ';
+        } charge += svc.toLocaleString() + '{br}';
+      }
+
+      var pb1 = Math.round((jumlah + svc) * 0.1);
       for(var i = 0; i < 25 - pb1.toLocaleString().length; i++){
         ppn += ' ';
       } ppn += pb1.toLocaleString() + '{br}';
 
-      for(var i = 0; i < 27; i++){
-        charge += ' ';
-      } charge += '- {br}' ;
-
-      var gtot = jumlah + pb1;
+      var gtot = jumlah + pb1 + svc;
       for(var i = 0; i < 27 - gtot.toLocaleString().length; i++){
         grand += ' ';
       } grand += gtot.toLocaleString() + '{br}';
 
       list += '--------------------------------{br}{left}';
       footer = '{br}{center}DO NOT PAY';
-      bill = header + subheader + list + subtotal + ppn + charge + grand + footer;
+
+      if(result[0].kat != 5){
+        bill = header + subheader + list + subtotal + charge + ppn + grand + footer;
+      } else {
+        bill = header + subheader + list + subtotal + ppn + grand + footer;
+      }
 
       console.log(bill);
-      connectToPrinter(bill);
+      // connectToPrinter(bill);
     }
   })
 }
@@ -1196,7 +1214,7 @@ function cetakBillPisah(meja, idpj){
       bill = header + subheader + list + subtotal + footer;
 
       console.log(bill);
-      connectToPrinter(bill);
+      // connectToPrinter(bill);
     }
   })
 }
@@ -1231,7 +1249,7 @@ function cetakBillDapur(meja, id){
       bill = header + subheader + list;
 
       console.log(bill);
-      connectToPrinter(bill);
+      // connectToPrinter(bill);
     }
   })
 }
@@ -1680,7 +1698,25 @@ function cetakUlang(idpj, tipe){
 
 function onHold(){
   app.toast.create({
+    text: 'Table reserved, please choose another table', 
+    closeButton: true, 
+    destroyOnClose: true, 
+    closeTimeout: 3000
+  }).open();
+}
+
+function onHold(){
+  app.toast.create({
     text: 'Transaction ongoing, please wait', 
+    closeButton: true, 
+    destroyOnClose: true, 
+    closeTimeout: 3000
+  }).open();
+}
+
+function onPrepare(){
+  app.toast.create({
+    text: 'Table need to be cleaned, preparing', 
     closeButton: true, 
     destroyOnClose: true, 
     closeTimeout: 3000
