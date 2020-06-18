@@ -36,7 +36,7 @@ var routes = [
       <div class="navbar" >
         <div class="navbar-inner sliding">
           <div class="left">
-            <a href="#" class="link back" onclick="clearCart({{$route.params.idMeja}});">
+            <a href="#" class="link " onclick="clearCart({{$route.params.idMeja}});">
               <i class="icon icon-back"></i>
               <span class="ios-only">Back</span>
             </a>

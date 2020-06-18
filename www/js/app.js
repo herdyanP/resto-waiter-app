@@ -109,6 +109,12 @@ document.addEventListener('deviceready', function() {
   app.init();
   document.addEventListener('backbutton', onBackPressed, false);
 
+  $('#login_form').on('submit', function(event){
+    event.preventDefault();
+    document.activeElement.blur()
+    $('#login_button').trigger('click');
+  })
+
   $(document).on('page:afterin', '.page[data-name="reorder"]', function(e){
     if($('.selected').length == 0){
       alert('Silahkan pilih meja terlebih dahulu.');
@@ -295,6 +301,7 @@ function listMeja(kat = 0){
       //               </div>\
       //             </div>';
 
+      // console.table(result);
       content += '<div onclick="listKategoriMeja()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 50%;"><p style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+(window.innerWidth > 480 ? "font-size: 8rem;" : "font-size: 6rem;")+'">&larr;</p></div>';
 
                   
@@ -791,10 +798,26 @@ function hapusItem(idtmp, meja, idpj){
 }
 
 function clearCart(meja){
+  // console.log(meja, idpj);
   app.request({
     url: addr+"API/cart/"+meja+"/",
-    method: "POST",
-    data: JSON.stringify({act: "clear"})
+    method: "GET",
+    success: function(json){
+      var result = JSON.parse(json);
+      console.log(result, result.length);
+      if(result.length > 0){
+        app.dialog.confirm("Items on the cart will be lost. Proceed?", "Warning", function(){
+          app.request({
+            url: addr+"API/cart/"+meja+"/",
+            method: "POST",
+            data: JSON.stringify({act: "clear"}),
+            success: function(){
+              app.views.main.router.back();
+            }
+          })
+        })
+      }
+    }
   })
 }
 
