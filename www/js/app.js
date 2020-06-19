@@ -328,7 +328,7 @@ function listMeja(kat = 0){
         }
 
         if(result[i].stbook == '1'){ // Meja telah direserve
-          content += '<div onclick="onReserved()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffebcd; color: black; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+          content += '<div onclick="onReserved(\''+result[i].jambook+'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffebcd; color: black; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
         } else if(result[i].ST == '1'){ // Meja telah diisi
           content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', '+result[i].id_pj+')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #f44336; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
         } else if(result[i].ST == '3'){ // Meja butuh dibersihkan
@@ -816,6 +816,8 @@ function clearCart(meja){
             }
           })
         })
+      } else {
+        app.views.main.router.back();
       }
     }
   })
@@ -1731,9 +1733,9 @@ function cetakUlang(idpj, tipe){
   // })
 }
 
-function onReserved(){
+function onReserved(jambook){
   app.toast.create({
-    text: 'Table reserved, please choose another table', 
+    text: 'Table reserved for ' +jambook+ ', please choose another table', 
     closeButton: true, 
     destroyOnClose: true, 
     closeTimeout: 3000
