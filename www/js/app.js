@@ -1064,7 +1064,7 @@ function simpanPesanan(nMeja, id, waitress, atasnama, pax){
         app.dialog.confirm('Print Bill?', 'Confirmation', function(){
           // cetakBillWaiter(nMeja);
           cetakBillDapur(nMeja, id);
-          // app.views.main.router.navigate('/');
+          app.views.main.router.navigate('/');
         }, function(){
           app.views.main.router.navigate('/');
         });
