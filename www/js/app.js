@@ -328,7 +328,7 @@ function listMeja(kat = 0){
         }
 
         if(result[i].stbook == '1'){ // Meja telah direserve
-          content += '<div onclick="onReserved(\''+result[i].jambook+'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffebcd; color: black; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+          content += '<div onclick="onReserved(\''+result[i].jambook+'\', \''+result[i].namabook+'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffebcd; color: black; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
         } else if(result[i].ST == '1'){ // Meja telah diisi
           content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', '+result[i].id_pj+')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #f44336; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
         } else if(result[i].ST == '3'){ // Meja butuh dibersihkan
@@ -1098,21 +1098,23 @@ function lihatPesanan(meja, pj){
   
         for(i = 0; i < result.length; i++){
           // if(old != result[i].no_penjualan) data += '<li class="list-group-title" style="font-size: 1.2em; height: 65px; padding-top: 10px;">'+result[i].no_penjualan+'<a class="link icon-only" onclick="cetakBillPisah('+meja+','+result[i].id_pj+')" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">print</i></a><span style="float: right;"><a class="link icon-only" onclick="app.views.main.router.navigate({name: \'merge\',params: {idMeja : '+meja+', idPJ : '+result[i].id_pj+'}});" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">call_merge</i></a></span></li>'
-          if(old != result[i].no_penjualan) data += '<li class="list-group-title" style="font-size: 1.2em; height: 65px; padding-top: 10px;">'+result[i].no_penjualan+'<a class="link icon-only" onclick="cetakBillPisah('+meja+','+result[i].id_pj+')" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">print</i></a></li>';
-          jumlah += parseInt(result[i].harga_jual * result[i].qty_jual);
-          data += ` <li class="item-content ">
-                      <div class="item-inner">
-                        <div class="item-title" >`+result[i].nama_barang+`
-                          <div class="item-footer">`+result[i].qty_jual+` x `+result[i].harga_jual+`</div>
+          if(result[i].nama_barang != null){
+            if(old != result[i].no_penjualan) data += '<li class="list-group-title" style="font-size: 1.2em; height: 65px; padding-top: 10px;">'+result[i].no_penjualan+'<a class="link icon-only" onclick="cetakBillPisah('+meja+','+result[i].id_pj+')" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">print</i></a></li>';
+            jumlah += parseInt(result[i].harga_jual * result[i].qty_jual);
+            data += ` <li class="item-content ">
+                        <div class="item-inner">
+                          <div class="item-title" >`+result[i].nama_barang+`
+                            <div class="item-footer">`+result[i].qty_jual+` x `+result[i].harga_jual+`</div>
+                          </div>
+                          <div class="item-after">`+parseInt(result[i].qty_jual * result[i].harga_jual).toLocaleString()+`
+                            <input type="checkbox" id="c-`+result[i].id_dtl_jual+`" class="to-split hidden" style="margin: 0 10px;" onchange="splitQty(this, `+result[i].id_dtl_jual+`, `+result[i].qty_jual+`)"/>
+                            <input type="hidden" id="item-`+result[i].id_dtl_jual+`" value="`+result[i].qty_jual+`"/>
+                            <!-- <a class="link icon-only" onClick="delItem(`+meja+`, `+pj+`, `+result[i].id_dtl_jual+`)" style="margin-left: 10px; transform: translateY(-3px);"><i class="icon f7-icons md-only">trash</i></a> -->
+                          </div>
                         </div>
-                        <div class="item-after">`+parseInt(result[i].qty_jual * result[i].harga_jual).toLocaleString()+`
-                          <input type="checkbox" id="c-`+result[i].id_dtl_jual+`" class="to-split hidden" style="margin: 0 10px;" onchange="splitQty(this, `+result[i].id_dtl_jual+`, `+result[i].qty_jual+`)"/>
-                          <input type="hidden" id="item-`+result[i].id_dtl_jual+`" value="`+result[i].qty_jual+`"/>
-                          <!-- <a class="link icon-only" onClick="delItem(`+meja+`, `+pj+`, `+result[i].id_dtl_jual+`)" style="margin-left: 10px; transform: translateY(-3px);"><i class="icon f7-icons md-only">trash</i></a> -->
-                        </div>
-                      </div>
-                    </li>`;
-          old = result[i].no_penjualan;
+                      </li>`;
+            old = result[i].no_penjualan;
+          }
         }
       }
 
@@ -1733,12 +1735,12 @@ function cetakUlang(idpj, tipe){
   // })
 }
 
-function onReserved(jambook){
+function onReserved(jambook, namabook){
   app.toast.create({
-    text: 'Table reserved for ' +jambook+ ', please choose another table', 
+    text: 'Table reserved for ' +jambook+ ' on behalf of Mr/Mrs ' +namabook+ ', please choose another table', 
     closeButton: true, 
     destroyOnClose: true, 
-    closeTimeout: 3000
+    closeTimeout: 5000
   }).open();
 }
 
