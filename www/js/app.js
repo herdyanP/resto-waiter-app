@@ -42,6 +42,7 @@ var currentWaitress = '';
 var refresh_meja = '';
 var paxorder = 0;
 var namaorder = '';
+var user = '';
 /*var pinBox = app.dialog.create({
     title: 'Employee PIN',
     closeByBackdropClick: false,
@@ -1209,7 +1210,7 @@ function cetakBillWaiter(meja){
       }
 
       console.log(bill);
-      // connectToPrinter(bill);
+      connectToPrinter(bill);
     }
   })
 }
@@ -1253,7 +1254,7 @@ function cetakBillPisah(meja, idpj){
       bill = header + subheader + list + subtotal + footer;
 
       console.log(bill);
-      // connectToPrinter(bill);
+      connectToPrinter(bill);
     }
   })
 }
@@ -1288,7 +1289,7 @@ function cetakBillDapur(meja, id){
       bill = header + subheader + list;
 
       console.log(bill);
-      // connectToPrinter(bill);
+      connectToPrinter(bill);
     }
   })
 }
@@ -1672,7 +1673,9 @@ function cetakUlang(idpj, tipe){
       var tgltime=d.getFullYear()+"/"+(d.getMonth()+1)+"/"+("0" + d.getDate()).slice(-2)+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
       // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TIME    : '+time+'{br}TABLE   : '+result[0].meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
-      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TIME    : '+time+'{br}TABLE   : '+result[0].meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
+      // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TIME    : '+time+'{br}TABLE   : '+result[0].meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
+
+      var subheader = '{left}DATE    : '+tgl+'{br}TIME    : '+time+'{br}TABLE   : '+result[0].meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
 
       for(var i = 0; i < result.length; i++){
         var ws = '';
@@ -1680,15 +1683,18 @@ function cetakUlang(idpj, tipe){
           ws += ' ';
         }
     
-        list += '{left}' + result[i].nama_barang + ws + 'x ' + result[i].qty_jual + (result[i].catatan ? '{br}   NOTE : ' +  result[i].catatan : '') + '{br}';
+        // list += '{left}' + result[i].nama_barang + ws + 'x ' + result[i].qty_jual + (result[i].catatan ? '{br}   NOTE : ' +  result[i].catatan : '') + '{br}';
+        list += '{left}' + result[i].nama_barang + ws + 'x ' + result[i].qty_jual + '{br}';
       }
 
       list += '--------------------------------{br}{left}';
-      list += '{br}{center}THIS IS REPRINTED RECEIPT{br}'+tgltime;
+      // list += '{br}{center}THIS IS REPRINTED RECEIPT{br}'+tgltime;
+
+      list += '{br}{center}THIS RECEIPT WAS REPRINTED{br}BY ' +user+ '{br}'+tgltime;
       bill = header + subheader + list;
 
       console.log(bill);
-      // connectToPrinter(bill);
+      connectToPrinter(bill);
     }
   })
 

@@ -13,7 +13,7 @@ var routes = [
       pageAfterIn: function (){
         // listMeja();
         listKategoriMeja();
-        var user = window.localStorage.getItem("pegawai");
+        user = window.localStorage.getItem("pegawai");
         $('#logged_user').html(user);
         // listReservasi();
       },
