@@ -43,6 +43,8 @@ var refresh_meja = '';
 var paxorder = 0;
 var namaorder = '';
 var user = '';
+var curTable = '';
+var fromRsv = 0;
 /*var pinBox = app.dialog.create({
     title: 'Employee PIN',
     closeByBackdropClick: false,
@@ -329,15 +331,21 @@ function listMeja(kat = 0){
         }
 
         if(result[i].stbook == '1'){ // Meja telah direserve
-          content += '<div onclick="onReserved(\''+result[i].jambook+'\', \''+result[i].namabook+'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffebcd; color: black; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+
+          if(result[i].ST == '1') { // Meja masih ada outstanding bill
+            content += '<div onclick="onReserved(\''+result[i].jambook+'\', \''+result[i].namabook+'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #8B0000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); font-size: 1.2rem;">Reserved</p></div>';
+          } else {
+            content += '<div onclick="onReserved(\''+result[i].jambook+'\', \''+result[i].namabook+'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffebcd; color: black; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+          }
+
         } else if(result[i].ST == '1'){ // Meja telah diisi
-          content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', '+result[i].id_pj+')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #f44336; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+          content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', '+result[i].id_pj+', \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', ' +result[i].curitem+ ', \'' +result[i].nama_cust+ '\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #8B0000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
         } else if(result[i].ST == '3'){ // Meja butuh dibersihkan
           content += '<div onclick="onPrepare()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
         } else if(result[i].hold > 0){ // Meja sedang melakukan order
-          content += '<div onclick="onHold()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffcc00; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+          content += '<div onclick="onHold()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #8B0000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
         } else { // Meja open
-          content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', 0)" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #4caf50; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+          content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', 0, \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', 0, \'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #008000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
         }
 
         // if(result[i].hold > 0){
@@ -373,17 +381,28 @@ function listMeja(kat = 0){
   })
 }
 
-function lihatmeja(meja, pj){
+function lihatmeja(meja, pj, nmeja, reservasi, curitem, namabook){
+  curTable = nmeja;
+  fromRsv = reservasi;
+  namaorder = namabook;
   // app.views.main.router.navigate({
   //   name: 'menu',
   //   params: {idMeja : meja, idPJ : pj}
   // });
-  if(pj > 0){
+  
+  // if(pj > 0){
+  if(curitem > 0){
     app.views.main.router.navigate({
       name: 'pesanan',
       params: {idMeja : meja, idPJ : pj}
     });
     // alert('1');
+  }  else if(reservasi > 0) {
+    app.views.main.router.navigate({
+      name: 'menu',
+      params: {idMeja : meja, idPJ : pj}
+    });
+    // alert('2');
   } else {
     app.views.main.router.navigate({
       name: 'menu',
@@ -694,7 +713,9 @@ function lihatKeranjang(meja, idpj){
       console.log(idpj);
 
       if(idpj == 0){
-        data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table #'+meja+' | '+namaorder+' / '+paxorder+' Pax<a class="link icon-only" onclick="editPax('+meja+', '+idpj+');" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">edit</i></a></li>';
+        data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table #'+meja+' | '+namaorder+' / '+paxorder+' Pax<a class="link icon-only" onclick="editPax('+meja+', '+idpj+', 0);" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">edit</i></a></li>';
+      } else if(fromRsv > 0) {
+        data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table #'+meja+' | '+namaorder+' / '+paxorder+' Pax<a class="link icon-only" onclick="editPax('+meja+', '+idpj+', 1);" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">edit</i></a></li>';
       } else {
         data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table #'+meja+' | '+namaorder+' / '+paxorder+' Pax</li>';
       }
@@ -979,7 +1000,7 @@ function inputPax(){
   }).open()
 }
 
-function editPax(meja, idpj){
+function editPax(meja, idpj, rsv){
   app.dialog.create({
     title: 'Edit Pax Amt.',
     closeByBackdropClick: true,
@@ -1000,9 +1021,12 @@ function editPax(meja, idpj){
       onClick: function(dialog, e){
         var pax = $('#pax').val();
 
-        if(pax){
+        if(pax && !rsv){
           paxorder = pax;
           editNama(meja, idpj);
+        } else {
+          paxorder = pax;
+          lihatKeranjang(meja, idpj);
         }
       }
     }]
@@ -1076,7 +1100,8 @@ function simpanPesanan(nMeja, id, waitress, atasnama, pax){
       }
     },
     error: function(xhr, status){
-      alert("simpanPesanan cannot be processed");
+      // alert("simpanPesanan cannot be processed");
+      alert("Network Error, order cannot be processed!");
     }
   })
 }
@@ -1150,12 +1175,12 @@ function cetakBillWaiter(meja){
       var result = JSON.parse(json);
       var bill = '';
       var list = '';
-      var header = '{br}{center}{h}MediaPOS{/h}{br}Pre-bill{br}--------------------------------{br}';
+      var header = '{br}{center}{h}MediaPOS{/h}{br}Bill{br}--------------------------------{br}';
       var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
       var len = result.length;
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
       // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
-      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
       var subtotal = 'Subtotal';
       var ppn = 'PB1 10%';
       var footer = '';
@@ -1224,10 +1249,10 @@ function cetakBillPisah(meja, idpj){
       var result = JSON.parse(json);
       var bill = '';
       var list = '';
-      var header = '{br}{center}{h}MediaPOS{/h}{br}Pre-bill{br}--------------------------------{br}';
+      var header = '{br}{center}{h}MediaPOS{/h}{br}Bill{br}--------------------------------{br}';
       var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
-      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}--------------------------------{br}';
       var subtotal = 'Subtotal';
       var footer = '';
 
@@ -1274,7 +1299,7 @@ function cetakBillDapur(meja, id){
       var len = result.length;
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
       // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
-      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
 
       for(var i = 0; i < result.length; i++){
         var ws = '';
@@ -1675,7 +1700,7 @@ function cetakUlang(idpj, tipe){
       // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TIME    : '+time+'{br}TABLE   : '+result[0].meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
       // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TIME    : '+time+'{br}TABLE   : '+result[0].meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
 
-      var subheader = '{left}DATE    : '+tgl+'{br}TIME    : '+time+'{br}TABLE   : '+result[0].meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
+      var subheader = '{left}DATE    : '+tgl+'{br}TIME    : '+time+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
 
       for(var i = 0; i < result.length; i++){
         var ws = '';

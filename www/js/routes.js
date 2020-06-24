@@ -4,6 +4,15 @@ var routes = [
     path: '/',
     url: './index.html',
     name: 'login',
+    on: {
+      pageAfterIn: function(){
+        $('#login_form').on('submit', function(event){
+          event.preventDefault();
+          document.activeElement.blur()
+          $('#login_button').trigger('click');
+        });
+      }
+    }
   },
   {
     path: '/home/',
@@ -155,7 +164,7 @@ var routes = [
               <span class="ios-only">Back</span>
             </a>
           </div>
-          <div class="title">Orders for table #{{$route.params.idMeja}}</div>
+          <div class="title" id="title_meja"></div>
           <div class="right">
             <!-- <a class="link icon-only" onclick="toSplit();" style="margin: 0 10px 0 0;"><i class="icon material-icons md-only">call_split</i></a> -->
             <a class="link icon-only" onclick="cetakUlang({{$route.params.idPJ}}, '');" style="margin: 0 10px 0 0;"><i class="icon material-icons md-only">print</i></a>
@@ -181,6 +190,7 @@ var routes = [
     on: {
         pageAfterIn: function test (e, page) {
           // do something after page gets into the view
+          $('#title_meja').html('Orders for table ' +curTable);
           clearTimeout(refresh_meja);
           lihatPesanan(page.route.params.idMeja, page.route.params.idPJ);
         },
