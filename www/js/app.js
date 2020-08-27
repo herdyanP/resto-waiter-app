@@ -576,7 +576,7 @@ function rowKategori(meja){
     success: function(json){
       var result = JSON.parse(json);
       for (i = 0; i < result.length; i++){
-        datanya += '<button onclick="tampil('+meja+','+result[i].id_sub+')" class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;"><p style="' +(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+ '">' +result[i].nama_kat+ '</p></button>';
+        datanya += '<button onclick="tampil('+meja+','+result[i].id_sub+', 0)" class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;"><p style="' +(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+ '">' +result[i].nama_kat+ '</p></button>';
       }
 
       datanya += '<button class="no-ripple" style="visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;"><p style="'+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+'">NIL</p></button>';
@@ -604,7 +604,7 @@ function listKategori(meja){
   })
 }
 
-function tampil(meja, kat){
+function tampil(meja, kat, start){
   var id_gudang = window.localStorage.getItem('gudang');
   var tb_cat = 
     `<div style="text-align: center;" onclick="rowKategori(' `+meja+` ')">
@@ -615,20 +615,36 @@ function tampil(meja, kat){
   $('#toolbar_cat').html(tb_cat);
   app.toolbar.show("#toolbar_menu");
   app.request({
-    url: addr+"API/barang/"+id_gudang+"/"+kat+"/",
+    url: addr+"API/barang/"+id_gudang+"/"+kat+"/"+start+"/",
     method: "GET",
     success: function(json){
       if(json){
         var result = JSON.parse(json);
         var datanya = '';
         var len = (result.length < 23 ? result.length : 23);
-        datanya += '<button onclick="rowKategori(' +meja+ ')" class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;"><p style="' +(window.innerWidth > 480 ? "font-size: 4em;" : "font-size: 3em;")+ '">&larr;</p></button>';
+        var prevBtn = 
+          `<div style="text-align: center;" onclick="` +(start == 0 ? `alert('First Page Reached!')` : `tampil(`+meja+`, `+kat+`, `+(start-12)+`)`)+ `">
+            <i class="icon material-icons md-only">chevron_left</i>
+            <span class="tabbar-label">Prev</span>
+          </div>`;
 
+        var nextBtn = 
+          `<div style="text-align: center;" onclick="` +(result.length < 12 ? `alert('Last Page Reached!')` : `tampil(`+meja+`, `+kat+`, `+(start+12)+`)`)+ `">
+            <i class="icon material-icons md-only">chevron_right</i>
+            <span class="tabbar-label">Next</span>
+          </div>`;
+        
+        // datanya += '<button onclick="rowKategori(' +meja+ ')" class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;"><p style="' +(window.innerWidth > 480 ? "font-size: 4em;" : "font-size: 3em;")+ '">&larr;</p></button>';
         for (i = 0; i < result.length; i++){
           datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang.replace(/(')/g, '\\$1')+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
         }
 
-        datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
+        if(result.length % 3 > 0){
+          datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
+        }
+
+        $('#toolbar_prev').html(prevBtn);
+        $('#toolbar_next').html(nextBtn);
         $('#menuku').html(datanya);
       }
     }
