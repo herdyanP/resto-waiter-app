@@ -1,84 +1,84 @@
 <div class="page" data-name="home">
-      <div class="navbar" style="height: 50px;position: fixed;/*top: 200;*/width: 100%;">
-        <div class="navbar-inner">
-          <div class="left">
-            <a href="#" class="link icon-only panel-open" data-panel="left">
-              <i class="f7-icons">menu</i>
-            </a>
-          </div>
-          <div class="title sliding">MediaPOS</div>
-          <div class="right">
-            <a href="#" class="link icon-only panel-open" data-panel="left">
-              <div id="logged_user"></div>
-              <!-- <i class="f7-icons">menu</i> -->
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="toolbar tabbar tabbar-labels toolbar-bottom-md">
-       <div class="toolbar-inner">
-        <a href="#tab-1" class="tab-link" onclick="dash()">
-          <i class="icon f7-icons ios-only">home</i>
-          <i class="icon icon-fill f7-icons ios-only">home_fill</i>
-          <i class="icon material-icons md-only">pie_chart</i>
-          <span class="tabbar-label">Dashboard</span>
+  <div class="navbar" style="height: 50px;position: fixed;/*top: 200;*/width: 100%;">
+    <div class="navbar-inner">
+      <div class="left">
+        <a href="#" class="link icon-only panel-open" data-panel="left">
+          <i class="f7-icons">menu</i>
         </a>
-        <a href="#tab-2" class="tab-link tab-link-active">
-          <i class="icon f7-icons ios-only">restaurant</i>
-          <i class="icon icon-fill f7-icons ios-only">list_fill</i>
-          <i class="icon material-icons md-only">restaurant</i>
-          <span class="tabbar-label">Order</span>
+      </div>
+      <div class="title sliding">MediaPOS</div>
+      <div class="right">
+        <a href="#" class="link icon-only panel-open" data-panel="left">
+          <div id="logged_user"></div>
+          <!-- <i class="f7-icons">menu</i> -->
         </a>
-        <!-- <a href="#tab-3" class="tab-link" onclick="listReservasi();">
-          <i class="icon f7-icons ios-only">clock</i>
-          <i class="icon icon-fill f7-icons ios-only">list_fill</i>
-          <i class="icon material-icons md-only">access_time</i>
-          <span class="tabbar-label">Reservations</span>
-        </a> -->
-       </div>
-     </div>
-     <div class="tabs">
-      <div id="tab-1" class="page-content tab">
-        <div id="container1" class="block">Its a me mario</div>
-        <div id="container2" class="block">Its a me luigi</div>
       </div>
-      <div id="tab-2" class="page-content tab tab-active hide-toolbar-on-scroll" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden;">
-        <div class="block">
-          <div class="row" id="mejaaktif" style=" overflow:scroll; max-height: calc( 90vh - 54px ); justify-content: normal;"></div>
-        </div>
+    </div>
+  </div>
+  
+  <div class="toolbar tabbar tabbar-labels toolbar-bottom-md">
+    <div class="toolbar-inner">
+      <a href="#tab-1" class="tab-link" onclick="dash()">
+        <i class="icon f7-icons ios-only">home</i>
+        <i class="icon icon-fill f7-icons ios-only">home_fill</i>
+        <i class="icon material-icons md-only">pie_chart</i>
+        <span class="tabbar-label">Dashboard</span>
+      </a>
+      <a href="#tab-2" class="tab-link tab-link-active">
+        <i class="icon f7-icons ios-only">restaurant</i>
+        <i class="icon icon-fill f7-icons ios-only">list_fill</i>
+        <i class="icon material-icons md-only">restaurant</i>
+        <span class="tabbar-label">Order</span>
+      </a>
+      <!-- <a href="#tab-3" class="tab-link" onclick="listReservasi();">
+        <i class="icon f7-icons ios-only">clock</i>
+        <i class="icon icon-fill f7-icons ios-only">list_fill</i>
+        <i class="icon material-icons md-only">access_time</i>
+        <span class="tabbar-label">Reservations</span>
+      </a> -->
+    </div>
+  </div>
+  <div class="tabs">
+    <div id="tab-1" class="page-content tab">
+      <div id="container1" class="block">Its a me mario</div>
+      <div id="container2" class="block">Its a me luigi</div>
+    </div>
+    <div id="tab-2" class="page-content tab tab-active hide-toolbar-on-scroll" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden;">
+      <div class="block">
+        <div class="row" id="mejaaktif" style=" overflow:scroll; max-height: calc( 90vh - 54px ); justify-content: normal;"></div>
       </div>
-      <div id="tab-3" class="page-content tab" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden;">
-        <div class="block">
-          <form id="barang_form" class="list no-hairlines no-hairlines-between">
-            <ul>
-              <li class="item-content item-input ">
-                <div class="item-inner">
-                  <div class="item-title item-label" style="color: unset;">Tanggal</div>
-                  <div class="item-input-wrap">
-                    <input type="date" id="tgl_reservasi" name="tgl_reservasi">
-                  </div>
+    </div>
+    <div id="tab-3" class="page-content tab" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden;">
+      <div class="block">
+        <form id="barang_form" class="list no-hairlines no-hairlines-between">
+          <ul>
+            <li class="item-content item-input ">
+              <div class="item-inner">
+                <div class="item-title item-label" style="color: unset;">Tanggal</div>
+                <div class="item-input-wrap">
+                  <input type="date" id="tgl_reservasi" name="tgl_reservasi">
                 </div>
-              </li>
-              <!-- <li class="item-content item-input ">
-                <div class="item-inner">
-                  <div class="item-title item-label" style="color: unset;">Harga per Satuan</div>
-                  <div class="item-input-wrap">
-                    <input type="number" name="harga" id="harga_addItem">
-                  </div>
+              </div>
+            </li>
+            <!-- <li class="item-content item-input ">
+              <div class="item-inner">
+                <div class="item-title item-label" style="color: unset;">Harga per Satuan</div>
+                <div class="item-input-wrap">
+                  <input type="number" name="harga" id="harga_addItem">
                 </div>
-              </li> -->
-              <!-- <li class="item-content">
-                <div class="item-inner">
-                  <div class="item-title" style="width: 100%;">
-                    <a class="button button-outline" id="">Tambah</a>
-                  </div>
+              </div>
+            </li> -->
+            <!-- <li class="item-content">
+              <div class="item-inner">
+                <div class="item-title" style="width: 100%;">
+                  <a class="button button-outline" id="">Tambah</a>
                 </div>
-              </li> -->
-            </ul>
-          </form> 
-          <div class="row" id="reservemeja" style=" overflow:scroll; max-height: calc( 90vh - 54px ); justify-content: normal;"></div>
-        </div>
+              </div>
+            </li> -->
+          </ul>
+        </form> 
+        <div class="row" id="reservemeja" style=" overflow:scroll; max-height: calc( 90vh - 54px ); justify-content: normal;"></div>
       </div>
-   </div>
- </div>
+    </div>
+  </div>
+</div>

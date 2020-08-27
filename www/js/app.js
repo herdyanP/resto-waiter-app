@@ -27,6 +27,11 @@ var app = new Framework7({
 // JS SCRIPT SEMENTARA DISINI DULU YAKKK...
 // NYOBA TEMPLATING
 
+var addr = "http://dev.cloudmnm.com/resto/";
+// var addr = "http://192.168.3.16/resto/";
+// var addr = "http://192.168.238.10/resto/";
+// var addr = "http://192.168.238.10/resto_trial/";
+
 var db;
 var nomormeja = 0;
 var st = 0;
@@ -35,8 +40,6 @@ var split = 0;
 var splitItem = [];
 var toBeMerged = [];
 var mergeItem = [];
-var addr = "http://dev.cloudmnm.com/resto/";
-// var addr = "http://192.168.3.16/resto/";
 var currMeja = 0;
 var currentWaitress = '';
 var refresh_meja = '';
@@ -133,15 +136,16 @@ document.addEventListener('deviceready', function() {
   })
 }); 
 
-function onBackPressed(){
-  var mv = app.views.main;
-  if(mv.router.currentPageEl.f7Page.name == 'home'){
-    app.dialog.confirm('Close app?', 'Confirmation', function(){navigator.app.exitApp();}, function(){return;})
-  }else{
-    testEmpty();
-    mv.router.back();
-    return;
-  }
+function onBackPressed(e){
+  e.preventDefault();
+  // var mv = app.views.main;
+  // if(mv.router.currentPageEl.f7Page.name == 'home'){
+  //   app.dialog.confirm('Close app?', 'Confirmation', function(){navigator.app.exitApp();}, function(){return;})
+  // }else{
+  //   testEmpty();
+  //   mv.router.back();
+  //   return;
+  // }
 }
 
 function checkDisplay(){
@@ -195,7 +199,7 @@ function newLogin(){
 
         app.views.main.router.navigate('/home/');
       } else {
-        app.toast.create({text: 'PIN Not Found', closeButton: true, destroyOnClose: true}).open();
+        app.toast.create({text: 'PIN Not Found', closeButton: true, destroyOnClose: true, closeTimeout: 5 * 1000}).open();
       }
     }
   })
@@ -343,9 +347,14 @@ function listMeja(kat = 0){
         } else if(result[i].ST == '3'){ // Meja butuh dibersihkan
           content += '<div onclick="onPrepare()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
         } else if(result[i].hold > 0){ // Meja sedang melakukan order
-          content += '<div onclick="onHold()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #8B0000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+          // content += '<div onclick="onHold(\'' +result[i].user_hold+ '\', \''+result[i].KODE+'\', '+result[i].id_pj+', \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', ' +result[i].curitem+ ', \'' +result[i].nama_cust+ '\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+          content += '<div onclick="onHold(\'' +result[i].user_hold+ '\', \''+result[i].KODE+'\', '+result[i].id_pj+', \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', ' +result[i].curitem+ ', \'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
         } else { // Meja open
-          content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', 0, \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', 0, \'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #008000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+          if(result[i].aktif == '0'){
+            content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', 0, \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', 0, \'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #008000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+          } else {
+            content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', 0, \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', 0, \'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+          }
         }
 
         // if(result[i].hold > 0){
@@ -376,12 +385,14 @@ function listMeja(kat = 0){
 
       refresh_meja = setTimeout(function(){
         listMeja(kat);
-      }, 10 * 1000);
+      }, 3 * 1000);
     }
   })
 }
 
 function lihatmeja(meja, pj, nmeja, reservasi, curitem, namabook){
+  var idpeg = window.localStorage.getItem("id_peg");
+
   curTable = nmeja;
   fromRsv = reservasi;
   namaorder = namabook;
@@ -391,25 +402,62 @@ function lihatmeja(meja, pj, nmeja, reservasi, curitem, namabook){
   // });
   
   // if(pj > 0){
-  if(curitem > 0){
-    app.views.main.router.navigate({
-      name: 'pesanan',
-      params: {idMeja : meja, idPJ : pj}
-    });
-    // alert('1');
-  }  else if(reservasi > 0) {
-    app.views.main.router.navigate({
-      name: 'menu',
-      params: {idMeja : meja, idPJ : pj}
-    });
-    // alert('2');
-  } else {
-    app.views.main.router.navigate({
-      name: 'menu',
-      params: {idMeja : meja, idPJ : 0}
-    });
-    // alert('0');
-  }
+
+  // logging di meja_tmp
+  app.request({
+    url: addr+ "/API/waitress/" +meja+ "/get/",
+    method: "POST",
+    data: JSON.stringify({id_meja: meja, id_user: idpeg}),
+    success: function(res){
+      var result = JSON.parse(res);
+
+      if(result.status == 1){
+        app.request({
+          url: addr+ "API/waitress/" +meja+ "/add/",
+          method: "POST",
+          data: JSON.stringify({id_meja: meja, id_user: idpeg}),
+          success: function(result){
+            console.log('setWaitress', result);
+          }
+        })
+
+        if(curitem > 0 && pj != '0'){ // jika sudah pernah pesan dan bukan customer baru
+          app.views.main.router.navigate({
+            name: 'pesanan',
+            params: {idMeja : meja, idPJ : pj}
+          });
+        }  else if(reservasi > 0) { // jika customer dari reservasi
+          app.views.main.router.navigate({
+            name: 'menu',
+            params: {idMeja : meja, idPJ : pj}
+          });
+        } else {
+          app.views.main.router.navigate({
+            name: 'menu',
+            params: {idMeja : meja, idPJ : 0}
+          });
+        }
+
+      } else {
+        // app.request({
+        //   url: addr+ "API/waitress/" +meja+ "/delete/",
+        //   method: "POST",
+        //   data: JSON.stringify({id_user: idpeg, id_meja: meja}),
+        //   success: function(result){
+        //     console.log("back del", result);
+        //   }
+        // })
+
+        app.toast.create({
+          text: 'Order for this table is being taken by ' +result.waitress+ '.', 
+          closeButton: true, 
+          destroyOnClose: true, 
+          closeTimeout: 2000
+        }).open();
+        // app.views.main.router.navigate('/');
+      }
+    }
+  })
 }
 
 function listReservasi(){
@@ -519,6 +567,23 @@ function checkIn(idbook){
   })
 }
 
+function rowKategori(meja){
+  var datanya = "";
+  app.request({
+    url: addr+ "API/kategori/",
+    method: "GET",
+    success: function(json){
+      var result = JSON.parse(json);
+      for (i = 0; i < result.length; i++){
+        datanya += '<button onclick="tampil('+meja+','+result[i].id_sub+')" class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;"><p style="' +(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+ '">' +result[i].nama_kat+ '</p></button>';
+      }
+
+      datanya += '<button class="no-ripple" style="visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;"><p style="'+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+'">NIL</p></button>';
+      $('#menuku').html(datanya);
+    }
+  })
+}
+
 function listKategori(meja){
   var data = "";
   app.request({
@@ -550,13 +615,15 @@ function tampil(meja, kat){
       if(json){
         var result = JSON.parse(json);
         var datanya = '';
-        var len = (result.length < 24 ? result.length : 24);
+        var len = (result.length < 23 ? result.length : 23);
+        datanya += '<button onclick="rowKategori(' +meja+ ')" class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;"><p style="' +(window.innerWidth > 480 ? "font-size: 4em;" : "font-size: 3em;")+ '">&larr;</p></button>';
 
-        for (i = 0; i < len; i++){
+        // for (i = 0; i < len; i++){
+        for (i = 0; i < result.length; i++){
           // datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
           // datanya+="<button onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
           // datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
-          datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+          datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang.replace(/(')/g, '\\$1')+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
         }
 
         datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
@@ -586,7 +653,7 @@ function cariItem(e, q, meja){
 
         for (i = 0; i < len; i++){
           // datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
-          datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+          datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang.replace(/(')/g, "\\$1")+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
         }
         datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
         $('#menuku').html(datanya);
@@ -616,7 +683,7 @@ function editQty(meja, id, amt, harga, nama, idpj){
       onClick: function(dialog, e){
         var amt_to_add = $('#editAmt').val();
         if(amt_to_add > 0){
-          edit(meja, id, amt_to_add, harga, nama, idpj);
+          edit(meja, id, amt_to_add, harga, '', idpj);
         }
       }
     }]
@@ -624,29 +691,55 @@ function editQty(meja, id, amt, harga, nama, idpj){
 }
 
 function addQty(meja, id, amt, harga, nama, idpj){
-  app.dialog.create({
-    title: 'Amt of '+nama+' to add:',
-    closeByBackdropClick: true,
-    content: `<div class="list no-hairlines no-hairlines-between box-appear">
-                <ul style="height: 100%;">
-                  <li class="item-content item-input" style="height: inherit;">
-                    <div class="item-inner" style="height: inherit;">
-                      <div class="item-input-wrap" style="height: inherit;">
-                        <input class="input-box" type="number" onClick="this.select();" name="addAmt" id="addAmt" value="`+amt+`" style="text-align: center; height: inherit;" />
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </div>`,
-    buttons: [
-    {
-      text: 'Confirm',
-      onClick: function(dialog, e){
-        var amt_to_add = $('#addAmt').val();
-        simpan(meja, id, amt_to_add, harga, nama, idpj)
-      }
-    }]
-  }).open();
+  var idpeg = window.localStorage.getItem("id_peg");
+  // app.request({
+  //   url: addr+ 'API/waitress/' +meja+ '/get/',
+  //   method: "POST",
+  //   data: JSON.stringify({id_user: idpeg, id_meja: meja}),
+  //   success: function(res){
+  //     var result = JSON.parse(res);
+  //     if(result.status == 1){
+
+        // 26 Aug 2020
+        app.dialog.create({
+          title: 'Amt of '+nama.replace(/\'/g, '\'')+' to add:',
+          closeByBackdropClick: true,
+          content: `<div class="list no-hairlines no-hairlines-between box-appear">
+                      <ul style="height: 100%;">
+                        <li class="item-content item-input" style="height: inherit;">
+                          <div class="item-inner" style="height: inherit;">
+                            <div class="item-input-wrap" style="height: inherit;">
+                              <input class="input-box" type="number" onClick="this.select();" name="addAmt" id="addAmt" value="`+amt+`" style="text-align: center; height: inherit;" />
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>`,
+          buttons: [
+          {
+            text: 'Confirm',
+            onClick: function(dialog, e){
+              var amt_to_add = $('#addAmt').val();
+              simpan(meja, id, amt_to_add, harga, '', idpj)
+            }
+          }]
+        }).open();
+        // 26 Aug 2020
+
+  //     } else {
+  //       app.request({
+  //         url: addr+ "API/waitress/" +meja+ "/delete/",
+  //         method: "POST",
+  //         data: JSON.stringify({id_user: idpeg, id_meja: meja}),
+  //         success: function(result){
+  //           console.log("back del", result);
+  //         }
+  //       })
+  //       app.views.main.router.navigate('/');
+  //     }
+  //   }
+  // })
+
 }
 
 function edit(meja, id, qty, harga, nama, idpj){
@@ -699,6 +792,49 @@ function simpan(meja, id, qty, harga, nama, idpj){
       }).open();
     }
   })
+
+
+  /* app.request({
+    url: addr+ "API/cek/" +meja+ "/" +idp+ "/",
+    method: "GET",
+    success: function(result){
+      var json = JSON.parse(json)
+      // if(result[0].cek == '0'){
+        
+        var temp = {
+          id_barang : id,
+          harga : harga,
+          qty : qty,
+          user_id : idp,
+          act : "add"
+        }
+      
+        app.request({
+          url: addr+"API/cart/"+meja+"/",
+          method: "POST",
+          data: JSON.stringify(temp),
+          success: function(){
+            lihatKeranjang(meja, idpj);
+            app.toast.create({
+              text: 'Added to cart', 
+              closeButton: true, 
+              destroyOnClose: true, 
+              closeTimeout: 1000
+            }).open();
+          }
+        })
+      // } else {
+      //   app.toast.create({
+      //     text: 'Other Waitress has already inputted orders, returning to table selection', 
+      //     closeButton: true, 
+      //     destroyOnClose: true, 
+      //     closeTimeout: 3000
+      //   }).open();
+      //   app.views.main.router.navigate('/home/');
+      // }
+    }
+  }) */
+
 }
 
 function lihatKeranjang(meja, idpj){
@@ -713,11 +849,11 @@ function lihatKeranjang(meja, idpj){
       console.log(idpj);
 
       if(idpj == 0){
-        data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table #'+meja+' | '+namaorder+' / '+paxorder+' Pax<a class="link icon-only" onclick="editPax('+meja+', '+idpj+', 0);" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">edit</i></a></li>';
+        data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table '+curTable+' | '+namaorder+' / '+paxorder+' Pax<a class="link icon-only" onclick="editPax('+meja+', '+idpj+', 0);" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">edit</i></a></li>';
       } else if(fromRsv > 0) {
-        data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table #'+meja+' | '+namaorder+' / '+paxorder+' Pax<a class="link icon-only" onclick="editPax('+meja+', '+idpj+', 1);" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">edit</i></a></li>';
+        data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table '+curTable+' | '+namaorder+' / '+paxorder+' Pax<a class="link icon-only" onclick="editPax('+meja+', '+idpj+', 1);" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">edit</i></a></li>';
       } else {
-        data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table #'+meja+' | '+namaorder+' / '+paxorder+' Pax</li>';
+        data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table '+curTable+' | '+namaorder+' / '+paxorder+' Pax</li>';
       }
 
 
@@ -730,7 +866,7 @@ function lihatKeranjang(meja, idpj){
                       </div>
                       <div class="item-after">
                         <!-- <a href="#" onclick="addQty(`+meja+`, `+result[i].id_barang+`, 1, `+result[i].harga_tmp+`, '`+result[i].nama_barang+`')" style="margin: 0px 5px;"><i class="icon f7-icons">add</i></a> -->
-                        <a href="#" onclick="editQty(`+meja+`, `+result[i].id_barang+`, 1, `+result[i].harga_tmp+`, '`+result[i].nama_barang+`', '`+idpj+`')" style="margin: 0px 5px;"><i class="icon f7-icons">add</i></a>
+                        <a href="#" onclick="editQty(`+meja+`, `+result[i].id_barang+`, 1, `+result[i].harga_tmp+`, '`+result[i].nama_barang.replace(/(')/g, '\\$1')+`', '`+idpj+`')" style="margin: 0px 5px;"><i class="icon f7-icons">add</i></a>
                         <a href="#" onclick="addCatatan(`+result[i].id_tmp+`,`+meja+`, '`+idpj+`')" style="margin: 0px 5px;"><i class="icon material-icons md-only">edit</i></a>
                         <a href="#" onclick="hapusItem(`+result[i].id_tmp+`,`+meja+`, '`+idpj+`')" style="margin: 0px 5px;"><i class="icon material-icons md-only">remove_shopping_cart</i></a>
                       </div>
@@ -819,30 +955,54 @@ function hapusItem(idtmp, meja, idpj){
   })
 }
 
-function clearCart(meja){
-  // console.log(meja, idpj);
+function clearCart2(idmeja, idpj){
   app.request({
-    url: addr+"API/cart/"+meja+"/",
-    method: "GET",
-    success: function(json){
-      var result = JSON.parse(json);
-      console.log(result, result.length);
-      if(result.length > 0){
-        app.dialog.confirm("Items on the cart will be lost. Proceed?", "Warning", function(){
-          app.request({
-            url: addr+"API/cart/"+meja+"/",
-            method: "POST",
-            data: JSON.stringify({act: "clear"}),
-            success: function(){
-              app.views.main.router.back();
-            }
-          })
-        })
-      } else {
-        app.views.main.router.back();
-      }
+    url: addr+"API/cart/"+idmeja+"/",
+    method: "POST",
+    data: JSON.stringify({act: "clear"}),
+    success: function(){
+      alert('sukses hapus');
+      lihatKeranjang(idmeja, idpj);
     }
   })
+}
+
+function clearCart(meja){ // tidak dipakai per 26 Juni 2020
+  // console.log(meja, idpj);
+  var idpeg = window.localStorage.getItem("id_peg");
+
+  app.request({
+    url: addr+ "API/waitress/" +meja+ "/delete/",
+    method: "POST",
+    data: JSON.stringify({id_user: idpeg, id_meja: meja}),
+    success: function(result){
+      console.log("back del", result);
+    }
+  })
+  app.views.main.router.back();
+
+  // app.request({
+  //   url: addr+"API/cart/"+meja+"/",
+  //   method: "GET",
+  //   success: function(json){
+  //     var result = JSON.parse(json);
+  //     console.log(result, result.length);
+  //     if(result.length > 0){
+  //       app.dialog.confirm("Items on the cart will be lost. Proceed?", "Warning", function(){
+  //         app.request({
+  //           url: addr+"API/cart/"+meja+"/",
+  //           method: "POST",
+  //           data: JSON.stringify({act: "clear"}),
+  //           success: function(){
+  //             app.views.main.router.back();
+  //           }
+  //         })
+  //       })
+  //     } else {
+  //       app.views.main.router.back();
+  //     }
+  //   }
+  // })
 }
 
 function cekPIN(meja, id, tipe, atasnama, pax){
@@ -910,10 +1070,10 @@ function cekPIN(meja, id, tipe, atasnama, pax){
 }
 
 // function inputNama(meja, id, tipe){
-function inputNama(){
+function inputNama(idmeja){
   app.dialog.create({
     title: 'Customer Name',
-    closeByBackdropClick: true,
+    closeByBackdropClick: false,
     content: `<div class="list no-hairlines no-hairlines-between box-appearm">
                 <ul style="height: 100%;">
                   <li class="item-content item-input" style="height: inherit;">
@@ -927,6 +1087,19 @@ function inputNama(){
               </div>`,
     buttons: [
     {
+      text: 'Cancel',
+      onClick: function(dialog, e){
+        app.request({
+          url: addr+ "API/waitress/" +idmeja+ "/delete/",
+          method: "POST",
+          data: JSON.stringify({id_user: idpeg, id_meja: idmeja}),
+          success: function(result){
+            console.log('delete', result);
+          }
+        })
+        app.views.main.router.back();
+      }
+    },{
       text: 'Confirm',
       onClick: function(dialog, e){
         var atasnama = $('#atasnama').val();
@@ -936,9 +1109,17 @@ function inputNama(){
           // cekPIN(meja, id, tipe, atasnama);
         }
       }
-    }],
+    }]/* ,
     on: {
       closed: function(dialog, e){
+        app.request({
+          url: addr+ "API/waitress/" +idmeja+ "/delete/",
+          method: "POST",
+          data: JSON.stringify({id_peg: idpeg, id_meja: idmeja}),
+          success: function(result){
+            console.log('delete', result);
+          }
+        })
         var atasnama = $('#atasnama').val();
 
         if(atasnama == '' || atasnama == '0'){
@@ -950,15 +1131,16 @@ function inputNama(){
           // inputNama()
         }
       }
-    }
+    } */
   }).open()
 }
 
 // function inputPax(meja, id, tipe, atasnama){
-function inputPax(){
+function inputPax(idmeja){
+  var idpeg = window.localStorage.getItem("id_peg");
   app.dialog.create({
     title: 'Pax Amt.',
-    closeByBackdropClick: true,
+    closeByBackdropClick: false,
     content: `<div class="list no-hairlines no-hairlines-between box-appear">
                 <ul style="height: 100%;">
                   <li class="item-content item-input" style="height: inherit;">
@@ -972,6 +1154,19 @@ function inputPax(){
               </div>`,
     buttons: [
     {
+      text: 'Cancel',
+      onClick: function(dialog, e){
+        app.request({
+          url: addr+ "API/waitress/" +idmeja+ "/delete/",
+          method: "POST",
+          data: JSON.stringify({id_user: idpeg, id_meja: idmeja}),
+          success: function(result){
+            console.log('delete', result);
+          }
+        })
+        app.views.main.router.back();
+      }
+    },{
       text: 'Confirm',
       onClick: function(dialog, e){
         var pax = $('#pax').val();
@@ -979,24 +1174,18 @@ function inputPax(){
         if(pax){
           paxorder = pax;
           // cekPIN(meja, id, tipe, atasnama, pax);
-          inputNama()
+          inputNama(idmeja)
         }
       }
-    }],
+    }]/* ,
     on: {
       closed: function(dialog, e){
-        var pax = $('#pax').val();
-
-        if(pax == '' || pax == '0'){
-          app.views.main.router.back()
-          // listKategoriMeja();
-          // alert('salah');
-          // paxorder = pax;
-          // cekPIN(meja, id, tipe, atasnama, pax);
-          // inputNama()
-        }
+        
+        // var pax = $('#pax').val();
+        // if(pax == '' || pax == '0'){
+        // }
       }
-    }
+    } */
   }).open()
 }
 
@@ -1063,14 +1252,14 @@ function editNama(meja, idpj){
   }).open()
 }
 
-function simpanPesanan(nMeja, id, waitress, atasnama, pax){
+function simpanPesanan(idmeja, id, waitress, atasnama, pax){
   var sub = parseInt($('#subTotal').val());
   var grand = parseInt($('#grandTotal').val());
   var gudang = window.localStorage.getItem("gudang");
   var idp = window.localStorage.getItem("id_peg");
   var temp = {
     action : "pesan",
-    meja : nMeja,
+    meja : idmeja,
     idpj : id,
     subtotal : sub,
     grantotal : sub,
@@ -1088,9 +1277,18 @@ function simpanPesanan(nMeja, id, waitress, atasnama, pax){
     data: JSON.stringify(temp),
     success: function(json){
       if(json){
-        app.dialog.confirm('Print Bill?', 'Confirmation', function(){
-          // cetakBillWaiter(nMeja);
-          cetakBillDapur(nMeja, id);
+        app.request({
+          url: addr+ "API/waitress/" +idmeja+ "/delete/",
+          method: "POST",
+          data: JSON.stringify({id_user: idp, id_meja: idmeja}),
+          success: function(result){
+            console.log("done pesan", result);
+          }
+        })
+
+        app.dialog.confirm('Print Table Checker?', 'Confirmation', function(){
+          // cetakBillWaiter(idmeja);
+          cetakBillDapur(idmeja, id);
           app.views.main.router.navigate('/');
         }, function(){
           app.views.main.router.navigate('/');
@@ -1110,12 +1308,18 @@ function lihatPesanan(meja, pj){
   var jumlah = 0;
   var data = "";
   var old = "";
+  var rinci = "";
   app.request({
     url: addr+"API/bill/"+meja+"/",
     method: "GET",
     success: function(json){
       // console.log(json);
       var result = JSON.parse(json);
+      var preSub = 0;
+      var preSvc = 0;
+      var prePB1 = 0;
+      var preGrand = 0;
+      var textSVC = '';
 
       if(result.length){
         console.log(result);
@@ -1127,10 +1331,12 @@ function lihatPesanan(meja, pj){
           if(result[i].nama_barang != null){
             if(old != result[i].no_penjualan) data += '<li class="list-group-title" style="font-size: 1.2em; height: 65px; padding-top: 10px;">'+result[i].no_penjualan+'<a class="link icon-only" onclick="cetakBillPisah('+meja+','+result[i].id_pj+')" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">print</i></a></li>';
             jumlah += parseInt(result[i].harga_jual * result[i].qty_jual);
+            preSub += parseInt(result[i].harga_jual * result[i].qty_jual);
+
             data += ` <li class="item-content ">
                         <div class="item-inner">
                           <div class="item-title" >`+result[i].nama_barang+`
-                            <div class="item-footer">`+result[i].qty_jual+` x `+result[i].harga_jual+`</div>
+                            <div class="item-footer">`+result[i].qty_jual+` x `+parseInt(result[i].harga_jual).toLocaleString()+`</div>
                           </div>
                           <div class="item-after">`+parseInt(result[i].qty_jual * result[i].harga_jual).toLocaleString()+`
                             <input type="checkbox" id="c-`+result[i].id_dtl_jual+`" class="to-split hidden" style="margin: 0 10px;" onchange="splitQty(this, `+result[i].id_dtl_jual+`, `+result[i].qty_jual+`)"/>
@@ -1142,9 +1348,45 @@ function lihatPesanan(meja, pj){
             old = result[i].no_penjualan;
           }
         }
+
+        preSvc = Math.round(parseFloat(result[0].svc) * preSub / 100);
+        prePB1 = Math.round(0.1 * (preSvc + preSub));
+        preGrand = preSub + preSvc + prePB1;
+
+        if(result[0].svc > 0){
+          textSVC =
+            `<li class="item-content ">
+              <div class="item-inner">
+                <div class="item-title">SVC ` +result[0].svc+ `%</div>
+                <div class="item-after">`+preSvc.toLocaleString()+`</div>
+              </div>
+            </li>`
+        }
+
+        rinci = 
+          `<li class="item-content ">
+            <div class="item-inner">
+              <div class="item-title">Subtotal</div>
+              <div class="item-after">`+preSub.toLocaleString()+`</div>
+            </div>
+          </li>`
+          +textSVC+
+          `<li class="item-content ">
+            <div class="item-inner">
+              <div class="item-title">PB1 10%</div>
+              <div class="item-after">`+prePB1.toLocaleString()+`</div>
+            </div>
+          </li>
+          <li class="item-content ">
+            <div class="item-inner">
+              <div class="item-title">Grand Total</div>
+              <div class="item-after">`+preGrand.toLocaleString()+`</div>
+            </div>
+          </li>`;
       }
 
       $('#orders').html(data);
+      $('#preview').html(rinci);
     }
   })
 }
@@ -1175,31 +1417,36 @@ function cetakBillWaiter(meja){
       var result = JSON.parse(json);
       var bill = '';
       var list = '';
-      var header = '{br}{center}{h}MediaPOS{/h}{br}Bill{br}--------------------------------{br}';
+      var header = '{br}{center}{h}MediaPOS{/h}{br}Billing Info{br}--------------------------------{br}';
       var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
       var len = result.length;
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
       // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
-      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}CUST    : '+result[0].nama_cust+'{br}--------------------------------{br}';
       var subtotal = 'Subtotal';
       var ppn = 'PB1 10%';
       var footer = '';
-      var charge = 'SVC 9.8%';
+      var charge = 'SVC ' +result[0].svc+ '%';
       var grand = 'Total';
+      var svc_pr = parseFloat(result[0].svc);
       var svc = 0;
 
-      console.log('kategori: ' +result[0].kat);
+      // console.log('kategori: ' +result[0].kat);
 
       for(i = 0; i < result.length; i++){
         var ws = '';
         var price_satuan = parseInt(result[i].harga_jual).toLocaleString();
         var price_bulk = (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString();
     
-        for(var j = 0; j < 27 - price_satuan.length - price_bulk.length; j++){
+        var qtystr = ('   '+result[i].qty_jual).slice(-3);
+        var pricelen = 32 - (6 + result[i].harga_jual.length + price_bulk.length);
+        console.log(pricelen);
+        // for(var j = 0; j < 27 - price_satuan.length - price_bulk.length; j++){
+        for(var j = 0; j < pricelen; j++){
           ws += ' ';
         }
     
-        list += '{left}'+result[i].nama_barang+'{br}  '+result[i].qty_jual+' x '+parseInt(result[i].harga_jual)+ws+(parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString()+'{br}';
+        list += '{left}'+result[i].nama_barang+'{br}'+qtystr+' x '+parseInt(result[i].harga_jual) +ws+ (parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual)).toLocaleString()+'{br}';
         jumlah += parseInt(result[i].harga_jual) * parseInt(result[i].qty_jual);
         // console.log(jumlah);
       }
@@ -1208,12 +1455,15 @@ function cetakBillWaiter(meja){
         subtotal += ' ';
       } subtotal += jumlah.toLocaleString() + '{br}';
 
-      if(result[0].kat != '5'){
-        svc = Math.round(jumlah * 0.098);
-        for(var i = 0; i < 24 - svc.toLocaleString().length; i++){
+      // if(result[0].kat != '5'){
+        svc = Math.round(jumlah * svc_pr / 100);
+        // console.log(charge.length + svc.toLocaleString().length);
+        var spacelen = 32 - (charge.length + svc.toLocaleString().length);
+        console.log(spacelen);
+        for(var i = 0; i < spacelen; i++){
           charge += ' ';
         } charge += svc.toLocaleString() + '{br}';
-      }
+      // }
 
       var pb1 = Math.round((jumlah + svc) * 0.1);
       for(var i = 0; i < 25 - pb1.toLocaleString().length; i++){
@@ -1226,9 +1476,15 @@ function cetakBillWaiter(meja){
       } grand += gtot.toLocaleString() + '{br}';
 
       list += '--------------------------------{br}{left}';
-      footer = '{br}{center}DO NOT PAY';
+      footer = '{br}{center}NOT PROOF OF PAYMENT';
 
-      if(result[0].kat != 5){
+      // if(result[0].kat != 5){
+      //   bill = header + subheader + list + subtotal + charge + ppn + grand + footer;
+      // } else {
+      //   bill = header + subheader + list + subtotal + ppn + grand + footer;
+      // }
+
+      if(svc_pr > 0){
         bill = header + subheader + list + subtotal + charge + ppn + grand + footer;
       } else {
         bill = header + subheader + list + subtotal + ppn + grand + footer;
@@ -1249,10 +1505,10 @@ function cetakBillPisah(meja, idpj){
       var result = JSON.parse(json);
       var bill = '';
       var list = '';
-      var header = '{br}{center}{h}MediaPOS{/h}{br}Bill{br}--------------------------------{br}';
+      var header = '{br}{center}{h}MediaPOS{/h}{br}Billing Info{br}--------------------------------{br}';
       var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
-      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}CUST    : '+result[0].nama_cust+'{br}--------------------------------{br}';
       var subtotal = 'Subtotal';
       var footer = '';
 
@@ -1275,7 +1531,7 @@ function cetakBillPisah(meja, idpj){
       } subtotal += jumlah.toLocaleString() + '{br}';
 
       list += '--------------------------------{br}{left}';
-      footer == '{br}{center}DO NOT PAY';
+      footer == '{br}{center}NOT PROOF OF PAYMENT';
       bill = header + subheader + list + subtotal + footer;
 
       console.log(bill);
@@ -1294,12 +1550,12 @@ function cetakBillDapur(meja, id){
 
       var bill = '';
       var list = '';
-      var header = '{br}{center}{h}MediaPOS{/h}{br}Table Checker Receipt{br}--------------------------------{br}';
+      var header = '{br}{center}{h}MediaPOS{/h}{br}Table Checker{br}--------------------------------{br}';
       var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
       var len = result.length;
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
       // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
-      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}CUST    : '+result[0].nama_cust+'{br}--------------------------------{br}';
 
       for(var i = 0; i < result.length; i++){
         var ws = '';
@@ -1687,7 +1943,7 @@ function cetakUlang(idpj, tipe){
       var result = JSON.parse(json);
       var bill = '';
       var list = '';
-      var header = '{br}{center}{h}MediaPOS{/h}{br}Table Checker Receipt{br}--------------------------------{br}';
+      var header = '{br}{center}{h}MediaPOS{/h}{br}Table Checker{br}--------------------------------{br}';
       var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
       var time = result[0].stamp_date.split(' ')[1];
       var len = result.length;
@@ -1775,13 +2031,28 @@ function onReserved(jambook, namabook){
   }).open();
 }
 
-function onHold(){
-  app.toast.create({
-    text: 'Transaction ongoing, please wait', 
-    closeButton: true, 
-    destroyOnClose: true, 
-    closeTimeout: 3000
-  }).open();
+function onHold(waitress, meja, pj, nMeja, reservasi, curitem, nama_cust){
+  // \''+result[i].KODE+'\', 0, \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', 0, \'\'
+  var curw = window.localStorage.getItem("id_peg");
+  if(waitress == curw){
+    lihatmeja(meja, pj, nMeja, reservasi, curitem, nama_cust);
+  } else {
+    app.request({
+      url: addr+ "API/waitress/" +waitress+ "/",
+      method: "GET",
+      success: function(result){
+        var res = JSON.parse(result);
+        
+        app.toast.create({
+          // text: 'Transaction ongoing, please wait', 
+          text: 'Order for this table is being taken by ' +res[0].nama_pegawai+ '.', 
+          closeButton: true, 
+          destroyOnClose: true, 
+          closeTimeout: 3000
+        }).open();
+      }
+    })
+  }
 }
 
 function onPrepare(){

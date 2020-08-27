@@ -37,7 +37,7 @@ var routes = [
     url: './pages/about.html',
     name: 'about',
   },
-  {
+  /* {
     name: 'menu',
     path: '/menu/:idMeja/:idPJ/',
     template: `
@@ -45,7 +45,7 @@ var routes = [
       <div class="navbar" >
         <div class="navbar-inner sliding">
           <div class="left">
-            <a href="#" class="link " onclick="clearCart({{$route.params.idMeja}});">
+            <a href="#" class="link" onclick="clearCart({{$route.params.idMeja}});">
               <i class="icon icon-back"></i>
               <span class="ios-only">Back</span>
             </a>
@@ -104,7 +104,66 @@ var routes = [
         pageInit: function (e, page) {
           // do something when page initialized
           listKategori(page.route.params.idMeja);
-          if(page.route.params.idPJ == 0) inputPax();
+          if(page.route.params.idPJ == 0) inputPax(page.route.params.idMeja);
+        },
+      }
+  }, */
+  {
+    name: 'menu',
+    path: '/menu/:idMeja/:idPJ/',
+    template: `
+    <div class="page" data-name="menu">
+      <div class="navbar" >
+        <div class="navbar-inner sliding">
+          <div class="left">
+            <a href="#" class="link" onclick="clearCart({{$route.params.idMeja}});">
+              <i class="icon icon-back"></i>
+              <span class="ios-only">Back</span>
+            </a>
+          </div>
+          <div class="title">Menus</div>
+          <div class="right">
+              <a class="link icon-only searchbar-enable" data-searchbar=".searchbar"><i class="icon material-icons md-only">search</i></a>
+              <a class="link icon-only" href="/keranjang/{{$route.params.idMeja}}/{{$route.params.idPJ}}/"><i class="icon material-icons md-only">shopping_cart</i></a>
+            </div>
+            <form class="searchbar searchbar-expandable">
+              <div class="searchbar-inner">
+                <div class="searchbar-input-wrap">
+                  <input type="search" placeholder="Search" onkeyup="cariItem(event, this.value, {{$route.params.idMeja}})"/>
+                  <i class="searchbar-icon"></i>
+                  <span class="input-clear-button"></span>
+                </div>
+                <span class="searchbar-disable-button">Cancel</span>
+              </div>
+            </form>
+        </div>
+      </div>
+      <div class="page-content" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden">
+        <div class="block">
+          <div class="row" id="menuku" style=" overflow-y:scroll; max-height: calc( 90vh - 50px ); justify-content: space-between;">
+          </div>
+        </div>
+      </div>
+    </div>`,
+    on: {
+        pageAfterIn: function test (e, page) {
+          // do something after page gets into the view
+          clearTimeout(refresh_meja);
+          searchBar = app.searchbar.create({
+            el: '.searchbar',
+            on: {
+              disable: function(){
+                rowKategori(page.route.params.idMeja);
+                // tampil(page.route.params.idMeja, $('#kategori').val());
+              }
+            }
+          });
+        },
+        pageInit: function (e, page) {
+          // do something when page initialized
+          // listKategori(page.route.params.idMeja);
+          rowKategori(page.route.params.idMeja);
+          if(page.route.params.idPJ == 0) inputPax(page.route.params.idMeja);
         },
       }
   },
@@ -122,6 +181,9 @@ var routes = [
             </a>
           </div>
           <div class="title">Cart</div>
+          <div class="right">
+            <a class="link icon-only" onclick="clearCart2({{$route.params.idMeja}}, {{$route.params.idPJ}})" style="margin: 0px 5px;"><i class="icon material-icons md-only">remove_shopping_cart</i></a>
+          </div>
         </div>
       </div>
       <div class="page-content">
@@ -159,7 +221,7 @@ var routes = [
       <div class="navbar">
         <div class="navbar-inner sliding">
           <div class="left">
-            <a href="#" class="link back">
+            <a href="#" class="link" onclick="clearCart({{$route.params.idMeja}});">
               <i class="icon icon-back"></i>
               <span class="ios-only">Back</span>
             </a>
@@ -173,12 +235,14 @@ var routes = [
         </div>
       </div>
       <div class="page-content">
-        <div class="list no-hairlines-between no-hairlines" style=" overflow-y:scroll;height: calc( 90vh - 50px );margin:1px;">
-          <ul id="orders">
-          </ul>
+        <div class="list no-hairlines-between no-hairlines" style="overflow-y:scroll;height: 56vh; margin: 1px;">
+          <ul id="orders"></ul>
+        </div>
+        <div class="list no-hairlines-between" style="margin: 1px; position: absolute; width: 100%; bottom: 8vh;">
+          <ul id="preview"></ul>
         </div>
       </div>
-      <div class="toolbar toolbar-bottom-md no-shadow" style="height: 70px;">
+      <div class="toolbar toolbar-bottom-md no-shadow" style="height: 8vh;">
         <div class="toolbar-inner">
           <button id="split_bill" class="button hidden" onclick="cekPIN({{$route.params.idMeja}}, {{$route.params.idPJ}}, 'split')">Split Into New Bill</button>
           <button id="cetak_bill" class="button" onclick="cetakBillWaiter({{$route.params.idMeja}})">Print Bill</button>
