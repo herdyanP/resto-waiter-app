@@ -20,6 +20,7 @@ var routes = [
     name: 'home',
     on: {
       pageAfterIn: function (){
+        $(".tab-link-highlight").css('display', 'block');
         // listMeja();
         listKategoriMeja();
         user = window.localStorage.getItem("pegawai");
@@ -37,77 +38,6 @@ var routes = [
     url: './pages/about.html',
     name: 'about',
   },
-  /* {
-    name: 'menu',
-    path: '/menu/:idMeja/:idPJ/',
-    template: `
-    <div class="page" data-name="menu">
-      <div class="navbar" >
-        <div class="navbar-inner sliding">
-          <div class="left">
-            <a href="#" class="link" onclick="clearCart({{$route.params.idMeja}});">
-              <i class="icon icon-back"></i>
-              <span class="ios-only">Back</span>
-            </a>
-          </div>
-          <div class="title">Menus</div>
-          <div class="right">
-              <a class="link icon-only searchbar-enable" data-searchbar=".searchbar"><i class="icon material-icons md-only">search</i></a>
-              <a class="link icon-only" href="/keranjang/{{$route.params.idMeja}}/{{$route.params.idPJ}}/"><i class="icon material-icons md-only">shopping_cart</i></a>
-            </div>
-            <form class="searchbar searchbar-expandable">
-              <div class="searchbar-inner">
-                <div class="searchbar-input-wrap">
-                  <input type="search" placeholder="Search" onkeyup="cariItem(event, this.value, {{$route.params.idMeja}})"/>
-                  <i class="searchbar-icon"></i>
-                  <span class="input-clear-button"></span>
-                </div>
-                <span class="searchbar-disable-button">Cancel</span>
-              </div>
-            </form>
-        </div>
-      </div>
-      <div class="page-content" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden">
-        <div class="list no-hairlines no-hairlines-between">
-          <ul>
-            <li class="item-content item-input">
-              <div class="item-inner">
-                <div class="item-title item-label"></div>
-                <div class="item-input-wrap input-dropdown-wrap">
-                  <select name="kategori" id="kategori" onchange="tampil({{$route.params.idMeja}}, this.value);">
-
-                  </select>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div class="block">
-          <div class="row" id="menuku" style=" overflow-y:scroll; max-height: calc( 90vh - 50px ); justify-content: space-between;">
-          </div>
-        </div>
-      </div>
-    </div>`,
-    on: {
-        pageAfterIn: function test (e, page) {
-          // do something after page gets into the view
-          clearTimeout(refresh_meja);
-          searchBar = app.searchbar.create({
-            el: '.searchbar',
-            on: {
-              disable: function(){
-                tampil(page.route.params.idMeja, $('#kategori').val());
-              }
-            }
-          });
-        },
-        pageInit: function (e, page) {
-          // do something when page initialized
-          listKategori(page.route.params.idMeja);
-          if(page.route.params.idPJ == 0) inputPax(page.route.params.idMeja);
-        },
-      }
-  }, */
   {
     name: 'menu',
     path: '/menu/:idMeja/:idPJ/',
@@ -138,6 +68,30 @@ var routes = [
             </form>
         </div>
       </div>
+
+      <div class="toolbar toolbar-bottom-md tabbar tabbar-labels" id="toolbar_menu">
+        <div class="toolbar-inner">
+          <a href="#" class="tab-link" id="toolbar_prev">
+            <div style="text-align: center;" onclick="alert('prev')">
+              <i class="icon material-icons md-only">chevron_left</i>
+              <span class="tabbar-label">Prev</span>
+            </div>  
+          </a>
+          <a href="#" class="tab-link" id="toolbar_cat">
+            <div style="text-align: center;" onclick="alert('cat')">
+              <i class="icon material-icons md-only">apps</i>
+              <span class="tabbar-label">Categories</span>
+            </div>
+          </a>
+          <a href="#" class="tab-link" id="toolbar_next">
+            <div style="text-align: center;"  onclick="alert('next')">
+              <i class="icon material-icons md-only">chevron_right</i>
+              <span class="tabbar-label">Next</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
       <div class="page-content" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden">
         <div class="block">
           <div class="row" id="menuku" style=" overflow-y:scroll; max-height: calc( 90vh - 50px ); justify-content: space-between;">
@@ -149,6 +103,8 @@ var routes = [
         pageAfterIn: function test (e, page) {
           // do something after page gets into the view
           clearTimeout(refresh_meja);
+          app.toolbar.hide("#toolbar_menu");
+          $(".tab-link-highlight").css('display', 'none');
           searchBar = app.searchbar.create({
             el: '.searchbar',
             on: {

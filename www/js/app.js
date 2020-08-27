@@ -569,6 +569,7 @@ function checkIn(idbook){
 
 function rowKategori(meja){
   var datanya = "";
+  app.toolbar.hide('#toolbar_menu');
   app.request({
     url: addr+ "API/kategori/",
     method: "GET",
@@ -605,10 +606,15 @@ function listKategori(meja){
 
 function tampil(meja, kat){
   var id_gudang = window.localStorage.getItem('gudang');
-  // var id_cabang = window.localStorage.getItem('cabang');
-
+  var tb_cat = 
+    `<div style="text-align: center;" onclick="rowKategori(' `+meja+` ')">
+      <i class="icon material-icons md-only">apps</i>
+      <span class="tabbar-label">Categories</span>
+    </div>`;
+  
+  $('#toolbar_cat').html(tb_cat);
+  app.toolbar.show("#toolbar_menu");
   app.request({
-    // url: addr+"API/barang/"+id_cabang+"/"+id_gudang+"/"+kat+"/",
     url: addr+"API/barang/"+id_gudang+"/"+kat+"/",
     method: "GET",
     success: function(json){
@@ -618,11 +624,7 @@ function tampil(meja, kat){
         var len = (result.length < 23 ? result.length : 23);
         datanya += '<button onclick="rowKategori(' +meja+ ')" class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;"><p style="' +(window.innerWidth > 480 ? "font-size: 4em;" : "font-size: 3em;")+ '">&larr;</p></button>';
 
-        // for (i = 0; i < len; i++){
         for (i = 0; i < result.length; i++){
-          // datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
-          // datanya+="<button onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
-          // datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
           datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang.replace(/(')/g, '\\$1')+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
         }
 
@@ -632,6 +634,43 @@ function tampil(meja, kat){
     }
   })
 }
+
+// function tampil(meja, kat){
+//   var id_gudang = window.localStorage.getItem('gudang');
+//   // var id_cabang = window.localStorage.getItem('cabang');
+//   var tb_cat = 
+//     `<div style="text-align: center;" onclick="rowKategori(' `+meja+` ')">
+//       <i class="icon material-icons md-only">apps</i>
+//       <span class="tabbar-label">Categories</span>
+//     </div>`;
+  
+//   $('#toolbar_cat').html(tb_cat);
+//   app.toolbar.show("#toolbar_menu");
+//   app.request({
+//     // url: addr+"API/barang/"+id_cabang+"/"+id_gudang+"/"+kat+"/",
+//     url: addr+"API/barang/"+id_gudang+"/"+kat+"/",
+//     method: "GET",
+//     success: function(json){
+//       if(json){
+//         var result = JSON.parse(json);
+//         var datanya = '';
+//         var len = (result.length < 23 ? result.length : 23);
+//         datanya += '<button onclick="rowKategori(' +meja+ ')" class="no-ripple" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;"><p style="' +(window.innerWidth > 480 ? "font-size: 4em;" : "font-size: 3em;")+ '">&larr;</p></button>';
+
+//         // for (i = 0; i < len; i++){
+//         for (i = 0; i < result.length; i++){
+//           // datanya+="<div onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45\" style=\"padding-top:22.5%;text-align:left;margin:5px;position:relative;\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"<div><h3><strong> Rp. "+parseInt((result[i].harga ? result[i].harga : 0)).toLocaleString()+"</strong></h3></div></div>";
+//           // datanya+="<button onclick=\"simpan('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+//           // datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang+"')\" class=\"col-45 no-ripple\" style=\"margin: 5px; height: calc((90vw / 3) - 5px); width: calc((90vw / 3) - 5px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\"font-size: 1.7em\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+//           datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang.replace(/(')/g, '\\$1')+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
+//         }
+
+//         datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
+//         $('#menuku').html(datanya);
+//       }
+//     }
+//   })
+// }
 
 function cariItem(e, q, meja){
   // var cabang = window.localStorage.getItem('cabang');
