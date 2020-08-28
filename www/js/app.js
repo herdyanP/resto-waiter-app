@@ -690,6 +690,7 @@ function tampil(meja, kat, start){
 
 function cariItem(e, q, meja){
   // var cabang = window.localStorage.getItem('cabang');
+  app.toolbar.hide('#toolbar_menu');
   var gudang = window.localStorage.getItem('gudang');
   var temp = {
     query : q
