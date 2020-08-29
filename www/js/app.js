@@ -121,6 +121,7 @@ document.addEventListener('deviceready', function() {
      
   app.init();
   document.addEventListener('backbutton', onBackPressed, false);
+  document.addEventListener('offline', offMint, false);
 
   $('#login_form').on('submit', function(event){
     event.preventDefault();
@@ -142,6 +143,15 @@ document.addEventListener('deviceready', function() {
     }
   })
 }); 
+
+function offMint(){
+  alert('Connection Interrupted, please relog');
+  app.views.main.router.navigate('/');
+}
+
+function halah(){
+  $("#input_hidden").focus();
+}
 
 function onBackPressed(e){
   e.preventDefault();
@@ -233,7 +243,11 @@ function listKategoriMeja(){
           datanya+="<button onclick=\"listMeja('"+result[i].id_m_kategory+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_m_kategory.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
         }
 
-        datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
+        var sisa = len % 3;
+        for(var i = 0; i <= sisa; i++){
+          datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
+        }
+
         $('#mejaaktif').html(datanya);
       }
     }
@@ -307,6 +321,8 @@ function listMeja(kat = 0){
     success: function(json){
       var result = JSON.parse(json);
       var font = '';
+      var len = result.length + 1;
+      var sisa = len % 3;
       // console.log(result);
       // content += '<div class="col-33" style="height: calc((90vw / 3) - 5px); margin: 20px 5px" onclick="listKategoriMeja();">\
       //               <div>\
@@ -316,7 +332,7 @@ function listMeja(kat = 0){
       //             </div>';
 
       // console.table(result);
-      content += '<div onclick="listKategoriMeja()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 50%;"><p style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+(window.innerWidth > 480 ? "font-size: 8rem;" : "font-size: 6rem;")+'">&larr;</p></div>';
+      content += '<div onclick="listKategoriMeja()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 10px); width: calc((90vw / 3) - 10px); vertical-align: middle; background: #2196f3; color: white; border-radius: 50%;"><p style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 10px); '+(window.innerWidth > 480 ? "font-size: 8rem;" : "font-size: 6rem;")+'">&larr;</p></div>';
 
                   
       for(var i = 0; i < result.length; i++){
@@ -344,23 +360,23 @@ function listMeja(kat = 0){
         if(result[i].stbook == '1'){ // Meja telah direserve
 
           if(result[i].ST == '1') { // Meja masih ada outstanding bill
-            content += '<div onclick="onReserved(\''+result[i].jambook+'\', \''+result[i].namabook+'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #8B0000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); font-size: 1.2rem;">Reserved</p></div>';
+            content += '<div onclick="onReserved(\''+result[i].jambook+'\', \''+result[i].namabook+'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 10px); width: calc((90vw / 3) - 10px); vertical-align: middle; background: #8B0000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 10px); font-size: 1.2rem;">Reserved</p></div>';
           } else {
-            content += '<div onclick="onReserved(\''+result[i].jambook+'\', \''+result[i].namabook+'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #ffebcd; color: black; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+            content += '<div onclick="onReserved(\''+result[i].jambook+'\', \''+result[i].namabook+'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 10px); width: calc((90vw / 3) - 10px); vertical-align: middle; background: #ffebcd; color: black; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 10px); '+font+'">'+result[i].NAMA+'</p></div>';
           }
 
         } else if(result[i].ST == '1'){ // Meja telah diisi
-          content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', '+result[i].id_pj+', \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', ' +result[i].curitem+ ', \'' +result[i].nama_cust+ '\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #8B0000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+          content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', '+result[i].id_pj+', \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', ' +result[i].curitem+ ', \'' +result[i].nama_cust+ '\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 10px); width: calc((90vw / 3) - 10px); vertical-align: middle; background: #8B0000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 10px); '+font+'">'+result[i].NAMA+'</p></div>';
         } else if(result[i].ST == '3'){ // Meja butuh dibersihkan
-          content += '<div onclick="onPrepare()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+          content += '<div onclick="onPrepare()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 10px); width: calc((90vw / 3) - 10px); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 10px); '+font+'">'+result[i].NAMA+'</p></div>';
         } /* else if(result[i].hold > 0){ // Meja sedang melakukan order
           // content += '<div onclick="onHold(\'' +result[i].user_hold+ '\', \''+result[i].KODE+'\', '+result[i].id_pj+', \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', ' +result[i].curitem+ ', \'' +result[i].nama_cust+ '\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
           content += '<div onclick="onHold(\'' +result[i].user_hold+ '\', \''+result[i].KODE+'\', '+result[i].id_pj+', \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', ' +result[i].curitem+ ', \'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
         } */ else { // Meja open
           if(result[i].aktif == '0'){
-            content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', 0, \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', 0, \'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #008000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+            content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', 0, \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', 0, \'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 10px); width: calc((90vw / 3) - 10px); vertical-align: middle; background: #008000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 10px); '+font+'">'+result[i].NAMA+'</p></div>';
           } else {
-            content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', 0, \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', 0, \'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
+            content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', 0, \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', 0, \'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 10px); width: calc((90vw / 3) - 10px); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 10px); '+font+'">'+result[i].NAMA+'</p></div>';
           }
         }
 
@@ -386,6 +402,11 @@ function listMeja(kat = 0){
         //   // content += '<button onclick="lihatmeja(\''+result[i].KODE+'\', 0)" class="" style="margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #4caf50; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+(window.innerWidth > 480 ? "font-size: 2.4rem;" : "font-size: 1.2rem;")+'">'+result[i].NAMA+'</p></button>';
         //   content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', 0)" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #4caf50; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
         // }
+      }
+
+      for(var i = 0; i <= sisa; i++){
+        // content += "<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 10px); width: calc((90vw / 3) - 10px); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
+        content += '<div class="" style="visibility: hidden; margin: 10px 1px; height: calc((90vw / 3) - 10px); width: calc((90vw / 3) - 10px); vertical-align: middle; background: #8B0000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 10px); font-size: 1.2rem;">NIL</p></div>';
       }
 
       $('#mejaaktif').html(content);
@@ -1024,7 +1045,7 @@ function clearCart2(idmeja, idpj){
     method: "POST",
     data: JSON.stringify({act: "clear"}),
     success: function(){
-      alert('sukses hapus');
+      alert('Successfully cleared cart');
       lihatKeranjang(idmeja, idpj);
     }
   })

@@ -21,6 +21,7 @@
     "cordova-plugin-dialog": "0.0.1",
     "cordova-plugin-dialogs": "^2.0.1",
     "cordova-plugin-nativestorage": "^2.3.2",
+    "cordova-plugin-network-information": "^2.0.2",
     "cordova-plugin-screen-orientation": "^3.0.1",
     "cordova-plugin-whitelist": "^1.3.3",
     "es6-promise-plugin": "^4.2.2",
@@ -49,7 +50,8 @@
         "ANDROID_SUPPORT_VERSION": "27.+"
       },
       "cordova-plugin-nativestorage": {},
-      "cordova-plugin-background-mode": {}
+      "cordova-plugin-background-mode": {},
+      "cordova-plugin-network-information": {}
     },
     "platforms": [
       "android"

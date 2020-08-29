@@ -103,6 +103,8 @@ var routes = [
         pageAfterIn: function test (e, page) {
           // do something after page gets into the view
           clearTimeout(refresh_meja);
+          rowKategori(page.route.params.idMeja);
+          
           app.toolbar.hide("#toolbar_menu");
           $(".tab-link-highlight").css('display', 'none');
           searchBar = app.searchbar.create({
@@ -118,7 +120,7 @@ var routes = [
         pageInit: function (e, page) {
           // do something when page initialized
           // listKategori(page.route.params.idMeja);
-          rowKategori(page.route.params.idMeja);
+          // rowKategori(page.route.params.idMeja);
           if(page.route.params.idPJ == 0) inputPax(page.route.params.idMeja);
         },
       }
