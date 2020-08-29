@@ -15,6 +15,7 @@
     "cordova-android": "^7.1.4",
     "cordova-android-support-gradle-release": "^3.0.1",
     "cordova-browser": "^5.0.4",
+    "cordova-plugin-background-mode": "^0.7.3",
     "cordova-plugin-datecs-printer": "^0.10.0",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-dialog": "0.0.1",
@@ -47,7 +48,8 @@
       "cordova-android-support-gradle-release": {
         "ANDROID_SUPPORT_VERSION": "27.+"
       },
-      "cordova-plugin-nativestorage": {}
+      "cordova-plugin-nativestorage": {},
+      "cordova-plugin-background-mode": {}
     },
     "platforms": [
       "android"
