@@ -333,6 +333,15 @@ var routes = [
       }
     }
   },
+  {
+    path: '/rsv_web/',
+    componentUrl: './pages/rsv_web.html',
+    on: {
+      pageAfterIn: function(){
+
+      }
+    }
+  },
 
   // Default route (404 page). MUST BE THE LAST
   {

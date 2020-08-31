@@ -27,9 +27,10 @@ var app = new Framework7({
 // JS SCRIPT SEMENTARA DISINI DULU YAKKK...
 // NYOBA TEMPLATING
 
-var addr = "http://dev.cloudmnm.com/resto/";
+// var addr = "http://dev.cloudmnm.com/resto/";
 // var addr = "http://192.168.3.16/resto/";
-// var addr = "http://192.168.238.10/resto/";
+
+var addr = "http://192.168.238.10/resto/";
 // var addr = "http://192.168.238.10/resto_trial/";
 
 var db;
@@ -1502,11 +1503,11 @@ function cetakBillWaiter(meja){
       var bill = '';
       var list = '';
       var header = '{br}{center}{h}MediaPOS{/h}{br}Billing Info{br}--------------------------------{br}';
-      var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
+      var tgl = result[0].tgl_penjualan.replace(/-/g,'/');
       var len = result.length;
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
       // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
-      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}CUST    : '+result[0].nama_cust+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}CUST    : '+result[0].nama_cust+'{br}GUESTS  : '+result[0].pax+'{br}--------------------------------{br}';
       var subtotal = 'Subtotal';
       var ppn = 'PB1 10%';
       var footer = '';
@@ -1590,9 +1591,9 @@ function cetakBillPisah(meja, idpj){
       var bill = '';
       var list = '';
       var header = '{br}{center}{h}MediaPOS{/h}{br}Billing Info{br}--------------------------------{br}';
-      var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
+      var tgl = result[0].tgl_penjualan.replace(/-/g,'/');
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
-      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}CUST    : '+result[0].nama_cust+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}CUST    : '+result[0].nama_cust+'{br}GUESTS  : '+result[0].pax+'{br}--------------------------------{br}';
       var subtotal = 'Subtotal';
       var footer = '';
 
@@ -1635,11 +1636,12 @@ function cetakBillDapur(meja, id){
       var bill = '';
       var list = '';
       var header = '{br}{center}{h}MediaPOS{/h}{br}Table Checker{br}--------------------------------{br}';
-      var tgl = result[0].tgl_penjualan.replace(/\W/g,'/');
+      var tgl = result[0].tgl_penjualan.replace(/-/g,'/');
+      // var tgltime=d.getFullYear()+"/"+(d.getMonth()+1)+"/"+("0" + d.getDate()).slice(-2)+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
       var len = result.length;
       // var subheader = '{left}No. Trans : '+result[0].no_penjualan+'{br}Tanggal   : '+tgl+'{br}Operator  : '+cpyProf.client+'{br}--------------------------------{br}';
       // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
-      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}CUST    : '+result[0].nama_cust+'{br}--------------------------------{br}';
+      var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}CUST    : '+result[0].nama_cust+'{br}GUESTS  : '+result[0].pax+'{br}--------------------------------{br}';
 
       for(var i = 0; i < result.length; i++){
         var ws = '';
@@ -2040,7 +2042,7 @@ function cetakUlang(idpj, tipe){
       // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TIME    : '+time+'{br}TABLE   : '+result[0].meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
       // var subheader = '{left}TX. NO. : '+result[0].no_penjualan+'{br}DATE    : '+tgl+'{br}TIME    : '+time+'{br}TABLE   : '+result[0].meja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
 
-      var subheader = '{left}DATE    : '+tgl+'{br}TIME    : '+time+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}--------------------------------{br}';
+      var subheader = '{left}DATE    : '+tgl+'{br}TIME    : '+time+'{br}TABLE   : '+result[0].nmeja+'{br}WAITER  : '+result[0].nama_waitress+'{br}CUST    : '+result[0].nama_cust+'{br}GUESTS  : '+result[0].pax+'{br}--------------------------------{br}';
 
       for(var i = 0; i < result.length; i++){
         var ws = '';
