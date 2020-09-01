@@ -1,0 +1,23 @@
+<template>
+  <div class="page">
+    <div class="navbar" style="height: 50px;position: fixed;/*top: 200;*/width: 100%;">
+      <div class="navbar-inner">
+        <div class="left">
+          <a href="#" class="link" onclick="clearCart({{$route.params.idMeja}});">
+            <i class="icon icon-back"></i>
+            <span class="ios-only">Back</span>
+          </a>
+        </div>
+        <div class="title sliding">MediaPOS</div>
+      </div>
+    </div>
+    
+    <div class="page-content" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden;">
+      <div class="block" style="padding: 0px; margin: 0px;">
+        <div style="overflow-x: hidden">
+          <iframe id="frame1" src="http://192.168.238.10/reservasi_trial/index.php?x=reservasi&cd=b2" style="width: 100vw; height: 100vh"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

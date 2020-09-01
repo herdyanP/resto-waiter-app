@@ -27,10 +27,10 @@ var app = new Framework7({
 // JS SCRIPT SEMENTARA DISINI DULU YAKKK...
 // NYOBA TEMPLATING
 
-// var addr = "http://dev.cloudmnm.com/resto/";
+var addr = "http://dev.cloudmnm.com/resto/";
 // var addr = "http://192.168.3.16/resto/";
 
-var addr = "http://192.168.238.10/resto/";
+// var addr = "http://192.168.238.10/resto/";
 // var addr = "http://192.168.238.10/resto_trial/";
 
 var db;
@@ -49,6 +49,7 @@ var namaorder = '';
 var user = '';
 var curTable = '';
 var fromRsv = 0;
+var totQty = 0;
 /*var pinBox = app.dialog.create({
     title: 'Employee PIN',
     closeByBackdropClick: false,
@@ -635,6 +636,7 @@ function listKategori(meja){
 
 function tampil(meja, kat, start){
   var id_gudang = window.localStorage.getItem('gudang');
+  var limits = 9;
   var tb_cat = 
     `<div style="text-align: center;" onclick="rowKategori(' `+meja+` ')">
       <i class="icon material-icons md-only">apps</i>
@@ -644,7 +646,7 @@ function tampil(meja, kat, start){
   $('#toolbar_cat').html(tb_cat);
   app.toolbar.show("#toolbar_menu");
   app.request({
-    url: addr+"API/barang/"+id_gudang+"/"+kat+"/"+start+"/",
+    url: addr+"API/barang/"+id_gudang+"/"+kat+"/"+start+"/"+limits+"/",
     method: "GET",
     success: function(json){
       if(json){
@@ -652,13 +654,13 @@ function tampil(meja, kat, start){
         var datanya = '';
         var len = (result.length < 23 ? result.length : 23);
         var prevBtn = 
-          `<div style="text-align: center;" onclick="` +(start == 0 ? `alert('First Page Reached!')` : `tampil(`+meja+`, `+kat+`, `+(start-12)+`)`)+ `">
+          `<div style="text-align: center;" onclick="` +(start == 0 ? `alert('First Page Reached!')` : `tampil(`+meja+`, `+kat+`, `+(start - limits)+`)`)+ `">
             <i class="icon material-icons md-only">chevron_left</i>
             <span class="tabbar-label">Prev</span>
           </div>`;
 
         var nextBtn = 
-          `<div style="text-align: center;" onclick="` +(result.length < 12 ? `alert('Last Page Reached!')` : `tampil(`+meja+`, `+kat+`, `+(start+12)+`)`)+ `">
+          `<div style="text-align: center;" onclick="` +(result.length < limits ? `alert('Last Page Reached!')` : `tampil(`+meja+`, `+kat+`, `+(start + limits)+`)`)+ `">
             <i class="icon material-icons md-only">chevron_right</i>
             <span class="tabbar-label">Next</span>
           </div>`;
@@ -668,9 +670,14 @@ function tampil(meja, kat, start){
           datanya+="<button onclick=\"addQty('"+meja+"','"+result[i].id_barang+"','1','"+result[i].harga+"','"+result[i].nama_barang.replace(/(')/g, '\\$1')+"')\" class=\"no-ripple\" style=\"margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">"+result[i].nama_barang.replace(/ \([\w \W]+\)/g, '')+"</p></button>";
         }
 
-        if(result.length % 3 > 0){
-          datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
-        }
+        // if(result.length % 9 > 0){
+          var sisa = result.length % 9;
+          for(var i = 0; i < sisa; i++){
+            datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
+          }
+        // } else {
+        //   datanya+="<button class=\"no-ripple\" style=\"visibility: hidden; margin: 10px 0; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #2196f3; color: white; border-radius: 15px;\"><p style=\""+(window.innerWidth > 480 ? "font-size: 1.5rem;" : "")+"\">NIL</p></button>";
+        // }
 
         $('#toolbar_prev').html(prevBtn);
         $('#toolbar_next').html(nextBtn);
@@ -805,7 +812,7 @@ function addQty(meja, id, amt, harga, nama, idpj){
             text: 'Confirm',
             onClick: function(dialog, e){
               var amt_to_add = $('#addAmt').val();
-              simpan(meja, id, amt_to_add, harga, '', idpj)
+              simpan(meja, id, amt_to_add, harga, '', idpj);
             }
           }]
         }).open();
@@ -868,7 +875,8 @@ function simpan(meja, id, qty, harga, nama, idpj){
     method: "POST",
     data: JSON.stringify(temp),
     success: function(){
-      lihatKeranjang(meja, idpj);
+      // lihatKeranjang(meja, idpj);
+      lihatKeranjangSimple(meja);
       app.toast.create({
         text: 'Added to cart', 
         closeButton: true, 
@@ -922,11 +930,67 @@ function simpan(meja, id, qty, harga, nama, idpj){
 
 }
 
+function lihatKeranjangSimple(meja){
+  var data = "";
+  var jumlah = 0;
+
+  totQty = 0;
+  app.request({
+    url: addr+"API/cart/"+meja+"/",
+    // url: addr+"API/cartExt/"+meja+"/"+idpj+"/",
+    method: "GET",
+    success: function(json){
+      var result = JSON.parse(json);
+
+      // console.log(idpj);
+
+      // if(idpj == 0){
+      //   data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table '+curTable+' | '+namaorder+' / '+paxorder+' Pax<a class="link icon-only" onclick="editPax('+meja+', '+idpj+', 0);" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">edit</i></a></li>';
+      // } else if(fromRsv > 0) {
+      //   data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table '+curTable+' | '+namaorder+' / '+paxorder+' Pax<a class="link icon-only" onclick="editPax('+meja+', '+idpj+', 1);" style="margin: 0 10px; transform: translateY(8px);"><i class="icon material-icons md-only" style="font-size: 1.5em;">edit</i></a></li>';
+      // } else {
+      //   data +='<li class="list-group-title" style="font-size: 1.0em; height: 65px; padding-top: 10px;">Table '+curTable+' | '+namaorder+' / '+paxorder+' Pax</li>';
+      // }
+
+      var odd = 'style="background: lightgray;"';
+      if(result.length > 0){
+        for(var i = 0; i < result.length; i++){
+          totQty++;
+          jumlah += parseInt(result[i].harga_tmp) * parseInt(result[i].qty_tmp);
+          data += 
+          `<li class="item-content" ` +(i % 2 == 0 ? odd : '')+ `>
+            <div class="item-inner">
+              <div class="item-title">`+result[i].qty_tmp+` x `+result[i].nama_barang+`</div>
+            </div>
+          </li>`;
+        }
+      } else {
+        data +=
+        `<li class="item-content">
+          <div class="item-inner">
+            <div class="item-title">
+              <div class="item-title">No Items in cart</div>
+            </div>
+          </div>
+        </li>`;
+      }
+
+      /*<div class="item-footer" id="catt`+result[i].id_barang+`">`+result[i].qty_tmp+` x `+result[i].harga_tmp+`</div>*/
+
+      // $('#subTotal').val(jumlah);
+      $('#simple_cart').html(data);
+    }
+  })
+}
+
 function lihatKeranjang(meja, idpj){
   var data = "";
   var jumlah = 0;
+
+  totQty = 0;
   app.request({
-    url: addr+"API/cart/"+meja+"/",
+    // url: addr+"API/cart/"+meja+"/",
+    url: addr+"API/cartExt/"+meja+"/"+idpj+"/",
     method: "GET",
     success: function(json){
       var result = JSON.parse(json);
@@ -943,6 +1007,7 @@ function lihatKeranjang(meja, idpj){
 
 
       for(var i = 0; i < result.length; i++){
+        totQty++;
         jumlah += parseInt(result[i].harga_tmp) * parseInt(result[i].qty_tmp);
         data += ` <li class="item-content ">
                     <div class="item-inner">
@@ -968,44 +1033,55 @@ function lihatKeranjang(meja, idpj){
 }
 
 function addCatatan(idtmp, meja, idpj){
-  app.dialog.prompt('Notes:', 'Title', 
-    function(catt){
-      var temp = {
-        act : "catatan",
-        id_tmp : idtmp,
-        catatan : catt
-      }
+  app.request({
+    url: addr+ "API/catatan/" +idtmp+ "/" +idpj+ "/",
+    method: "GET",
+    success: function(res){
+      var result = JSON.parse(res);
+      console.log(result[0].catatan);
 
-      app.request({
-        url: addr+"API/cart/"+meja+"/",
-        method: "POST",
-        data: JSON.stringify(temp),
-        success: function(json){
-          if(json){
-            app.toast.create({
-              text: 'Notes successfully added', 
-              closeButton: true, 
-              destroyOnClose: true, 
-              closeTimeout: 2000
-            }).open();
-          } else {
-            app.toast.create({
-              text: 'Failed to add note', 
-              closeButton: true, 
-              destroyOnClose: true, 
-              closeTimeout: 2000
-            }).open();
+      app.dialog.prompt('Notes:', 'Title', 
+        function(catt){
+          var temp = {
+            act : "catatan",
+            id_tmp : idtmp,
+            catatan : catt
           }
-
-          lihatKeranjang(meja, idpj);
-        }
-      })
-
-      console.log(temp);
-    },
-    function(){
-      // app.toast.create({text: 'Batal', closeTimeout: 2000}).open()
-    });
+    
+          app.request({
+            url: addr+"API/cart/"+meja+"/",
+            method: "POST",
+            data: JSON.stringify(temp),
+            success: function(json){
+              if(json){
+                app.toast.create({
+                  text: 'Notes successfully added', 
+                  closeButton: true, 
+                  destroyOnClose: true, 
+                  closeTimeout: 2000
+                }).open();
+              } else {
+                app.toast.create({
+                  text: 'Failed to add note', 
+                  closeButton: true, 
+                  destroyOnClose: true, 
+                  closeTimeout: 2000
+                }).open();
+              }
+    
+              lihatKeranjang(meja, idpj);
+            }
+          })
+    
+          console.log(temp);
+        },
+        function(){
+          // app.toast.create({text: 'Batal', closeTimeout: 2000}).open()
+        }).on('opened', function(){
+          $('.dialog-input').val(result[0].catatan);
+        });
+    }
+  })
 }
 
 function hapusItem(idtmp, meja, idpj){
@@ -1156,6 +1232,7 @@ function cekPIN(meja, id, tipe, atasnama, pax){
 
 // function inputNama(meja, id, tipe){
 function inputNama(idmeja){
+  var idpeg = window.localStorage.getItem("id_peg");
   app.dialog.create({
     title: 'Customer Name',
     closeByBackdropClick: false,
@@ -1192,6 +1269,16 @@ function inputNama(idmeja){
         if(atasnama){
           namaorder = atasnama;
           // cekPIN(meja, id, tipe, atasnama);
+        } else {
+          app.request({
+            url: addr+ "API/waitress/" +idmeja+ "/delete/",
+            method: "POST",
+            data: JSON.stringify({id_user: idpeg, id_meja: idmeja}),
+            success: function(result){
+              console.log('delete', result);
+            }
+          })
+          app.views.main.router.back();
         }
       }
     }]/* ,
@@ -1260,6 +1347,16 @@ function inputPax(idmeja){
           paxorder = pax;
           // cekPIN(meja, id, tipe, atasnama, pax);
           inputNama(idmeja)
+        } else {
+          app.request({
+            url: addr+ "API/waitress/" +idmeja+ "/delete/",
+            method: "POST",
+            data: JSON.stringify({id_user: idpeg, id_meja: idmeja}),
+            success: function(result){
+              console.log('delete', result);
+            }
+          })
+          app.views.main.router.back();
         }
       }
     }]/* ,
@@ -1338,55 +1435,59 @@ function editNama(meja, idpj){
 }
 
 function simpanPesanan(idmeja, id, waitress, atasnama, pax){
-  var sub = parseInt($('#subTotal').val());
-  var grand = parseInt($('#grandTotal').val());
-  var gudang = window.localStorage.getItem("gudang");
-  var idp = window.localStorage.getItem("id_peg");
-  var temp = {
-    action : "pesan",
-    meja : idmeja,
-    idpj : id,
-    subtotal : sub,
-    grantotal : sub,
-    idpeg : idp,
-    waitress : waitress,
-    nama_cust : atasnama,
-    pax : pax
-  }
-
-  console.log(temp);
-
-  app.request({
-    url: addr+"API/penjualan/"+gudang+"/",
-    method: "POST",
-    data: JSON.stringify(temp),
-    success: function(json){
-      if(json){
-        app.request({
-          url: addr+ "API/waitress/" +idmeja+ "/delete/",
-          method: "POST",
-          data: JSON.stringify({id_user: idp, id_meja: idmeja}),
-          success: function(result){
-            console.log("done pesan", result);
-          }
-        })
-
-        app.dialog.confirm('Print Table Checker?', 'Confirmation', function(){
-          // cetakBillWaiter(idmeja);
-          cetakBillDapur(idmeja, id);
-          app.views.main.router.navigate('/');
-        }, function(){
-          app.views.main.router.navigate('/');
-        });
-
-        // app.views.main.router.navigate('/home/');
-      }
-    },
-    error: function(xhr, status){
-      // alert("simpanPesanan cannot be processed");
-      alert("Network Error, order cannot be processed!");
+  if(totQty == 0){
+    alert('Cart is empty!');
+  } else {
+    var sub = parseInt($('#subTotal').val());
+    var grand = parseInt($('#grandTotal').val());
+    var gudang = window.localStorage.getItem("gudang");
+    var idp = window.localStorage.getItem("id_peg");
+    var temp = {
+      action : "pesan",
+      meja : idmeja,
+      idpj : id,
+      subtotal : sub,
+      grantotal : sub,
+      idpeg : idp,
+      waitress : waitress,
+      nama_cust : atasnama,
+      pax : pax
     }
-  })
+  
+    console.log(temp);
+  
+    app.request({
+      url: addr+"API/penjualan/"+gudang+"/",
+      method: "POST",
+      data: JSON.stringify(temp),
+      success: function(json){
+        if(json){
+          app.request({
+            url: addr+ "API/waitress/" +idmeja+ "/delete/",
+            method: "POST",
+            data: JSON.stringify({id_user: idp, id_meja: idmeja}),
+            success: function(result){
+              console.log("done pesan", result);
+            }
+          })
+  
+          app.dialog.confirm('Print Table Checker?', 'Confirmation', function(){
+            // cetakBillWaiter(idmeja);
+            cetakBillDapur(idmeja, id);
+            app.views.main.router.navigate('/');
+          }, function(){
+            app.views.main.router.navigate('/');
+          });
+  
+          // app.views.main.router.navigate('/home/');
+        }
+      },
+      error: function(xhr, status){
+        // alert("simpanPesanan cannot be processed");
+        alert("Network Error, order cannot be processed!");
+      }
+    })
+  }
 }
 
 function lihatPesanan(meja, pj){
@@ -2174,6 +2275,10 @@ function listTx(){
       // console.log(result);
     }
   })
+}
+
+function openBvg(idmeja, idpj){
+  alert(idmeja, idpj);
 }
 
 

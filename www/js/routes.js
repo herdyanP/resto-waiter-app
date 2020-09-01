@@ -53,6 +53,7 @@ var routes = [
           </div>
           <div class="title">Menus</div>
           <div class="right">
+              <a class="link" style="border: solid white 3px; height: 45px;" onclick="openBvg('{{$route.params.idMeja}}', '{{$route.params.idPJ}}')">Open Bvg</a>
               <a class="link icon-only searchbar-enable" data-searchbar=".searchbar"><i class="icon material-icons md-only">search</i></a>
               <a class="link icon-only" href="/keranjang/{{$route.params.idMeja}}/{{$route.params.idPJ}}/"><i class="icon material-icons md-only">shopping_cart</i></a>
             </div>
@@ -93,8 +94,12 @@ var routes = [
       </div>
 
       <div class="page-content" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden">
-        <div class="block">
-          <div class="row" id="menuku" style=" overflow-y:scroll; max-height: calc( 90vh - 50px ); justify-content: space-between;">
+        <div class="block" style="margin-bottom: 0px;">
+          <div class="row" id="menuku" style=" overflow-y:scroll; height: calc( 70vh - 50px ); justify-content: space-between;"></div>
+        </div>
+        <div style="overflow-y: scroll; height: calc( 95vh - (70vh - 50px) - 56px); border-top: solid black 5px;">
+          <div class="list no-hairlines-between no-hairlines" style="margin-top: 0px;">
+            <ul id="simple_cart"></ul>
           </div>
         </div>
       </div>
@@ -102,6 +107,8 @@ var routes = [
     on: {
         pageAfterIn: function test (e, page) {
           // do something after page gets into the view
+          console.log(page.route.params.idMeja, page.route.params.idPJ);
+          lihatKeranjangSimple(page.route.params.idMeja);
           clearTimeout(refresh_meja);
           rowKategori(page.route.params.idMeja);
           
@@ -339,6 +346,15 @@ var routes = [
     on: {
       pageAfterIn: function(){
 
+      }
+    }
+  },
+  {
+    path: '/open_bvg/',
+    componentUrl: './pages/open_bvg.html',
+    on: {
+      pageAfterIn: function(){
+        
       }
     }
   },
