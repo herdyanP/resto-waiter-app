@@ -253,7 +253,7 @@ var routes = [
     </div>`,
     // componentUrl: './pages/pesanan.html',
     on: {
-        pageAfterIn: function test (e, page) {
+        pageAfterIn: function (e, page) {
           // do something after page gets into the view
           clearTimeout(refresh_meja);
           lihatMergeable(page.route.params.idMeja, page.route.params.idPJ);
@@ -350,11 +350,13 @@ var routes = [
     }
   },
   {
-    path: '/open_bvg/',
+    path: '/open_bvg/:idMeja/:idPJ/',
     componentUrl: './pages/open_bvg.html',
+    name: 'openbvg',
     on: {
-      pageAfterIn: function(){
-        
+      pageAfterIn: function(e, page){
+        $("#idmeja_bvg").val(page.route.params.idMeja);
+        $("#idpj_bvg").val(page.route.params.idPJ);
       }
     }
   },

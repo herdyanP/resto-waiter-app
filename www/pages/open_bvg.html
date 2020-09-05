@@ -1,23 +1,64 @@
 <template>
   <div class="page">
-    <div class="navbar" style="height: 50px;position: fixed;/*top: 200;*/width: 100%;">
+    <div class="navbar" style="height: 50px; position: fixed; width: 100%;">
       <div class="navbar-inner">
         <div class="left">
-          <a href="#" class="link" onclick="clearCart({{$route.params.idMeja}});">
+          <a href="#" class="link back">
             <i class="icon icon-back"></i>
             <span class="ios-only">Back</span>
           </a>
         </div>
-        <div class="title sliding">MediaPOS</div>
+        <div class="title">Open Beverages</div>
       </div>
     </div>
     
-    <div class="page-content" style="padding-top: 27px; padding-bottom: 35px; overflow-y: hidden;">
-      <div class="block" style="padding: 0px; margin: 0px;">
-        <div style="overflow-x: hidden">
-          <iframe id="frame1" src="http://192.168.238.10/reservasi_trial/index.php?x=reservasi&cd=b2" style="width: 100vw; height: 100vh"></iframe>
-        </div>
-      </div>
+    <div class="page-content">
+      <form action="#" id="form_bvg" class="list no-hairlines no-hairlines-between">
+        <input type="hidden" id="idmeja_bvg" name="idmeja">
+        <input type="hidden" id="idpj_bvg" name="idpj">
+        
+        <ul>
+          <li class="item-content item-input ">
+            <div class="item-inner">
+              <div class="item-title item-label" style="color: unset;">Name</div>
+              <div class="item-input-wrap">
+                <input type="text" name="nama_barang" id="nama_barang">
+              </div>
+            </div>
+          </li>
+          <li class="item-content item-input ">
+            <div class="item-inner">
+              <div class="item-title item-label" style="color: unset;">Price</div>
+              <div class="item-input-wrap">
+                <input type="text" inputmode="numeric" onkeyup="comma(this)" name="harga_jual" id="harga_jual">
+              </div>
+            </div>
+          </li>
+          <li class="item-content item-input ">
+            <div class="item-inner">
+              <div class="item-title item-label" style="color: unset;">Qty</div>
+              <div class="item-input-wrap">
+                <input type="text" inputmode="numeric" onkeyup="comma(this)" name="qty_jual" id="qty_jual">
+              </div>
+            </div>
+          </li>
+          <li class="item-content item-input ">
+            <div class="item-inner">
+              <div class="item-title item-label" style="color: unset;">Notes</div>
+              <div class="item-input-wrap">
+                <textarea name="catatan" id="catatan"></textarea>
+              </div>
+            </div>
+          </li>
+          <li class="item-content">
+            <div class="item-inner">
+              <div class="item-title" style="width: 100%;">
+                <a class="button button-outline" style="display: block;" onclick="addBvg()">Tambah</a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </form>
     </div>
   </div>
 </template>

@@ -27,10 +27,10 @@ var app = new Framework7({
 // JS SCRIPT SEMENTARA DISINI DULU YAKKK...
 // NYOBA TEMPLATING
 
-var addr = "http://dev.cloudmnm.com/resto/";
+// var addr = "http://dev.cloudmnm.com/resto/";
 // var addr = "http://192.168.3.16/resto/";
 
-// var addr = "http://192.168.238.10/resto/";
+var addr = "http://192.168.238.10/resto/";
 // var addr = "http://192.168.238.10/resto_trial/";
 
 var db;
@@ -371,10 +371,10 @@ function listMeja(kat = 0){
           content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', '+result[i].id_pj+', \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', ' +result[i].curitem+ ', \'' +result[i].nama_cust+ '\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 10px); width: calc((90vw / 3) - 10px); vertical-align: middle; background: #8B0000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 10px); '+font+'">'+result[i].NAMA+'</p></div>';
         } else if(result[i].ST == '3'){ // Meja butuh dibersihkan
           content += '<div onclick="onPrepare()" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 10px); width: calc((90vw / 3) - 10px); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 10px); '+font+'">'+result[i].NAMA+'</p></div>';
-        } /* else if(result[i].hold > 0){ // Meja sedang melakukan order
+        } else if(result[i].hold > 0){ // Meja sedang melakukan order
           // content += '<div onclick="onHold(\'' +result[i].user_hold+ '\', \''+result[i].KODE+'\', '+result[i].id_pj+', \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', ' +result[i].curitem+ ', \'' +result[i].nama_cust+ '\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
-          content += '<div onclick="onHold(\'' +result[i].user_hold+ '\', \''+result[i].KODE+'\', '+result[i].id_pj+', \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', ' +result[i].curitem+ ', \'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 5px); width: calc(90vw / 3); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 5px); '+font+'">'+result[i].NAMA+'</p></div>';
-        } */ else { // Meja open
+          content += '<div onclick="onHold(\'' +result[i].user_hold+ '\', \''+result[i].KODE+'\', '+result[i].id_pj+', \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', ' +result[i].curitem+ ', \'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 10px); width: calc((90vw / 3) - 10px); vertical-align: middle; background: #b8860b; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 10px); '+font+'">'+result[i].NAMA+'</p></div>';
+        } else { // Meja open
           if(result[i].aktif == '0'){
             content += '<div onclick="lihatmeja(\''+result[i].KODE+'\', 0, \'' +result[i].NAMA+ '\', ' +result[i].idreservasi+ ', 0, \'\')" class="" style="margin: 10px 1px; height: calc((90vw / 3) - 10px); width: calc((90vw / 3) - 10px); vertical-align: middle; background: #008000; color: white; border-radius: 50%;"><p class="" style="margin: auto; text-align: center; vertical-align: middle; line-height: calc((90vw / 3) - 10px); '+font+'">'+result[i].NAMA+'</p></div>';
           } else {
@@ -420,7 +420,7 @@ function listMeja(kat = 0){
   })
 }
 
-function lihatmeja(meja, pj, nmeja, reservasi, curitem, namabook){
+function lihatmeja(meja, pj = 0, nmeja, reservasi, curitem, namabook){
   var idpeg = window.localStorage.getItem("id_peg");
 
   curTable = nmeja;
@@ -451,7 +451,7 @@ function lihatmeja(meja, pj, nmeja, reservasi, curitem, namabook){
           }
         })
 
-        if(curitem > 0 && pj != '0'){ // jika sudah pernah pesan dan bukan customer baru
+        if(pj != '0' && pj != null){ // jika sudah pernah pesan dan bukan customer baru
           app.views.main.router.navigate({
             name: 'pesanan',
             params: {idMeja : meja, idPJ : pj}
@@ -1012,7 +1012,7 @@ function lihatKeranjang(meja, idpj){
         data += ` <li class="item-content ">
                     <div class="item-inner">
                       <div class="item-title" >`+result[i].qty_tmp+` x `+result[i].nama_barang+`
-                        <div class="item-footer">`+(result[i].catatan ? result[i].catatan : '')+`</div>
+                        <div class="item-footer">`+(result[i].catatan ? result[i].catatan : '')+`; `+(result[i].latest ? 'New notes: '+result[i].latest : '')+`</div>
                       </div>
                       <div class="item-after">
                         <!-- <a href="#" onclick="addQty(`+meja+`, `+result[i].id_barang+`, 1, `+result[i].harga_tmp+`, '`+result[i].nama_barang+`')" style="margin: 0px 5px;"><i class="icon f7-icons">add</i></a> -->
@@ -2277,8 +2277,28 @@ function listTx(){
   })
 }
 
-function openBvg(idmeja, idpj){
-  alert(idmeja, idpj);
+function openBvg(idmeja, idpj = 0){
+  app.views.main.router.navigate({
+    name: 'openbvg',
+    params: {idMeja : idmeja, idPJ : idpj}
+  });
+}
+
+function addBvg(){
+  var idpeg = window.localStorage.getItem("id_peg");
+  var temp = app.form.convertToData('#form_bvg');
+  temp.idpeg = idpeg;
+
+  // console.log(temp);
+  app.request({
+    url: addr+"API/openBvg/0/",
+    method: "POST",
+    data: JSON.stringify(temp),
+    success: function(){
+      alert('Success!');
+      app.views.main.router.back();
+    }
+  })
 }
 
 
