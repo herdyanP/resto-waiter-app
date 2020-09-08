@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.medianusamandiri.mediapos" version="1.4.1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.medianusamandiri.mediapos" version="1.4.3" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>MediaPOS</name>
     <description>
         Aplikasi POS
@@ -28,17 +28,13 @@
         <splash density="xhdpi" src="res/screen/android/mediapos-xhdpi-portrait.png" />
         <splash density="xxhdpi" src="res/screen/android/mediapos-xxxhdpi-portrait.png" />
         <splash density="xxxhdpi" src="res/screen/android/mediapos-xxxhdpi-portrait.png" />
-        <preference name="android-minSdkVersion" value="19" />
-        <preference name="android-targetSdkVersion" value="28" />
         <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:allowBackup="false" />
+            <application android:fullBackupContent="false" />
             <application android:usesCleartextTraffic="true" />
         </edit-config>
-        <config-file parent="/manifest/application" target="AndroidManifest.xml">
-            <provider android:authorities="${applicationId}.sharing.provider" android:exported="false" android:grantUriPermissions="true" android:name="nl.xservices.plugins.FileProvider">
-                <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/sharing_paths" />
-            </provider>
-        </config-file>
+        <preference name="android-minSdkVersion" value="19" />
+        <preference name="android-targetSdkVersion" value="28" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
@@ -61,6 +57,10 @@
     <plugin name="com.darktalker.cordova.screenshot" spec="~0.1.6" />
     <plugin name="cordova-plugin-file" spec="~6.0.2" />
     <plugin name="cordova-plugin-x-socialsharing" spec="~5.6.2" />
-    <plugin name="cordova-pdf-generator" spec="~2.0.8" />
     <plugin name="cordova-plugin-network-information" spec="~2.0.2" />
+    <plugin name="phonegap-plugin-barcodescanner" spec="~8.1.0">
+        <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.1.1" />
+    </plugin>
+    <plugin name="cordova-plugin-btprinter" spec="~0.0.1-dev" />
+    <plugin name="cordova-pdf-generator" spec="^2.1.1" />
 </widget>

@@ -50,6 +50,22 @@
             </li>
             <li class="item-content item-input inline-label">
               <div class="item-inner">
+                <div class="item-title item-label" style="color: unset;">Total Penerimaan</div>
+                <div class="item-input-wrap">
+                  <input type="tel" id="ul_uang_masuk" value="0" readonly disabled style="text-align: right;">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input inline-label">
+              <div class="item-inner">
+                <div class="item-title item-label" style="color: unset;">Total Pengeluaran</div>
+                <div class="item-input-wrap">
+                  <input type="tel" id="ul_uang_keluar" value="0" readonly disabled style="text-align: right;">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input inline-label">
+              <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Uang Saat Ini</div>
                 <div class="item-input-wrap">
                   <input type="tel" id="ul_current_uang" value="0" onchange="commaNumber(this); hitungLain(this.value);" onclick="this.select();" style="text-align: right;">
@@ -66,17 +82,17 @@
             </li>
           </ul>
 
-          <br>
+          <br><ul id="ul_closing_masuk"></ul>
 
-          <ul id="ul_closing_sales"></ul>
+          <br><ul id="ul_closing_keluar"></ul>
 
-          <br>
+          <br><ul id="ul_closing_sales"></ul>
           
-          <ul id="ul_closing_item"></ul>
+          <br><ul id="ul_closing_item"></ul>
         </div>
 
         <div class="card-footer" id="closing_button" style="display: none;">
-          <button class="button button-fill color-green" onclick="closing();">Cetak dan close penjualan</button>
+          <button class="button button-fill color-green" onclick="closing(this);">Cetak dan close penjualan</button>
         </div>
       </div>
     </div>

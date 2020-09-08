@@ -8,7 +8,7 @@ var routes = [
 
       $('#title_home').html('MediaPOS '+(cpyProf.jenis == 1 ? "F&amp;B" : "Retail"));
       
-      AdMob.showInterstitial();
+      // AdMob.showInterstitial();
       tampilMenu();
       keranjang();
 
@@ -20,7 +20,12 @@ var routes = [
 
       searchbar = app.searchbar.create({
         el: '.searchbar',
+        customSearch: true,
         on: {
+          search: function(searchbar, query, prevQuery){
+            cariItem(query);
+            console.log(query);
+          },
           enable: function(){
             pauseFlag = 1;
           },
@@ -231,6 +236,7 @@ var routes = [
     },
     pageAfterOut: function(){
       cl_items = [];
+      cl_kaskeluar = [];
       $('#closing_button').css('display', 'none');
     }
   }
@@ -614,7 +620,10 @@ var routes = [
 
           list += '\
                       <tr>\
-                        <td colspan="3"'+result[i].nama_barang+'</td>\
+                        <td colspan="3">\
+                          '+result[i].nama_barang+'\
+                          <br>Cttn: '+result[i].catatan+'\
+                        </td>\
                       </tr>\
                       <tr>\
                         <td style="padding-left: 20px;">'+qty+' x '+hj+'</td>\
@@ -623,7 +632,7 @@ var routes = [
                     ';
         }
 
-        list += '<tr><td colspan="3" style="border-bottom: solid black 2px;"></tr>';
+        list += '<tr><td colspan="3" style="border-bottom: solid black 2px;"></td></tr>';
 
         var stot = '\
                   <tr>\
@@ -702,6 +711,58 @@ var routes = [
         var q = tbl + header + dtloutlet + tgl + notrans + op + list + stot + dsc + grd + /*via +*/ paid + chn + thanks;
         $('#preview_rcpt').html(q);
       })
+    }
+  }
+},
+{
+  path: '/kaskeluar/',
+  componentUrl: './pages/kaskeluar.html',
+  on: {
+    pageAfterIn: function(){
+      var dt = new Date();
+      var yr = dt.getFullYear();
+      var mt = ('00'+(dt.getMonth() + 1)).slice(-2);
+      var dy = ('00'+dt.getDate()).slice(-2);
+      var hr = ('00'+dt.getHours()).slice(-2);
+      var mn = ('00'+dt.getMinutes()).slice(-2);
+      var sc = ('00'+dt.getSeconds()).slice(-2);
+
+      var discrp = 0;
+      var c_stamp = yr+'-'+mt+'-'+dy+' '+hr+':'+mn+':'+sc;
+      var stamp_sv = $('#stamp_sv').val();
+
+      var sales = {
+        act: 'cl_all',
+        tgl: stamp_sv
+      }
+
+      $.ajax({
+        url: site+'/API/laporan/' +cpyProf.id_user+ '/',
+        method: 'POST',
+        data: JSON.stringify(sales),
+        success: function(result){
+          var pj = parseInt(result[0].penjualan);
+          var km = parseInt(result[0].kasmasuk);
+          var kk = parseInt(result[0].kaskeluar);
+          var st = parseInt(result[0].starting_cash);
+          var available = st + pj + km - kk;
+
+          console.log(st, pj, km, kk);
+          $("#availcash").val(available);
+          $("#wang_kaskeluar").val(available.toLocaleString('id-id'));
+
+        }
+      })
+      console.log('ini kas keluar');
+    }
+  }
+},
+{
+  path: '/kasmasuk/',
+  componentUrl: './pages/kasmasuk.html',
+  on: {
+    pageAfterIn: function(){
+      console.log('ini kas masuk');
     }
   }
 }];

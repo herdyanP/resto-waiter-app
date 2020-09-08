@@ -10,6 +10,7 @@
         <div class="title" id="title_home">MediaPOS</div>
         <div class="right">
           <!-- <p id="currentUser" style="font-size: 14px; margin-right: 18px;"></p> -->
+          <a href="#" class="link icon-only" onclick="openScanBarcode();"><i class="icon material-icons md-only">photo_camera</i></a>
           <a class="link icon-only searchbar-enable" data-searchbar=".searchbar"><i class="icon material-icons md-only">search</i></a>
         </div>
         <form class="searchbar searchbar-expandable">
@@ -142,9 +143,20 @@
             <ul>
               <li class="item-content item-input inline-label" style="display: block;">
                 <div class="item-inner">
+                  <div class="item-title item-label" style="color: unset;">Diskon (%)</div>
+                  <div class="item-input-wrap">
+                    <input type="text" inputmode="numeric" lang="id" id="disk_pr" value="0" onchange="cekDiskon(this.value)" onclick="this.select();" style="text-align: right;">
+                    <!-- <input type="tel" lang="id" id="disk_rp" value="0" onchange="hitungDiskon(); commaNumber(this);" onclick="this.select();" style="text-align: right;"> -->
+                    <!-- <input type="text" lang="id" id="dsk_persen" value="0" onclick="this.select();" onchange="diskon(this.value); hitungKembalian(document.getElementById(bayar).value)" style="text-align: right;"> -->
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input inline-label" style="display: block;">
+                <div class="item-inner">
                   <div class="item-title item-label" style="color: unset;">Diskon (Rp)</div>
                   <div class="item-input-wrap">
-                    <input type="tel" lang="id" id="disk_rp" value="0" onchange="hitungDiskon(); commaNumber(this);" onclick="this.select();" style="text-align: right;">
+                    <input type="text" inputmode="numeric" lang="id" id="disk_rp" value="0" onkeyup="comma(this);" onchange="hitungDiskon();" onclick="this.select();" style="text-align: right;">
+                    <!-- <input type="tel" lang="id" id="disk_rp" value="0" onchange="hitungDiskon(); commaNumber(this);" onclick="this.select();" style="text-align: right;"> -->
                     <!-- <input type="text" lang="id" id="dsk_persen" value="0" onclick="this.select();" onchange="diskon(this.value); hitungKembalian(document.getElementById(bayar).value)" style="text-align: right;"> -->
                   </div>
                 </div>

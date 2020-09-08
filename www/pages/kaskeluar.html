@@ -1,0 +1,62 @@
+<template>
+  <div class="page">
+
+    <div class="navbar">
+      <div class="navbar-inner sliding">
+        <div class="left">
+          <a href="#" class="link back">
+            <i class="icon icon-back"></i>
+            <span class="ios-only">Back</span>
+          </a>
+        </div>
+        <div class="title">
+          Pengeluaran Kas
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content" id="scrollable">
+      <div class="block">
+        <form id="form_kaskeluar" class="list no-hairlines no-hairlines-between">
+          <ul>
+            <li class="item-content item-input ">
+              <div class="item-inner">
+                <div class="item-title item-label" style="color: unset;">Uang Tersedia</div>
+                <div class="item-input-wrap">
+                  <!-- <input type="tel" id="nom_kaskeluar"> -->
+                  <input type="text" name="wang" id="wang_kaskeluar" readonly disabled style="text-align: right;">
+                  <input type="hidden" id="availcash">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input ">
+              <div class="item-inner">
+                <div class="item-title item-label" style="color: unset;">Nominal</div>
+                <div class="item-input-wrap">
+                  <!-- <input type="tel" id="nom_kaskeluar"> -->
+                  <input type="text" name="nominal" id="nom_kaskeluar" inputmode="numeric" onclick="this.select();" onkeyup="comma_keluar(this);" style="text-align: right;">
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input ">
+              <div class="item-inner">
+                <div class="item-title item-label" style="color: unset;">Uraian</div>
+                <div class="item-input-wrap">
+                  <input type="text" name="uraian" id="ura_kaskeluar">
+                </div>
+              </div>
+            </li>
+
+            <li class="item-content">
+              <div class="item-inner">
+                <div class="item-title" style="width: 100%;">
+                  <a class="col button button-outline" onclick="prosesKas('keluar', document.getElementById('form_kaskeluar'));">Simpan</a>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </form>       
+      </div>
+    </div>
+  </div>
+</template>
