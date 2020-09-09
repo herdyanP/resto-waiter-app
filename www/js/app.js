@@ -4428,3 +4428,9 @@ status => 4,  Data Anda Sudah Terdaftar, dengan status premium
 
 // TODO: proses pembayaran -> simpan di tabel tmp saat user akan membuat outlet baru -> arahkan ke halaman pembayaran -> user upload bukti pembayaran -> approve kemudian bikin outlet dengan data yg disubmit
 // TODO: penambahan role kasir dan pembatasan menu terkait
+
+// 8 September 2020
+// TODO: referal code sales
+// TODO: pada laporan closing, total uang kas cuma yang jenisnya cash
+// TODO: saat register harus cek apakah email valid atau tidak
+// TODO: taphold event dari framework7
