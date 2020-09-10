@@ -191,6 +191,19 @@ var routes = [
   on: {
     pageAfterIn: function(){
       // if(AdMob) AdMob.showInterstitial();
+
+      // Dom7('#passlogin').on('taphold', function(){
+      //   getClipboardContents(this);
+      // })
+
+      Dom7('#passlogin').on('taphold', function(){
+        // getClipboardContents(this);
+        var el = this;
+        cordova.plugins.clipboard.paste(function (text) { 
+          el.value = text;
+          // alert(text); 
+        });
+      })
       $('#appversion').html("v"+appVer);
     },
     pageAfterOut: function(){

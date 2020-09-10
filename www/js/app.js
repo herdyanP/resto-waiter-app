@@ -9,7 +9,13 @@ var app = new Framework7({
   init: false,
   // theme: theme,
   routes: routes,
+  touch: {
+    // Disable fast clicks
+    fastClicks: true,
+    tapHold: true //enable tap hold events
+  }
 });
+
 
 // JS SCRIPT SEMENTARA DISINI DULU YAKKK...
 // NYOBA TEMPLATING
@@ -24,8 +30,10 @@ var cpyProf;
 var diskonAmt = 0; totalSub = 0; totalGrand = 0; kembalian = 0;
 var pingTimeout = 0;
 var appVer = 0;
-// var site = 'https://demo.medianusamandiri.com/lightpos';
+
 var site = 'http://mediapos.cloudmnm.com';
+// var site = 'http://dev.cloudmnm.com/mediapos/';
+
 var trueHeight = window.innerHeight
 var moddedHeight = Math.floor(trueHeight / 100) * 100;
 var dailyModal = 0;
@@ -131,6 +139,16 @@ Highcharts.setOptions({
 
 document.addEventListener('deviceready', function() {
   app.init();
+
+  Dom7('#passlogin').on('taphold', function(){
+    // getClipboardContents(this);
+    var el = this;
+    cordova.plugins.clipboard.paste(function (text) { 
+      el.value = text;
+      // alert(text); 
+    });
+  })
+
   adid = {
     // banner: 'ca-app-pub-3940256099942544/6300978111', /*test ID*/
     // banner: 'ca-app-pub-8300135360648716/8651556341',  /*real ID*/
@@ -196,6 +214,16 @@ document.addEventListener('deviceready', function() {
     // alert(version);
   });
 });
+
+// async function getClipboardContents(el) {
+//   try {
+//     const text = await navigator.clipboard.readText();
+//     el.value = text;
+//     // console.log('Pasted content: ', text);
+//   } catch (err) {
+//     console.error('Failed to read clipboard contents: ', err);
+//   }
+// }
 
 function initDB(){
   /*db.transaction(function(tx) {
@@ -1593,7 +1621,8 @@ function laporanClosing(stamp){
         cl_cc = cc;
         cl_em = emoney;
   
-        $('#ul_current_uang').val((parseInt(tunai) + parseInt(cc) + parseInt(emoney) + parseInt(dailyModal)).toLocaleString('id-ID'));
+        // $('#ul_current_uang').val((parseInt(tunai) + parseInt(cc) + parseInt(emoney) + parseInt(dailyModal)).toLocaleString('id-ID'));
+        $('#ul_current_uang').val((parseInt(tunai) + parseInt(dailyModal)).toLocaleString('id-ID'));
       } else {
         // datanya += `
         //   <li>
