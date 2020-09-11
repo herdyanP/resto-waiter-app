@@ -31,8 +31,8 @@ var diskonAmt = 0; totalSub = 0; totalGrand = 0; kembalian = 0;
 var pingTimeout = 0;
 var appVer = 0;
 
-var site = 'http://mediapos.cloudmnm.com';
-// var site = 'http://dev.cloudmnm.com/mediapos/';
+// var site = 'http://mediapos.cloudmnm.com';
+var site = 'http://dev.cloudmnm.com/mediapos/';
 
 var trueHeight = window.innerHeight
 var moddedHeight = Math.floor(trueHeight / 100) * 100;
@@ -260,110 +260,6 @@ function onConstruction(){
     closeTimeout: 3000,
     closeButton: true
   }).open();
-}
-
-function onNewLogin(q){
-  console.log('new login');
-  $('#login_button').addClass('disabled');
-
-  var temp = {
-    'device' : device.uuid
-  };
-
-  $.each($(q).serializeArray(), function(){
-    temp[this.name] = this.value;
-  })
-
-  // console.log(temp);
-
-  app.request({
-    url: site+'/API/login/',
-    method: 'POST',
-    data: JSON.stringify(temp),
-    timeout: 10 * 1000,
-    success: function(json){
-      var c = 0;
-      if(json != '0') {
-        // console.log(json);
-        var result = JSON.parse(json);
-
-        temp.nama = result[0].NAMA;
-        temp.cabang = result[0].nama_cabang;
-        temp.outlet = result[0].nama_outlet;
-        temp.client = result[0].nama_client;
-        temp.id_cabang = result[0].id_cabang;
-        temp.id_client = result[0].id_client;
-        temp.id_outlet = result[0].id_outlet;
-        temp.alamat = result[0].alamat;
-        temp.id_user = result[0].ID;
-        temp.jenis = result[0].jenis_outlet;
-
-        // logoByte64 = result[0].image;
-        initGambar(result[0].image);
-
-        // console.log(temp);
-        NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
-        // break;
-      } else {
-        app.toast.create({
-          text: "Cek lagi username / password anda",
-          closeTimeout: 3000,
-          closeButton: true
-        }).open();
-      }
-    },
-    error: function(){
-      app.toast.create({
-        text: "Koneksi ke Server Gagal",
-        closeTimeout: 3000,
-        closeButton: true
-      }).open();
-    },
-    complete: function(){
-      $('#login_button').removeClass('disabled');
-    }
-  })
-
-  /*$.ajax({
-    url: site+'/API/login/',
-    method: 'POST',
-    data: JSON.stringify(temp),
-    timeout: 10000
-  }).done(function(result){
-    // console.log(result);
-    var c = 0;
-    if(result != '0') {
-      console.log(result);
-
-      for(var i = 0; i < result.length; i++){
-        temp.nama = result[i].nama_pegawai;
-        temp.cabang = result[i].nama_cabang;
-        temp.outlet = result[i].nama_outlet;
-        temp.client = result[i].nama_client;
-        temp.id_cabang = result[i].id_cabang;
-        temp.id_client = result[i].id_client;
-        temp.id_outlet = result[i].id_outlet;
-        temp.id_pegawai = result[i].id_pegawai;
-
-        NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
-        break;
-      }
-    } else {
-      app.toast.create({
-        text: "Cek lagi username / password anda",
-        closeTimeout: 3000,
-        closeButton: true
-      }).open();
-    }
-  }).fail(function(){
-    app.toast.create({
-      text: "Koneksi ke Server Gagal",
-      closeTimeout: 3000,
-      closeButton: true
-    }).open();
-  }).always(function(){
-    $('#login_button').removeClass('disabled');
-  })*/
 }
 
 function onStoreSuccess(obj){
@@ -670,71 +566,6 @@ function onGetStampFail(){
     console.log(error);
   })
 }*/
-
-function tampilMenu(){
-  try{
-    var kat = $('#kategori').val();
-    $.ajax({
-      url: site+'/API/kategori/'+cpyProf.id_client+'/',
-      method: 'GET',
-    }).done(function(result){
-      console.log('kategori');
-      var data = '<option value="0">Semua menu</option>';
-      for(var i = 0; i < result.length; i++){
-        if(result[i].id_kategori == null || result[i].nama_kategori == null) continue;
-
-        if(kat != 0 && kat == result[i].id_kategori){
-          // data += `<option value="${result[i].id_kategori}" selected>${result[i].nama_kategori}</option>`;
-          data += '<option value="'+result[i].id_kategori+'" selected>'+result[i].nama_kategori+'</option>';
-        } else {
-          // data += `<option value="${result[i].id_kategori}">${result[i].nama_kategori}</option>`;
-          data += '<option value="'+result[i].id_kategori+'">'+result[i].nama_kategori+'</option>';
-        }
-      }
-
-      if(pauseFlag == 0) $('#kategori').html(data);
-    });
-
-    $.ajax({
-      url: site+'/API/menu2/'+cpyProf.id_outlet+'/'+kat+'/',
-      method: 'GET'
-    }).done(function(result){
-      // console.log(result);
-      console.log('menu');
-      var len, i;
-
-      var datanya = '';
-      for (i = 0; i < result.length; i++){
-        if(cpyProf.jenis == 1){
-          // datanya += `<div onclick="simpan(${result[i].id_barang}, 1, ${result[i].harga.split('-')[0]}, '${result[i].nama_barang}')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ${(screen.width < 400 ? 'font-size: 10px;' : '')}">${result[i].nama_barang}</p></div>`;
-          datanya += '<div onclick="simpan('+result[i].id_barang+', 1, '+result[i].harga.split("-")[0]+', \''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); '+(screen.width < 400 ? "font-size: 10px;" : "")+'">'+result[i].nama_barang+'</p></div>';
-        } else {
-          datanya += '\
-                      <li class="item-content">\
-                        <div class="item-media" style="background: black; color: white; border-radius: 30px;">\
-                          <div style="width: 100%; text-align: center;">'+result[i].nama_barang[0]+'</div>\
-                        </div>\
-                        <div class="item-inner" onclick="simpan('+result[i].id_barang+', 1, '+result[i].harga.split("-")[0]+', \''+result[i].nama_barang+'\')">\
-                          <div class="item-title">'+result[i].nama_barang+'</div>\
-                          <div class="item-after">Rp '+parseInt(result[i].harga.split("-")[0]).toLocaleString("id-ID")+'</div>\
-                        </div>\
-                      </li>\
-                    ';
-        }
-        // datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;"><i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ' +(screen.width < 400 ? 'font-size: 10px;' : '')+ '">' +result[i].nama_barang+ '</p></div>';
-        // datanya += '<div onclick="simpan('+result[i].id_barang+', 1,'+result[i].harga.split('-')[0]+',\''+result[i].nama_barang+'\')" class="col-33" style="height: 100px;"><div style="margin: auto; width: ' +(screen.width < 400 ? '40px' : '50px')+ '; height: ' +(screen.width < 400 ? '40px' : '50px')+ '; border: solid black 1px; border-radius: 20px;"><i style="font-size: ' +(screen.width < 400 ? '30px' : '40px')+ '; line-height: ' +(screen.width < 400 ? '40px' : '50px')+ '; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i></div><p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); ' +(screen.width < 400 ? 'font-size: 10px;')+ '">'+result[i].nama_barang+'</p></div>';
-      }
-
-      if(result.length % 3 != 0 && cpyProf.jenis == 1) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
-      if(pauseFlag == 0) $(cpyProf.jenis == 1 ? '#itemlist' : '#itemrow').html(datanya);
-      refreshMenu = setTimeout(tampilMenu, 5 * 1000);
-    }).fail(function(a,b,error){
-      console.log(error);
-    })
-  } catch(error){
-    console.log(error);
-  }
-}
 
 function ubahAmount(id, hrg){
   // console.log(id);
