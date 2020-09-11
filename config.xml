@@ -28,11 +28,11 @@
         <splash density="xhdpi" src="res/screen/android/mediapos-xhdpi-portrait.png" />
         <splash density="xxhdpi" src="res/screen/android/mediapos-xxxhdpi-portrait.png" />
         <splash density="xxxhdpi" src="res/screen/android/mediapos-xxxhdpi-portrait.png" />
-        <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application">
+        <!-- <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:allowBackup="false" />
             <application android:fullBackupContent="false" />
             <application android:usesCleartextTraffic="true" />
-        </edit-config>
+        </edit-config> -->
         <preference name="android-minSdkVersion" value="19" />
         <preference name="android-targetSdkVersion" value="28" />
     </platform>
@@ -40,10 +40,6 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
-    <plugin name="cordova-plugin-admobpro" spec="^2.49.0">
-        <variable name="ADMOB_APP_ID" value="ca-app-pub-8300135360648716/8651556341" />
-        <variable name="PLAY_SERVICES_VERSION" value="16.0.0" />
-    </plugin>
     <plugin name="cordova-plugin-nativestorage" spec="~2.3.2" />
     <plugin name="cordova-plugin-app-version" spec="~0.1.9" />
     <plugin name="cordova-plugin-datecs-printer" spec="~0.10.0" />

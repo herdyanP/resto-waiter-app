@@ -25,14 +25,14 @@ var shortMonths = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep"
 var mtd = 1;
 var txNmr = 0;
 var retail, cabang, lastId, user, platform, jn, uid, updates;
-var adid = {};
+// var adid = {};
 var cpyProf;
 var diskonAmt = 0; totalSub = 0; totalGrand = 0; kembalian = 0;
 var pingTimeout = 0;
 var appVer = 0;
 
 // var site = 'http://mediapos.cloudmnm.com';
-var site = 'http://dev.cloudmnm.com/mediapos/';
+var site = 'http://dev.cloudmnm.com/mediapos';
 
 var trueHeight = window.innerHeight
 var moddedHeight = Math.floor(trueHeight / 100) * 100;
@@ -149,36 +149,36 @@ document.addEventListener('deviceready', function() {
     });
   })
 
-  adid = {
-    // banner: 'ca-app-pub-3940256099942544/6300978111', /*test ID*/
-    // banner: 'ca-app-pub-8300135360648716/8651556341',  /*real ID*/
-    banner: 'ca-app-pub-8300135360648716/5241305930', /*ID medusa*/
-    // interstitial: 'ca-app-pub-3940256099942544/1033173712' /*test ID*/
-    interstitial: 'ca-app-pub-8300135360648716/4160878738' /*ID medusa*/
-  }
+  // adid = {
+  //   // banner: 'ca-app-pub-3940256099942544/6300978111', /*test ID*/
+  //   // banner: 'ca-app-pub-8300135360648716/8651556341',  /*real ID*/
+  //   banner: 'ca-app-pub-8300135360648716/5241305930', /*ID medusa*/
+  //   // interstitial: 'ca-app-pub-3940256099942544/1033173712' /*test ID*/
+  //   interstitial: 'ca-app-pub-8300135360648716/4160878738' /*ID medusa*/
+  // }
 
-  if(AdMob) {
-    AdMob.createBanner({
-      adId: adid.banner,
-      position: AdMob.AD_POSITION.BOTTOM_CENTER,
-      autoShow: true
-    }, function(){
-      console.log('AdMob init success!');
-    }, function(){
-      console.log('AdMob init failed!');
-    });
+  // if(AdMob) {
+  //   AdMob.createBanner({
+  //     adId: adid.banner,
+  //     position: AdMob.AD_POSITION.BOTTOM_CENTER,
+  //     autoShow: true
+  //   }, function(){
+  //     console.log('AdMob init success!');
+  //   }, function(){
+  //     console.log('AdMob init failed!');
+  //   });
 
-    AdMob.prepareInterstitial({
-      adId: adid.interstitial,
-      autoShow: false
-    }, function(){
-      console.log('interstitial ready');
-    }, function(){
-      console.log('interstitial not ready');
-    });
+  //   AdMob.prepareInterstitial({
+  //     adId: adid.interstitial,
+  //     autoShow: false
+  //   }, function(){
+  //     console.log('interstitial ready');
+  //   }, function(){
+  //     console.log('interstitial not ready');
+  //   });
 
-    AdMob.showInterstitial();
-  }
+  //   AdMob.showInterstitial();
+  // }
 
   // if(AdMob) AdMob.prepareInterstitial( {adId: adid.interstitial, autoShow: false} );
 
@@ -260,37 +260,6 @@ function onConstruction(){
     closeTimeout: 3000,
     closeButton: true
   }).open();
-}
-
-function onStoreSuccess(obj){
-  console.log('Store Success');
-  
-  cpyProf = obj;
-  // $('#panel_subTitle').append('<br>'+cpyProf.outlet);
-  $('#panel_subTitle').html('<br><strong>MediaPOS '+(cpyProf.jenis == 1 ? "F&amp;B" : "Retail")+'</strong><br>POS Application<br>'+cpyProf.outlet);
-  app.views.main.router.navigate('/home/');
-
-  // NativeStorage.getItem('modal', onModalFound, onModalNotFound);
-
-  // tampilMenu();
-  
-  // $.ajax({
-  //   url: site+'/API/satuan/'+obj.id_client+'/',
-  //   method: 'GET'
-  // }).done(function(result){
-  //   if(result.length == 0){
-  //     app.dialog.alert('Silahkan Tambahkan Satuan Baru Terlebih Dahulu', 'Alert', function(){
-  //       app.views.main.router.navigate('/satuan/');
-  //     })
-  //   } else {
-  //     // initMenu();
-  //     // initCombo();
-  //   }
-  // })
-}
-
-function onStoreFail(){
-  console.log('Store Fail')
 }
 
 function onLogin(){
@@ -638,7 +607,6 @@ function cariItem(q){
   app.preloader.show();
 
   $.ajax({
-    // https://demo.medianusamandiri.com/lightpos/API/json_cari_barang.php?id_gudang=20&nama_barang=es
     url: site+'/API/json_cari_barang.php?id_gudang='+cpyProf.id_outlet+'&query='+q,
     method: 'GET',
   }).done(function(result){
@@ -713,126 +681,6 @@ function cariItem(q){
     console.log(error);
   }).always(function(){
     app.preloader.hide();
-  })
-}
-
-function simpan(id, qty, harga, nama){
-  var temp = {
-    'id_barang' : id,
-    'qty' : qty,
-    'harga' : harga
-  }
-
-  if(harga == 0){
-    app.toast.create({
-      text: "Harga masih 0, silahkan tambah harga dahulu di master pricelist",
-      closeTimeout: 3000,
-      closeButton: false
-    }).open();
-  } else {
-    $.ajax({
-      url: site+'/API/cart/'+cpyProf.id_user+'/',
-      method: 'POST',
-      data: JSON.stringify(temp)
-    }).done(function(result){
-      app.toast.create({
-        text: "Sukses Tambah ke Keranjang",
-        closeTimeout: 3000,
-        closeButton: true
-      }).open();
-    
-      keranjang();
-      hitungDiskon();
-
-    }).fail(function(a,b,error){
-      console.log(error);
-      // alert(error);
-    })
-  }  
-}
-
-function keranjang(){
-  var data = '<ul>';
-  var jumlah = 0;
-  var disk_rp = $('#disk_rp').val();
-
-  // if(pauseFlag == 0){
-    $.ajax({
-      url: site+'/API/cart/'+cpyProf.id_user+'/',
-      method: 'GET'
-    }).done(function(result){
-      console.log('keranjang');
-      var testp = result;
-      for(i = 0; i < testp.length; i++){
-        // console.log(testp[i].id_barang, testp[i].total_tmp, testp[i].nama_barang, testp[i].qty_tmp);
-        // <div class="item-title" onclick="ubahAmount('+testp[i].id_tmp+');">\
-        // <div class="item-after"><a href="#" onclick="pilihHapus('+testp[i].id_barang+','+testp[i].qty_tmp+')"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>\
-      
-        // data += `<li class="item-content ">
-        //           <div class="item-inner">
-        //             <div class="item-title" onclick="ubahAmount(`+testp[i].id_barang+`,`+testp[i].harga_tmp+`);">`+testp[i].nama_barang+`
-        //               <div class="item-footer">`+testp[i].qty_tmp+` x `+testp[i].harga_tmp+`</div>
-        //             </div>
-        //             <div class="item-after"><a href="#" onclick="hapusKeranjang(`+testp[i].id_barang+`)"><i class="icon material-icons md-only">remove_shopping_cart</i></a></div>
-        //           </div>
-        //         </li>`;
-        data += '<li class="item-content ">\
-                          <div class="item-inner">\
-                            <div class="item-title" onclick="ubahAmount('+testp[i].id_barang+','+testp[i].harga_tmp+');">'+testp[i].nama_barang+'\
-                              <div class="item-footer">\
-                                '+testp[i].qty_tmp+' x '+testp[i].harga_tmp+'\
-                                <br> Cttn: '+testp[i].catatan+'\
-                              </div>\
-                            </div>\
-                            <div class="item-after">\
-                              <a href="#" onclick="tambahNote('+testp[i].id_tmp+')"><i class="icon material-icons md-only" style="margin: 0 5px;">playlist_add</i></a>\
-                              <a href="#" onclick="hapusKeranjang('+testp[i].id_barang+')"><i class="icon material-icons md-only" style="margin: 0 5px;">remove_shopping_cart</i></a>\
-                            </div>\
-                          </div>\
-                        </li>';
-            // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString('id-ID')+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
-       
-        jumlah += parseInt(testp[i].qty_tmp * testp[i].harga_tmp);  // no PPN 
-      }
-  
-      if(testp.length == 0) $('#disk_rp').val(0);
-  
-      totalSub = jumlah;
-  
-      data += '</ul>';
-      // totalGrand = totalSub;
-  
-      // if(pauseFlag == 0) $('#keranjang').html(data);
-      $('#keranjang').html(data);
-      // $('#subtotal').html(totalSub.toLocaleString('id-ID'));
-      $('#bayar').val(totalSub.toLocaleString('id-ID'));
-  
-      hitungDiskon();
-      // refreshKeranjang = setTimeout(keranjang, 5 * 1000);
-    }).fail(function(a,b,error){
-      // alert(error);
-      console.log(error);
-    })
-  // }
-}
-
-function hapusKeranjang(id){
-  var temp = {
-    id_login: cpyProf.id_user
-  }
-
-  $.ajax({
-    url: site+'/API/hapus/'+id+'/',
-    method: 'POST',
-    data: JSON.stringify(temp)
-  }).done(function(json){
-    app.toast.create({
-      text: "Succefully removed from cart",
-      closeTimeout: 3000,
-      closeButton: true
-    }).open();
-
-    keranjang();
   })
 }
 

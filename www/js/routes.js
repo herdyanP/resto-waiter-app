@@ -6,15 +6,15 @@ var routes = [
     pageAfterIn: function(){
       pauseFlag = 0;
 
-      $('#title_home').html('MediaPOS '+(cpyProf.jenis == 1 ? "F&amp;B" : "Retail"));
+      $('#title_home').html('MediaPOS '+(cpyProf.jenis_outlet == 1 ? "F&amp;B" : "Retail"));
       
       // AdMob.showInterstitial();
       tampilMenu();
-      keranjang();
+      // keranjang();
 
-      if(cpyProf.jenis == 1){
+      if(cpyProf.jenis_outlet == '1'){
         $('#block-grid').css('display', 'block');
-      } else if(cpyProf.jenis == 2){
+      } else if(cpyProf.jenis_outlet == '2'){
         $('#block-row').css('display', 'block');
       }
 
@@ -33,60 +33,43 @@ var routes = [
             pauseFlag = 0;
 
             tampilMenu();
-            keranjang();
+            // keranjang();
           }
         }
       })
 
-      NativeStorage.getItem('modal', onModalFound, onModalNotFound);
+      // NativeStorage.getItem('modal', onModalFound, onModalNotFound);
 
-      var ac = app.autocomplete.create({
-        inputEl: '#idewallet',
-        openIn: 'dropdown',
-        preloader: true,
-        limit: 10,
-        source: function(query, render){
-          var autoc = this;
-          var results = [];
-          var nohp = $('#idewallet').val();
-          if(query.length === 0){
-            render(results);
-            return;
-          }
+      // var ac = app.autocomplete.create({
+      //   inputEl: '#idewallet',
+      //   openIn: 'dropdown',
+      //   preloader: true,
+      //   limit: 10,
+      //   source: function(query, render){
+      //     var autoc = this;
+      //     var results = [];
+      //     var nohp = $('#idewallet').val();
+      //     if(query.length === 0){
+      //       render(results);
+      //       return;
+      //     }
 
-          autoc.preloaderShow();
-          app.request({
-            url: site+"/API/cust/"+cpyProf.id_client+"/"+nohp+"/",
-            method: "GET",
-            success: function(json){
-              var result = JSON.parse(json);
-              for(var i = 0; i < result.length; i++){
-                if(result[i].no_hp.indexOf(query) >= 0) results.push(result[i].no_hp);
-              }
+      //     autoc.preloaderShow();
+      //     app.request({
+      //       url: site+"/API/cust/"+cpyProf.id_client+"/"+nohp+"/",
+      //       method: "GET",
+      //       success: function(json){
+      //         var result = JSON.parse(json);
+      //         for(var i = 0; i < result.length; i++){
+      //           if(result[i].no_hp.indexOf(query) >= 0) results.push(result[i].no_hp);
+      //         }
 
-              autoc.preloaderHide();
-              render(results);
-            }
-          });
-        }
-      });
-
-      $.ajax({
-        url: site+'/API/kategori/'+cpyProf.id_client+'/',
-        method: 'GET',
-      }).done(function(result){
-        var data = '<option value="0">Semua menu</option>';
-        for(var i = 0; i < result.length; i++){
-          if(result[i].id_kategori == null || result[i].nama_kategori == null) continue;
-
-          // data += `<option value="${result[i].id_kategori}">${result[i].nama_kategori}</option>`;
-          data += '<option value="'+result[i].id_kategori+'">'+result[i].nama_kategori+'</option>';
-        }
-
-        $('#kategori').html(data);
-      });
-
-      // $('#currentUser').html('Operator: '+ (cpyProf.nama ? cpyProf.nama : cpyProf.client));
+      //         autoc.preloaderHide();
+      //         render(results);
+      //       }
+      //     });
+      //   }
+      // });
 
       if(screen.width < 400){
         $('#icon_home').css('font-size', '18px');
@@ -94,22 +77,9 @@ var routes = [
         // $('#currentUser').css('font-size', '12px');
         // $('#currentUser').css('margin-right', '14px');
       }
-
-      // tampilFood();
-      // tampilBvrg();
-      // tampilCombo();
-
-      // emptyDB();
-
-      // onLogin();
     },
     pageAfterOut: function(){
       clearTimeout(refreshMenu);
-      clearTimeout(refreshMenu);
-      clearTimeout(refreshMenu);
-
-      clearTimeout(refreshKeranjang);
-      clearTimeout(refreshKeranjang);
       clearTimeout(refreshKeranjang);
     }
   }

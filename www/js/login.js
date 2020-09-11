@@ -10,7 +10,7 @@ function onNewLogin(q){
         success: function(result){
             var parsed = JSON.parse(result);
             if(parsed.ST_CODE == '1'){
-                console.log(parsed);
+                // console.log(parsed);
                 // temp.nama = parsed[0].NAMA;
                 // temp.cabang = parsed[0].nama_cabang;
                 // temp.outlet = parsed[0].nama_outlet;
@@ -25,9 +25,7 @@ function onNewLogin(q){
                 // logoByte64 = parsed[0].image;
                 // initGambar(parsed[0].image);
                 
-                // console.log(temp);
-                // NativeStorage.setItem('akun', temp, onStoreSuccess, onStoreFail);
-                // break;
+                NativeStorage.setItem('akun', parsed, onStoreSuccess, onStoreFail);
             } else {
                 app.toast.create({
                     text: "Cek lagi username / password anda",
@@ -47,4 +45,16 @@ function onNewLogin(q){
             $('#login_button').removeClass('disabled');
         }
     })
+}
+
+function onStoreSuccess(obj){
+    console.log('Store Success');
+    
+    cpyProf = obj;
+    $('#panel_subTitle').html('<br><strong>MediaPOS '+(cpyProf.jenis == 1 ? "F&amp;B" : "Retail")+'</strong><br>POS Application<br>'+cpyProf.outlet);
+    app.views.main.router.navigate('/home/');
+}
+
+function onStoreFail(){
+    console.log('Store Fail');
 }
