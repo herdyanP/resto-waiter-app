@@ -1,15 +1,34 @@
-function onNewLogin(q){
+function onNewLogin(){
     $('#login_button').addClass('disabled');
     var formData = app.form.convertToData('#login_cred');
-    
+
+    onLoginAttempt(formData);
+}
+
+function cekStored(){
+    NativeStorage.remove('modal');
+    NativeStorage.getItem('akun', function(obj){
+        var loginData = {
+            user: obj.USERNAME,
+            pass: obj.PASSWORD
+        }
+
+        onLoginAttempt(loginData);
+    }, function(){
+        NativeStorage.clear();
+    });
+}
+
+function onLoginAttempt(loginData){
     app.request({
         url: site+'/API/login/',
         method: 'POST',
-        data: JSON.stringify(formData),
+        data: JSON.stringify(loginData),
         timeout: 10 * 1000,
         success: function(result){
             var parsed = JSON.parse(result);
             if(parsed.ST_CODE == '1'){
+                parsed.PASSWORD = loginData.pass;
                 // console.log(parsed);
                 // temp.nama = parsed[0].NAMA;
                 // temp.cabang = parsed[0].nama_cabang;

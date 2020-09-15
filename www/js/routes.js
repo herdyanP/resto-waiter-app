@@ -80,7 +80,7 @@ var routes = [
     },
     pageAfterOut: function(){
       clearTimeout(refreshMenu);
-      clearTimeout(refreshKeranjang);
+      // clearTimeout(refreshKeranjang);
     }
   }
 },

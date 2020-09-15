@@ -53,7 +53,7 @@ function tampilMenu(){
 				for (i = 0; i < iter.length; i++){
 					if(cpyProf.jenis_outlet == '1'){ // Row
 						datanya += 
-							'<div onclick="simpan('+iter[i].id_barang+', 1, 0)" class="col-33" style="height: 100px;">\
+							'<div onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')" class="col-33" style="height: 100px;">\
 								<div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;">\
 									<i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i>\
 								</div>\
@@ -65,7 +65,7 @@ function tampilMenu(){
 								<div class="item-media" style="background: black; color: white; border-radius: 30px;">\
 									<div style="width: 100%; text-align: center;">'+iter[i].nama_barang[0]+'</div>\
 								</div>\
-								<div class="item-inner" onclick="simpan('+iter[i].id_barang+', 1, 0)">\
+								<div class="item-inner" onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')">\
 									<div class="item-title">'+iter[i].nama_barang+'</div>\
 									<div class="item-after">Rp 0</div>\
 								</div>\

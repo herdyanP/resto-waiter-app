@@ -8,7 +8,7 @@ function simpan(id, qty, harga){
     app.request({
         url: site+'/API/cart/'+cpyProf.ID_CLIENT+'/'+cpyProf.ID,
         method: 'POST',
-        timeout: 10 * 1000,
+        // timeout: 10 * 1000,
         data: JSON.stringify(temp),
         success: function(result){
             var parsed = JSON.parse(result);
@@ -52,28 +52,28 @@ function keranjang(){
     app.request({
         url: site+'/API/cart/'+cpyProf.ID_CLIENT+'/'+cpyProf.ID,
         method: 'GET',
-        timeout: 10 * 1000,
+        // timeout: 10 * 1000,
         success: function(result){
             var parsed = JSON.parse(result);
 
             if(parsed.ST_CODE == '1'){
-                var data = parsed.DATA;
-                for(i = 0; i < data.length; i++){
+                var iter = parsed.DATA;
+                for(i = 0; i < iter.length; i++){
                     data += 
                     '<li class="item-content ">\
                         <div class="item-inner">\
-                            <div class="item-title" onclick="ubahAmount('+data[i].id_barang+','+data[i].harga_tmp+');">'+data[i].nama_barang+'\
-                                <div class="item-footer">'+data[i].qty_tmp+' x '+data[i].harga_tmp+'<br> Cttn: '+data[i].catatan+'</div>\
+                            <div class="item-title" onclick="ubahAmount('+iter[i].id_tmp+');">'+iter[i].nama_barang+'\
+                                <div class="item-footer">'+iter[i].qty_tmp+' x '+iter[i].harga_tmp+'<br> Cttn: '+iter[i].catatan+'</div>\
                             </div>\
                             <div class="item-after">\
-                                <a href="#" onclick="tambahNote('+data[i].id_tmp+')"><i class="icon material-icons md-only" style="margin: 0 5px;">playlist_add</i></a>\
-                                <a href="#" onclick="hapusKeranjang('+data[i].id_barang+')"><i class="icon material-icons md-only" style="margin: 0 5px;">remove_shopping_cart</i></a>\
+                                <a href="#" onclick="tambahNote('+iter[i].id_tmp+')"><i class="icon material-icons md-only" style="margin: 0 5px;">playlist_add</i></a>\
+                                <a href="#" onclick="hapusKeranjang('+iter[i].id_tmp+')"><i class="icon material-icons md-only" style="margin: 0 5px;">remove_shopping_cart</i></a>\
                             </div>\
                         </div>\
                     </li>';
-                    // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString('id-ID')+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
+                    // iter+="<li class=\"swipeout deleted-callback\" iter-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString('id-ID')+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
                     
-                    jumlah += parseInt(data[i].qty_tmp * data[i].harga_tmp);  // no PPN 
+                    jumlah += parseInt(iter[i].qty_tmp * iter[i].harga_tmp);  // no PPN 
                 }
             } else {
                 $('#disk_rp').val(0);
@@ -178,4 +178,78 @@ function hapusKeranjang(id_tmp){
             console.log('Error hapus keranjang');
         }
     })
-  }
+}
+
+function ubahAmount(id_tmp){
+    // console.log(id);
+    app.dialog.create({
+        title: 'Ubah Kuantitas',
+        closeByBackdropClick: true,
+        content: '\
+            <div class="list no-hairlines no-hairlines-between">\
+                <ul>\
+                    <li class="item-content item-input">\
+                    <div class="item-inner">\
+                        <div class="item-input-wrap">\
+                        <input type="number" name="edit_amt" id="edit_amt" oninput="comma(this)" style="text-align: right;" />\
+                        </div>\
+                    </div>\
+                    </li>\
+                </ul>\
+            </div>',
+        buttons: [
+        {
+            text: 'Batal',
+            onClick: function(dialog, e){
+                dialog.close();
+            }
+        },
+        {
+            text: 'Simpan',
+            onClick: function(dialog, e){
+                var v = $('#edit_amt').val();
+                var temp = {
+                    qty: v,
+                    id_tmp: id_tmp,
+                }
+        
+                app.request({
+                    url: site+'/API/edit/'+cpyProf.ID_CLIENT+'/'+cpyProf.ID,
+                    method: "POST",
+                    data: JSON.stringify(temp),
+                    success: function(result){
+                        var parsed = JSON.parse(result);
+                        if(parsed.ST_CODE == '1'){
+                            app.toast.create({
+                                text: "Sukses ubah",
+                                closeTimeout: 3000,
+                                closeButton: true
+                            }).open();
+                        } else {
+                            app.toast.create({
+                                text: "Gagal ubah",
+                                closeTimeout: 3000,
+                                closeButton: true
+                            }).open();
+                        }
+
+                        keranjang();
+                    }
+                })
+
+                // $.ajax({
+                //     // url: site+'/API/update_penj_dtl_tmp.php?id_barang='+id+'&harga='+hrg+'&id_login='+cpyProf.id_outlet+'&qty='+v
+                //     // url: site+'/API/update_penj_dtl_tmp.php?id_barang='+id+'&harga='+hrg+'&id_login='+cpyProf.id_user+'&qty='+v
+
+                // }).done(function(){
+                //     app.toast.create({
+                //         text: "Sukses Ubah",
+                //         closeTimeout: 3000,
+                //         closeButton: true
+                //     }).open();
+                //     keranjang();
+                // })
+            }
+        }]
+    }).open();
+}

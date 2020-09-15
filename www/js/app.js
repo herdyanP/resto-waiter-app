@@ -199,14 +199,9 @@ document.addEventListener('deviceready', function() {
 
 
 
-  onLogin();
-  // tampilFood();
-  // tampilCombo();
-
-  window.localStorage.setItem('test', 1);
-
+  cekStored();
   document.addEventListener("backbutton", onBackPressed, false);
-  document.addEventListener("online", onOnline, false);
+  // document.addEventListener("online", onOnline, false);
 
   cordova.getAppVersion.getVersionNumber(function (version) {
     appVer = version;
@@ -243,11 +238,11 @@ function initDB(){
 function clearDB(){
 }
 
-function onOnline(){
-  console.log('back online');
-  tampilMenu();
-  keranjang();
-}
+// function onOnline(){
+//   console.log('back online');
+//   tampilMenu();
+//   keranjang();
+// }
 
 function afterOnline(a){
 }
@@ -262,11 +257,7 @@ function onConstruction(){
   }).open();
 }
 
-function onLogin(){
-  console.log('cek login');
-  NativeStorage.remove('modal');
-  NativeStorage.getItem('akun', onRetSuccess, onRetFail);
-}
+
 
 function onRetSuccess(obj){
   $.ajax({
@@ -277,7 +268,7 @@ function onRetSuccess(obj){
     console.log(result);
     if(result != '0'){
       cpyProf = obj;
-      cpyProf.client = result[0].nama_client;
+      // cpyProf.client = result[0].nama_client;
       cpyProf.outlet = result[0].nama_outlet;
       cpyProf.cabang = result[0].nama_cabang;
       cpyProf.alamat = result[0].alamat;
@@ -535,64 +526,6 @@ function onGetStampFail(){
     console.log(error);
   })
 }*/
-
-function ubahAmount(id, hrg){
-  // console.log(id);
-  app.dialog.create({
-    title: 'Ubah Kuantitas',
-    closeByBackdropClick: true,
-    /*content: `
-      <div class="list no-hairlines no-hairlines-between">
-        <ul>
-          <li class="item-content item-input">
-            <div class="item-inner">
-              <div class="item-input-wrap">
-                <input type="number" name="edit_amt" id="edit_amt" oninput="comma(this)" style="text-align: right;" />
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>`,*/
-    content: '\
-          <div class="list no-hairlines no-hairlines-between">\
-            <ul>\
-              <li class="item-content item-input">\
-                <div class="item-inner">\
-                  <div class="item-input-wrap">\
-                    <input type="number" name="edit_amt" id="edit_amt" oninput="comma(this)" style="text-align: right;" />\
-                  </div>\
-                </div>\
-              </li>\
-            </ul>\
-          </div>',
-    buttons: [
-    {
-      text: 'Batal',
-      onClick: function(dialog, e){
-        dialog.close();
-      }
-    },
-    {
-      text: 'Simpan',
-      onClick: function(dialog, e){
-        var v = $('#edit_amt').val();
-
-        $.ajax({
-          // url: site+'/API/update_penj_dtl_tmp.php?id_barang='+id+'&harga='+hrg+'&id_login='+cpyProf.id_outlet+'&qty='+v
-          url: site+'/API/update_penj_dtl_tmp.php?id_barang='+id+'&harga='+hrg+'&id_login='+cpyProf.id_user+'&qty='+v
-        }).done(function(){
-          app.toast.create({
-            text: "Sukses Ubah",
-            closeTimeout: 3000,
-            closeButton: true
-          }).open();
-
-          keranjang();
-        })
-      }
-    }]
-  }).open();
-}
 
 function searched(e, q){
   if ( (window.event ? event.keyCode : e.which) == 13) { 
