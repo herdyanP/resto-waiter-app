@@ -148,6 +148,49 @@ function keranjang(){
     // }
 }
 
+function tambahNote(id_tmp){
+    // console.log('tambah note id: ' +id);
+    app.dialog.prompt('Catatan:', 'Tambah', function(ctt){
+        var temp = {
+            catatan: ctt,
+            id_tmp: id_tmp
+        }
+
+        app.request({
+            url: site+'/API/catatan/'+cpyProf.ID_CLIENT+'/'+cpyProf.ID,
+            method: 'POST',
+            data: JSON.stringify(temp),
+            success: function(result){
+                var parsed = JSON.parse(result);
+                if(parsed.ST_CODE == '1'){
+                    app.toast.create({
+                        text: "Sukses menyimpan catatan",
+                        closeTimeout: 3000,
+                        closeButton: true
+                    }).open();
+                } else {
+                    app.toast.create({
+                        text: "Gagal menyimpan catatan",
+                        closeTimeout: 3000,
+                        closeButton: true
+                    }).open();
+                }
+                keranjang();
+            }
+        })        
+    
+        // $.ajax({
+        //     url: site+ "/API/catatan/" +id+ "/",
+        //     method: "POST",
+        //     data: JSON.stringify(temp),
+        //     success: function(result){
+        //     // console.log(result);
+        //     keranjang();
+        //     }
+        // })
+    })
+}
+
 function hapusKeranjang(id_tmp){
     var temp = {
         id_tmp: id_tmp

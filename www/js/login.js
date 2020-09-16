@@ -6,7 +6,6 @@ function onNewLogin(){
 }
 
 function cekStored(){
-    NativeStorage.remove('modal');
     NativeStorage.getItem('akun', function(obj){
         var loginData = {
             user: obj.USERNAME,
@@ -29,18 +28,6 @@ function onLoginAttempt(loginData){
             var parsed = JSON.parse(result);
             if(parsed.ST_CODE == '1'){
                 parsed.PASSWORD = loginData.pass;
-                // console.log(parsed);
-                // temp.nama = parsed[0].NAMA;
-                // temp.cabang = parsed[0].nama_cabang;
-                // temp.outlet = parsed[0].nama_outlet;
-                // temp.client = parsed[0].nama_client;
-                // temp.id_cabang = parsed[0].id_cabang;
-                // temp.id_client = parsed[0].id_client;
-                // temp.id_outlet = parsed[0].id_outlet;
-                // temp.alamat = parsed[0].alamat;
-                // temp.id_user = parsed[0].ID;
-                // temp.jenis = parsed[0].jenis_outlet;
-                
                 // logoByte64 = parsed[0].image;
                 // initGambar(parsed[0].image);
                 

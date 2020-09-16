@@ -73,7 +73,7 @@ function tampilMenu(){
 					}
 				}	
 				
-				if(result.length % 3 != 0 && cpyProf.jenis_outlet == 1) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
+				if(iter.length % 3 != 0 && cpyProf.jenis_outlet == 1) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
 				$(cpyProf.jenis_outlet == 1 ? '#itemlist' : '#itemrow').html(datanya);
 			} else {
 				console.log('Barang kosong');
@@ -82,6 +82,59 @@ function tampilMenu(){
 			console.log('Request menu timeout / failed');
 		}, complete: function(){
 			refreshMenu = setTimeout(tampilMenu, 10 * 1000);
+		}
+	})
+}
+
+function searched(e, q){
+	if ( (window.event ? event.keyCode : e.which) == 13) { 
+		cariItem(q);
+	}
+}
+
+function cariItem(q){
+	clearTimeout(refreshMenu);
+	var kat = $('#kategori').val();
+	var que = {'query': q};
+	var datanya = "";
+  
+	app.preloader.show();
+
+	app.request({
+		url: site+'/API/menu/'+cpyProf.ID_CLIENT+'/'+kat,
+		method: 'POST',
+		data: JSON.stringify(que),
+		success: function(result){
+			var parsed = JSON.parse(result);
+			if(parsed.ST_CODE == '1'){
+				var iter = parsed.DATA;
+				for (i = 0; i < iter.length; i++){
+					if(cpyProf.jenis_outlet == 1){
+						datanya += 
+							'<div onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')" class="col-33" style="height: 100px;">\
+								<div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;">\
+									<i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i>\
+								</div>\
+								<p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); '+(screen.width < 400 ? "font-size: 10px;" : "")+'">'+iter[i].nama_barang+'</p>\
+							</div>';
+					} else {
+						datanya += 
+							'<li class="item-content">\
+								<div class="item-inner" onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')">\
+									<div class="item-title">'+iter[i].nama_barang+'</div>\
+									<div class="item-after">Rp '+parseInt(iter[i].harga).toLocaleString('id-ID')+'</div>\
+								</div>\
+							</li>';
+					}
+				}
+			  
+				if(iter.length % 3 != 0 && cpyProf.jenis_outlet == 1) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
+				$(cpyProf.jenis_outlet == 1 ? '#itemlist' : '#itemrow').html(datanya);
+			} else {
+				console.log('Search kosong');
+			}
+		}, complete: function(){
+			app.preloader.hide();
 		}
 	})
 }
