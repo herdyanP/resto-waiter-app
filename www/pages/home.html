@@ -10,6 +10,7 @@
         <div class="title" id="title_home">MediaPOS</div>
         <div class="right">
           <!-- <p id="currentUser" style="font-size: 14px; margin-right: 18px;"></p> -->
+          <a href="#" class="link icon-only" onclick="changeLayout();"><i class="icon material-icons md-only">refresh</i></a>
           <a href="#" class="link icon-only" onclick="openScanBarcode();"><i class="icon material-icons md-only">photo_camera</i></a>
           <a class="link icon-only searchbar-enable" data-searchbar=".searchbar"><i class="icon material-icons md-only">search</i></a>
         </div>
@@ -248,6 +249,8 @@
                       <select id="platform" name="platform" onchange="getElementById('idewallet').select();">
                         <option value="1" selected>GO-PAY</option>
                         <option value="2">OVO</option>
+                        <option value="3">DANA</option>
+                        <option value="4">LinkAja</option>
                       </select>
                     </div>
                   </div>
@@ -256,7 +259,7 @@
                   <div class="item-inner">
                     <div class="item-title item-label" style="color: unset;">No. HP</div>
                     <div class="item-input-wrap">
-                      <input type="tel" maxlength="12" pattern="[0-9]{10,12}" id="idewallet" value="">
+                      <input type="tel" maxlength="12" pattern="[0-9]{10,12}" id="idewallet" name="nomor_ewallet" value="">
                     </div>
                   </div>
                 </li>

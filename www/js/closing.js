@@ -353,7 +353,7 @@ function cetakClosing(el, idclose = 0){
     var stamp = 'Tanggal   : ' + dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
   
     var header = '{br}{center}PENERIMAAN PENJUALAN KASIR{br}--------------------------------{br}{br}';
-    var subheader = '{left}Cashier Name : ' +cpyProf.client+ '{br}Print Date   : ' +dy+ '-' +(dt.getMonth() + 1)+ '-' +dt.getFullYear()+ ' ' +hr+ ':' +mn+ '{br}================================{br}';
+    var subheader = '{left}Cashier Name : ' +cpyProf.NAMA+ '{br}Print Date   : ' +dy+ '-' +(dt.getMonth() + 1)+ '-' +dt.getFullYear()+ ' ' +hr+ ':' +mn+ '{br}================================{br}';
   
     var cl_modal = 'Modal Awal: ';
     var cl_tot = 'Total Penjualan: ';
@@ -483,4 +483,4 @@ function cetakClosing(el, idclose = 0){
   
     var q = header + subheader + cl_modal + cl_tot + cl_masuk + cl_keluar + cl_uang + sep1 + cl_byr_tu + cl_byr_cc + cl_byr_em + cl_byr_tot + sep2 + cl_list + cl_item_tot +sep3 + cl_list_masuk + sep4 + cl_list_keluar + eol;
     connectToPrinter(q, el);
-  }
+}

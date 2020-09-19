@@ -51,30 +51,38 @@ function tampilMenu(){
 				var datanya = '';
 
 				for (i = 0; i < iter.length; i++){
-					if(cpyProf.jenis_outlet == '1'){ // Row
+					if(layout == '1'){ // Row
+						var c = i % avColor.length;
 						datanya += 
-							'<div onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')" class="col-33" style="height: 100px;">\
+							/* '<div onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')" class="col-33" style="height: 100px;">\
 								<div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;">\
 									<i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i>\
 								</div>\
 								<p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); '+(screen.width < 400 ? "font-size: 10px;" : "")+'">'+iter[i].nama_barang+'</p>\
+							</div>'; */
+							'<div onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')" class="col-33" style="height: 33vw;">\
+								<div style="margin: auto; width: 18vw; height: 18vw; border: solid black 1px; border-radius: 20px; background: '+avColor[c]+'; color: white;">\
+									<p style="vertical-align: middle; text-align: center; font-size: 5vw;">'+iter[i].nama_barang[0]+'</p>\
+								</div>\
+								<p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); '+(screen.width < 400 ? "font-size: 10px;" : "")+'">'+iter[i].nama_barang+'</p>\
 							</div>';
-					} else if(cpyProf.jenis_outlet == '2'){ // List
+					} else if(layout == '2'){ // List
+						var c = i % avColor.length;
 						datanya += 
 							'<li class="item-content">\
-								<div class="item-media" style="background: black; color: white; border-radius: 30px;">\
+								<div class="item-media" style="background: '+avColor[c]+'; color: white; border-radius: 30px;">\
 									<div style="width: 100%; text-align: center;">'+iter[i].nama_barang[0]+'</div>\
 								</div>\
 								<div class="item-inner" onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')">\
 									<div class="item-title">'+iter[i].nama_barang+'</div>\
-									<div class="item-after">Rp 0</div>\
+									<div class="item-after">Rp '+parseInt(iter[i].harga).toLocaleString()+'</div>\
 								</div>\
 							</li>';
 					}
 				}	
 				
-				if(iter.length % 3 != 0 && cpyProf.jenis_outlet == 1) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
-				$(cpyProf.jenis_outlet == 1 ? '#itemlist' : '#itemrow').html(datanya);
+				if(iter.length % 3 != 0 && layout == 1) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
+				$(layout == 1 ? '#itemlist' : '#itemrow').html(datanya);
 			} else {
 				console.log('Barang kosong');
 			}
@@ -109,27 +117,31 @@ function cariItem(q){
 			if(parsed.ST_CODE == '1'){
 				var iter = parsed.DATA;
 				for (i = 0; i < iter.length; i++){
-					if(cpyProf.jenis_outlet == 1){
+					if(layout == 1){
+						var c = i % avColor.length;
 						datanya += 
-							'<div onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')" class="col-33" style="height: 100px;">\
-								<div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;">\
-									<i style="font-size: 40px; line-height: 50px; vertical-align: middle; text-align: center;" class="icon material-icons md-only">restaurant</i>\
+							'<div onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')" class="col-33" style="height: 33vw;">\
+								<div style="margin: auto; width: 18vw; height: 18vw; border: solid black 1px; border-radius: 20px; background: '+avColor[c]+'; color: white;">\
+									<p style="vertical-align: middle; text-align: center; font-size: 5vw;">'+iter[i].nama_barang[0]+'</p>\
 								</div>\
 								<p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); '+(screen.width < 400 ? "font-size: 10px;" : "")+'">'+iter[i].nama_barang+'</p>\
 							</div>';
 					} else {
 						datanya += 
 							'<li class="item-content">\
+								<div class="item-media" style="background: '+avColor[c]+'; color: white; border-radius: 30px;">\
+									<div style="width: 100%; text-align: center;">'+iter[i].nama_barang[0]+'</div>\
+								</div>\
 								<div class="item-inner" onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')">\
 									<div class="item-title">'+iter[i].nama_barang+'</div>\
-									<div class="item-after">Rp '+parseInt(iter[i].harga).toLocaleString('id-ID')+'</div>\
+									<div class="item-after">Rp '+parseInt(iter[i].harga).toLocaleString()+'</div>\
 								</div>\
 							</li>';
 					}
 				}
 			  
-				if(iter.length % 3 != 0 && cpyProf.jenis_outlet == 1) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
-				$(cpyProf.jenis_outlet == 1 ? '#itemlist' : '#itemrow').html(datanya);
+				if(iter.length % 3 != 0 && layout == 1) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
+				$(layout == 1 ? '#itemlist' : '#itemrow').html(datanya);
 			} else {
 				console.log('Search kosong');
 			}

@@ -124,12 +124,22 @@ function cetakReceipt(idpj){
                         via = iter[0].bayar_card;
                         break;
                     case '3':
-                        jn = (iter[0].id_ewallet == '1' ? 'GO-PAY' : 'OVO');
+                        if(iter[0].id_ewallet == '1'){
+                            jn = 'GO-PAY';
+                        } else if(iter[0].id_ewallet == '2'){
+                            jn = 'OVO';
+                        } else if(iter[0].id_ewallet == '3'){
+                            jn = 'DANA';
+                        } else if(iter[0].id_ewallet == '4'){
+                            jn = 'LinkAja';
+                        }
+                        
+                        // jn = (iter[0].id_ewallet == '1' ? 'GO-PAY' : 'OVO');
                         via = iter[0].bayar_emoney;
                         break;
                 }
 
-                var header = '{br}{center}'+cpyProf.nama_toko+'{br}'+cpyProf.alamat+'{br}Sales Receipt{br}--------------------------------{br}';
+                var header = '{center}'+cpyProf.nama_toko+'{br}'+cpyProf.alamat+'{br}Sales Receipt{br}--------------------------------{br}';
                 var subheader = '{left}No. Trans : ' +iter[0].no_penjualan+ '{br}' +iter[0].stamp_date+ '{br}Operator  : ' +cpyProf.NAMA+ '{br}--------------------------------{br}';
 
                 var list = '';
@@ -175,13 +185,187 @@ function cetakReceipt(idpj){
 
                 var thanks = '{br}{center}Terima Kasih {br}Atas Kunjungan Anda';
                 var mp = '{br}Powered by MediaPOS';
-                var eol = '{br}{br}{br}{br}{left}';
+                var eol = '{br}{br}{br}';
                 
                 var q = header + subheader + list + sub + dsc + grd + paid + kbl + '{br}' + thanks + mp + eol;
                 connectToPrinter(q);
             }
         }
     })
+}
+
+var containerPreview = '';
+function dialogShare(idpj){
+    var options = {
+        documentSize: 'A4',
+        type: 'base64'
+    }
+
+    pdf
+    .fromData(q, options)
+    .then(function(base64){
+        window.plugins.socialsharing.share(null, null, 'data:application/pdf;base64,'+base64, null);
+        // console.log(base64);
+    })
+    .catch(function(err){
+        console.log(err);
+    })
+
+    /* app.request({
+        url: site+'/API/preview/'+cpyProf.ID_CLIENT+'/'+idpj,
+        method: 'GET',
+        success: function(result){
+            var parsed = JSON.parse(result);
+            if(parsed.ST_CODE == '1'){
+                var iter = parsed.DATA;
+                var tbl = 
+                    '<table style="width: 100%">\
+                        <tr>\
+                            <td style="width: 40%"></td>\
+                            <td style="width: 20%"></td>\
+                            <td style="width: 40%"></td>\
+                        </tr>';
+            
+                var header = 
+                    '<tr>\
+                        <td colspan="3" style="text-align: center;">Sales Receipt</td>\
+                    </tr>';
+            
+                var dtloutlet = 
+                    '<tr>\
+                        <td colspan="3" style="text-align: center;">'+cpyProf.nama_toko+'</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">'+cpyProf.alamat+'</td>\
+                    </tr>';
+            
+                var notrans = 
+                    '<tr>\
+                        <td>No. Trans</td>\
+                        <td colspan="2">: '+iter[0].no_penjualan+'</td>\
+                    </tr>';
+            
+                var dt = new Date();
+                var dy = ('00'+dt.getDate()).slice(-2);
+                var hr = ('00'+dt.getHours()).slice(-2);
+                var mn = ('00'+dt.getMinutes()).slice(-2);
+                var stamp = dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
+                
+                var tgl = 
+                    '<tr>\
+                        <td>Tanggal</td>\
+                        <td colspan="2">: '+stamp+'</td>\
+                    </tr>';
+            
+                var op = 
+                    '<tr>\
+                        <td>Operator</td>\
+                        <td colspan="2">: '+cpyProf.NAMA+'</td>\
+                    </tr>\
+                    <tr><td colspan="3" style="border-top: solid black 2px;"></td></tr>';
+            
+                var list = '';
+                for(var i = 0; i < iter.length; i++){
+                    var qty = parseInt(iter[i].qty_jual).toLocaleString('id-ID');
+                    var hj = parseInt(iter[i].harga_jual).toLocaleString('id-ID');
+                    var jml = (parseInt(iter[i].harga_jual) * parseInt(iter[i].qty_jual)).toLocaleString('id-ID');
+            
+                    list += 
+                    '<tr>\
+                        <td colspan="3">\
+                            '+iter[i].nama_barang+'\
+                            <br>Cttn: '+iter[i].catatan+'\
+                        </td>\
+                    </tr>\
+                    <tr>\
+                        <td style="padding-left: 20px;">'+qty+' x '+hj+'</td>\
+                        <td colspan="2" style="text-align: right;">'+jml+'</td>\
+                    </tr>'
+                }
+            
+                list += '<tr><td colspan="3" style="border-bottom: solid black 2px;"></td></tr>';
+            
+                var stot = 
+                '<tr>\
+                    <td>Subtotal</td>\
+                    <td>:</td>\
+                    <td style="text-align: right;">'+parseInt(iter[0].total_jual).toLocaleString('id-ID')+'</td>\
+                </tr>';
+            
+                var dsc = 
+                '<tr>\
+                    <td>Diskon</td>\
+                    <td>:</td>\
+                    <td style="text-align: right;">'+parseInt(iter[0].disc_rp).toLocaleString('id-ID')+'</td>\
+                </tr>';
+            
+                var grd = 
+                '<tr>\
+                    <td>Grand Total</td>\
+                    <td>:</td>\
+                    <td style="text-align: right;">'+parseInt(iter[0].grantot_jual).toLocaleString('id-ID')+'</td>\
+                </tr>';
+            
+                var jn = '', bayar = '';
+                switch($('#metode').val()){
+                    case '1':
+                        jn = 'Tunai';
+                        bayar = iter[0].bayar_tunai;
+                    break;
+                    case '2':
+                        jn = 'Kartu Debit/Kredit';
+                        bayar = iter[0].bayar_card;
+                    break;
+                    case '3':
+                        jn = ($('#platform').val() == 1 ? 'GO-PAY' : 'OVO');
+                        bayar = iter[0].bayar_emoney;
+                    break;
+                }
+            
+                var paid = 
+                '<tr>\
+                    <td>'+jn+'</td>\
+                    <td>:</td>\
+                    <td style="text-align: right;">'+parseInt(bayar).toLocaleString('id-ID')+'</td>\
+                </tr>';
+            
+                var chn = 
+                '<tr>\
+                    <td>Change</td>\
+                    <td>:</td>\
+                    <td style="text-align: right;">'+parseInt(iter[0].kembali_tunai).toLocaleString('id-ID')+'</td>\
+                </tr>\
+                <tr><td>&nbsp;</td></tr>';
+            
+                var thanks = 
+                    '<tr>\
+                    <td colspan="3" style="text-align: center;">Terima Kasih Atas Kunjungan Anda</td>\
+                    </tr>\
+                    <tr>\
+                    <td colspan="3" style="text-align: center;">Powered by MediaPOS</td>\
+                    </tr>\
+                </table>';
+            
+                var q = tbl + header + dtloutlet + tgl + notrans + op + list + stot + dsc + grd + paid + chn + thanks;
+                var options = {
+                    documentSize: 'A4',
+                    type: 'base64'
+                }
+            
+                pdf.fromData(q, options)
+                    .then(function(base64){
+                        window.plugins.socialsharing.share(null, null, 'data:application/pdf;base64,'+base64, null);
+                        // console.log(base64);
+                    })
+                    .catch(function(err){
+                        console.log(err);
+                    })
+                // $('#preview_rcpt').html(q);
+            } else {
+
+            }
+        }
+    }) */
 }
 
 function selesai(){

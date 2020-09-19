@@ -31,12 +31,18 @@ function onLoginAttempt(loginData){
                 parsed.PASSWORD = loginData.pass;
                 // logoByte64 = parsed[0].image;
                 // initGambar(parsed[0].image);
+
+                NativeStorage.getItem('layout', function(obj){
+                    layout = obj;
+                }, function(){
+                    layout = parsed.jenis_outlet;
+                });
                 
                 NativeStorage.setItem('akun', parsed, function(obj){
                     cpyProf = obj;
                     sessionCheck();
 
-                    $('#panel_subTitle').html('<br><strong>MediaPOS '+(cpyProf.jenis == 1 ? "F&amp;B" : "Retail")+'</strong><br>POS Application<br>'+cpyProf.outlet);
+                    $('#panel_subTitle').html('<br><strong>MediaPOS '+(cpyProf.jenis_outlet == 1 ? "F&amp;B" : "Retail")+'</strong><br>POS Application<br>'+cpyProf.outlet);
                     app.views.main.router.navigate('/home/');
                 });
             } else if(parsed.ST_CODE == '2'){

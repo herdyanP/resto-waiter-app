@@ -57,9 +57,9 @@ var routes = [
       tampilMenu();
       keranjang();
 
-      if(cpyProf.jenis_outlet == '1'){
+      if(layout == '1'){
         $('#block-grid').css('display', 'block');
-      } else if(cpyProf.jenis_outlet == '2'){
+      } else if(layout == '2'){
         $('#block-row').css('display', 'block');
       }
 
@@ -255,7 +255,17 @@ var routes = [
                 bayar = iter[0].bayar_card;
                 break;
               case '3':
-                jn = (iter[0].id_ewallet == '1' ? 'GO-PAY' : 'OVO');
+                if(iter[0].id_ewallet == '1'){
+                  jn = 'GO-PAY';
+                } else if(iter[0].id_ewallet == '2'){
+                  jn = 'OVO';
+                } else if(iter[0].id_ewallet == '3'){
+                  jn = 'DANA';
+                } else if(iter[0].id_ewallet == '4'){
+                  jn = 'LinkAja';
+                }
+
+                // jn = (iter[0].id_ewallet == '1' ? 'GO-PAY' : 'OVO');
                 bayar = iter[0].bayar_emoney;
                 break;
             }
@@ -292,6 +302,7 @@ var routes = [
               </tr>\
             </table>';
 
+            containerPreview = q;
             var q = tbl + header + dtloutlet + tgl + notrans + op + list + stot + dsc + grd + /*via +*/ paid + chn + thanks;
             $('#preview_rcpt').html(q);
           } else {
@@ -324,24 +335,27 @@ var routes = [
         tgl: stamp_sv
       }
 
-      $.ajax({
+      app.request({
         url: site+'/API/laporan/'+cpyProf.ID_CLIENT+'/'+cpyProf.ID,
         method: 'POST',
         data: JSON.stringify(sales),
         success: function(result){
-          var pj = parseInt(result[0].penjualan);
-          var km = parseInt(result[0].kasmasuk);
-          var kk = parseInt(result[0].kaskeluar);
-          var st = parseInt(result[0].starting_cash);
-          var available = st + pj + km - kk;
+          var parsed = JSON.parse(result);
+          if(parsed.ST_CODE == '1'){
+            var iter = parsed.DATA;
+            var pj = parseInt(iter[0].penjualan);
+            var km = parseInt(iter[0].kasmasuk);
+            var kk = parseInt(iter[0].kaskeluar);
+            var st = parseInt(iter[0].starting_cash);
+            var available = st + pj + km - kk;
 
-          console.log(st, pj, km, kk);
-          $("#availcash").val(available);
-          $("#wang_kaskeluar").val(available.toLocaleString('id-id'));
+            $("#availcash").val(available);
+            $("#wang_kaskeluar").val(available.toLocaleString('id-id'));
+          } else {
 
+          }
         }
       })
-      console.log('ini kas keluar');
     }
   }
 },
@@ -383,6 +397,238 @@ var routes = [
       cl_items = [];
       cl_kaskeluar = [];
       $('#closing_button').css('display', 'none');
+    }
+  }
+},
+{
+  name: 'cpreview',
+  path: '/cpreview/:idc/',
+  template: '\
+    <div class="page">\
+      <div class="navbar">\
+        <div class="navbar-inner">\
+          <div class="title"></div>\
+          <div class="right">\
+            <a href="#" class="link icon-only" onclick="cetakClosingID({{$route.params.idc}});">\
+              <i class="material-icons">print</i>\
+            </a>\
+          </div>\
+        </div>\
+      </div>\
+      <div class="toolbar toolbar-bottom-md no-shadow color-green">\
+        <div class="toolbar-inner">\
+          <button class="button" onclick="selesai()">Selesai</button>\
+        </div>\
+      </div>\
+      \
+      <div class="page-content">\
+        <div class="block" id="preview_clos"></div>\
+      </div>\
+    </div>\
+  ',
+  on: {
+    pageAfterIn: function(e, page){
+      app.request({
+        url: site+'/API/preview/'+cpyProf.ID_CLIENT+'/'+page.route.params.idc,
+        method: 'GET',
+        success: function(result){
+          var parsed = JSON.parse(result);
+          if(parsed.ST_CODE == '1'){
+            var iter = parsed.DATA;
+            var tbl = 
+            '<table style="width: 100%">\
+              <tr>\
+                <td style="width: 40%"></td>\
+                <td style="width: 20%"></td>\
+                <td style="width: 40%"></td>\
+              </tr>';
+
+            var header = 
+              '<tr>\
+                <td colspan="3" style="text-align: center;">Sales Receipt</td>\
+              </tr>';
+
+            var dtloutlet = 
+              '<tr>\
+                <td colspan="3" style="text-align: center;">'+cpyProf.nama_toko+'</td>\
+              </tr>\
+              <tr>\
+                <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">'+cpyProf.alamat+'</td>\
+              </tr>';
+
+            var notrans = 
+              '<tr>\
+                <td>No. Trans</td>\
+                <td colspan="2">: '+iter[0].no_penjualan+'</td>\
+              </tr>';
+              
+            var dt = new Date();
+            var dy = ('00'+dt.getDate()).slice(-2);
+            var hr = ('00'+dt.getHours()).slice(-2);
+            var mn = ('00'+dt.getMinutes()).slice(-2);
+            var stamp = dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
+            var tgl = 
+              '<tr>\
+                <td>Tanggal</td>\
+                <td colspan="2">: '+stamp+'</td>\
+              </tr>';
+          
+            var op = 
+              '<tr>\
+                <td>Operator</td>\
+                <td colspan="2">: '+cpyProf.NAMA+'</td>\
+              </tr>\
+              <tr><td colspan="3" style="border-top: solid black 2px;"></tr>';
+              
+            var list = '';
+            for(var i = 0; i < iter.length; i++){
+              var qty = parseInt(iter[i].qty_jual).toLocaleString('id-ID');
+              var hj = parseInt(iter[i].harga_jual).toLocaleString('id-ID');
+              var jml = (parseInt(iter[i].harga_jual) * parseInt(iter[i].qty_jual)).toLocaleString('id-ID');  
+              list += 
+                '<tr>\
+                  <td colspan="3">\
+                    '+iter[i].nama_barang+'\
+                    <br>Cttn: '+iter[i].catatan+'\
+                  </td>\
+                </tr>\
+                <tr>\
+                  <td style="padding-left: 20px;">'+qty+' x '+hj+'</td>\
+                  <td colspan="2" style="text-align: right;">'+jml+'</td>\
+                </tr>';
+            }
+
+            list += '<tr><td colspan="3" style="border-bottom: solid black 2px;"></td></tr>';
+            var stot = 
+              '<tr>\
+                <td>Subtotal</td>\
+                <td>:</td>\
+                <td style="text-align: right;">'+parseInt(iter[0].total_jual).toLocaleString('id-ID')+'</td>\
+              </tr>';
+
+            var dsc = 
+              '<tr>\
+                <td>Diskon</td>\
+                <td>:</td>\
+                <td style="text-align: right;">'+parseInt(iter[0].disc_rp).toLocaleString('id-ID')+'</td>\
+              </tr>';
+
+            var grd = 
+              '<tr>\
+                <td>Grand Total</td>\
+                <td>:</td>\
+                <td style="text-align: right;">'+parseInt(iter[0].grantot_jual).toLocaleString('id-ID')+'</td>\
+              </tr>';
+
+
+            var jn = '', bayar = '';
+            switch(iter[0].jenis_bayar){
+              case '1':
+                jn = 'Tunai';
+                bayar = iter[0].bayar_tunai;
+                break;
+              case '2':
+                jn = 'Kartu Debit/Kredit';
+                bayar = iter[0].bayar_card;
+                break;
+              case '3':
+                if(iter[0].id_ewallet == '1'){
+                  jn = 'GO-PAY';
+                } else if(iter[0].id_ewallet == '2'){
+                  jn = 'OVO';
+                } else if(iter[0].id_ewallet == '3'){
+                  jn = 'DANA';
+                } else if(iter[0].id_ewallet == '4'){
+                  jn = 'LinkAja';
+                }
+
+                // jn = (iter[0].id_ewallet == '1' ? 'GO-PAY' : 'OVO');
+                bayar = iter[0].bayar_emoney;
+                break;
+            }
+
+            /*var via = `
+              <tr>
+                <td>Via</td>
+                <td>:</td>
+                <td style="text-align: right;">${jn}</td>
+              </tr>
+            `;*/
+
+            var paid = 
+              '<tr>\
+                <td>'+jn+'</td>\
+                <td>:</td>\
+                <td style="text-align: right;">'+parseInt(bayar).toLocaleString('id-ID')+'</td>\
+              </tr>';
+
+            var chn = 
+              '<tr>\
+                <td>Kembalian</td>\
+                <td>:</td>\
+                <td style="text-align: right;">'+parseInt(iter[0].kembali_tunai).toLocaleString('id-ID')+'</td>\
+              </tr>\
+              <tr><td>&nbsp;</td></tr>';
+
+            var thanks = 
+              '<tr>\
+                <td colspan="3" style="text-align: center;">Terima Kasih Atas Kunjungan Anda</td>\
+              </tr>\
+              <tr>\
+                <td colspan="3" style="text-align: center;">Powered by MediaPOS</td>\
+              </tr>\
+            </table>';
+
+            containerPreview = q;
+            var q = tbl + header + dtloutlet + tgl + notrans + op + list + stot + dsc + grd + /*via +*/ paid + chn + thanks;
+            $('#preview_clos').html(q);
+          } else {
+
+          }
+        }
+      })
+    }
+  }
+},
+{
+  path: '/print/',
+  componentUrl: './pages/print.html',
+  on: {
+    pageAfterIn: function(){
+      var temp = {
+        act: "print"
+      }
+
+      app.request({
+        url: site+'/API/laporan/'+cpyProf.ID_CLIENT+'/'+cpyProf.ID,
+        method: 'POST',
+        data: JSON.stringify(temp),
+        success: function(result){
+          var parsed = JSON.parse(result);
+          if(parsed.ST_CODE == '1'){
+            var datanya = '';
+            var iter = parsed.DATA;
+
+            for(var i = 0; i < iter.length; i++){
+              datanya +=
+                '<li class="item-content">\
+                  <div class="item-inner">\
+                    <div class="item-title">'+iter[i].no_penjualan+'\
+                      <div class="item-footer">'+iter[i].stamp_date+'</div>\
+                    </div>\
+                    <div class="item-after">\
+                      <a href="#" onclick="lihatPreview('+iter[i].id_pj+')"><i class="icon material-icons md-only">print</i></a>\
+                    </div>\
+                  </div>\
+                </li>';
+            }
+
+            $('#list_print').html(datanya);
+          } else {
+
+          }
+        }
+      })
     }
   }
 },
