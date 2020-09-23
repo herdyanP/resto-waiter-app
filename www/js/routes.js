@@ -59,8 +59,10 @@ var routes = [
 
       if(layout == '1'){
         $('#block-grid').css('display', 'block');
+        $('#block-row').css('display', 'none');
       } else if(layout == '2'){
         $('#block-row').css('display', 'block');
+        $('#block-grid').css('display', 'none');
       }
 
       searchbar = app.searchbar.create({
@@ -151,165 +153,7 @@ var routes = [
   ',
   on: {
     pageAfterIn: function(e, page){
-      app.request({
-        url: site+'/API/preview/'+cpyProf.ID_CLIENT+'/'+page.route.params.idpj,
-        method: 'GET',
-        success: function(result){
-          var parsed = JSON.parse(result);
-          if(parsed.ST_CODE == '1'){
-            var iter = parsed.DATA;
-            var tbl = 
-            '<table style="width: 100%">\
-              <tr>\
-                <td style="width: 40%"></td>\
-                <td style="width: 20%"></td>\
-                <td style="width: 40%"></td>\
-              </tr>';
-
-            var header = 
-              '<tr>\
-                <td colspan="3" style="text-align: center;">Sales Receipt</td>\
-              </tr>';
-
-            var dtloutlet = 
-              '<tr>\
-                <td colspan="3" style="text-align: center;">'+cpyProf.nama_toko+'</td>\
-              </tr>\
-              <tr>\
-                <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">'+cpyProf.alamat+'</td>\
-              </tr>';
-
-            var notrans = 
-              '<tr>\
-                <td>No. Trans</td>\
-                <td colspan="2">: '+iter[0].no_penjualan+'</td>\
-              </tr>';
-              
-            var dt = new Date();
-            var dy = ('00'+dt.getDate()).slice(-2);
-            var hr = ('00'+dt.getHours()).slice(-2);
-            var mn = ('00'+dt.getMinutes()).slice(-2);
-            var stamp = dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
-            var tgl = 
-              '<tr>\
-                <td>Tanggal</td>\
-                <td colspan="2">: '+stamp+'</td>\
-              </tr>';
-          
-            var op = 
-              '<tr>\
-                <td>Operator</td>\
-                <td colspan="2">: '+cpyProf.NAMA+'</td>\
-              </tr>\
-              <tr><td colspan="3" style="border-top: solid black 2px;"></tr>';
-              
-            var list = '';
-            for(var i = 0; i < iter.length; i++){
-              var qty = parseInt(iter[i].qty_jual).toLocaleString('id-ID');
-              var hj = parseInt(iter[i].harga_jual).toLocaleString('id-ID');
-              var jml = (parseInt(iter[i].harga_jual) * parseInt(iter[i].qty_jual)).toLocaleString('id-ID');  
-              list += 
-                '<tr>\
-                  <td colspan="3">\
-                    '+iter[i].nama_barang+'\
-                    <br>Cttn: '+iter[i].catatan+'\
-                  </td>\
-                </tr>\
-                <tr>\
-                  <td style="padding-left: 20px;">'+qty+' x '+hj+'</td>\
-                  <td colspan="2" style="text-align: right;">'+jml+'</td>\
-                </tr>';
-            }
-
-            list += '<tr><td colspan="3" style="border-bottom: solid black 2px;"></td></tr>';
-            var stot = 
-              '<tr>\
-                <td>Subtotal</td>\
-                <td>:</td>\
-                <td style="text-align: right;">'+parseInt(iter[0].total_jual).toLocaleString('id-ID')+'</td>\
-              </tr>';
-
-            var dsc = 
-              '<tr>\
-                <td>Diskon</td>\
-                <td>:</td>\
-                <td style="text-align: right;">'+parseInt(iter[0].disc_rp).toLocaleString('id-ID')+'</td>\
-              </tr>';
-
-            var grd = 
-              '<tr>\
-                <td>Grand Total</td>\
-                <td>:</td>\
-                <td style="text-align: right;">'+parseInt(iter[0].grantot_jual).toLocaleString('id-ID')+'</td>\
-              </tr>';
-
-
-            var jn = '', bayar = '';
-            switch(iter[0].jenis_bayar){
-              case '1':
-                jn = 'Tunai';
-                bayar = iter[0].bayar_tunai;
-                break;
-              case '2':
-                jn = 'Kartu Debit/Kredit';
-                bayar = iter[0].bayar_card;
-                break;
-              case '3':
-                if(iter[0].id_ewallet == '1'){
-                  jn = 'GO-PAY';
-                } else if(iter[0].id_ewallet == '2'){
-                  jn = 'OVO';
-                } else if(iter[0].id_ewallet == '3'){
-                  jn = 'DANA';
-                } else if(iter[0].id_ewallet == '4'){
-                  jn = 'LinkAja';
-                }
-
-                // jn = (iter[0].id_ewallet == '1' ? 'GO-PAY' : 'OVO');
-                bayar = iter[0].bayar_emoney;
-                break;
-            }
-
-            /*var via = `
-              <tr>
-                <td>Via</td>
-                <td>:</td>
-                <td style="text-align: right;">${jn}</td>
-              </tr>
-            `;*/
-
-            var paid = 
-              '<tr>\
-                <td>'+jn+'</td>\
-                <td>:</td>\
-                <td style="text-align: right;">'+parseInt(bayar).toLocaleString('id-ID')+'</td>\
-              </tr>';
-
-            var chn = 
-              '<tr>\
-                <td>Kembalian</td>\
-                <td>:</td>\
-                <td style="text-align: right;">'+parseInt(iter[0].kembali_tunai).toLocaleString('id-ID')+'</td>\
-              </tr>\
-              <tr><td>&nbsp;</td></tr>';
-
-            var thanks = 
-              '<tr>\
-                <td colspan="3" style="text-align: center;">Terima Kasih Atas Kunjungan Anda</td>\
-              </tr>\
-              <tr>\
-                <td colspan="3" style="text-align: center;">Powered by MediaPOS</td>\
-              </tr>\
-            </table>';
-
-            containerPreview = q;
-            var q = tbl + header + dtloutlet + tgl + notrans + op + list + stot + dsc + grd + /*via +*/ paid + chn + thanks;
-            $('#preview_rcpt').html(q);
-          } else {
-
-          }
-        }
-      })
+      previewPenjualan(page.route.params.idpj);
     }
   }
 },
@@ -350,7 +194,7 @@ var routes = [
             var available = st + pj + km - kk;
 
             $("#availcash").val(available);
-            $("#wang_kaskeluar").val(available.toLocaleString('id-id'));
+            $("#wang_kaskeluar").val(available.toLocaleString(locale));
           } else {
 
           }
@@ -382,7 +226,7 @@ var routes = [
             var data = parsed.DATA;
 
             $('#id_closing').val(data.id_closing);
-            $('#ul_closing_modal').html(parseInt(data.starting_cash).toLocaleString('id-ID'));
+            $('#ul_closing_modal').html(parseInt(data.starting_cash).toLocaleString(locale));
             $('#cl_modal').val(parseInt(data.starting_cash));
             $('#stamp_sv').val(data.openingcashdate);
 
@@ -412,6 +256,9 @@ var routes = [
             <a href="#" class="link icon-only" onclick="cetakClosingID({{$route.params.idc}});">\
               <i class="material-icons">print</i>\
             </a>\
+            <a href="#" class="link icon-only" onclick="dialogShare({{$route.params.idc}});">\
+              <i class="material-icons">share</i>\
+            </a>\
           </div>\
         </div>\
       </div>\
@@ -428,165 +275,7 @@ var routes = [
   ',
   on: {
     pageAfterIn: function(e, page){
-      app.request({
-        url: site+'/API/preview/'+cpyProf.ID_CLIENT+'/'+page.route.params.idc,
-        method: 'GET',
-        success: function(result){
-          var parsed = JSON.parse(result);
-          if(parsed.ST_CODE == '1'){
-            var iter = parsed.DATA;
-            var tbl = 
-            '<table style="width: 100%">\
-              <tr>\
-                <td style="width: 40%"></td>\
-                <td style="width: 20%"></td>\
-                <td style="width: 40%"></td>\
-              </tr>';
-
-            var header = 
-              '<tr>\
-                <td colspan="3" style="text-align: center;">Sales Receipt</td>\
-              </tr>';
-
-            var dtloutlet = 
-              '<tr>\
-                <td colspan="3" style="text-align: center;">'+cpyProf.nama_toko+'</td>\
-              </tr>\
-              <tr>\
-                <td colspan="3" style="text-align: center; border-bottom: solid black 2px;">'+cpyProf.alamat+'</td>\
-              </tr>';
-
-            var notrans = 
-              '<tr>\
-                <td>No. Trans</td>\
-                <td colspan="2">: '+iter[0].no_penjualan+'</td>\
-              </tr>';
-              
-            var dt = new Date();
-            var dy = ('00'+dt.getDate()).slice(-2);
-            var hr = ('00'+dt.getHours()).slice(-2);
-            var mn = ('00'+dt.getMinutes()).slice(-2);
-            var stamp = dy + ' ' + shortMonths[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + hr+':'+mn;
-            var tgl = 
-              '<tr>\
-                <td>Tanggal</td>\
-                <td colspan="2">: '+stamp+'</td>\
-              </tr>';
-          
-            var op = 
-              '<tr>\
-                <td>Operator</td>\
-                <td colspan="2">: '+cpyProf.NAMA+'</td>\
-              </tr>\
-              <tr><td colspan="3" style="border-top: solid black 2px;"></tr>';
-              
-            var list = '';
-            for(var i = 0; i < iter.length; i++){
-              var qty = parseInt(iter[i].qty_jual).toLocaleString('id-ID');
-              var hj = parseInt(iter[i].harga_jual).toLocaleString('id-ID');
-              var jml = (parseInt(iter[i].harga_jual) * parseInt(iter[i].qty_jual)).toLocaleString('id-ID');  
-              list += 
-                '<tr>\
-                  <td colspan="3">\
-                    '+iter[i].nama_barang+'\
-                    <br>Cttn: '+iter[i].catatan+'\
-                  </td>\
-                </tr>\
-                <tr>\
-                  <td style="padding-left: 20px;">'+qty+' x '+hj+'</td>\
-                  <td colspan="2" style="text-align: right;">'+jml+'</td>\
-                </tr>';
-            }
-
-            list += '<tr><td colspan="3" style="border-bottom: solid black 2px;"></td></tr>';
-            var stot = 
-              '<tr>\
-                <td>Subtotal</td>\
-                <td>:</td>\
-                <td style="text-align: right;">'+parseInt(iter[0].total_jual).toLocaleString('id-ID')+'</td>\
-              </tr>';
-
-            var dsc = 
-              '<tr>\
-                <td>Diskon</td>\
-                <td>:</td>\
-                <td style="text-align: right;">'+parseInt(iter[0].disc_rp).toLocaleString('id-ID')+'</td>\
-              </tr>';
-
-            var grd = 
-              '<tr>\
-                <td>Grand Total</td>\
-                <td>:</td>\
-                <td style="text-align: right;">'+parseInt(iter[0].grantot_jual).toLocaleString('id-ID')+'</td>\
-              </tr>';
-
-
-            var jn = '', bayar = '';
-            switch(iter[0].jenis_bayar){
-              case '1':
-                jn = 'Tunai';
-                bayar = iter[0].bayar_tunai;
-                break;
-              case '2':
-                jn = 'Kartu Debit/Kredit';
-                bayar = iter[0].bayar_card;
-                break;
-              case '3':
-                if(iter[0].id_ewallet == '1'){
-                  jn = 'GO-PAY';
-                } else if(iter[0].id_ewallet == '2'){
-                  jn = 'OVO';
-                } else if(iter[0].id_ewallet == '3'){
-                  jn = 'DANA';
-                } else if(iter[0].id_ewallet == '4'){
-                  jn = 'LinkAja';
-                }
-
-                // jn = (iter[0].id_ewallet == '1' ? 'GO-PAY' : 'OVO');
-                bayar = iter[0].bayar_emoney;
-                break;
-            }
-
-            /*var via = `
-              <tr>
-                <td>Via</td>
-                <td>:</td>
-                <td style="text-align: right;">${jn}</td>
-              </tr>
-            `;*/
-
-            var paid = 
-              '<tr>\
-                <td>'+jn+'</td>\
-                <td>:</td>\
-                <td style="text-align: right;">'+parseInt(bayar).toLocaleString('id-ID')+'</td>\
-              </tr>';
-
-            var chn = 
-              '<tr>\
-                <td>Kembalian</td>\
-                <td>:</td>\
-                <td style="text-align: right;">'+parseInt(iter[0].kembali_tunai).toLocaleString('id-ID')+'</td>\
-              </tr>\
-              <tr><td>&nbsp;</td></tr>';
-
-            var thanks = 
-              '<tr>\
-                <td colspan="3" style="text-align: center;">Terima Kasih Atas Kunjungan Anda</td>\
-              </tr>\
-              <tr>\
-                <td colspan="3" style="text-align: center;">Powered by MediaPOS</td>\
-              </tr>\
-            </table>';
-
-            containerPreview = q;
-            var q = tbl + header + dtloutlet + tgl + notrans + op + list + stot + dsc + grd + /*via +*/ paid + chn + thanks;
-            $('#preview_clos').html(q);
-          } else {
-
-          }
-        }
-      })
+      previewClosing(page.route.params.idc);
     }
   }
 },

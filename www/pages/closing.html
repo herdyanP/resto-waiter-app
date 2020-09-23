@@ -36,50 +36,77 @@
               <div class="item-content">
                 <div class="item-inner">
                   <div class="item-title">Modal Awal</div>
-                  <div class="item-after" id="ul_closing_modal"></div>
+                  <div class="item-after" id="ul_closing_modal">0</div>
                 </div>
               </div>
             </li>
             <li>
               <div class="item-content">
                 <div class="item-inner">
-                  <div class="item-title">Total Penjualan</div>
-                  <div class="item-after" id="ul_closing_total"></div>
+                  <div class="item-title">Penjualan</div>
+                  <div class="item-after" id="ul_closing_total">0</div>
                 </div>
               </div>
             </li>
-            <li class="item-content item-input inline-label">
+            <li class="item-content">
               <div class="item-inner">
-                <div class="item-title item-label" style="color: unset;">Total Penerimaan</div>
+                <div class="item-title">Penerimaan</div>
+                <div class="item-after" id="ul_uang_masuk">0</div>
+              </div>
+            </li>
+            <li class="item-content">
+              <div class="item-inner">
+                <div class="item-title">Pengeluaran</div>
+                <div class="item-after" id="ul_uang_keluar">0</div>
+              </div>
+            </li>
+            <li class="item-content" onclick="inputUang()">
+              <div class="item-inner">
+                <div class="item-title">Total</div>
+                <div class="item-after" id="ul_current_uang">0</div>
+              </div>
+            </li>
+            <!-- <li class="item-content" onclick="inputLain()">
+              <div class="item-inner">
+                <div class="item-title">Lain-Lain</div>
+                <div class="item-after" id="ul_uang_lain">0</div>
+              </div>
+            </li> -->
+            <!-- <li class="item-content item-input inline-label">
+              <div class="item-inner">
+                <div class="item-title item-label" style="color: unset;">Penerimaan</div>
                 <div class="item-input-wrap">
+                  <div class="item-after" id="ul_uang_masuk">0</div>
                   <input type="tel" id="ul_uang_masuk" value="0" readonly disabled style="text-align: right;">
                 </div>
               </div>
-            </li>
-            <li class="item-content item-input inline-label">
+            </li> -->
+            <!-- <li class="item-content item-input inline-label">
               <div class="item-inner">
-                <div class="item-title item-label" style="color: unset;">Total Pengeluaran</div>
+                <div class="item-title item-label" style="color: unset;">Pengeluaran</div>
                 <div class="item-input-wrap">
+                  <div class="item-after" id="ul_uang_keluar">0</div>
                   <input type="tel" id="ul_uang_keluar" value="0" readonly disabled style="text-align: right;">
                 </div>
               </div>
-            </li>
-            <li class="item-content item-input inline-label">
+            </li> -->
+            <!-- <li class="item-content item-input inline-label" onclick="inputUang()">
               <div class="item-inner">
-                <div class="item-title item-label" style="color: unset;">Uang Saat Ini</div>
+                <div class="item-title item-label" style="color: unset;">Total</div>
                 <div class="item-input-wrap">
+                  <div class="item-after" id="ul_current_uang">0</div>
                   <input type="tel" id="ul_current_uang" value="0" onchange="commaNumber(this); hitungLain(this.value);" onclick="this.select();" style="text-align: right;">
                 </div>
               </div>
-            </li>
-            <li class="item-content item-input inline-label">
+            </li> -->
+            <!-- <li class="item-content item-input inline-label">
               <div class="item-inner">
                 <div class="item-title item-label" style="color: unset;">Lain-Lain</div>
                 <div class="item-input-wrap">
                   <input type="tel" id="ul_uang_lain" value="0" readonly disabled style="text-align: right;">
                 </div>
               </div>
-            </li>
+            </li> -->
           </ul>
 
           <br><ul id="ul_closing_masuk"></ul>
@@ -92,7 +119,7 @@
         </div>
 
         <div class="card-footer" id="closing_button" style="display: none;">
-          <button class="button button-fill color-green" onclick="simpanClosing(this);">Cetak dan close penjualan</button>
+          <button class="button button-fill color-green" onclick="simpanClosing(this);">Simpan closing penjualan</button>
         </div>
       </div>
     </div>

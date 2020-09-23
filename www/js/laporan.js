@@ -43,9 +43,9 @@ function laporanPenjualan(){
                     }
               
                     if(i == 0){
-                        datanya += '<tr><td class="label-cell">'+iter[i].no_penjualan+'</td><td>'+iter[i].tgl_penjualan+'</td><td class="numeric-cell">'+parseInt(iter[i].total_jual).toLocaleString('id-ID')+'</td><td>'+jenis+'</td></tr>';
+                        datanya += '<tr><td class="label-cell">'+iter[i].no_penjualan+'</td><td>'+iter[i].tgl_penjualan+'</td><td class="numeric-cell">'+parseInt(iter[i].total_jual).toLocaleString(locale)+'</td><td>'+jenis+'</td></tr>';
                     }else if(iter[i].no_penjualan != iter[i-1].no_penjualan){
-                        datanya += '<tr><td class="label-cell">'+iter[i].no_penjualan+'</td><td>'+iter[i].tgl_penjualan+'</td><td class="numeric-cell">'+parseInt(iter[i].total_jual).toLocaleString('id-ID')+'</td><td>'+jenis+'</td></tr>';
+                        datanya += '<tr><td class="label-cell">'+iter[i].no_penjualan+'</td><td>'+iter[i].tgl_penjualan+'</td><td class="numeric-cell">'+parseInt(iter[i].total_jual).toLocaleString(locale)+'</td><td>'+jenis+'</td></tr>';
                     }
                 }
               
@@ -98,7 +98,7 @@ function laporanPerItem(){
                         '<tr>\
                             <td class="label-cell">'+iter[i].nama_barang+'</td>\
                             <td class="numeric-cell">'+iter[i].jml+'</td>\
-                            <td class="numeric-cell">'+parseInt(iter[i].total).toLocaleString("id-ID")+'</td>\
+                            <td class="numeric-cell">'+parseInt(iter[i].total).toLocaleString(locale)+'</td>\
                         </tr>';
                 }
             } 

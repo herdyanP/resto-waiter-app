@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.medianusamandiri.mediapos" version="1.4.4" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.medianusamandiri.mediapos" version="1.4.6" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>MediaPOS</name>
     <description>
         Aplikasi POS
@@ -15,6 +15,10 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+
+    <allow-navigation href="http://mediapos.co.id/*" />
+    <allow-navigation href="http://mediapos.cloudmnm.com/*" />
+
     <platform name="android">
         <allow-intent href="market:*" />
         <icon density="mdpi" src="res/icon/android/mipmap-mdpi/ic_launcher.png" />

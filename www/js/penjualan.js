@@ -71,7 +71,7 @@ function keranjang(){
                             </div>\
                         </div>\
                     </li>';
-                    // iter+="<li class=\"swipeout deleted-callback\" iter-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString('id-ID')+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
+                    // iter+="<li class=\"swipeout deleted-callback\" iter-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString(locale)+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
                     
                     jumlah += parseInt(iter[i].qty_tmp * iter[i].harga_tmp);  // no PPN 
                 }
@@ -83,7 +83,7 @@ function keranjang(){
             totalSub = jumlah;
             data += '</ul>';
             $('#keranjang').html(data);
-            $('#bayar').val(totalSub.toLocaleString('id-ID'));
+            $('#bayar').val(totalSub.toLocaleString(locale));
             
             hitungDiskon();
         }, error: function(){
@@ -122,7 +122,7 @@ function keranjang(){
             </div>\
             </div>\
             </li>';
-            // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString('id-ID')+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
+            // data+="<li class=\"swipeout deleted-callback\" data-id=\""+rs.rows.item(i).id_tmp+"\"><div class=\"item-content swipeout-content\"><div class=\"item-inner\"><div class=\"item-title\"><div class=\"item-header\">"+rs.rows.item(i).nama_barang+"</div>"+rs.rows.item(i).total.toLocaleString(locale)+"</div><div>"+rs.rows.item(i).qty+"</div></div></div><div class=\"swipeout-actions-right\"><a href=\"#\" onclick=\"hapusKeranjang('"+rs.rows.item(i).id_tmp+"')\" class=\"swipeout-delete\">Delete</a></div></li>";
             
             jumlah += parseInt(testp[i].qty_tmp * testp[i].harga_tmp);  // no PPN 
         }
@@ -136,8 +136,8 @@ function keranjang(){
         
         // if(pauseFlag == 0) $('#keranjang').html(data);
         $('#keranjang').html(data);
-        // $('#subtotal').html(totalSub.toLocaleString('id-ID'));
-        $('#bayar').val(totalSub.toLocaleString('id-ID'));
+        // $('#subtotal').html(totalSub.toLocaleString(locale));
+        $('#bayar').val(totalSub.toLocaleString(locale));
         
         hitungDiskon();
         // refreshKeranjang = setTimeout(keranjang, 5 * 1000);

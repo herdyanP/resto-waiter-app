@@ -26,12 +26,12 @@ function listKategori(){
 				app.preloader.hide();
 			} else {
 				app.preloader.hide();
-				alert('Terjadi kesalahan saat mengambil list kategori');
+				// alert('Terjadi kesalahan saat mengambil list kategori');
 			}
 			// if(pauseFlag == 0) $('#kategori').html(data);
 		}, error: function(){
 			app.preloader.hide();
-			alert('Terjadi kesalahan saat mengambil list kategori');
+			// alert('Terjadi kesalahan saat mengambil list kategori');
 		}
 	})
 }
@@ -51,8 +51,8 @@ function tampilMenu(){
 				var datanya = '';
 
 				for (i = 0; i < iter.length; i++){
+					var c = i % avColor.length;
 					if(layout == '1'){ // Row
-						var c = i % avColor.length;
 						datanya += 
 							/* '<div onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')" class="col-33" style="height: 100px;">\
 								<div style="margin: auto; width: 50px; height: 50px; border: solid black 1px; border-radius: 20px;">\
@@ -67,7 +67,6 @@ function tampilMenu(){
 								<p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); '+(screen.width < 400 ? "font-size: 10px;" : "")+'">'+iter[i].nama_barang+'</p>\
 							</div>';
 					} else if(layout == '2'){ // List
-						var c = i % avColor.length;
 						datanya += 
 							'<li class="item-content">\
 								<div class="item-media" style="background: '+avColor[c]+'; color: white; border-radius: 30px;">\
@@ -75,19 +74,20 @@ function tampilMenu(){
 								</div>\
 								<div class="item-inner" onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')">\
 									<div class="item-title">'+iter[i].nama_barang+'</div>\
-									<div class="item-after">Rp '+parseInt(iter[i].harga).toLocaleString()+'</div>\
+									<div class="item-after">Rp '+parseInt(iter[i].harga).toLocaleString(locale)+'</div>\
 								</div>\
 							</li>';
 					}
 				}	
 				
-				if(iter.length % 3 != 0 && layout == 1) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
-				$(layout == 1 ? '#itemlist' : '#itemrow').html(datanya);
+				if(iter.length % 3 != 0 && layout == '1') datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
+				$(layout == '1' ? '#itemlist' : '#itemrow').html(datanya);
 			} else {
+				$(layout == '1' ? '#itemlist' : '#itemrow').html(datanya);
 				console.log('Barang kosong');
 			}
 		}, error: function(){
-			console.log('Request menu timeout / failed');
+			// alert('Gagal saat melakukan query!');
 		}, complete: function(){
 			refreshMenu = setTimeout(tampilMenu, 10 * 1000);
 		}
@@ -117,8 +117,8 @@ function cariItem(q){
 			if(parsed.ST_CODE == '1'){
 				var iter = parsed.DATA;
 				for (i = 0; i < iter.length; i++){
+					var c = i % avColor.length;
 					if(layout == 1){
-						var c = i % avColor.length;
 						datanya += 
 							'<div onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')" class="col-33" style="height: 33vw;">\
 								<div style="margin: auto; width: 18vw; height: 18vw; border: solid black 1px; border-radius: 20px; background: '+avColor[c]+'; color: white;">\
@@ -134,17 +134,20 @@ function cariItem(q){
 								</div>\
 								<div class="item-inner" onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')">\
 									<div class="item-title">'+iter[i].nama_barang+'</div>\
-									<div class="item-after">Rp '+parseInt(iter[i].harga).toLocaleString()+'</div>\
+									<div class="item-after">Rp '+parseInt(iter[i].harga).toLocaleString(locale)+'</div>\
 								</div>\
 							</li>';
 					}
 				}
 			  
 				if(iter.length % 3 != 0 && layout == 1) datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
-				$(layout == 1 ? '#itemlist' : '#itemrow').html(datanya);
+				$(layout == '1' ? '#itemlist' : '#itemrow').html(datanya);
 			} else {
+				$(layout == '1' ? '#itemlist' : '#itemrow').html('');
 				console.log('Search kosong');
 			}
+		}, error: function(){
+			// alert('Gagal saat melakukan query!');
 		}, complete: function(){
 			app.preloader.hide();
 		}

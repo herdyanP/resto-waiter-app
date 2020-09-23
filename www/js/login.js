@@ -42,7 +42,7 @@ function onLoginAttempt(loginData){
                     cpyProf = obj;
                     sessionCheck();
 
-                    $('#panel_subTitle').html('<br><strong>MediaPOS '+(cpyProf.jenis_outlet == 1 ? "F&amp;B" : "Retail")+'</strong><br>POS Application<br>'+cpyProf.outlet);
+                    $('#panel_subTitle').html('<br><strong>MediaPOS '+(cpyProf.jenis_outlet == '1' ? "F&amp;B" : "Retail")+'</strong><br>POS Application<br>'+cpyProf.nama_toko);
                     app.views.main.router.navigate('/home/');
                 });
             } else if(parsed.ST_CODE == '2'){
