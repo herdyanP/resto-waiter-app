@@ -60,8 +60,8 @@ function tampilMenu(){
 								</div>\
 								<p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); '+(screen.width < 400 ? "font-size: 10px;" : "")+'">'+iter[i].nama_barang+'</p>\
 							</div>'; */
-							'<div onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')" class="col-33" style="height: 33vw;">\
-								<div style="margin: auto; width: 18vw; height: 18vw; border: solid black 1px; border-radius: 20px; background: '+avColor[c]+'; color: white;">\
+							'<div onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')" class="col-33">\
+								<div style="margin: auto; border: solid black 1px; border-radius: 20px; background: '+avColor[c]+'; color: white;">\
 									<p style="vertical-align: middle; text-align: center; font-size: 5vw;">'+iter[i].nama_barang[0]+'</p>\
 								</div>\
 								<p style="margin: unset; position: relative; top: 20%; transform: translateY(-50%); '+(screen.width < 400 ? "font-size: 10px;" : "")+'">'+iter[i].nama_barang+'</p>\
@@ -81,9 +81,9 @@ function tampilMenu(){
 				}	
 				
 				if(iter.length % 3 != 0 && layout == '1') datanya += '<div class="col-33" style="height: 100px; visibility: hidden;\"><p style="margin: unset; position: relative; top: 50%; transform: translateY(-50%);">NIL</p></div>';
-				$(layout == '1' ? '#itemlist' : '#itemrow').html(datanya);
+				// $(layout == '1' ? '#itemlist' : '#itemrow').html(datanya);
 			} else {
-				$(layout == '1' ? '#itemlist' : '#itemrow').html(datanya);
+				// $(layout == '1' ? '#itemlist' : '#itemrow').html(datanya);
 				console.log('Barang kosong');
 			}
 		}, error: function(){

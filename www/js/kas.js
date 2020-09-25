@@ -25,7 +25,7 @@ function simpanModal(uang){
             success: function(result){
                 var parsed = JSON.parse(result);
                 if(parsed.ST_CODE == '1'){
-                    $('#menu_penjualan').css('display', 'block');
+                    $('#menu_penjualan').css('display', '');
                     $('#modal_awal').css('display', 'none');
                 } else {
                     alert('Gagal menyimpan modal awal');

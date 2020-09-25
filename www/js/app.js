@@ -108,7 +108,6 @@ document.addEventListener('deviceready', function() {
 
   // if(AdMob) AdMob.prepareInterstitial( {adId: adid.interstitial, autoShow: false} );
 
-  screen.orientation.lock('portrait');
 
   var d = new Date();
   var tgls=d.getFullYear()+"-"+("0" + (d.getMonth()+1)).slice(-2)+"-"+("0" + d.getDate()).slice(-2);
@@ -127,6 +126,10 @@ document.addEventListener('deviceready', function() {
 
   cekStored();
   document.addEventListener("backbutton", onBackPressed, false);
+  
+
+  screen.orientation.lock('portrait'); // unlock ketika masuk halaman utama
+  window.addEventListener("orientationchange", checkRotation);
 
   cordova.getAppVersion.getVersionNumber(function (version) {
     appVer = version;
@@ -255,26 +258,26 @@ function editBarang(q){
 }
 
 function showEditBarang(id, tipe, kode, nama, harga, satuan, status){
-  document.getElementById('scrollable').scrollTop = 0;
-  $('#button_addItem').css('display', 'none');
-  $('#buttons_editRemove').css('display', 'flex');
-  $('#_status').css('display', 'block');
+  // document.getElementById('scrollable').scrollTop = 0;
+  // $('#button_addItem').css('display', 'none');
+  // $('#buttons_editRemove').css('display', 'flex');
+  // $('#_status').css('display', 'block');
 
-  $('#id_barang').val(id);
-  $('#tipe_barang').val(tipe);
-  $('#kode_barang').val(kode);
-  $('#nama_barang').val(nama);
-  $('#harga_addItem').val(harga.split('-')[0]);
-  $('#satuan_select').val(satuan);
-  $('#status_sel').val(status);
+  // $('#id_barang').val(id);
+  // $('#tipe_barang').val(tipe);
+  // $('#kode_barang').val(kode);
+  // $('#nama_barang').val(nama);
+  // $('#harga_addItem').val(harga.split('-')[0]);
+  // $('#satuan_select').val(satuan);
+  // $('#status_sel').val(status);
 }
 
 function hideEditBarang(q){
-  $('#button_addItem').css('display', 'block');
-  $('#buttons_editRemove').css('display', 'none');
-  $('#_status').css('display', 'none');
+  // $('#button_addItem').css('display', 'block');
+  // $('#buttons_editRemove').css('display', 'none');
+  // $('#_status').css('display', 'none');
 
-  $(q).trigger('reset');
+  // $(q).trigger('reset');
 }
 
 function hapusBarang(id, nama){
@@ -362,19 +365,19 @@ function listSatuan(){
 }
 
 function showEditSatuan(id, nama){
-  document.getElementById('scrollable').scrollTop = 0;
-  $('#button_addSatuan').css('display', 'none');
-  $('#buttons_editSatuan').css('display', 'flex');
+  // document.getElementById('scrollable').scrollTop = 0;
+  // $('#button_addSatuan').css('display', 'none');
+  // $('#buttons_editSatuan').css('display', 'flex');
 
-  $('#id_satuan').val(id);
-  $('#nama_satuan').val(nama);
+  // $('#id_satuan').val(id);
+  // $('#nama_satuan').val(nama);
 }
 
 function hideEditSatuan(q){
-  $('#button_addSatuan').css('display', 'block');
-  $('#buttons_editSatuan').css('display', 'none');
+  // $('#button_addSatuan').css('display', 'block');
+  // $('#buttons_editSatuan').css('display', 'none');
 
-  $(q).trigger('reset');
+  // $(q).trigger('reset');
 }
 
 function editSatuan(q){
@@ -481,19 +484,19 @@ function listKategori(){
 }
 
 function showEditKategori(id, nama){
-  document.getElementById('scrollable').scrollTop = 0;
-  $('#button_addKategori').css('display', 'none');
-  $('#buttons_editKategori').css('display', 'flex');
+  // document.getElementById('scrollable').scrollTop = 0;
+  // $('#button_addKategori').css('display', 'none');
+  // $('#buttons_editKategori').css('display', 'flex');
 
-  $('#id_kategori').val(id);
-  $('#nama_kategori').val(nama);
+  // $('#id_kategori').val(id);
+  // $('#nama_kategori').val(nama);
 }
 
 function hideEditKategori(q){
-  $('#button_addKategori').css('display', 'block');
-  $('#buttons_editKategori').css('display', 'none');
+  // $('#button_addKategori').css('display', 'block');
+  // $('#buttons_editKategori').css('display', 'none');
 
-  $(q).trigger('reset');
+  // $(q).trigger('reset');
 }
 
 function editKategori(q){
@@ -613,32 +616,59 @@ function listPricelist(){
 }
 
 function showEditPricelist(id, tipe, kode, nama, harga, satuan, status){
-  document.getElementById('scrollable').scrollTop = 0;
-  // $('#button_addItem').css('display', 'none');
-  $('#buttons_editRemove').css('display', 'flex');
-  $('#_status').css('display', 'block');
+  // document.getElementById('scrollable').scrollTop = 0;
+  // // $('#button_addItem').css('display', 'none');
+  // $('#buttons_editRemove').css('display', 'flex');
+  // $('#_status').css('display', 'block');
 
-  $('#id_barang').val(id);
-  // $('#tipe_barang').val(tipe);
-  // $('#kode_barang').val(kode);
-  // $('#nama_barang').val(nama);
-  $('#harga_addItem').val(harga.split('-')[0]);
-  $('#id_satuan').val(satuan);
-  // $('#status_sel').val(status);
+  // $('#id_barang').val(id);
+  // // $('#tipe_barang').val(tipe);
+  // // $('#kode_barang').val(kode);
+  // // $('#nama_barang').val(nama);
+  // $('#harga_addItem').val(harga.split('-')[0]);
+  // $('#id_satuan').val(satuan);
+  // // $('#status_sel').val(status);
 }
 
 function hideEditPricelist(q){
-  // $('#button_addItem').css('display', 'block');
-  $('#buttons_editRemove').css('display', 'none');
-  $('#_status').css('display', 'none');
+  // // $('#button_addItem').css('display', 'block');
+  // $('#buttons_editRemove').css('display', 'none');
+  // $('#_status').css('display', 'none');
 
-  $(q).trigger('reset');
+  // $(q).trigger('reset');
 }
 
 // ========== PROSES MASTER ENDS HERE ==========
 
 
 // ========== PROSES UTILITY STARTS HERE ==========
+
+function checkRotation(){
+  if(screen.orientation.type == "portrait-primary"){
+    $('#menu_penjualan').removeClass('row');
+    $('#menu_penjualan').removeClass('no-gap');
+
+    // $('#penjualan_left').addClass('portrait-menu');
+    // $('#penjualan_left').removeClass('landscape-menu');
+
+    $('#penjualan_right').addClass('portrait-menu');
+    $('#penjualan_right').removeClass('landscape-menu');
+
+    // $('#menu_card').css('max-height', '');
+  } else {
+    $('#menu_penjualan').addClass('row');
+    $('#menu_penjualan').addClass('no-gap');
+
+    // $('#penjualan_left').addClass('landscape-menu');
+    // $('#penjualan_left').removeClass('portrait-menu');
+
+    $('#penjualan_right').addClass('landscape-menu');
+    $('#penjualan_right').removeClass('portrait-menu');
+
+    // $('#menu_card').css('max-height', '100vh');
+    
+  }
+}
 
 function goTo(url){
   cordova.InAppBrowser.open(
@@ -976,17 +1006,17 @@ function hitungDiskon(){
 function metode(a){
   mtd = a;
   if(a == '1'){
-    $('.bayar-tunai').css('display', 'block');
+    $('.bayar-tunai').css('display', '');
     $('.bayar-card').css('display', 'none');
     $('.bayar-ewallet').css('display', 'none');
   } else if(a == '2'){
     $('.bayar-tunai').css('display', 'none');
-    $('.bayar-card').css('display', 'block');
+    $('.bayar-card').css('display', '');
     $('.bayar-ewallet').css('display', 'none');
   } else if(a == '3'){
     $('.bayar-tunai').css('display', 'none');
     $('.bayar-card').css('display', 'none');
-    $('.bayar-ewallet').css('display', 'block');
+    $('.bayar-ewallet').css('display', '');
   }
 }
 
@@ -1028,7 +1058,7 @@ function misc(){
 function unmisc(){
   $('#login-title').css('position', 'absolute');
   $('#img-logo').css('margin', '');
-  $('#backfood').css('display', 'block');
+  $('#backfood').css('display', '');
 }
 
 function openScanBarcode(){
@@ -1057,12 +1087,12 @@ function lihatPreview(idpj){
 
 function changeLayout(){
   if(layout == '1'){
-    $('#block-grid').css('display', 'block');
+    $('#block-grid').css('display', '');
     $('#block-row').css('display', 'none');
     layout = '2';
     NativeStorage.setItem('layout', layout);
   } else if(layout == '2'){
-    $('#block-row').css('display', 'block');
+    $('#block-row').css('display', '');
     $('#block-grid').css('display', 'none');
     layout = '1';
     NativeStorage.setItem('layout', layout);

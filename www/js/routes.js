@@ -4,6 +4,9 @@ var routes = [
   url: './index.html',
   on: {
     pageAfterIn: function(){
+      console.log('screen locked');
+      screen.orientation.lock('portrait');
+      
       Dom7('#passlogin').on('taphold', function(){
         var el = this;
         cordova.plugins.clipboard.paste(function (text) { 
@@ -21,11 +24,15 @@ var routes = [
   componentUrl: './pages/home.html',
   on: {
     pageAfterIn: function(){
+      console.log('screen unlocked');
+      screen.orientation.unlock();
+      checkRotation();
+
       NativeStorage.getItem('modal', function(modal){
         dailyModal = modal;
       }, function(){
         $('#menu_penjualan').css('display', 'none');
-        $('#modal_awal').css('display', 'block');
+        $('#modal_awal').css('display', '');
 
         app.request({
           url: site+'/API/opening/'+cpyProf.ID_CLIENT+'/'+cpyProf.ID,
@@ -43,7 +50,7 @@ var routes = [
               NativeStorage.setItem('modal', data.starting_cash);
               NativeStorage.setItem('stamp', data.openingcashdate);
 
-              $('#menu_penjualan').css('display', 'block');
+              $('#menu_penjualan').css('display', '');
               $('#modal_awal').css('display', 'none');
             } else {
               console.log('Modal not found');
@@ -58,10 +65,10 @@ var routes = [
       keranjang();
 
       if(layout == '1'){
-        $('#block-grid').css('display', 'block');
+        $('#block-grid').css('display', '');
         $('#block-row').css('display', 'none');
       } else if(layout == '2'){
-        $('#block-row').css('display', 'block');
+        $('#block-row').css('display', '');
         $('#block-grid').css('display', 'none');
       }
 

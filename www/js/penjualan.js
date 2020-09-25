@@ -82,10 +82,10 @@ function keranjang(){
             
             totalSub = jumlah;
             data += '</ul>';
-            $('#keranjang').html(data);
-            $('#bayar').val(totalSub.toLocaleString(locale));
+            // $('#keranjang').html(data);
+            // $('#bayar').val(totalSub.toLocaleString(locale));
             
-            hitungDiskon();
+            // hitungDiskon();
         }, error: function(){
             console.log('Timeout keranjang');
         }
