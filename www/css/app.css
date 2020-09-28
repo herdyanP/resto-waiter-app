@@ -607,6 +607,12 @@ tr.tbl-bor {
       font-size: 5.5em; 
       border-radius: 50%;
     }
+    .lettericonkasir {
+      /* background: cyan;  */
+      margin: auto; 
+      font-size: 3em; 
+      border-radius: 50%;
+    }
   }
 
   @media (min-width: 45em){
@@ -625,6 +631,13 @@ tr.tbl-bor {
       /* background: cyan;  */
       margin: auto; 
       font-size: 7em; 
+      border-radius: 50%;
+    }
+    
+    .lettericonkasir {
+      /* background: cyan;  */
+      margin: auto; 
+      font-size: 3em; 
       border-radius: 50%;
     }
   }
@@ -647,6 +660,13 @@ tr.tbl-bor {
       font-size: 5.5em; 
       border-radius: 50%;
     }
+
+    .lettericonkasir {
+      /* background: cyan;  */
+      margin: auto; 
+      font-size: 3em; 
+      border-radius: 50%;
+    }
   }
 
   @media (min-width: 37em){
@@ -663,6 +683,13 @@ tr.tbl-bor {
       /* background: green;  */
       margin: auto; 
       font-size: 7em; 
+      border-radius: 50%;
+    }
+
+    .lettericonkasir {
+      /* background: cyan;  */
+      margin: auto; 
+      font-size: 3em; 
       border-radius: 50%;
     }
   }

@@ -39,7 +39,7 @@ var avColor = ['#c4b033', '#d9a84a', '#62bcca', '#44c092'];
 var trueHeight = window.innerHeight
 var moddedHeight = Math.floor(trueHeight / 100) * 100;
 var dailyModal = 0;
-var refreshMenu, refreshKeranjang, refreshSession;
+var refreshMenu, refreshKeranjang, refreshSession, refreshKasir;
 var logoByte64 = '';
 
 var existing = 0;
