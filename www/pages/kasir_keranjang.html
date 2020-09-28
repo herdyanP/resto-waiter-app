@@ -3,66 +3,47 @@
 		<div class="navbar">
 			<div class="navbar-inner">
 				<div class="left">
-					<a href="#" class="link icon-only panel-open" data-panel="left">
-						<i class="f7-icons" id="icon_home">menu</i>
-					</a>
-				</div>
+		          <a href="#" class="link back">
+		            <i class="icon icon-back"></i>
+		            <span class="ios-only">Back</span>
+		          </a>
+		        </div>
 				<div class="title" id="title_home">MediaPOS</div>
-				<div class="right">
-					<!-- <a href="#" class="link icon-only" onclick="changeLayout();"><i class="icon material-icons md-only">refresh</i></a>
-					<a href="#" class="link icon-only" onclick="openScanBarcode();"><i class="icon material-icons md-only">photo_camera</i></a>
-					<a class="link icon-only searchbar-enable" data-searchbar=".searchbar"><i class="icon material-icons md-only">search</i></a> -->
-				</div>
-				<form class="searchbar searchbar-expandable">
-					<div class="searchbar-inner">
-						<div class="searchbar-input-wrap">
-							<input type="search" placeholder="Search" onkeyup="searched(event, this.value)"/>
-							<i class="searchbar-icon"></i>
-							<span class="input-clear-button"></span>
-						</div>
-						<span class="searchbar-disable-button">Cancel</span>
-					</div>
-				</form>
 			</div>
 		</div>
 
 		<div class="page-content">
-			<div id="kasir_list_penjualan">
+			<div id="menu_kasir_keranjang_tampilan">
+			<div class="col-40">
 				<!-- Card untuk menu -->
 				<div class="card">
 					<div class="card-header">
 						<strong>Data Penjualan</strong>
 					</div>
 					
-					<div class="card-content">
+					<div class="card-content keranjang-list-content">
 						<div class="list no-hairlines" id="kasir_hasil_keranjang">
-
-							
-
-
-
 						</div>
 					</div>
 
 				</div>
-				
 				<div class="block" id="block-row" style="display: none;">
 					<div class="list no-hairlines no-hairlines-between">
 						<ul id="itemrow" class="list no-hairlines no-hairlines-between"></ul>
 					</div>
 				</div>
-				
-			</div>
+				</div>
+			
 			<!-- Card untuk menu -->
 			
 			<!-- Card untuk keranjang dan pembayaran -->
-			<div class="col-40">
+			<div class="col-60">
 				<!-- <div class="card-content"> -->
-
 				<div class="card">
 					<div class="card-header">
 						<strong>Payment</strong>
 					</div>
+					<div class="card-content keranjang-payment-content">
 					<div class="list no-hairlines no-hairlines-between">
 						<ul>
 							<li class="item-content item-input inline-label" style="display: block;">
@@ -187,12 +168,20 @@
 							</div>
 						</ul>
 					</div>
+					</div>
+					<input type="hidden" name="kasir_pjid" id="kasir_pjid">
+					<div class="card-footer">
+						<button class="col-45 button button-fill color-red" style="margin: auto;" onclick="batal(kasir_pjid.value)">Batal</button>
+              			<button class="col-45 button button-fill color-green" style="margin: auto;" onclick="bayar()">Bayar</button>
+					</div>
 
+
+
+
+					</div>
 					
 				</div>
-					<div class="card-footer">
-						<button class="button button-fill color-green" id="bayarButton" onclick="bayar()">Bayar</button>
-					</div>
+					
 			</div>
 
 		</div>
