@@ -646,31 +646,38 @@ function hideEditPricelist(q){
 
 function checkRotation(){
   clearTimeout(refreshMenu);
+  console.log(screen.orientation.type);
   if(screen.orientation.type == "portrait-primary"){
-    $('#menu_penjualan').removeClass('row');
-    $('#menu_penjualan').removeClass('no-gap');
+    switch(app.views.main.router.currentRoute.name){
+      case 'home':
+        console.log('added');
+        $('#menu_penjualan').removeClass('row');
+        $('#menu_penjualan').removeClass('no-gap');
+        $('#penjualan_right').addClass('portrait-menu');
+        $('#penjualan_right').removeClass('landscape-menu');
 
-    // $('#penjualan_left').addClass('portrait-menu');
-    // $('#penjualan_left').removeClass('landscape-menu');
-
-    $('#penjualan_right').addClass('portrait-menu');
-    $('#penjualan_right').removeClass('landscape-menu');
-
-    // $('#menu_card').css('max-height', '');
+        tampilMenu();
+        break;
+  
+      default:
+        console.log('default portrait');
+    }
   } else {
-    $('#menu_penjualan').addClass('row');
-    $('#menu_penjualan').addClass('no-gap');
+    switch(app.views.main.router.currentRoute.name){
+      case 'home':
+        console.log('removed');
+        $('#menu_penjualan').addClass('row');
+        $('#menu_penjualan').addClass('no-gap');    
+        $('#penjualan_right').addClass('landscape-menu');
+        $('#penjualan_right').removeClass('portrait-menu');
 
-    // $('#penjualan_left').addClass('landscape-menu');
-    // $('#penjualan_left').removeClass('portrait-menu');
-
-    $('#penjualan_right').addClass('landscape-menu');
-    $('#penjualan_right').removeClass('portrait-menu');
-
-    // $('#menu_card').css('max-height', '100vh');
-    
+        tampilMenu();
+        break;
+  
+      default:
+        console.log('default landscape');
+    }
   }
-  tampilMenu();
 }
 
 function goTo(url){

@@ -21,15 +21,19 @@ var routes = [
 },
 {
   path: '/top/',
-  componentUrl: './pages/top.html'
+  componentUrl: './pages/top.html',
+  on: {
+    pageAfterIn: function(){
+      screen.orientation.unlock();
+    }
+  }
 },
 {
+  name: 'home',
   path: '/home/',
   componentUrl: './pages/home.html',
   on: {
     pageAfterIn: function(){
-      console.log('screen unlocked');
-      screen.orientation.unlock();
       checkRotation();
 
       NativeStorage.getItem('modal', function(modal){
