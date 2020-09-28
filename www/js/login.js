@@ -43,7 +43,8 @@ function onLoginAttempt(loginData){
                     sessionCheck();
 
                     $('#panel_subTitle').html('<br><strong>MediaPOS '+(cpyProf.jenis_outlet == '1' ? "F&amp;B" : "Retail")+'</strong><br>POS Application<br>'+cpyProf.nama_toko);
-                    app.views.main.router.navigate('/home/');
+                    // app.views.main.router.navigate('/home/');
+                    app.views.main.router.navigate('/top/');
                 });
             } else if(parsed.ST_CODE == '2'){
                 app.toast.create({

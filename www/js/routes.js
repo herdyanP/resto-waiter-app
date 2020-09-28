@@ -20,6 +20,10 @@ var routes = [
   }
 },
 {
+  path: '/top/',
+  componentUrl: './pages/top.html'
+},
+{
   path: '/home/',
   componentUrl: './pages/home.html',
   on: {

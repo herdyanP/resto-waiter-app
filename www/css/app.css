@@ -589,6 +589,10 @@ tr.tbl-bor {
 
 
 @media (orientation: landscape){
+  .menu-top {
+    height: 30vh;
+  }
+
   @media (min-width: 30em){
     .penjualan-barang {
       /* height: calc(80vh - 60px); */
@@ -644,6 +648,10 @@ tr.tbl-bor {
 }
 
 @media (orientation: portrait){
+  .menu-top {
+    height: 15vh;
+  }
+  
   @media (min-width: 20em){
     .penjualan-barang {
       height: 40vh;

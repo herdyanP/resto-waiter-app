@@ -1135,6 +1135,10 @@ function selesai(){
   keranjang();
 }
 
+function pindahTop(tujuan){
+  app.views.main.router.navigate('/'+tujuan+'/');
+}
+
 // ========== PROSES UTILITY ENDS HERE ==========
 
 
