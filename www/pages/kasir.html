@@ -4,177 +4,22 @@
       <div class="navbar-inner">
         <div class="left">
           <a href="#" class="link icon-only panel-open" data-panel="left">
-            <i class="f7-icons" id="icon_home">menu</i>
+            <i class="f7-icons">menu</i>
           </a>
         </div>
-        <div class="title" id="title_home">MediaPOS</div>
-        <div class="right">
-          <!-- <a href="#" class="link icon-only" onclick="changeLayout();"><i class="icon material-icons md-only">refresh</i></a> -->
-          <!-- <a href="#" class="link icon-only" onclick="openScanBarcode();"><i class="icon material-icons md-only">photo_camera</i></a> -->
-          <!-- <a class="link icon-only searchbar-enable" data-searchbar=".searchbar"><i class="icon material-icons md-only">search</i></a> -->
-        </div>
-        <form class="searchbar searchbar-expandable">
-          <div class="searchbar-inner">
-            <div class="searchbar-input-wrap">
-              <input type="search" placeholder="Search" onkeyup="searched(event, this.value)"/>
-              <i class="searchbar-icon"></i>
-              <span class="input-clear-button"></span>
-            </div>
-            <span class="searchbar-disable-button">Cancel</span>
-          </div>
-        </form>
+        <div class="title">Menu Kasir</div>
       </div>
     </div>
 
     <div class="page-content">
-      <div id="menu_penjualan">
+      <div>
         <!-- Card untuk menu -->
         <div class="col-60">
           <div class="card"> 
             <div class="card-content">
-  
-              <!-- <div class="list no-hairlines no-hairlines-between">
-                <ul>
-                  <li class="item-content item-input">
-                    <div class="item-inner">
-                      <div class="item-title item-label"></div>
-                      <div class="item-input-wrap input-dropdown-wrap">
-                        <select name="kategori" id="kategori" onclick="listKategori();" onchange="tampilMenu();">
-                          <option value="0">Semua menu</option>
-                        </select>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </div> -->
-  
-              <!-- <div class="block" id="block-grid" style="display: none;"> -->
-                <!-- <div class="grid-demo"> -->
-                  <div class="row no-gap" style="overflow-y: scroll;" id="tampilan_list_kasir">
-
-
-                    <!-- <div class="col-33">
-                      <div class="card" style="border-radius: 10%;">
-                        <div class="card-content">
-                          <div style="text-align: center;">
-                            <div class="lettericon">A</div>
-                          </div>
-                          <div style="padding: 5px;">ini nama barang</div>
-                          <div style="color: gray; text-align: right; font-size: 12px; padding: 5px;">Rp 500,000</div>
-                        </div>
-                      </div>
-                    </div> -->
-                    <!-- div class="col-30 tablet-25">
-                      <div class="card" onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')">
-                        <div class="card-content">
-                          <div style="text-align: center; border-radius: 4px 4px 0 0; background: '+avColor[c]+'">
-                            <div class="lettericon">TX/14/202009/0002</div>
-                          </div>
-                          <div style="padding: 5px; height: 3em;">Nama : Dika, Nomor Meja : B02</div>
-                          <div style="color: gray; text-align: right; font-size: 12px; padding: 5px;">Rp '+parseInt(iter[i].harga).toLocaleString(locale)+'</div>
-                        </div>
-                      </div>
-                    </div> -->
-
-                    <!-- <div class="col-33">
-                      <div class="card">
-                        <div class="card-content">
-                          <div style="background: pink; text-align: center;">
-                            <div class="lettericon">A</div>
-                          </div>
-                          <div style="padding: 5px;">ini nama barang</div>
-                          <div style="color: gray; text-align: right; font-size: 12px; padding: 5px;">Rp 1,000,000</div>
-                        </div>
-                      </div>
-                    </div> -->
-                    <!-- <div class="col-33">
-                      <div class="card">
-                        <div class="card-content">
-                          <div style="background: violet; text-align: center;">
-                            <div class="lettericon">A</div>
-                          </div>
-                          <div style="padding: 5px;">ini nama barang</div>
-                          <div style="color: gray; text-align: right; font-size: 12px; padding: 5px;">Rp 45,000</div>
-                        </div>
-                      </div>
-                    </div> -->
-
-
-                  </div>
-                <!-- </div> -->
-              <!-- </div> -->
-      
-              <div class="block" id="block-row" style="display: none;">
-                <div class="list no-hairlines no-hairlines-between">
-                  <ul id="itemrow" class="list no-hairlines no-hairlines-between"></ul>
-                </div>
-              </div>
-  
-              
+              <div class="row no-gap" style="overflow-y: scroll;" id="tampilan_list_kasir"></div>
             </div>
           </div>
-        </div>
-        <!-- Card untuk menu -->
-        
-        <!-- Card untuk keranjang dan pembayaran -->
-        <!-- <div class="col-40"> -->
-          <!-- <div class="card-content"> -->
-            <!-- 
-            <div class="card">
-              <div class="card-header">
-                <strong>Keranjang</strong>
-              </div>
-    
-              <div class="card-content penjualan-keranjang">
-                <div class="list no-hairlines" id="keranjang">
-                  <li class="item-content ">
-                    <div class="item-inner">
-                      <div class="item-title" onclick="ubahAmount('+iter[i].id_tmp+');">barang 1
-                        <div class="item-footer">1 x 5,000<br> Cttn: -</div>
-                      </div>
-                      <div class="item-after">
-                        <a href="#" onclick="tambahNote('+iter[i].id_tmp+')"><i class="icon material-icons md-only" style="margin: 0 5px;">playlist_add</i></a>
-                        <a href="#" onclick="hapusKeranjang('+iter[i].id_tmp+')"><i class="icon material-icons md-only" style="margin: 0 5px;">remove_shopping_cart</i></a>
-                      </div>
-                    </div>
-                  </li>
-                </div>
-              </div>
-
-            </div>
-
-            <div class="card">
-              <div class="card-content">
-                <button class="button button-fill color-green" id="bayarButton" onclick="bayar()">Bayar</button>
-              </div>
-            </div>
-        </div> -->
-        <!-- Card untuk keranjang dan pembayaran -->
-
-      <!-- </div> -->
-
-      <div id="modal_awal" class="card card-outline" style="display: none;">
-        <div class="list no-hairlines no-hairlines-between">
-          <ul>
-            <li class="item-content">
-              <div class="item-inner">
-                <div class="item-title">
-                  Modal Awal
-                </div>
-              </div>
-            </li>
-            <li class="item-content item-input">
-              <div class="item-inner">
-                <div class="item-input-wrap">
-                  <input type="tel" pattern="[0-9]" name="modal" id="modal" oninput="comma(this)" style="text-align: right;" />
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-
-        <div class="card-footer">
-          <button class="button button-fill color-green" id="modalButton" onclick="simpanModal(document.getElementById('modal').value)">Simpan</button>
         </div>
       </div>
     </div>
