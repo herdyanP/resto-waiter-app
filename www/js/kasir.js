@@ -20,13 +20,13 @@ function tampilKasir(){
 					datanya += 
 
 					'<div class="col-30 tablet-25">\
-						<div class="card" onclick="simpan('+iter[i].id_barang+', 1, '+iter[i].harga+')">\
+						<div class="card" onclick="pindah_keranjang_kasir('+iter[i].id_pj+')">\
 							<div class="card-content">\
 								<div style="text-align: center; border-radius: 4px 4px 0 0; background: '+avColor[c]+'">\
 									<div class="lettericonkasir">'+exp[3]+'</div>\
 								</div>\
-								<div style="padding: 5px; height: 3em;">Nama : '+iter[i].customer+'<br>Meja : '+iter[i].meja+'</div>\
-								<div style="color: gray; text-align: right; font-size: 12px; padding: 5px;">'+iter[i].no_penjualan+'</div>\
+								<div style="padding: 5px; height: 4em;font-size:10px;">Nama : '+iter[i].customer+'<br>Meja : '+iter[i].meja+'</div>\
+								<div style="color: gray; text-align: right;" class="nopenjualankasir">'+iter[i].no_penjualan+'</div>\
 							</div>\
 						</div>\
 					</div>';
@@ -66,5 +66,14 @@ function tampilKasir(){
 			refreshKasir = setTimeout(tampilKasir, 10 * 1000);
 		}
 	})
+}
+
+
+function pindah_keranjang_kasir(id){
+	// console.log(id);
+	app.views.main.router.navigate({
+    name: 'kasir_keranjang',
+    	params: {idPJ : id}
+  	});
 }
 

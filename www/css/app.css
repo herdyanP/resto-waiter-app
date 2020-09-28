@@ -593,7 +593,7 @@ tr.tbl-bor {
     height: 30vh;
   }
 
-  @media (min-width: 30em){
+  @media (min-width: 480px){
     .penjualan-barang {
       /* height: calc(80vh - 60px); */
       height: 66vh;
@@ -614,12 +614,15 @@ tr.tbl-bor {
     .lettericonkasir {
       /* background: cyan;  */
       margin: auto; 
-      font-size: 3em; 
+      font-size: 2em; 
       border-radius: 50%;
+    }
+    .nopenjualankasir {
+      font-size: 9px; 
     }
   }
 
-  @media (min-width: 45em){
+  @media (min-width: 720px){
     .penjualan-barang {
       /* height: calc(80vh - 60px); */
       height: 75vh;
@@ -644,6 +647,9 @@ tr.tbl-bor {
       font-size: 3em; 
       border-radius: 50%;
     }
+    .nopenjualankasir {
+      font-size: 12px; 
+    }
   }
 }
 
@@ -652,7 +658,7 @@ tr.tbl-bor {
     height: 15vh;
   }
   
-  @media (min-width: 20em){
+  @media (min-width: 320px){
     .penjualan-barang {
       height: 40vh;
     }
@@ -672,12 +678,15 @@ tr.tbl-bor {
     .lettericonkasir {
       /* background: cyan;  */
       margin: auto; 
-      font-size: 3em; 
+      font-size: 2em; 
       border-radius: 50%;
+    }
+    .nopenjualankasir {
+      font-size: 9px; 
     }
   }
 
-  @media (min-width: 37em){
+  @media (min-width: 600px){
     .penjualan-barang {
       height: 40vh;
     }
@@ -700,7 +709,11 @@ tr.tbl-bor {
       font-size: 3em; 
       border-radius: 50%;
     }
+    .nopenjualankasir {
+      font-size: 9px; 
+    }
   }
+
 }
 
 
