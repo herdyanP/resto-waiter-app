@@ -34,11 +34,11 @@
         <splash density="xhdpi" src="res/screen/android/mediapos-xhdpi-portrait.png" />
         <splash density="xxhdpi" src="res/screen/android/mediapos-xxxhdpi-portrait.png" />
         <splash density="xxxhdpi" src="res/screen/android/mediapos-xxxhdpi-portrait.png" />
-        <!-- <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application">
+        <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:allowBackup="false" />
             <application android:fullBackupContent="false" />
             <application android:usesCleartextTraffic="true" />
-        </edit-config> -->
+        </edit-config>
         <preference name="android-minSdkVersion" value="19" />
         <preference name="android-targetSdkVersion" value="28" />
     </platform>

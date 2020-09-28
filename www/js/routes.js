@@ -377,6 +377,15 @@ var routes = [
 {
   path: '/pengaturan/',
   componentUrl: './pages/pengaturan.html'
+},{
+  path: '/kasir/',
+  componentUrl: './pages/kasir.html',
+  on: {
+    pageAfterIn: function(){
+      tampilKasir();
+      // console.log('tahun: '+dt.getFullYear(), 'bulan: '+(dt.getMonth() + 1));
+    }
+  }
 }];
 
 /* {
