@@ -386,7 +386,24 @@ var routes = [
       // console.log('tahun: '+dt.getFullYear(), 'bulan: '+(dt.getMonth() + 1));
     }
   }
-}];
+},{
+    name: 'kasir_keranjang',
+    path: '/kasir_keranjang/:idPJ/',
+    componentUrl: './pages/kasir_keranjang.html',
+    on: {
+        pageAfterIn: function (e, page) {
+          // do something after page gets into the view
+          clearTimeout(refreshKasir);
+          kasir_lihat_keranjang(page.route.params.idPJ);
+        },
+        pageInit: function (e, page) {
+          // do something when page initialized
+        },
+      }
+  },
+
+
+];
 
 /* {
   path: '/tambah/',
