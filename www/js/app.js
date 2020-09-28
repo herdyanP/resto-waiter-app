@@ -658,6 +658,14 @@ function checkRotation(){
 
         tampilMenu();
         break;
+
+        case 'kasir_keranjang':
+        console.log('added');
+        $('#menu_kasir_keranjang_tampilan').removeClass('row');
+        $('#menu_kasir_keranjang_tampilan').removeClass('no-gap');
+
+        tampilMenu();
+        break;
   
       default:
         console.log('default portrait');
@@ -670,6 +678,14 @@ function checkRotation(){
         $('#menu_penjualan').addClass('no-gap');    
         $('#penjualan_right').addClass('landscape-menu');
         $('#penjualan_right').removeClass('portrait-menu');
+
+        tampilMenu();
+        break;
+
+      case 'kasir_keranjang':
+        console.log('removed');
+        $('#menu_kasir_keranjang_tampilan').addClass('row');
+        $('#menu_kasir_keranjang_tampilan').addClass('no-gap');
 
         tampilMenu();
         break;

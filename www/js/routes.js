@@ -397,7 +397,9 @@ var routes = [
     on: {
         pageAfterIn: function (e, page) {
           // do something after page gets into the view
+          checkRotation()
           clearTimeout(refreshKasir);
+          $("#kasir_pjid").val(page.route.params.idPJ);
           kasir_lihat_keranjang(page.route.params.idPJ);
         },
         pageInit: function (e, page) {

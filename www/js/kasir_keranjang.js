@@ -46,3 +46,35 @@ function kasir_lihat_keranjang(id){
 	})
 }
 
+function batal(id){
+	var r = confirm("Apakah kamu yakin ingin membatalkan Transaksi ini !!!");
+	if (r == true) {
+	  simpanbatal(id);
+	} else {
+	  
+	}
+}
+
+function simpanbatal(id){
+	app.request({
+		url: site+'/API/batal_penjualan/'+cpyProf.ID_CLIENT+'/'+id+'/'+cpyProf.ID,
+		method: 'GET',
+		timeout: 10 * 1000,
+		success: function(result){
+			var parsed = JSON.parse(result);
+			var datanya = '';
+			if(parsed.DATA == '1'){
+				app.views.main.router.navigate('/kasir/');
+			} else {
+				alert('Data gagal dibatalkan silahkan hubungi Admin !!!');
+			}
+
+			$('#kasir_hasil_keranjang').html(datanya);
+		}, error: function(){
+			// alert('Gagal saat melakukan query!');
+		}, complete: function(){
+			// refreshKasir = setTimeout(tampilKasir, 10 * 1000);
+		}
+	})
+}
+
