@@ -27,6 +27,7 @@ var txNmr = 0;
 var retail, cabang, lastId, user, platform, jn, uid, updates;
 // var adid = {};
 var cpyProf;
+var v_subtotal = 0;
 var diskonAmt = 0; totalSub = 0; totalGrand = 0; kembalian = 0;
 var pingTimeout = 0;
 var appVer = 0;
@@ -644,6 +645,7 @@ function hideEditPricelist(q){
 // ========== PROSES UTILITY STARTS HERE ==========
 
 function checkRotation(){
+  clearTimeout(refreshMenu);
   if(screen.orientation.type == "portrait-primary"){
     $('#menu_penjualan').removeClass('row');
     $('#menu_penjualan').removeClass('no-gap');
@@ -668,6 +670,7 @@ function checkRotation(){
     // $('#menu_card').css('max-height', '100vh');
     
   }
+  tampilMenu();
 }
 
 function goTo(url){

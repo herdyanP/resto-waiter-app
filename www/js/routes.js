@@ -130,6 +130,15 @@ var routes = [
   }
 },
 {
+  path: '/payment/',
+  componentUrl: './pages/payment.html',
+  on: {
+    pageAfterIn: function(){
+      console.log(v_subtotal);
+    }
+  }
+},
+{
   name: 'preview',
   path: '/preview/:idpj/',
   template: '\

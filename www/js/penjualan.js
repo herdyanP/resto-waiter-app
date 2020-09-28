@@ -80,9 +80,10 @@ function keranjang(){
                 console.log('keranjang kosong');
             }
             
+            v_subtotal = jumlah
             totalSub = jumlah;
             data += '</ul>';
-            // $('#keranjang').html(data);
+            $('#keranjang').html(data);
             // $('#bayar').val(totalSub.toLocaleString(locale));
             
             // hitungDiskon();

@@ -1,4 +1,8 @@
 function bayar(){
+    app.views.main.router.navigate('/payment/');
+}
+
+function checkout(){
     var d = new Date();
     var tgl = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+("0" + d.getDate()).slice(-2);
     var tgltime = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+("0" + d.getDate()).slice(-2)+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();

@@ -589,48 +589,80 @@ tr.tbl-bor {
 
 
 @media (orientation: landscape){
-  .penjualan-barang {
-    height: calc(80vh - 60px);
-  }
-
   @media (min-width: 30em){
+    .penjualan-barang {
+      /* height: calc(80vh - 60px); */
+      height: 66vh;
+    }
+
+    .penjualan-keranjang {
+      /* height: 60vh; */
+      height: 56vh;
+      overflow-y: scroll;
+    }
+
     .lettericon {
-      background: cyan; 
+      /* background: cyan;  */
       margin: auto; 
-      font-size: 4.5em; 
+      font-size: 5.5em; 
       border-radius: 50%;
     }
   }
 
   @media (min-width: 45em){
+    .penjualan-barang {
+      /* height: calc(80vh - 60px); */
+      height: 75vh;
+    }
+
+    .penjualan-keranjang {
+      /* height: 60vh; */
+      height: 68vh;
+      overflow-y: scroll;
+    }
+
     .lettericon {
-      background: cyan; 
+      /* background: cyan;  */
       margin: auto; 
-      font-size: 6.5em; 
+      font-size: 7em; 
       border-radius: 50%;
     }
   }
 }
 
 @media (orientation: portrait){
-  .penjualan-barang {
-    height: 40vh;
-  }
-
   @media (min-width: 20em){
+    .penjualan-barang {
+      height: 40vh;
+    }
+  
+    .penjualan-keranjang {
+      height: 25vh;
+      overflow-y: scroll;
+    }
+
     .lettericon {
-      background: green; 
+      /* background: green;  */
       margin: auto; 
-      font-size: 4.5em; 
+      font-size: 5.5em; 
       border-radius: 50%;
     }
   }
 
   @media (min-width: 37em){
+    .penjualan-barang {
+      height: 40vh;
+    }
+  
+    .penjualan-keranjang {
+      height: 35vh;
+      overflow-y: scroll;
+    }
+
     .lettericon {
-      background: green; 
+      /* background: green;  */
       margin: auto; 
-      font-size: 6.5em; 
+      font-size: 7em; 
       border-radius: 50%;
     }
   }
