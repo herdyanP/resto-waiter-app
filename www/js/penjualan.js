@@ -280,19 +280,6 @@ function ubahAmount(id_tmp){
                         keranjang();
                     }
                 })
-
-                // $.ajax({
-                //     // url: site+'/API/update_penj_dtl_tmp.php?id_barang='+id+'&harga='+hrg+'&id_login='+cpyProf.id_outlet+'&qty='+v
-                //     // url: site+'/API/update_penj_dtl_tmp.php?id_barang='+id+'&harga='+hrg+'&id_login='+cpyProf.id_user+'&qty='+v
-
-                // }).done(function(){
-                //     app.toast.create({
-                //         text: "Sukses Ubah",
-                //         closeTimeout: 3000,
-                //         closeButton: true
-                //     }).open();
-                //     keranjang();
-                // })
             }
         }]
     }).open();
