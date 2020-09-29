@@ -664,10 +664,6 @@ function checkRotation(){
         $('#menu_kasir_keranjang_tampilan').removeClass('row');
         $('#menu_kasir_keranjang_tampilan').removeClass('no-gap');
 
-<<<<<<< HEAD
-        // tampilMenu();
-=======
->>>>>>> de4f3c2cfbbad65f50bd7440f515bc3e36a1d012
         break;
   
       default:
@@ -690,10 +686,6 @@ function checkRotation(){
         $('#menu_kasir_keranjang_tampilan').addClass('row');
         $('#menu_kasir_keranjang_tampilan').addClass('no-gap');
 
-<<<<<<< HEAD
-        // tampilMenu();
-=======
->>>>>>> de4f3c2cfbbad65f50bd7440f515bc3e36a1d012
         break;
   
       default:

@@ -324,7 +324,7 @@ function inputNama(){
         {
             text: 'Lanjut',
             onClick: function(dialog, e){
-                $('#temp_nama').val() = $('#atasnama').val();
+                $('#temp_nama').val($('#atasnama').val());
                 dialog.close();
                 inputMeja();
             }
@@ -358,8 +358,9 @@ function inputMeja(){
         {
             text: 'Lanjut',
             onClick: function(dialog, e){
-                $('#temp_meja').val() = $('#namameja').val();
+                $('#temp_meja').val($('#namameja').val());
                 dialog.close();
+                order();
             }
         }]
     }).open()
@@ -383,6 +384,7 @@ function order(){
                     closeTimeout: 3000,
                     closeButton: false
                 }).open();
+                keranjang();
             } else {
                 app.toast.create({
                     text: "Gagal simpan pesanan",
