@@ -663,7 +663,6 @@ function checkRotation(){
         console.log('added');
         $('#menu_kasir_keranjang_tampilan').removeClass('row');
         $('#menu_kasir_keranjang_tampilan').removeClass('no-gap');
-
         break;
   
       default:
@@ -685,7 +684,6 @@ function checkRotation(){
         console.log('removed');
         $('#menu_kasir_keranjang_tampilan').addClass('row');
         $('#menu_kasir_keranjang_tampilan').addClass('no-gap');
-
         break;
   
       default:
