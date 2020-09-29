@@ -388,6 +388,9 @@ var routes = [
     pageAfterIn: function(){
       tampilKasir();
       // console.log('tahun: '+dt.getFullYear(), 'bulan: '+(dt.getMonth() + 1));
+    },
+    pageAfterOut: function(){
+      clearTimeout(refreshKasir);
     }
   }
 },{
@@ -397,8 +400,7 @@ var routes = [
     on: {
         pageAfterIn: function (e, page) {
           // do something after page gets into the view
-          checkRotation()
-          clearTimeout(refreshKasir);
+          checkRotation();
           $("#kasir_pjid").val(page.route.params.idPJ);
           kasir_lihat_keranjang(page.route.params.idPJ);
         },
