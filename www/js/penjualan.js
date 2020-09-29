@@ -27,7 +27,7 @@ function simpan(id, qty, harga){
             }
 
             keranjang();
-            hitungDiskon();
+            // hitungDiskon();
         }, error: function(){
             console.log('Error mengambil list keranjang');
         }
