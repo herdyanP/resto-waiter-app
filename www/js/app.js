@@ -664,7 +664,6 @@ function checkRotation(){
         $('#menu_kasir_keranjang_tampilan').removeClass('row');
         $('#menu_kasir_keranjang_tampilan').removeClass('no-gap');
 
-        tampilMenu();
         break;
   
       default:
@@ -687,7 +686,6 @@ function checkRotation(){
         $('#menu_kasir_keranjang_tampilan').addClass('row');
         $('#menu_kasir_keranjang_tampilan').addClass('no-gap');
 
-        tampilMenu();
         break;
   
       default:
@@ -771,7 +769,14 @@ function connectToPrinter(q, el){
 
 function comma(el){
   if(el.value == '') el.value = 0;
+  
+  if(!isNaN(el.value)){
+    el.value=el.value
+  }else{
+    el.value=0;
+  }
   el.value = parseInt((el.value).replace(/\D/g, '')).toLocaleString(locale);
+  
 }
 
 function commaNumber(el){
@@ -1147,7 +1152,7 @@ function dialogShare(idpj){
 }
 
 function selesai(){
-  app.views.main.router.navigate('/home/');
+  app.views.main.router.navigate('/top/');
 
   $('#bayar').val(0);
   $('#kembalian').empty().append('0');

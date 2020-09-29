@@ -48,9 +48,17 @@
 						<ul>
 							<li class="item-content item-input inline-label" style="display: block;">
 								<div class="item-inner">
+									<div class="item-title item-label" style="color: unset;">Sub Total</div>
+									<div class="item-input-wrap">
+										<div class="col-30" id="subtotal1" style="text-align: right;">0</div>
+									</div>
+								</div>
+							</li>
+							<li class="item-content item-input inline-label" style="display: block;">
+								<div class="item-inner">
 									<div class="item-title item-label" style="color: unset;">Diskon (%)</div>
 									<div class="item-input-wrap">
-										<input type="text" inputmode="numeric" lang="id" id="disk_pr" value="0" onchange="cekDiskon(this.value)" onclick="this.select();" style="text-align: right;">
+										<input type="text" inputmode="numeric" lang="id" id="disk_pr" value="0" onchange="comma(this);cekDiskon(this.value)" onclick="this.select();" style="text-align: right;">
 										<!-- <input type="tel" lang="id" id="disk_rp" value="0" onchange="hitungDiskon(); commaNumber(this);" onclick="this.select();" style="text-align: right;"> -->
 										<!-- <input type="text" lang="id" id="dsk_persen" value="0" onclick="this.select();" onchange="diskon(this.value); hitungKembalian(document.getElementById(bayar).value)" style="text-align: right;"> -->
 									</div>
@@ -92,7 +100,7 @@
 								<div class="item-inner">
 									<div class="item-title item-label" style="color: unset;">Terbayar</div>
 									<div class="item-input-wrap">
-										<input type="number" id="bayar" value="0" onchange="hitungKembalian(this.value); commaNumber(this);" onclick="changeType(this); this.select();" style="text-align: right;">
+										<input type="text" inputmode="numeric" id="bayar" value="0" onchange="hitungKembalian(this.value); commaNumber(this);" onclick="changeType(this); this.select();" style="text-align: right;">
 									</div>
 								</div>
 							</li>
@@ -172,7 +180,7 @@
 					<input type="hidden" name="kasir_pjid" id="kasir_pjid">
 					<div class="card-footer">
 						<button class="col-45 button button-fill color-red" style="margin: auto;" onclick="batal(kasir_pjid.value)">Batal</button>
-              			<button class="col-45 button button-fill color-green" style="margin: auto;" onclick="bayar()">Bayar</button>
+              			<button class="col-45 button button-fill color-green" style="margin: auto;" onclick="bayar_kasir(kasir_pjid.value)">Bayar</button>
 					</div>
 
 
