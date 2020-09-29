@@ -297,3 +297,123 @@ function ubahAmount(id_tmp){
         }]
     }).open();
 }
+
+function inputNama(){
+    app.dialog.create({
+        title: 'Nama',
+        closeByBackdropClick: false,
+        content: 
+            '<div class="list no-hairlines no-hairlines-between">\
+                <ul style="height: 100%;"\
+                    <li class="item-content item-input" style="height: inherit;">\
+                        <div class="item-inner" style="height: inherit;">\
+                            <div class="item-input-wrap" style="height: inherit;">\
+                                <input class="input" type="text" name="atasnama" id="atasnama" style="text-align: center; height: inherit;" />\
+                            </div>\
+                        </div>\
+                    </li>\
+                </ul>\
+            </div>',
+        buttons: [
+        {
+            text: 'Batal',
+            onClick: function(dialog, e){
+                dialog.close();
+            }
+        },
+        {
+            text: 'Lanjut',
+            onClick: function(dialog, e){
+                $('#temp_nama').val() = $('#atasnama').val();
+                dialog.close();
+                inputMeja();
+            }
+        }]
+    }).open();
+}
+
+function inputMeja(){
+    app.dialog.create({
+        title: 'Meja',
+        closeByBackdropClick: false,
+        content: 
+            '<div class="list no-hairlines no-hairlines-between">\
+                <ul style="height: 100%;"\
+                    <li class="item-content item-input" style="height: inherit;">\
+                        <div class="item-inner" style="height: inherit;">\
+                            <div class="item-input-wrap" style="height: inherit;">\
+                                <input class="input" type="text" name="namameja" id="namameja" style="text-align: center; height: inherit;" />\
+                            </div>\
+                        </div>\
+                    </li>\
+                </ul>\
+            </div>',
+        buttons: [
+        {
+            text: 'Batal',
+            onClick: function(dialog, e){
+                dialog.close();
+            }
+        },
+        {
+            text: 'Lanjut',
+            onClick: function(dialog, e){
+                $('#temp_meja').val() = $('#namameja').val();
+                dialog.close();
+            }
+        }]
+    }).open()
+}
+
+function order(){
+    var temp = {
+        nama : $('#temp_nama').val(),
+        meja : $('#temp_meja').val()
+    }
+
+    app.request({
+        url: site+'/API/order/'+cpyProf.ID_CLIENT+'/'+cpyProf.ID,
+        method: 'POST',
+        data: JSON.stringify(temp),
+        success: function(result){
+            var parsed = JSON.parse(result);
+            if(parsed.ST_CODE == '1'){
+                app.toast.create({
+                    text: "Berhasil simpan pesanan",
+                    closeTimeout: 3000,
+                    closeButton: false
+                }).open();
+            } else {
+                app.toast.create({
+                    text: "Gagal simpan pesanan",
+                    closeTimeout: 3000,
+                    closeButton: false
+                }).open();
+            }
+        }
+    })
+}
+
+function pay(){
+    app.request({
+        url: site+'/API/order/'+cpyProf.ID_CLIENT+'/'+cpyProf.ID,
+        method: 'POST',
+        success: function(result){
+            var parsed = JSON.parse(result);
+            if(parsed.ST_CODE == '1'){
+                app.views.main.router.navigate({
+                    name: 'kasir_keranjang',
+                    params: {
+                        idPJ : parsed.DATA.idpj
+                    }
+                })
+            } else {
+                app.toast.create({
+                    text: "Gagal simpan pesanan",
+                    closeTimeout: 3000,
+                    closeButton: false
+                }).open();
+            }
+        }
+    })
+}
